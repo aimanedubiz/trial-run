@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edu Kidz - Matematik Tahun 2: Pengurusan Data</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti for Fireworks -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
+            min-height: 100vh;
+        }
+        .font-fredoka {
+            font-family: 'Fredoka', cursive;
+        }
+        .card-pop {
+            transition: all 0.2s ease-in-out;
+        }
+        .card-pop:hover {
+            transform: translateY(-4px) scale(1.02);
+        }
+        .tally-mark {
+            display: inline-block;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #1e3a8a;
+            background: #e0f2fe;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid #93c5fd;
+        }
+        .bar-transition {
+            transition: height 0.8s ease-out;
+        }
+    </style>
+</head>
+<body class="p-2 md:p-6 flex flex-col items-center justify-center">
+
+    <!-- Main Application Shell -->
+    <div id="app" class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl border-4 border-yellow-400 overflow-hidden relative">
+
+        <!-- HEADER BAR -->
+        <header class="bg-indigo-600 text-white p-4 flex justify-between items-center border-b-4 border-indigo-800">
+            <div class="flex items-center gap-3">
+                <div class="bg-yellow-400 text-indigo-900 font-black px-3 py-1 rounded-2xl text-xl shadow transform -rotate-3">
+                    <i class="fa-solid fa-graduation-cap"></i> EDU KIDZ
+                </div>
+                <span class="text-xs md:text-sm font-semibold bg-indigo-500 px-3 py-1 rounded-full hidden sm:inline-block">
+                    Matematik Tahun 2: Data
+                </span>
+            </div>
+            
+            <div id="user-status-bar" class="hidden flex items-center gap-3">
+                <span id="current-user-name" class="font-bold text-yellow-300 text-sm md:text-base">
+                    <i class="fa-solid fa-user-circle"></i> Murid
+                </span>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded-xl shadow transition">
+                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                </button>
+            </div>
+        </header>
+
+        <main class="p-4 md:p-8">
+
+            <!-- SCREEN 1: LOGIN / REGISTER -->
+            <section id="auth-screen" class="space-y-6 text-center max-w-md mx-auto py-6">
+                <div class="space-y-2">
+                    <h1 class="text-3xl font-extrabold text-indigo-900 font-fredoka">Selamat Datang ke Edu Kidz! 🎉</h1>
+                    <p class="text-gray-600 text-sm">Masukkan nama anda untuk mula bermain & kumpul markah dalam Pengurusan Data Tahun 2.</p>
+                </div>
+
+                <div class="bg-indigo-50 p-6 rounded-2xl border-2 border-indigo-200 space-y-4">
+                    <div>
+                        <label class="block text-left text-xs font-bold text-indigo-900 uppercase mb-1">Nama Pemain / Murid</label>
+                        <input type="text" id="player-name-input" placeholder="Contoh: Amir / Sarah" class="w-full px-4 py-3 rounded-xl border-2 border-indigo-300 focus:border-indigo-600 focus:outline-none text-lg font-bold text-indigo-900">
+                    </div>
+                    <button onclick="loginUser()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold py-3 text-lg rounded-xl shadow-lg transform active:scale-95 transition">
+                        <i class="fa-solid fa-play"></i> Mula Main Sekarang!
+                    </button>
+                </div>
+
+                <!-- Leaderboard Preview -->
+                <div class="mt-8 text-left bg-yellow-50 p-4 rounded-2xl border border-yellow-300">
+                    <h3 class="font-bold text-indigo-900 text-sm flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-trophy text-yellow-500"></i> Carta Kedudukan Pemain
+                    </h3>
+                    <div id="auth-leaderboard" class="text-xs space-y-1 text-gray-700">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 2: DASHBOARD / SETUP -->
+            <section id="dashboard-screen" class="hidden space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
+                    <div>
+                        <h2 class="text-2xl font-bold text-indigo-900 font-fredoka">Hai, <span id="dash-player-name" class="text-emerald-600">Pemain</span>! 👋</h2>
+                        <p class="text-xs text-gray-600">Pilih topik, tahap kesukaran, dan masa menjawab untuk memulakan cabaran!</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="showLeaderboardModal()" class="bg-yellow-400 hover:bg-yellow-500 text-indigo-950 font-bold px-4 py-2 rounded-xl shadow text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-trophy"></i> Carta Kedudukan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Selection Form -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Topik Selection -->
+                    <div class="md:col-span-3 space-y-2">
+                        <label class="block font-bold text-indigo-900 text-sm uppercase"><i class="fa-solid fa-list-check"></i> 1. Pilih Kategori Topik</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button type="button" onclick="selectTopic(1, this)" class="topic-btn active bg-indigo-600 text-white p-4 rounded-2xl text-left border-2 border-indigo-700 shadow card-pop">
+                                <div class="font-bold text-base"><i class="fa-solid fa-square-poll-vertical mr-1"></i> Cara Kumpul Data</div>
+                                <div class="text-xs opacity-90 font-normal">Gundal, Jadual & Piktograf</div>
+                            </button>
+                            <button type="button" onclick="selectTopic(2, this)" class="topic-btn bg-white hover:bg-indigo-50 text-indigo-900 p-4 rounded-2xl text-left border-2 border-indigo-200 shadow card-pop">
+                                <div class="font-bold text-base"><i class="fa-solid fa-chart-column mr-1"></i> Kenali Carta Palang</div>
+                                <div class="text-xs text-gray-500 font-normal">Membaca tajuk, paksi & nilai palang</div>
+                            </button>
+                            <button type="button" onclick="selectTopic(3, this)" class="topic-btn bg-white hover:bg-indigo-50 text-indigo-900 p-4 rounded-2xl text-left border-2 border-indigo-200 shadow card-pop">
+                                <div class="font-bold text-base"><i class="fa-solid fa-pen-to-square mr-1"></i> Lengkapkan Ayat Penyataan</div>
+                                <div class="text-xs text-gray-500 font-normal">Mentafsir maklumat terbanyak/tersedikit</div>
+                            </button>
+                            <button type="button" onclick="selectTopic(4, this)" class="topic-btn bg-white hover:bg-indigo-50 text-indigo-900 p-4 rounded-2xl text-left border-2 border-indigo-200 shadow card-pop">
+                                <div class="font-bold text-base"><i class="fa-solid fa-brain mr-1"></i> Penyelesaian Masalah</div>
+                                <div class="text-xs text-gray-500 font-normal">Soalan reka cerita & KBAT Tahun 2</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Difficulty Selection -->
+                    <div class="space-y-2">
+                        <label class="block font-bold text-indigo-900 text-sm uppercase"><i class="fa-solid fa-gauge-high"></i> 2. Tahap Kesukaran</label>
+                        <select id="diff-select" class="w-full bg-white border-2 border-indigo-200 rounded-xl p-3 font-bold text-indigo-900 focus:outline-none focus:border-indigo-500">
+                            <option value="all" selected>Semua Tahap (Campuran)</option>
+                            <option value="easy">Mudah (Senang)</option>
+                            <option value="medium">Sederhana</option>
+                            <option value="hard">Sukar (KBAT)</option>
+                        </select>
+                    </div>
+
+                    <!-- Timer Selection -->
+                    <div class="space-y-2">
+                        <label class="block font-bold text-indigo-900 text-sm uppercase"><i class="fa-solid fa-stopwatch"></i> 3. Masa Menjawab</label>
+                        <select id="timer-select" class="w-full bg-white border-2 border-indigo-200 rounded-xl p-3 font-bold text-indigo-900 focus:outline-none focus:border-indigo-500">
+                            <option value="30">30 Saat / Soalan</option>
+                            <option value="60" selected>1 Minit / Soalan</option>
+                            <option value="0">Tiada Had Masa</option>
+                        </select>
+                    </div>
+
+                    <!-- Start Button -->
+                    <div class="flex items-end">
+                        <button onclick="startGame()" class="w-full bg-yellow-400 hover:bg-yellow-500 text-indigo-950 font-black text-xl py-3 rounded-xl shadow-lg border-2 border-yellow-500 transform active:scale-95 transition">
+                            <i class="fa-solid fa-rocket mr-1"></i> MULA GAME!
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SCREEN 3: GAMEPLAY -->
+            <section id="game-screen" class="hidden space-y-4">
+                
+                <!-- Game Header Info -->
+                <div class="flex justify-between items-center bg-indigo-900 text-white p-3 md:p-4 rounded-2xl shadow">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-indigo-700 px-3 py-1 rounded-xl text-xs md:text-sm font-bold" id="q-number-badge">Soalan 1 / 20</span>
+                        <span class="bg-emerald-500 px-3 py-1 rounded-xl text-xs md:text-sm font-bold" id="score-badge">Markah: 0</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="text-xs text-indigo-200 font-bold hidden sm:inline">Masa:</div>
+                        <div id="timer-display" class="bg-red-500 px-3 py-1 rounded-xl text-xs md:text-sm font-black tracking-wider">01:00</div>
+                    </div>
+                </div>
+
+                <!-- Cognitive & Type Info Badge -->
+                <div class="flex justify-between text-xs text-gray-500 font-semibold px-1">
+                    <span id="cognitive-badge" class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-md">Aras: Mengingat</span>
+                    <span id="question-type-badge" class="bg-purple-100 text-purple-800 px-2 py-0.5 rounded-md">Jenis: Objektif</span>
+                </div>
+
+                <!-- Visual Chart / Graphic Area -->
+                <div id="visual-box" class="bg-gradient-to-b from-sky-50 to-white border-2 border-sky-200 p-4 rounded-2xl text-center min-h-[180px] flex flex-col justify-center items-center shadow-inner overflow-x-auto">
+                    <!-- Dynamic Graphic (Bar Chart / Tally / Pictograph) -->
+                </div>
+
+                <!-- Question Text -->
+                <div id="question-text-box" class="text-base md:text-lg font-bold text-indigo-950 bg-amber-50 p-4 rounded-2xl border-l-4 border-amber-400">
+                    Sila tunggu, soalan sedang dimuatkan...
+                </div>
+
+                <!-- Interactive Answer Area -->
+                <div id="answer-area" class="pt-2">
+                    <!-- Dynamic rendering: MCQ, Input, Matching, etc. -->
+                </div>
+
+                <!-- Feedback Box -->
+                <div id="feedback-box" class="hidden p-4 rounded-2xl border-2 text-center font-bold text-sm"></div>
+
+                <!-- Next Button -->
+                <div class="flex justify-end pt-2">
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-6 py-3 rounded-xl shadow-lg transition">
+                        Soalan Seterusnya <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- SCREEN 4: SUMMARY & RESULTS -->
+            <section id="result-screen" class="hidden text-center space-y-6 py-6">
+                <div class="space-y-2">
+                    <div class="text-5xl">🏆</div>
+                    <h2 class="text-3xl font-black text-indigo-900 font-fredoka">Tahniah! Permainan Tamat!</h2>
+                    <p class="text-gray-600 text-sm">Berikut adalah keputusan pencapaian subtopik Data anda:</p>
+                </div>
+
+                <div class="bg-indigo-50 border-2 border-indigo-200 p-6 rounded-3xl max-w-sm mx-auto space-y-3 shadow-inner">
+                    <div class="text-gray-500 font-bold text-xs uppercase">Jumlah Markah</div>
+                    <div id="final-score" class="text-5xl font-black text-emerald-600">0 / 100</div>
+                    <div id="accuracy-rate" class="text-xs font-bold text-indigo-800">Ketepatan: 0%</div>
+                    <hr class="border-indigo-200">
+                    <div id="performance-feedback" class="text-sm font-extrabold text-indigo-900">
+                        Cemerlang! Anda seorang pakar Data!
+                    </div>
+                </div>
+
+                <div class="flex justify-center gap-3">
+                    <button onclick="goToDashboard()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-6 py-3 rounded-xl shadow-lg text-sm">
+                        <i class="fa-solid fa-rotate-right"></i> Main Lagi
+                    </button>
+                    <button onclick="showLeaderboardModal()" class="bg-yellow-400 hover:bg-yellow-500 text-indigo-950 font-extrabold px-6 py-3 rounded-xl shadow-lg text-sm">
+                        <i class="fa-solid fa-trophy"></i> Lihat Kedudukan
+                    </button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL: LEADERBOARD -->
+    <div id="leaderboard-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex justify-center items-center p-4 z-50">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
+            <button onclick="closeLeaderboardModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </button>
+            <h3 class="text-2xl font-black text-indigo-900 font-fredoka flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-500"></i> Carta Kedudukan Murid
+            </h3>
+            <div class="max-h-60 overflow-y-auto space-y-2" id="full-leaderboard-list">
+                <!-- Leaderboard items inserted dynamically -->
+            </div>
+            <button onclick="closeLeaderboardModal()" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // Global State variables
+        let currentUser = null;
+        let selectedTopic = 1;
+        let selectedDiff = 'all';
+        let timerConfig = 60;
+        let timerInterval = null;
+        let timeLeft = 60;
+        let currentQuestionIdx = 0;
+        let totalScore = 0;
+        let activeQuestions = [];
+
+        // Shared 7-item Datasets for consistent, high-variety questions
+        const petChart7 = {
+            kind: 'barchart',
+            title: 'Haiwan Peliharaan Murid 2 Melati',
+            data: [
+                {label: 'Kucing', val: 14},
+                {label: 'Ikan', val: 8},
+                {label: 'Arnab', val: 10},
+                {label: 'Burung', val: 5},
+                {label: 'Kura-kura', val: 3},
+                {label: 'Hamster', val: 7},
+                {label: 'Ayam', val: 12}
+            ]
+        };
+
+        const fruitChart7 = {
+            kind: 'barchart',
+            title: 'Jualan Buah-Buahan di Kantin (Biji)',
+            data: [
+                {label: 'Epal', val: 18},
+                {label: 'Pisang', val: 24},
+                {label: 'Tembikai', val: 12},
+                {label: 'Mangga', val: 9},
+                {label: 'Durian', val: 6},
+                {label: 'Anggur', val: 15},
+                {label: 'Oren', val: 20}
+            ]
+        };
+
+        // Complete Question Bank Database (Subtopic Data KSSR Semakan Tahun 2)
+        const questionBank = {
+            // TOPIK 1: Cara Kumpul Data (20 Soalan Unik)
+            1: [
+                { type: 'mcq', cognitive: 'Mengingat', diff: 'easy', question: 'Apakah nilai gundal bagi simbol |||| ?', graphic: { kind: 'tally', count: 4 }, options: ['3', '4', '5', '6'], answer: '4', explain: 'Empat garisan tegak mewakili nombor 4.' },
+                { type: 'mcq', cognitive: 'Mengingat', diff: 'easy', question: 'Apakah nilai bagi satu kumpulan gundal lengkap 卌 ?', graphic: { kind: 'tally', count: 5 }, options: ['4', '5', '6', '10'], answer: '5', explain: 'Satu kumpulan gundal lengkap dengan garisan melintang mewakili nilai 5.' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'easy', question: 'Berapakah bilangan Epal dalam gundal 卌 ||| ?', graphic: { kind: 'tally', count: 8 }, options: ['6', '7', '8', '9'], answer: '8', explain: 'Gundal 5 + 3 garisan tegak = 8.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'easy', question: 'Lihat ikon berikut: 🍎🍎🍎🍎🍎. Taip bilangan epal dalam nombor.', graphic: { kind: 'icons', icon: '🍎', count: 5 }, answer: '5', explain: 'Terdapat 5 biji epal.' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'medium', question: 'Jika 1 simbol 🚗 mewakili 2 buah kereta. Berapakah jumlah kereta bagi 3 simbol 🚗🚗🚗?', graphic: { kind: 'pictograph_key', icon: '🚗', count: 3, key: 2 }, options: ['3', '5', '6', '8'], answer: '6', explain: '3 simbol × 2 = 6 buah kereta.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Berapakah nilai gundal 卌 卌 || ?', graphic: { kind: 'tally', count: 12 }, options: ['10', '11', '12', '14'], answer: '12', explain: '5 + 5 + 2 = 12.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Jika 1 simbol ⚽ mewakili 5 orang murid. Berapakah murid bagi 2 simbol ⚽⚽?', graphic: { kind: 'pictograph_key', icon: '⚽', count: 2, key: 5 }, answer: '10', explain: '2 simbol × 5 = 10 orang murid.' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'easy', question: 'Manakah antara berikut adalah cara mengumpul data?', options: ['Gundal', 'Pembaris', 'Jam', 'Penimbang'], answer: 'Gundal', explain: 'Gundal, jadual, dan piktograf adalah cara mengumpul data.' },
+                { type: 'mcq', cognitive: 'Mengingat', diff: 'easy', question: 'Berapakah simbol gundal tegak untuk nombor 3?', options: ['|', '||', '|||', '||||'], answer: '|||', explain: 'Tiga garisan tegak ||| mewakili nombor 3.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Kira jumlah gundal berikut: 卌 卌 卌', graphic: { kind: 'tally', count: 15 }, answer: '15', explain: '5 + 5 + 5 = 15.' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'easy', question: 'Apakah nama jadual yang menggunakan garisan untuk membilang data?', options: ['Carta Palang', 'Jadual Gundal', 'Piktograf', 'Peta Minda'], answer: 'Jadual Gundal', explain: 'Jadual gundal menggunakan garisan (tally marks) untuk membilang.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'hard', question: 'Manakah mewakili gundal bagi nombor 14?', options: ['卌 卌 ||||', '卌 卌 |||', '卌 卌 卌', '卌 ||||'], answer: '卌 卌 ||||', explain: '5 + 5 + 4 = 14.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'hard', question: 'Jika 1 simbol ⭐️ mewakili 4 mata. Berapakah mata untuk 4 simbol ⭐️⭐️⭐️⭐️?', graphic: { kind: 'pictograph_key', icon: '⭐️', count: 4, key: 4 }, answer: '16', explain: '4 × 4 = 16 mata.' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'medium', question: 'Berapakah nilai gundal bagi 卌 | ?', graphic: { kind: 'tally', count: 6 }, options: ['5', '6', '7', '8'], answer: '6', explain: '5 + 1 = 6.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Bilangan kek dijual ialah 9. Manakah bentuk gundal yang betul?', options: ['卌 ||||', '卌 |||', '卌 卌', '|||| ||||'], answer: '卌 ||||', explain: '5 + 4 = 9.' },
+                { type: 'input', cognitive: 'Memahami', diff: 'easy', question: 'Kira jumlah bunga: 🌸🌸🌸🌸🌸🌸🌸🌸. Tulis jawapan dalam angka.', graphic: { kind: 'icons', icon: '🌸', count: 8 }, answer: '8', explain: '8 kuntum bunga.' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: 'Dalam piktograf, 2 simbol 🐟 mewakili 10 ekor ikan. Berapakah nilai 1 simbol 🐟?', options: ['2', '4', '5', '10'], answer: '5', explain: '10 ÷ 2 = 5 ekor ikan setiap simbol.' },
+                { type: 'mcq', cognitive: 'Mengingat', diff: 'easy', question: 'Piktograf ialah perwakilan data yang menggunakan ________.', options: ['Simbol / Gambar', 'Garisan sahaja', 'Nombor sahaja', 'Warna sahaja'], answer: 'Simbol / Gambar', explain: 'Piktograf menggunakan gambar atau simbol untuk mewakili data.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Kira jumlah gundal: 卌 卌 卌 ||', graphic: { kind: 'tally', count: 17 }, answer: '17', explain: '5 + 5 + 5 + 2 = 17.' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: 'Ahmad mengumpul 20 biji guli. Berapakah kumpulan gundal lengkap 卌 yang dibentuk?', options: ['2', '3', '4', '5'], answer: '4', explain: '20 ÷ 5 = 4 kumpulan gundal lengkap.' }
+            ],
+
+            // TOPIK 2: Kenali Carta Palang (20 Soalan Unik Menggunakan Carta 7 Item)
+            2: [
+                { type: 'mcq', cognitive: 'Mengingat', diff: 'easy', question: 'Berdasarkan carta palang, haiwan manakah yang PALING BANYAK dipelihara?', graphic: petChart7, options: ['Kucing', 'Ayam', 'Arnab', 'Ikan'], answer: 'Kucing', explain: 'Palang paling tinggi ialah Kucing dengan nilai 14.' },
+                { type: 'mcq', cognitive: 'Mengingat', diff: 'easy', question: 'Haiwan manakah yang PALING SEDIKIT dipelihara?', graphic: petChart7, options: ['Burung', 'Hamster', 'Kura-kura', 'Ikan'], answer: 'Kura-kura', explain: 'Palang paling rendah ialah Kura-kura dengan nilai 3.' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'easy', question: 'Berapakah bilangan murid yang memelihara AYAM?', graphic: petChart7, options: ['10', '12', '14', '8'], answer: '12', explain: 'Palang Ayam menunjukkan nilai 12.' },
+                { type: 'input', cognitive: 'Memahami', diff: 'easy', question: 'Berapakah bilangan murid yang memelihara ARNAB?', graphic: petChart7, answer: '10', explain: 'Ketinggian palang Arnab ialah 10.' },
+                { type: 'input', cognitive: 'Memahami', diff: 'medium', question: 'Berapakah bilangan murid yang memelihara HAMSTER?', graphic: petChart7, answer: '7', explain: 'Palang Hamster berada pada paras nombor 7.' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'medium', question: 'Haiwan manakah yang dipelihara oleh TEPAT 5 orang murid?', graphic: petChart7, options: ['Hamster', 'Burung', 'Kura-kura', 'Ikan'], answer: 'Burung', explain: 'Palang Burung menunjukkan nilai 5.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Berapakah BEZA antara murid memelihara Kucing (14) dan Ikan (8)?', graphic: petChart7, options: ['4', '5', '6', '7'], answer: '6', explain: 'Beza = 14 - 8 = 6 orang.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Berapakah JUMLAH murid yang memelihara Arnab (10) dan Hamster (7)?', graphic: petChart7, options: ['15', '16', '17', '18'], answer: '17', explain: 'Jumlah = 10 + 7 = 17 orang.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'hard', question: 'Berapakah BEZA antara haiwan terbanyak (Kucing = 14) dan tersedikit (Kura-kura = 3)?', graphic: petChart7, answer: '11', explain: 'Beza = 14 - 3 = 11 orang.' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: 'Haiwan manakah yang mempunyai bilangan LEBIH daripada 9 orang murid?', graphic: petChart7, options: ['Burung & Kura-kura', 'Kucing, Ayam & Arnab', 'Hamster & Ikan', 'Ikan & Burung'], answer: 'Kucing, Ayam & Arnab', explain: 'Kucing (14), Ayam (12), dan Arnab (10) semuanya lebih daripada 9.' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: 'Pilih susunan haiwan daripada TERBANYAK kepada TERSEDIKIT:', graphic: petChart7, options: ['Kucing, Ayam, Arnab, Ikan, Hamster, Burung, Kura-kura', 'Kura-kura, Burung, Hamster, Ikan, Arnab, Ayam, Kucing', 'Kucing, Arnab, Ayam, Ikan, Hamster, Burung, Kura-kura', 'Ayam, Kucing, Arnab, Ikan, Hamster, Burung, Kura-kura'], answer: 'Kucing, Ayam, Arnab, Ikan, Hamster, Burung, Kura-kura', explain: '14 > 12 > 10 > 8 > 7 > 5 > 3.' },
+                { type: 'mcq', cognitive: 'Mengingat', diff: 'easy', question: 'Apakah tajuk bagi carta palang haiwan di atas?', graphic: petChart7, options: ['Haiwan Peliharaan Murid 2 Melati', 'Sukan Kegemaran', 'Buah-Buahan Kantin', 'Cara Ke Sekolah'], answer: 'Haiwan Peliharaan Murid 2 Melati', explain: 'Tajuk carta terletak pada bahagian atas carta palang.' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'easy', question: 'Berapakah bilangan murid yang memelihara IKAN?', graphic: petChart7, options: ['6', '7', '8', '9'], answer: '8', explain: 'Palang Ikan menunjukkan nilai 8.' },
+                { type: 'input', cognitive: 'Memahami', diff: 'easy', question: 'Berapakah bilangan murid yang memelihara KURA-KURA?', graphic: petChart7, answer: '3', explain: 'Palang Kura-kura bernilai 3.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Berapakah JUMLAH murid yang memelihara Ayam (12) dan Burung (5)?', graphic: petChart7, options: ['15', '16', '17', '18'], answer: '17', explain: '12 + 5 = 17.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Berapakah BEZA antara Ayam (12) dan Hamster (7)?', graphic: petChart7, options: ['3', '4', '5', '6'], answer: '5', explain: '12 - 7 = 5.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'hard', question: 'Kira JUMLAH KESELURUHAN murid bagi kesemua 7 jenis haiwan peliharaan ini.', graphic: petChart7, answer: '59', explain: '14 + 8 + 10 + 5 + 3 + 7 + 12 = 59 orang murid.' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: 'Pernyataan manakah yang BENAR mengenai carta haiwan di atas?', graphic: petChart7, options: ['Hamster lebih banyak daripada Arnab', 'Burung paling sedikit dipelihara', 'Ayam lebih banyak daripada Arnab', 'Ikan sama banyak dengan Kucing'], answer: 'Ayam lebih banyak daripada Arnab', explain: 'Ayam (12) lebih banyak daripada Arnab (10).' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'medium', question: 'Haiwan manakah yang dipelihara KURANG daripada 6 orang murid?', graphic: petChart7, options: ['Burung & Kura-kura', 'Arnab & Ayam', 'Ikan & Hamster', 'Kucing & Ayam'], answer: 'Burung & Kura-kura', explain: 'Burung (5) dan Kura-kura (3) kurang daripada 6.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'hard', question: 'Jika 2 orang murid membebaskan burung mereka, berapakah baki murid yang memelihara Burung?', graphic: petChart7, options: ['2', '3', '4', '5'], answer: '3', explain: '5 - 2 = 3 orang murid.' }
+            ],
+
+            // TOPIK 3: Lengkapkan Ayat Penyataan Berdasarkan Gambar (20 Soalan Unik Menggunakan Carta 7 Buah)
+            3: [
+                { type: 'mcq', cognitive: 'Mengingat', diff: 'easy', question: 'Buah yang PALING BANYAK dijual di kantin ialah ________.', graphic: fruitChart7, options: ['Pisang', 'Oren', 'Epal', 'Tembikai'], answer: 'Pisang', explain: 'Pisang mempunyai jualan tertinggi iaitu 24 biji.' },
+                { type: 'mcq', cognitive: 'Mengingat', diff: 'easy', question: 'Buah yang PALING SEDIKIT dijual ialah ________.', graphic: fruitChart7, options: ['Mangga', 'Durian', 'Anggur', 'Tembikai'], answer: 'Durian', explain: 'Durian paling sedikit dijual iaitu 6 biji.' },
+                { type: 'input', cognitive: 'Memahami', diff: 'easy', question: 'Lengkapkan: Jualan buah Epal ialah ________ biji.', graphic: fruitChart7, answer: '18', explain: 'Palang Epal menunjukkan 18 biji.' },
+                { type: 'input', cognitive: 'Memahami', diff: 'easy', question: 'Lengkapkan: Jualan buah Oren ialah ________ biji.', graphic: fruitChart7, answer: '20', explain: 'Palang Oren menunjukkan 20 biji.' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'medium', question: 'Buah Pisang dijual LEBIH BANYAK daripada buah ________.', graphic: fruitChart7, options: ['Kesemua buah lain', 'Tiada buah', 'Epal sahaja', 'Oren sahaja'], answer: 'Kesemua buah lain', explain: 'Pisang (24 biji) adalah yang paling tinggi berbanding semua buah.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Lengkapkan: Beza jualan antara Pisang (24) dan Durian (6) ialah ________ biji.', graphic: fruitChart7, options: ['12', '15', '18', '20'], answer: '18', explain: '24 - 6 = 18 biji.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Lengkapkan: Jumlah jualan Epal (18) dan Anggur (15) ialah ________ biji.', graphic: fruitChart7, answer: '33', explain: '18 + 15 = 33 biji.' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'easy', question: 'Lengkapkan: Jualan buah Tembikai ialah ________ biji.', graphic: fruitChart7, options: ['10', '12', '14', '16'], answer: '12', explain: 'Palang Tembikai bernilai 12.' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'medium', question: 'Buah yang dijual TEPAT 9 biji ialah ________.', graphic: fruitChart7, options: ['Mangga', 'Durian', 'Tembikai', 'Anggur'], answer: 'Mangga', explain: 'Palang Mangga menunjukkan nilai 9.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'hard', question: 'Lengkapkan: Beza jualan Oren (20) dan Mangga (9) ialah ________ biji.', graphic: fruitChart7, answer: '11', explain: '20 - 9 = 11 biji.' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: 'Lengkapkan: Dua jenis buah yang jumlah jualannya 30 biji ialah ________.', graphic: fruitChart7, options: ['Epal (18) & Tembikai (12)', 'Pisang (24) & Durian (6)', 'Oren (20) & Mangga (9)', 'Anggur (15) & Mangga (9)'], answer: 'Epal (18) & Tembikai (12)', explain: '18 + 12 = 30 biji.' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: 'Lengkapkan ayat: Buah Anggur (15) dijual KURANG daripada buah ________.', graphic: fruitChart7, options: ['Pisang (24), Oren (20) & Epal (18)', 'Durian (6) & Mangga (9)', 'Tembikai (12) sahaja', 'Durian sahaja'], answer: 'Pisang (24), Oren (20) & Epal (18)', explain: 'Pisang (24), Oren (20), dan Epal (18) semuanya lebih daripada Anggur (15).' },
+                { type: 'input', cognitive: 'Memahami', diff: 'easy', question: 'Lengkapkan: Jualan buah Durian ialah ________ biji.', graphic: fruitChart7, answer: '6', explain: 'Durian bernilai 6 biji.' },
+                { type: 'input', cognitive: 'Memahami', diff: 'medium', question: 'Lengkapkan: Jualan buah Anggur ialah ________ biji.', graphic: fruitChart7, answer: '15', explain: 'Anggur bernilai 15 biji.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Lengkapkan: Jumlah jualan Durian (6) dan Mangga (9) ialah ________ biji.', graphic: fruitChart7, options: ['13', '14', '15', '16'], answer: '15', explain: '6 + 9 = 15 biji.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'hard', question: 'Lengkapkan: Beza jualan Pisang (24) dan Oren (20) ialah ________ biji.', graphic: fruitChart7, options: ['2', '3', '4', '5'], answer: '4', explain: '24 - 20 = 4 biji.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'hard', question: 'Lengkapkan: Jumlah jualan Tembikai (12), Mangga (9) dan Durian (6) ialah ________ biji.', graphic: fruitChart7, answer: '27', explain: '12 + 9 + 6 = 27 biji.' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: 'Pilih penyataan yang TEPAT melengkapkan ayat: "Jualan buah Tembikai (12) adalah ________ daripada Durian (6)."', graphic: fruitChart7, options: ['Dua kali ganda', 'Sama banyak', 'Kurang separuh', 'Tiga kali ganda'], answer: 'Dua kali ganda', explain: '12 ÷ 6 = 2 (dua kali ganda).' },
+                { type: 'mcq', cognitive: 'Memahami', diff: 'easy', question: 'Lengkapkan: Buah kedua paling banyak dijual ialah ________.', graphic: fruitChart7, options: ['Oren', 'Epal', 'Pisang', 'Anggur'], answer: 'Oren', explain: 'Oren (20 biji) berada di tangga kedua selepas Pisang (24 biji).' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'hard', question: 'Kira JUMLAH KESELURUHAN jualan ketujuh-tujuh jenis buah-buahan tersebut (dalam biji).', graphic: fruitChart7, answer: '104', explain: '18 + 24 + 12 + 9 + 6 + 15 + 20 = 104 biji.' }
+            ],
+
+            // TOPIK 4: Penyelesaian Masalah & KBAT (20 Soalan Unik)
+            4: [
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'easy', question: 'Dalam satu tinjauan, 8 murid suka warna Merah dan 6 murid suka Warna Biru. Berapakah jumlah murid?', graphic: { kind: 'text_only', text: 'Merah = 8 | Biru = 6 | Jumlah = ?' }, options: ['12', '13', '14', '15'], answer: '14', explain: 'Jumlah = 8 + 6 = 14 orang murid.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'easy', question: 'Siti kumpul 15 guli, Ali kumpul 9 guli. Berapakah BEZA guli mereka?', graphic: { kind: 'text_only', text: 'Siti = 15 | Ali = 9 | Beza = ?' }, options: ['4', '5', '6', '7'], answer: '6', explain: 'Beza = 15 - 9 = 6 biji guli.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Carta menunjukkan 20 biji kek dijual. Jika Kek Coklat = 12 biji, berapakah bilangan Kek Pandan?', graphic: { kind: 'text_only', text: 'Jumlah Kek = 20 | Coklat = 12 | Pandan = ?' }, answer: '8', explain: 'Kek Pandan = 20 - 12 = 8 biji kek.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Dalam piktograf, 1 simbol 🍎 = 3 biji epal. Jika Abu ada 4 simbol, berapakah jumlah epalnya?', graphic: { kind: 'pictograph_key', icon: '🍎', count: 4, key: 3 }, options: ['7', '10', '12', '15'], answer: '12', explain: '4 × 3 = 12 biji epal.' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: 'Kelas 2 Amanah ada 30 orang murid. 14 naik Bas, 10 naik Kereta, baki jalan kaki. Berapakah jalan kaki?', graphic: { kind: 'text_only', text: 'Jumlah = 30 | Bas = 14 | Kereta = 10 | Jalan Kaki = ?' }, options: ['4', '6', '8', '10'], answer: '6', explain: 'Jalan kaki = 30 - 14 - 10 = 6 orang.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'easy', question: 'Dalam jadual gundal, kumpulan gundal menunjukkan 卌 卌 卌. Berapakah jumlahnya?', graphic: { kind: 'tally', count: 15 }, answer: '15', explain: '5 + 5 + 5 = 15.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Di kedai buku, 18 buku cerita dijual pada waktu pagi dan 14 pada waktu petang. Berapakah jumlah buku dijual?', graphic: { kind: 'text_only', text: 'Pagi = 18 | Petang = 14 | Jumlah = ?' }, options: ['30', '31', '32', '34'], answer: '32', explain: '18 + 14 = 32 buah buku.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Adam kumpul 25 setem. Lim kumpul 17 setem. Berapakah beza setem mereka?', graphic: { kind: 'text_only', text: 'Adam = 25 | Lim = 17 | Beza = ?' }, answer: '8', explain: '25 - 17 = 8 setem.' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: 'Jadual menunjukkan 35 orang murid memilih sukan. Bola Sepak = 15, Badminton = 12. Berapakah murid memilih Renang?', graphic: { kind: 'text_only', text: 'Jumlah = 35 | Bola Sepak = 15 | Badminton = 12 | Renang = ?' }, options: ['6', '7', '8', '9'], answer: '8', explain: 'Renang = 35 - 15 - 12 = 8 orang murid.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Jika 1 simbol 🎁 = 5 hadiah. Berapakah simbol diperlukan untuk mewakili 20 hadiah?', graphic: { kind: 'pictograph_key', icon: '🎁', count: 4, key: 5 }, options: ['2', '3', '4', '5'], answer: '4', explain: '20 ÷ 5 = 4 simbol.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'easy', question: 'Terdapat 9 mainan di dalam kotak A dan 7 di dalam kotak B. Berapakah jumlah mainan?', graphic: { kind: 'text_only', text: 'Kotak A = 9 | Kotak B = 7 | Jumlah = ?' }, answer: '16', explain: '9 + 7 = 16 mainan.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'easy', question: 'Manakah ayat matematik yang betul untuk mencari BEZA antara 18 dengan 7?', graphic: { kind: 'text_only', text: 'Cari Beza antara 18 dan 7' }, options: ['18 + 7 = 25', '18 - 7 = 11', '18 × 7 = 126', '18 ÷ 7 = 2'], answer: '18 - 7 = 11', explain: 'Kata kunci "Beza" menggunakan operasi tolak (-).' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: 'Sebuah kedai menjual 40 botol jus. Jus Epal = 15, Jus Oren = 15. Berapakah Jus Mangga yang dijual?', graphic: { kind: 'text_only', text: 'Jumlah = 40 | Epal = 15 | Oren = 15 | Mangga = ?' }, options: ['8', '10', '12', '15'], answer: '10', explain: '40 - 15 - 15 = 10 botol.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Kira jumlah gundal murid gemar membaca: 卌 卌 卌 卌.', graphic: { kind: 'tally', count: 20 }, answer: '20', explain: '5 × 4 = 20 orang murid.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Pada hari Isnin, 22 murid hadir perpustakaan. Hari Selasa, 28 murid hadir. Berapakah jumlah kehadiran 2 hari itu?', graphic: { kind: 'text_only', text: 'Isnin = 22 | Selasa = 28 | Jumlah = ?' }, options: ['48', '50', '52', '54'], answer: '50', explain: '22 + 28 = 50 orang murid.' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'hard', question: 'Berapakah beza antara 50 dengan 23?', graphic: { kind: 'text_only', text: '50 - 23 = ?' }, answer: '27', explain: '50 - 23 = 27.' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: '1 simbol ⭐️ mewakili 2 markah. Sarah mendapat 16 markah. Berapakah simbol ⭐️ yang diperoleh Sarah?', graphic: { kind: 'pictograph_key', icon: '⭐️', count: 8, key: 2 }, options: ['6', '7', '8', '9'], answer: '8', explain: '16 ÷ 2 = 8 simbol ⭐️.' },
+                { type: 'mcq', cognitive: 'Mengaplikasi', diff: 'easy', question: 'Apakah operasi matematik yang digunakan untuk mencari JUMLAH KESELURUHAN data?', options: ['Tambah (+)', 'Tolak (-)', 'Bahagi (÷)', 'Darab (×)'], answer: 'Tambah (+)', explain: 'Mencari jumlah keseluruhan menggunakan operasi tambah (+).' },
+                { type: 'input', cognitive: 'Mengaplikasi', diff: 'medium', question: 'Pak Cik Leman ada 38 ekor ayam. Dia menjual 15 ekor. Berapakah baki ayamnya?', graphic: { kind: 'text_only', text: 'Mula = 38 | Jual = 15 | Baki = ?' }, answer: '23', explain: '38 - 15 = 23 ekor ayam.' },
+                { type: 'mcq', cognitive: 'Menganalisis', diff: 'hard', question: '20 orang murid mendaftar kelab. Kelab Catur = 8, Kelab Robotik = 7, baki Kelab Seni. Berapakah murid Kelab Seni?', graphic: { kind: 'text_only', text: 'Jumlah = 20 | Catur = 8 | Robotik = 7 | Seni = ?' }, options: ['4', '5', '6', '7'], answer: '5', explain: '20 - 8 - 7 = 5 orang murid.' }
+            ]
+        };
+
+        // On Load initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            checkExistingSession();
+            renderAuthLeaderboard();
+        });
+
+        // Auth Logic
+        function loginUser() {
+            const nameInput = document.getElementById('player-name-input').value.trim();
+            if (!nameInput) {
+                alert('Sila masukkan nama anda terlebih dahulu!');
+                return;
+            }
+            currentUser = nameInput;
+            localStorage.setItem('edukidz_user', currentUser);
+            
+            // Save initial leaderboard record if new user
+            let leaderboard = JSON.parse(localStorage.getItem('edukidz_leaderboard') || '[]');
+            if (!leaderboard.find(u => u.name.toLowerCase() === currentUser.toLowerCase())) {
+                leaderboard.push({ name: currentUser, score: 0, date: new Date().toLocaleDateString() });
+                localStorage.setItem('edukidz_leaderboard', JSON.stringify(leaderboard));
+            }
+
+            updateUserUI();
+            goToDashboard();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('edukidz_user');
+            document.getElementById('auth-screen').classList.remove('hidden');
+            document.getElementById('dashboard-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('user-status-bar').classList.add('hidden');
+            renderAuthLeaderboard();
+        }
+
+        function checkExistingSession() {
+            const saved = localStorage.getItem('edukidz_user');
+            if (saved) {
+                currentUser = saved;
+                updateUserUI();
+                goToDashboard();
+            }
+        }
+
+        function updateUserUI() {
+            document.getElementById('user-status-bar').classList.remove('hidden');
+            document.getElementById('current-user-name').innerHTML = `<i class="fa-solid fa-user-circle"></i> ${currentUser}`;
+            document.getElementById('dash-player-name').innerText = currentUser;
+        }
+
+        function goToDashboard() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('dashboard-screen').classList.remove('hidden');
+        }
+
+        function selectTopic(topicId, btnElement) {
+            selectedTopic = topicId;
+            document.querySelectorAll('.topic-btn').forEach(b => {
+                b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-700');
+                b.classList.add('bg-white', 'text-indigo-900', 'border-indigo-200');
+            });
+            btnElement.classList.remove('bg-white', 'text-indigo-900', 'border-indigo-200');
+            btnElement.classList.add('bg-indigo-600', 'text-white', 'border-indigo-700');
+        }
+
+        // Start Game Workflow
+        function startGame() {
+            selectedDiff = document.getElementById('diff-select').value;
+            timerConfig = parseInt(document.getElementById('timer-select').value);
+
+            let baseQuestions = questionBank[selectedTopic] || questionBank[1];
+            
+            // Filter by difficulty if specified and sufficient
+            let filtered = baseQuestions;
+            if (selectedDiff !== 'all') {
+                let match = baseQuestions.filter(q => q.diff === selectedDiff);
+                if (match.length >= 5) {
+                    filtered = match;
+                }
+            }
+
+            // Shuffle questions randomly to prevent repetition
+            let shuffled = [...filtered].sort(() => Math.random() - 0.5);
+            
+            // Select up to 20 unique questions for this session
+            activeQuestions = shuffled.slice(0, 20);
+
+            currentQuestionIdx = 0;
+            totalScore = 0;
+
+            document.getElementById('dashboard-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+
+            renderQuestion();
+        }
+
+        // Render Current Question
+        function renderQuestion() {
+            clearInterval(timerInterval);
+            document.getElementById('feedback-box').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+
+            const q = activeQuestions[currentQuestionIdx];
+
+            // Badge updates
+            document.getElementById('q-number-badge').innerText = `Soalan ${currentQuestionIdx + 1} / ${activeQuestions.length}`;
+            document.getElementById('score-badge').innerText = `Markah: ${totalScore}`;
+            document.getElementById('cognitive-badge').innerText = `Aras: ${q.cognitive}`;
+            document.getElementById('question-type-badge').innerText = `Jenis: ${q.type === 'mcq' ? 'Objektif' : 'Isi Tempat Kosong'}`;
+
+            // Visual Graphic rendering
+            renderVisualGraphic(q.graphic);
+
+            // Question Text
+            document.getElementById('question-text-box').innerText = q.question;
+
+            // Render Answer Options / Input
+            const answerArea = document.getElementById('answer-area');
+            answerArea.innerHTML = '';
+
+            if (q.type === 'mcq') {
+                const grid = document.createElement('div');
+                grid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3';
+                q.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'bg-white hover:bg-indigo-50 text-indigo-900 font-extrabold p-4 rounded-xl border-2 border-indigo-200 shadow text-left card-pop text-base flex justify-between items-center';
+                    btn.innerHTML = `<span>${opt}</span> <i class="fa-regular fa-circle"></i>`;
+                    btn.onclick = () => checkAnswer(opt, btn);
+                    grid.appendChild(btn);
+                });
+                answerArea.appendChild(grid);
+            } else if (q.type === 'input') {
+                const box = document.createElement('div');
+                box.className = 'flex flex-col sm:flex-row gap-3 max-w-md mx-auto';
+                box.innerHTML = `
+                    <input type="text" id="user-text-input" placeholder="Taip jawapan angka di sini..." class="w-full p-3 rounded-xl border-2 border-indigo-300 font-bold text-center text-lg text-indigo-900 focus:outline-none focus:border-indigo-600">
+                    <button onclick="checkInputAnswer()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold px-6 py-3 rounded-xl shadow">Hantar</button>
+                `;
+                answerArea.appendChild(box);
+            }
+
+            // Start Timer
+            if (timerConfig > 0) {
+                timeLeft = timerConfig;
+                updateTimerDisplay();
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        handleTimeout();
+                    }
+                }, 1000);
+            } else {
+                document.getElementById('timer-display').innerText = "TIADA HAD";
+            }
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            document.getElementById('timer-display').innerText = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Render Graphic SVG/HTML Diagrams dynamically
+        function renderVisualGraphic(graphic) {
+            const visualBox = document.getElementById('visual-box');
+            visualBox.innerHTML = '';
+
+            if (!graphic) return;
+
+            if (graphic.kind === 'tally') {
+                let html = '<div class="flex items-center gap-2 flex-wrap justify-center">';
+                let fullGroups = Math.floor(graphic.count / 5);
+                let remainder = graphic.count % 5;
+                for (let i = 0; i < fullGroups; i++) {
+                    html += `<span class="tally-mark text-2xl font-black">卌</span>`;
+                }
+                if (remainder > 0) {
+                    html += `<span class="tally-mark text-2xl font-black">${'|'.repeat(remainder)}</span>`;
+                }
+                html += '</div>';
+                visualBox.innerHTML = html;
+            } else if (graphic.kind === 'icons') {
+                visualBox.innerHTML = `<div class="text-4xl tracking-widest">${graphic.icon.repeat(graphic.count)}</div>`;
+            } else if (graphic.kind === 'barchart') {
+                let maxVal = Math.max(...graphic.data.map(d => d.val)) + 3;
+                let chartTitle = graphic.title ? `<div class="font-bold text-indigo-900 text-xs sm:text-sm mb-2 bg-indigo-100 px-3 py-1 rounded-full border border-indigo-200">${graphic.title}</div>` : '';
+                let chartHtml = chartTitle + '<div class="flex items-end justify-center gap-1.5 sm:gap-3 h-44 w-full max-w-2xl border-b-2 border-indigo-900 pb-1 px-1 overflow-x-auto">';
+                
+                let barColors = ['bg-indigo-500', 'bg-emerald-500', 'bg-amber-500', 'bg-rose-500', 'bg-sky-500', 'bg-purple-500', 'bg-teal-500'];
+                
+                graphic.data.forEach((item, idx) => {
+                    let heightPct = (item.val / maxVal) * 100;
+                    let colorClass = barColors[idx % barColors.length];
+                    chartHtml += `
+                        <div class="flex flex-col items-center flex-1 min-w-[34px] sm:min-w-[44px] h-full justify-end">
+                            <span class="text-[10px] sm:text-xs font-bold text-indigo-900 mb-1">${item.val}</span>
+                            <div class="w-full ${colorClass} rounded-t-md sm:rounded-t-lg shadow bar-transition hover:opacity-90" style="height: ${heightPct}%;"></div>
+                            <span class="text-[9px] sm:text-xs font-bold text-indigo-950 mt-1 truncate w-full text-center" title="${item.label}">${item.label}</span>
+                        </div>
+                    `;
+                });
+                chartHtml += '</div>';
+                visualBox.innerHTML = chartHtml;
+            } else if (graphic.kind === 'pictograph_key') {
+                visualBox.innerHTML = `
+                    <div class="text-3xl mb-2">${graphic.icon.repeat(graphic.count)}</div>
+                    <div class="bg-yellow-200 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full border border-yellow-400">
+                        Petunjuk: 1 ${graphic.icon} = ${graphic.key} unit
+                    </div>
+                `;
+            } else if (graphic.kind === 'text_only') {
+                visualBox.innerHTML = `<div class="font-extrabold text-indigo-900 text-base md:text-lg bg-indigo-100 px-4 py-2 rounded-xl border border-indigo-200">${graphic.text}</div>`;
+            }
+        }
+
+        // Answer Evaluation
+        function checkAnswer(selectedOpt, btnElem) {
+            clearInterval(timerInterval);
+            const q = activeQuestions[currentQuestionIdx];
+            disableAnswerButtons();
+
+            if (selectedOpt.toString().trim().toLowerCase() === q.answer.toString().trim().toLowerCase()) {
+                // Correct Answer!
+                totalScore += 5;
+                document.getElementById('score-badge').innerText = `Markah: ${totalScore}`;
+                if (btnElem) btnElem.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+                
+                triggerFireworks();
+                showFeedback(true, `Tahniah! Jawapan anda betul! (+5 Markah)<br><span class="text-xs font-normal">${q.explain}</span>`);
+            } else {
+                // Wrong Answer!
+                if (btnElem) btnElem.classList.add('bg-red-100', 'border-red-500', 'text-red-900');
+                showFeedback(false, `Jawapan Kurang Tepat! Jawapan betul ialah: <strong class="text-indigo-900">${q.answer}</strong>.<br><span class="text-xs font-normal">${q.explain}</span>`);
+            }
+
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function checkInputAnswer() {
+            const inputVal = document.getElementById('user-text-input').value.trim();
+            if (!inputVal) return;
+            checkAnswer(inputVal, null);
+        }
+
+        function handleTimeout() {
+            disableAnswerButtons();
+            const q = activeQuestions[currentQuestionIdx];
+            showFeedback(false, `Masa Tamat! Jawapan betul ialah: <strong>${q.answer}</strong>.<br><span class="text-xs font-normal">${q.explain}</span>`);
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function disableAnswerButtons() {
+            document.querySelectorAll('#answer-area button, #answer-area input').forEach(el => {
+                el.disabled = true;
+            });
+        }
+
+        function showFeedback(isCorrect, message) {
+            const fb = document.getElementById('feedback-box');
+            fb.classList.remove('hidden', 'bg-emerald-100', 'border-emerald-400', 'text-emerald-900', 'bg-red-100', 'border-red-400', 'text-red-900');
+            if (isCorrect) {
+                fb.classList.add('bg-emerald-100', 'border-emerald-400', 'text-emerald-900');
+            } else {
+                fb.classList.add('bg-red-100', 'border-red-400', 'text-red-900');
+            }
+            fb.innerHTML = message;
+        }
+
+        function triggerFireworks() {
+            confetti({
+                particleCount: 80,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        function nextQuestion() {
+            currentQuestionIdx++;
+            if (currentQuestionIdx < activeQuestions.length) {
+                renderQuestion();
+            } else {
+                finishGame();
+            }
+        }
+
+        // Game Finished Logic
+        function finishGame() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const maxScore = activeQuestions.length * 5;
+            document.getElementById('final-score').innerText = `${totalScore} / ${maxScore}`;
+            
+            const pct = Math.round((totalScore / maxScore) * 100);
+            document.getElementById('accuracy-rate').innerText = `Ketepatan: ${pct}%`;
+
+            let feedback = "Teruskan Usaha!";
+            if (pct >= 80) feedback = "Cemerlang! Anda seorang pakar Pengurusan Data!";
+            else if (pct >= 50) feedback = "Syabas! Usaha yang baik, boleh tingkatkan lagi!";
+            document.getElementById('performance-feedback').innerText = feedback;
+
+            // Save to Leaderboard
+            saveScoreToLeaderboard(totalScore);
+        }
+
+        // Leaderboard Management
+        function saveScoreToLeaderboard(score) {
+            if (!currentUser) return;
+            let leaderboard = JSON.parse(localStorage.getItem('edukidz_leaderboard') || '[]');
+            let userRecord = leaderboard.find(u => u.name.toLowerCase() === currentUser.toLowerCase());
+            
+            if (userRecord) {
+                if (score > userRecord.score) {
+                    userRecord.score = score;
+                    userRecord.date = new Date().toLocaleDateString();
+                }
+            } else {
+                leaderboard.push({ name: currentUser, score: score, date: new Date().toLocaleDateString() });
+            }
+
+            leaderboard.sort((a, b) => b.score - a.score);
+            localStorage.setItem('edukidz_leaderboard', JSON.stringify(leaderboard));
+            renderAuthLeaderboard();
+        }
+
+        function renderAuthLeaderboard() {
+            let leaderboard = JSON.parse(localStorage.getItem('edukidz_leaderboard') || '[]');
+            const container = document.getElementById('auth-leaderboard');
+            if (!container) return;
+
+            if (leaderboard.length === 0) {
+                container.innerHTML = `<p class="italic text-gray-400">Belum ada rekod pemain.</p>`;
+                return;
+            }
+
+            let html = '';
+            leaderboard.slice(0, 3).forEach((item, index) => {
+                html += `<div class="flex justify-between font-semibold">
+                    <span>${index + 1}. ${item.name}</span>
+                    <span class="text-emerald-600 font-bold">${item.score} Mata</span>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function showLeaderboardModal() {
+            let leaderboard = JSON.parse(localStorage.getItem('edukidz_leaderboard') || '[]');
+            const list = document.getElementById('full-leaderboard-list');
+            list.innerHTML = '';
+
+            if (leaderboard.length === 0) {
+                list.innerHTML = `<p class="text-center text-gray-500 py-4">Tiada rekod disimpan lagi.</p>`;
+            } else {
+                leaderboard.forEach((item, index) => {
+                    const row = document.createElement('div');
+                    row.className = 'flex justify-between items-center p-3 bg-indigo-50 rounded-xl font-bold text-indigo-900';
+                    row.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-yellow-400 text-indigo-950 flex justify-center items-center text-xs font-black">${index + 1}</span>
+                            <span>${item.name}</span>
+                        </div>
+                        <span class="text-emerald-600">${item.score} Markah</span>
+                    `;
+                    list.appendChild(row);
+                });
+            }
+
+            document.getElementById('leaderboard-modal').classList.remove('hidden');
+        }
+
+        function closeLeaderboardModal() {
+            document.getElementById('leaderboard-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

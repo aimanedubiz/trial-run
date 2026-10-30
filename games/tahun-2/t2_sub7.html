@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATH KIDS – EDU KIDZ: BENTUK TAHUN 2</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Fredoka for playful education look -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Fredoka', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6EE7B7 0%, #3B82F6 100%);
+            min-height: 100vh;
+            user-select: none;
+        }
+        .game-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes bounce-short {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-bounce-short {
+            animation: bounce-short 1s infinite;
+        }
+        .pulse-glow {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+        }
+    </style>
+</head>
+<body class="text-gray-800 flex flex-col items-center justify-center p-2 sm:p-4 min-h-screen">
+
+    <div id="app" class="w-full max-w-4xl mx-auto flex flex-col items-center">
+        <!-- Main dynamic container rendered via JavaScript -->
+    </div>
+
+    <script>
+        // ==========================================
+        // GAME DATABASE & STATE MANAGEMENT
+        // ==========================================
+        const questionBank = {
+            1: { // TOPIK 1: 3D Shapes & Properties
+                senang: [
+                    { q: "Apakah nama bentuk ini?", type: "objektif", shape: "kubus", options: ["Kon", "Kubus", "Silinder", "Kuboid"], answer: 1, explanation: "Ini adalah KUBUS kerana mempunyai 6 permukaan rata yang sama saiz." },
+                    { q: "Berapakah bilangan permukaan bagi sebuah kubus?", type: "objektif", shape: "kubus", options: ["4", "5", "6", "8"], answer: 2, explanation: "Kubus mempunyai tepat 6 permukaan rata." },
+                    { q: "Bentuk manakah yang mempunyai permukaan melengkung?", type: "objektif", shape: "silinder", options: ["Kubus", "Kuboid", "Silinder", "Piramid"], answer: 2, explanation: "Silinder mempunyai permukaan melengkung di sekelilingnya." },
+                    { q: "Apakah nama bentuk 3D ini seperti kotak pensel?", type: "objektif", shape: "kuboid", options: ["Kuboid", "Kon", "Bulatan", "Silinder"], answer: 0, explanation: "Kotak pensel berbentuk KUBoid." },
+                    { q: "Berapakah bilangan bucu bagi sebuah kon?", type: "objektif", shape: "kon", options: ["0", "1", "4", "6"], answer: 1, explanation: "Kon mempunyai 1 bucu di bahagian atas." },
+                    { q: "Bentuk manakah mempunyai tapak segi empat sama dan permukaan sisi segi tiga?", type: "objektif", shape: "piramid", options: ["Kon", "Piramid", "Silinder", "Kubus"], answer: 1, explanation: "Piramid tapak segi empat sama mempunyai muka sisi berbentuk segi tiga." },
+                    { q: "Tin minuman biasanya berbentuk apa?", type: "objektif", shape: "silinder", options: ["Kubus", "Kon", "Silinder", "Kuboid"], answer: 2, explanation: "Tin minuman berbentuk Silinder." },
+                    { q: "Topi hari jadi berbentuk apa?", type: "objektif", shape: "kon", options: ["Kon", "Silinder", "Kubus", "Kuboid"], answer: 0, explanation: "Topi hari jadi berbentuk Kon." },
+                    { q: "Sebuah kuboid mempunyai berapa permukaan rata?", type: "objektif", shape: "kuboid", options: ["4", "5", "6", "12"], answer: 2, explanation: "Kuboid mempunyai 6 permukaan rata." },
+                    { q: "Adakah silinder mempunyai permukaan rata?", type: "objektif", shape: "silinder", options: ["Ya, 2 permukaan rata bulat", "Tidak ada", "Ya, 6 permukaan", "Ya, 4 permukaan"], answer: 0, explanation: "Silinder mempunyai 2 permukaan rata berbentuk bulatan di atas dan bawah." },
+                    { q: "Berapakah bucu bagi kubus?", type: "objektif", shape: "kubus", options: ["4", "6", "8", "12"], answer: 2, explanation: "Kubus mempunyai 8 bucu." },
+                    { q: "Apakah bentuk bola sepak?", type: "objektif", shape: "sfera", options: ["Kubus", "Sfera / Bola", "Kon", "Silinder"], answer: 1, explanation: "Bola sepak berbentuk sfera (bulat 3D)." },
+                    { q: "Objek manakah tidak boleh bergolek?", type: "objektif", shape: "kubus", options: ["Kubus", "Silinder", "Kon", "Sfera"], answer: 0, explanation: "Kubus mempunyai permukaan rata dan tidak boleh bergolek." },
+                    { q: "Berapakah sisi lurus bagi kuboid?", type: "objektif", shape: "kuboid", options: ["8", "10", "12", "6"], answer: 2, explanation: "Kuboid mempunyai 12 sisi lurus." },
+                    { q: "Antara berikut, yang manakah bentuk 3 dimensi?", type: "objektif", shape: "kubus", options: ["Segi empat sama", "Kubus", "Bulatan", "Segi tiga"], answer: 1, explanation: "Kubus adalah bentuk 3 dimensi (3D)." },
+                    { q: "Bentuk manakah mempunyai tapak rata dan satu bucu tajam?", type: "objektif", shape: "kon", options: ["Silinder", "Kon", "Kubus", "Kuboid"], answer: 1, explanation: "Kon mempunyai tapak rata dan 1 bucu tajam." },
+                    { q: "Adakah piramid mempunyai permukaan melengkung?", type: "objektif", shape: "piramid", options: ["Ya", "Tidak", "Mungkin", "Kadang-kadang"], answer: 1, explanation: "Piramid hanya mempunyai permukaan rata." },
+                    { q: "Bentuk 3D manakala semua sisinya sama panjang?", type: "objektif", shape: "kubus", options: ["Kuboid", "Kubus", "Silinder", "Kon"], answer: 1, explanation: "Kubus mempunyai panjang, lebar dan tinggi yang sama." },
+                    { q: "Botol air mineral tegak menyerupai bentuk...", type: "objektif", shape: "silinder", options: ["Kon", "Kuboid", "Silinder", "Piramid"], answer: 2, explanation: "Botol air menyerupai Silinder." },
+                    { q: "Kotak tisu biasanya berbentuk...", type: "objektif", shape: "kuboid", options: ["Kubus", "Kuboid", "Silinder", "Kon"], answer: 1, explanation: "Kotak tisu berbentuk Kuboid." }
+                ],
+                sederhana: [
+                    { q: "Sebuah bentuk mempunyai 6 permukaan rata yang sama saiz. Apakah bentuk itu?", type: "objektif", shape: "kubus", options: ["Kubus", "Kuboid", "Kon", "Silinder"], answer: 0, explanation: "Kubus mempunyai 6 permukaan rata yang sama saiz." },
+                    { q: "Bentuk manakah mempunyai 1 permukaan melengkung dan 2 permukaan rata berbentuk bulatan?", type: "objektif", shape: "silinder", options: ["Kon", "Silinder", "Kubus", "Piramid"], answer: 1, explanation: "Silinder mempunyai 1 permukaan melengkung dan 2 bulatan rata." },
+                    { q: "Apakah persamaan antara kubus dan kuboid?", type: "objektif", shape: "kuboid", options: ["Bilangan permukaan, bucu dan sisi yang sama", "Saiz yang sama", "Semua sisi sama panjang", "Tiada bucu"], answer: 0, explanation: "Kedua-duanya mempunyai 6 permukaan, 8 bucu dan 12 sisi." },
+                    { q: "Saya ada 5 permukaan rata, 5 bucu dan 8 sisi. Siapakah saya?", type: "objektif", shape: "piramid", options: ["Piramid tapak segi empat sama", "Kon", "Kuboid", "Silinder"], answer: 0, explanation: "Piramid tapak segi empat sama mempunyai 5 permukaan dan 5 bucu." },
+                    { q: "Objek manakah boleh meluncur dan bergolek sekaligus?", type: "objektif", shape: "silinder", options: ["Silinder", "Kubus", "Kuboid", "Piramid"], answer: 0, explanation: "Silinder boleh meluncur pada tapaknya dan bergolek pada badannya." },
+                    { q: "Antara berikut, susunan manakah betul mengikut bilangan bucu bagi Kubus, Kon, Silinder?", type: "objektif", shape: "kubus", options: ["8, 1, 0", "6, 1, 2", "8, 0, 1", "4, 2, 0"], answer: 0, explanation: "Kubus (8 bucu), Kon (1 bucu), Silinder (0 bucu)." },
+                    { q: "Mengapakah bola mudah bergolek?", type: "objektif", shape: "sfera", options: ["Kerana permukaannya melengkung sepenuhnya", "Kerana ada bucu", "Kerana ada permukaan rata", "Kerana ringan"], answer: 0, explanation: "Permukaan melengkung penuh membolehkan bola bergolek ke semua arah." },
+                    { q: "Bentuk 3D manakala muka sisinya terdiri daripada segi tiga dan tapaknya segi empat?", type: "objektif", shape: "piramid", options: ["Piramid", "Kuboid", "Kon", "Silinder"], answer: 0, explanation: "Piramid tapak segi empat mempunyai muka sisi segi tiga." },
+                    { q: "Manakah pernyataan BENAR tentang kon?", type: "objektif", shape: "kon", options: ["Mempunyai 1 bucu dan 1 permukaan melengkung", "Mempunyai 6 permukaan rata", "Mempunyai 8 bucu", "Tiada permukaan melengkung"], answer: 0, explanation: "Kon ada 1 bucu dan 1 permukaan melengkung." },
+                    { q: "Sebuah kuboid mempunyai permukaan bertentangan yang...", type: "objektif", shape: "kuboid", options: ["Sama saiz", "Berbeza saiz", "Melengkung", "Bulat"], answer: 0, explanation: "Permukaan bertentangan pada kuboid adalah sama saiz." },
+                    { q: "Apakah perbezaan utama kubus dan kuboid?", type: "objektif", shape: "kubus", options: ["Kubus semua permukaan sama besar, kuboid permukaan bertentangan sama besar", "Kubus ada bucu, kuboid tiada", "Kubus melengkung", "Tiada perbezaan"], answer: 0, explanation: "Kubus semua sisi sama, kuboid panjang berbeza." },
+                    { q: "Bentuk 3D yang tiada bucu dan tiada sisi lurus ialah...", type: "objektif", shape: "sfera", options: ["Sfera", "Kubus", "Piramid", "Kon"], answer: 0, explanation: "Sfera tidak mempunyai bucu mahupun sisi lurus." },
+                    { q: "Berapakah permukaan rata bagi silinder?", type: "objektif", shape: "silinder", options: ["2", "1", "3", "0"], answer: 0, explanation: "Silinder mempunyai 2 permukaan rata di atas dan bawah." },
+                    { q: "Jika anda memotong kon di bahagian atas secara melintang, bentuk apakah yang terhasil di atas?", type: "objektif", shape: "kon", options: ["Bulatan kecil", "Segi tiga", "Segi empat", "Tiada bentuk"], answer: 0, explanation: "Keratan rentas kon membentuk bulatan." },
+                    { q: "Bentuk 3D manakah yang paling sesuai untuk membina roda?", type: "objektif", shape: "silinder", options: ["Silinder (leper)", "Kubus", "Piramid", "Kuboid"], answer: 0, explanation: "Silinder leper menyerupai bentuk roda." },
+                    { q: "Apakah bentuk bagi sebuah dadu permainan?", type: "objektif", shape: "kubus", options: ["Kubus", "Kuboid", "Silinder", "Sfera"], answer: 0, explanation: "Dadu berbentuk kubus." },
+                    { q: "Berapakah jumlah bucu bagi sebuah kuboid?", type: "objektif", shape: "kuboid", options: ["8", "6", "12", "4"], answer: 0, explanation: "Kuboid mempunyai 8 bucu." },
+                    { q: "Manakah objek berikut mempunyai permukaan melengkung dan permukaan rata?", type: "objektif", shape: "kon", options: ["Kon", "Kubus", "Kuboid", "Piramid"], answer: 0, explanation: "Kon mempunyai permukaan melengkung dan tapak rata." },
+                    { q: "Berapakah muka rata bagi piramid tapak segi empat sama?", type: "objektif", shape: "piramid", options: ["5 (1 tapak + 4 segi tiga)", "6", "4", "8"], answer: 0, explanation: "Piramid mempunyai 5 permukaan kesemuanya." },
+                    { q: "Antara berikut, pasangan bentuk 3D dan ciri yang manakah salah?", type: "objektif", shape: "silinder", options: ["Silinder - 8 bucu", "Kubus - 6 permukaan rata", "Kon - 1 bucu", "Sfera - tiada bucu"], answer: 0, explanation: "Silinder tiada bucu, jadi pernyataan itu salah." }
+                ],
+                sukar: [
+                    { q: "Aiman mempunyai objek 3D dengan 1 permukaan melengkung dan 1 bucu. Apakah objek itu?", type: "objektif", shape: "kon", options: ["Kon", "Silinder", "Kubus", "Kuboid"], answer: 0, explanation: "Kon mempunyai 1 permukaan melengkung dan 1 bucu." },
+                    { q: "Siti mencatatkan ciri suatu bentuk: 6 permukaan rata, 12 sisi lurus, 8 bucu, tetapi panjang sisi tidak semua sama. Apakah bentuk itu?", type: "objektif", shape: "kuboid", options: ["Kuboid", "Kubus", "Piramid", "Silinder"], answer: 0, explanation: "Ini adalah ciri-ciri Kuboid." },
+                    { q: "Berapakah jumlah permukaan rata dan permukaan melengkung bagi sebuah silinder?", type: "objektif", shape: "silinder", options: ["2 permukaan rata dan 1 permukaan melengkung", "1 permukaan rata dan 1 melengkung", "3 permukaan rata", "Tiada permukaan melengkung"], answer: 0, explanation: "2 permukaan rata (atas/bawah) + 1 melengkung (badan)." },
+                    { q: "Jika sebuah kubus mempunyai 6 permukaan rata, berapakah jumlah permukaan rata jika kita ada 3 buah kubus yang disusun berasingan?", type: "objektif", shape: "kubus", options: ["18 permukaan rata", "6 permukaan", "12 permukaan", "24 permukaan"], answer: 0, explanation: "3 × 6 = 18 permukaan rata." },
+                    { q: "Bentuk manakah yang mempunyai bilangan bucu yang SAMA dengan bilangan permukaan ratanya?", type: "objektif", shape: "piramid", options: ["Piramid tapak segi empat sama (5 bucu, 5 permukaan)", "Kubus (8 bucu, 6 permukaan)", "Kuboid", "Kon"], answer: 0, explanation: "Piramid tapak segi empat sama mempunyai 5 bucu dan 5 permukaan." },
+                    { q: "Rizal memegang objek yang tidak mempunyai bucu, tidak mempunyai sisi lurus, dan boleh bergolek ke semua arah. Apakah bentuk itu?", type: "objektif", shape: "sfera", options: ["Sfera", "Silinder", "Kon", "Kuboid"], answer: 0, explanation: "Sfera tiada bucu, tiada sisi dan boleh bergolek ke semua arah." },
+                    { q: "Mengapakah tin minuman lebih mudah disusun bertindih berbanding bola?", type: "objektif", shape: "silinder", options: ["Kerana silinder mempunyai permukaan rata di atas dan bawah", "Kerana silinder ringan", "Kerana bola tiada warna", "Kerana silinder bucu tajam"], answer: 0, explanation: "Permukaan rata membolehkan silinder ditindih stabil." },
+                    { q: "Sebuah bentuk 3D mempunyai 8 bucu dan 12 sisi. Antara berikut, bentuk manakah BUKAN ciri ini?", type: "objektif", shape: "silinder", options: ["Silinder", "Kubus", "Kuboid", "Semua di atas betul"], answer: 0, explanation: "Silinder tidak mempunyai 8 bucu atau 12 sisi." },
+                    { q: "Farah ingin membina model istana menggunakan kotak. Kotak kasut sesuai mewakili bentuk...", type: "objektif", shape: "kuboid", options: ["Kuboid", "Kubus", "Kon", "Sfera"], answer: 0, explanation: "Kotak kasut berbentuk Kuboid." },
+                    { q: "Apakah bentuk 3D yang terhasil apabila sebuah kon dicantumkan tapaknya dengan sebuah silinder?", type: "objektif", shape: "gabungan", options: ["Bentuk gabungan khas (Kon + Silinder)", "Kubus", "Piramid", "Sfera"], answer: 0, explanation: "Gabungan bentuk kon dan silinder." },
+                    { q: "Berapakah jumlah keseluruhan bucu bagi 2 buah kubus dan 1 buah kon?", type: "objektif", shape: "gabungan", options: ["17 bucu (8 + 8 + 1)", "16 bucu", "10 bucu", "18 bucu"], answer: 0, explanation: "(2 × 8) + 1 = 16 + 1 = 17 bucu." },
+                    { q: "Bentuk manakah mempunyai bilangan sisi paling banyak?", type: "objektif", shape: "kubus", options: ["Kubus/Kuboid (12 sisi)", "Piramid (8 sisi)", "Kon (1 sisi)", "Silinder (2 sisi melengkung)"], answer: 0, explanation: "Kubus dan kuboid mempunyai 12 sisi lurus." },
+                    { q: "Pilih pernyataan yang SALAH mengenai sifat 3D:", type: "objektif", shape: "kon", options: ["Kon mempunyai 2 bucu", "Kubus mempunyai 8 bucu", "Silinder tiada bucu", "Sfera tiada sisi"], answer: 0, explanation: "Kon hanya mempunyai 1 bucu, bukan 2." },
+                    { q: "Sebuah bentuk mempunyai tapak bulatan dan melengkung ke atas meruncing. Jika diterbalikkan, adakah sifatnya berubah?", type: "objektif", shape: "kon", options: ["Tidak, sifat asas kekal sama walaupun kedudukan berubah", "Ya, bucu jadi bertambah", "Ya, hilang bucu", "Menjadi silinder"], answer: 0, explanation: "Sifat fizikal bentuk kekal walaupun diterbalikkan." },
+                    { q: "Jika anda menggolekkan sebuah silinder secara melintang (baring), bagaimana pergerakannya?", type: "objektif", shape: "silinder", options: ["Bergolek lurus", "Berpusing di tempat sama", "Meluncur sahaja", "Terbang"], answer: 0, explanation: "Silinder baring akan bergolek lurus." },
+                    { q: "Antara bentuk berikut, yang manakah mempunyai paling sedikit permukaan rata?", type: "objektif", shape: "kon", options: ["Kon (1 permukaan rata)", "Kubus (6 permukaan)", "Kuboid (6 permukaan)", "Piramid (5 permukaan)"], answer: 0, explanation: "Kon hanya mempunyai 1 permukaan rata (tapak)." },
+                    { q: "Amir meletakkan kubus di atas meja. Berapakah permukaan kubus yang bersentuhan dengan meja?", type: "objektif", shape: "kubus", options: ["1 permukaan", "4 permukaan", "6 permukaan", "Semua permukaan"], answer: 0, explanation: "Hanya 1 permukaan bawah yang bersentuhan dengan meja." },
+                    { q: "Apakah bentuk 3D bagi sebiji bola keranjang?", type: "objektif", shape: "sfera", options: ["Sfera", "Silinder", "Kon", "Kubus"], answer: 0, explanation: "Bola keranjang berbentuk Sfera." },
+                    { q: "Manakah ciri yang membezakan kon dengan piramid?", type: "objektif", shape: "kon", options: ["Kon ada permukaan melengkung, piramid ada permukaan rata segi tiga", "Kon ada bucu, piramid tiada", "Piramid boleh bergolek", "Kon ada 6 permukaan"], answer: 0, explanation: "Kon mempunyai permukaan melengkung manakala piramid permukaan rata." },
+                    { q: "Jika anda mempunyai 4 buah kuboid, berapakah jumlah bucu kesemuanya?", type: "objektif", shape: "kuboid", options: ["32 bucu", "24 bucu", "16 bucu", "40 bucu"], answer: 0, explanation: "4 × 8 bucu = 32 bucu." }
+                ]
+            },
+            2: { // TOPIK 2: Base 2D Shapes of 3D Objects
+                senang: [
+                    { q: "Pilih bentuk 2D yang menjadi permukaan tapak bagi sebuah kubus.", type: "objektif", shape: "segi_empat_sama", options: ["Segi empat sama", "Bulatan", "Segi tiga", "Segi empat tepat"], answer: 0, explanation: "Permukaan kubus terdiri daripada Segi Empat Sama." },
+                    { q: "Apakah bentuk 2D yang terdapat pada muka silinder?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi tiga", "Segi empat sama", "Heksagon"], answer: 0, explanation: "Silinder mempunyai muka berbentuk Bulatan." },
+                    { q: "Permukaan tapak kon ialah bentuk...", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi empat", "Segi tiga", "Bintang"], answer: 0, explanation: "Tapak kon berbentuk Bulatan." },
+                    { q: "Kuboid mempunyai permukaan asas berbentuk...", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat", "Bulatan", "Segi tiga", "Pentagon"], answer: 0, explanation: "Kuboid dibina daripada segi empat tepat (dan segi empat sama)." },
+                    { q: "Muka sisi piramid tapak segi empat sama berbentuk...", type: "objektif", shape: "segi_tiga", options: ["Segi tiga", "Bulatan", "Segi empat sama", "Semi-bulatan"], answer: 0, explanation: "Muka sisi piramid berbentuk Segi Tiga." },
+                    { q: "Adakah terdapat bentuk bulatan pada kubus?", type: "objektif", shape: "kubus", options: ["Tidak", "Ya", "Mungkin", "Pasti"], answer: 0, explanation: "Kubus tidak mempunyai bentuk bulatan." },
+                    { q: "Bentuk 2D manakah yang tiada bucu?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi tiga", "Segi empat sama", "Segi empat tepat"], answer: 0, explanation: "Bulatan tiada bucu dan tiada sisi lurus." },
+                    { q: "Berapakah bilangan bucu bagi segi empat sama?", type: "objektif", shape: "segi_empat_sama", options: ["4", "3", "5", "0"], answer: 0, explanation: "Segi empat sama mempunyai 4 bucu." },
+                    { q: "Bentuk 2D apakah yang mempunyai 3 sisi lurus dan 3 bucu?", type: "objektif", shape: "segi_tiga", options: ["Segi tiga", "Bulatan", "Segi empat", "Silinder"], answer: 0, explanation: "Segi tiga mempunyai 3 sisi dan 3 bucu." },
+                    { q: "Apakah bentuk muka jam dinding bulat?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi empat", "Segi tiga", "Kubus"], answer: 0, explanation: "Jam dinding bulat berbentuk Bulatan." },
+                    { q: "Kepingan kertas A4 menyerupai bentuk...", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat", "Bulatan", "Segi tiga", "Sfera"], answer: 0,explanation: "Kertas A4 berbentuk segi empat tepat." },
+                    { q: "Permukaan duit syiling berbentuk...", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi empat", "Segi tiga", "Kuboid"], answer: 0, explanation: "Duit syiling berbentuk bulatan." },
+                    { q: "Papan tulis sekolah (whiteboard) biasanya berbentuk...", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat", "Bulatan", "Segi tiga", "Kon"], answer: 0, explanation: "Papan tulis berbentuk segi empat tepat." },
+                    { q: "Bentuk 2D manakah mempunyai 4 sisi sama panjang?", type: "objektif", shape: "segi_empat_sama", options: ["Segi empat sama", "Segi empat tepat", "Segi tiga", "Bulatan"], answer: 0, explanation: "Segi empat sama mempunyai 4 sisi sama panjang." },
+                    { q: "Apakah bentuk asas bagi permukaan dadu?", type: "objektif", shape: "segi_empat_sama", options: ["Segi empat sama", "Bulatan", "Segi tiga", "Segi empat tepat"], answer: 0, explanation: "Permukaan dadu ialah segi empat sama." },
+                    { q: "Bentuk 2D manakah yang mempunyai sisi bertentangan sama panjang?", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat", "Segi tiga", "Bulatan", "Kon"], answer: 0, explanation: "Segi empat tepat mempunyai sisi bertentangan sama panjang." },
+                    { q: "Berapakah bucu bagi segi tiga?", type: "objektif", shape: "segi_tiga", options: ["3", "4", "0", "6"], answer: 0, explanation: "Segi tiga mempunyai 3 bucu." },
+                    { q: "Adakah segi empat sama sejenis bentuk 2D?", type: "objektif", shape: "segi_empat_sama", options: ["Ya", "Tidak", "Mungkin", "Entah"], answer: 0, explanation: "Ya, segi empat sama adalah bentuk 2 dimensi." },
+                    { q: "Bentuk 2D manakah yang boleh dilukis menggunakan duit syiling sebagai stensil?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi empat sama", "Segi tiga", "Segi empat tepat"], answer: 0, explanation: "Syiling menghasilkan bentuk bulatan." },
+                    { q: "Pilih bentuk 2D daripada senarai berikut:", type: "objektif", shape: "segi_tiga", options: ["Segi tiga", "Kubus", "Silinder", "Kon"], answer: 0, explanation: "Segi tiga ialah bentuk 2D." }
+                ],
+                sederhana: [
+                    { q: "Sebuah kuboid mempunyai permukaan yang dibentuk daripada gabungan...", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat dan kadang-kadang segi empat sama", "Bulatan sahaja", "Segi tiga sahaja", "Semua bulatan"], answer: 0, explanation: "Kuboid dibina daripada segi empat tepat." },
+                    { q: "Berapakah bilangan bentuk bulatan yang terdapat pada sebuah silinder tertutup?", type: "objektif", shape: "bulatan", options: ["2 (atas dan bawah)", "1 sahaja", "3", "Tiada"], answer: 0, explanation: "Silinder mempunyai 2 bulatan di kedua-dua hujung." },
+                    { q: "Jika anda melukis garisan lurus mengelilingi tapak sebuah kon, apakah bentuk 2D yang terhasil?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi tiga", "Segi empat", "Sfera"], answer: 0, explanation: "Tapak kon menghasilkan bentuk bulatan." },
+                    { q: "Apakah bentuk 2D yang membentuk permukaan sisi (muka tegak) sebuah piramid tapak segi empat sama?", type: "objektif", shape: "segi_tiga", options: ["Segi tiga", "Bulatan", "Segi empat sama", "Segi empat tepat"], answer: 0, explanation: "Muka sisi piramid berbentuk segi tiga." },
+                    { q: "Bentuk 2D manakah yang mempunyai bilangan sisi yang SAMA dengan bilangan bucunya?", type: "objektif", shape: "segi_empat_sama", options: ["Segi empat sama, segi empat tepat dan segi tiga", "Bulatan", "Kon", "Silinder"], answer: 0, explanation: "Segi empat (4 sisi, 4 bucu) dan segi tiga (3 sisi, 3 bucu)." },
+                    { q: "Manakah pernyataan BENAR mengenai bentuk 2D pada kubus?", type: "objektif", shape: "kubus", options: ["Kesemua 6 permukaan adalah segi empat sama yang kongruen (sama saiz)", "Ada permukaan bulatan", "Ada permukaan segi tiga", "Semua sisi berbeza"], answer: 0, explanation: "Kubus mempunyai 6 muka segi empat sama yang sama saiz." },
+                    { q: "Ali ingin melukis bentangan kubus. Berapakah bilangan bentuk segi empat sama yang diperlukan?", type: "objektif", shape: "kubus", options: ["6", "4", "5", "8"], answer: 0, explanation: "Bentangan kubus memerlukan 6 keping segi empat sama." },
+                    { q: "Bentuk 2D manakah yang tiada sisi lurus langsung?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi tiga", "Segi empat sama", "Segi empat tepat"], answer: 0, explanation: "Bulatan mempunyai 1 sisi melengkung dan tiada sisi lurus." },
+                    { q: "Apakah persamaan antara segi empat sama dan segi empat tepat?", type: "objektif", shape: "segi_empat_sama", options: ["Keduanya mempunyai 4 sisi lurus dan 4 bucu", "Keduanya sama panjang semua sisi", "Keduanya ada bucu tajam", "A dan C betul"], answer: 3, explanation: "Keduanya ada 4 sisi, 4 bucu (A & C benar)." },
+                    { q: "Jika anda memotong silinder secara menegak melalui tengah, bentuk 2D apakah yang kelihatan pada keratan tersebut?", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat", "Bulatan", "Segi tiga", "Bintang"], answer: 0, explanation: "Keratan menegak silinder menghasilkan segi empat tepat." },
+                    { q: "Antara berikut, bentuk 2D yang manakah mempunyai 3 bucu?", type: "objektif", shape: "segi_tiga", options: ["Segi tiga", "Segi empat sama", "Bulatan", "Segi empat tepat"], answer: 0, explanation: "Segi tiga mempunyai tepat 3 bucu." },
+                    { q: "Berapakah jumlah sisi lurus bagi sebuah segi empat tepat?", type: "objektif", shape: "segi_empat_tepat", options: ["4", "3", "5", "6"], answer: 0, explanation: "Segi empat tepat mempunyai 4 sisi lurus." },
+                    { q: "Manakah bentuk 2D yang paling sesuai untuk melukis roda kereta mainan?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi empat sama", "Segi tiga", "Segi empat tepat"], answer: 0, explanation: "Roda berbentuk bulatan." },
+                    { q: "Apakah bentuk 2D yang terhasil pada tapak sebuah piramid?", type: "objektif", shape: "segi_empat_sama", options: ["Segi empat sama", "Bulatan", "Segi tiga", "Sfera"], answer: 0, explanation: "Tapak piramid dalam silibus Tahun 2 ialah segi empat sama." },
+                    { q: "Sebuah sampul surat mempunyai penutup berbentuk segi tiga dan badan berbentuk...", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat", "Bulatan", "Segi tiga sama", "Kon"], answer: 0, explanation: "Badan sampul surat berbentuk segi empat tepat." },
+                    { q: "Bentuk 2D manakah yang mempunyai semua sisi sama panjang dan sudut tegak?", type: "objektif", shape: "segi_empat_sama", options: ["Segi empat sama", "Segi empat tepat", "Segi tiga", "Bulatan"], answer: 0, explanation: "Segi empat sama mempunyai sisi sama dan sudut tegak." },
+                    { q: "Jika anda mencantumkan 2 keping segi tiga sama sisi, bentuk 2D baharu apakah yang mungkin terbentuk?", type: "objektif", shape: "segi_tiga", options: ["Segi empat selari / rombus", "Bulatan", "Kubus", "Silinder"], answer: 0, explanation: "Cantuman segi tiga boleh membentuk rombus atau segi empat." },
+                    { q: "Antara berikut, objek manakah permukaannya BUKAN segi empat tepat?", type: "objektif", shape: "segi_empat_tepat", options: ["Duit syiling", "Buku teks", "Papan hitam", "Pintu bilik"], answer: 0, explanation: "Duit syiling berbentuk bulatan." },
+                    { q: "Berapakah bucu yang dimiliki oleh gabungan 2 buah segi empat sama?", type: "objektif", shape: "segi_empat_sama", options: ["Bergantung pada cara cantuman (biasanya 6 atau 8)", "Sentiasa 4", "10", "12"], answer: 0, explanation: "Bergantung pada susunan cantuman." },
+                    { q: "Pilih pernyataan yang SALAH mengenai ciri bentuk 2D:", type: "objektif", shape: "bulatan", options: ["Bulatan mempunyai 4 bucu", "Segi tiga ada 3 bucu", "Segi empat ada 4 sisi", "Segi empat sama semua sisi sama"], answer: 0, explanation: "Bulatan tiada bucu, jadi pernyataan itu salah." }
+                ],
+                sukar: [
+                    { q: "Siti melukis bentuk 3D di atas kertas. Jika bentuk itu mempunyai 6 muka yang semuanya segi empat sama, apakah bentuk 3D itu?", type: "objektif", shape: "kubus", options: ["Kubus", "Kuboid", "Piramid", "Kon"], answer: 0, explanation: "6 muka segi empat sama membentuk Kubus." },
+                    { q: "Sebuah bentuk 3D mempunyai tapak berbentuk bulatan dan satu permukaan melengkung yang tirus di atas. Apakah bentuk 2D yang membentuk keratan rentas melintang di tengah-tengah bentuk itu?", type: "objektif", shape: "bulatan", options: ["Bulatan (semakin kecil ke atas)", "Segi tiga", "Segi empat", "Tiada bentuk"], answer: 0, explanation: "Keratan melintang kon sentiasa berbentuk bulatan." },
+                    { q: "Amin mempunyai 4 keping segi empat sama dan 1 keping segi empat sama tapak. Jika dicantumkan mengikut bentangan, apakah bentuk 3D yang terhasil?", type: "objektif", shape: "piramid", options: ["Piramid tapak segi empat sama", "Kubus", "Kuboid", "Kon"], answer: 0, explanation: "4 segi tiga sisi + 1 tapak segi empat = Piramid." },
+                    { q: "Manakah bentuk 2D yang mempunyai bilangan sisi paling sedikit?", type: "objektif", shape: "segi_tiga", options: ["Segi tiga (3 sisi)", "Segi empat sama (4 sisi)", "Bulatan (1 sisi melengkung)", "Pentagon (5 sisi)"], answer: 0, explanation: "Segi tiga mempunyai 3 sisi (paling sedikit untuk sisi lurus)." },
+                    { q: "Jika anda melipat sehelai kertas berbentuk segi empat tepat kepada dua bahagian sama besar secara membujur, apakah bentuk 2D baharu yang terbentuk pada permukaannya?", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat yang lebih kecil", "Segi tiga", "Bulatan", "Sfera"], answer: 0, explanation: "Bentuk segi empat tepat kekal tetapi saiznya mengecil." },
+                    { q: "Berapakah jumlah bucu kesemua bagi 3 buah segi empat sama dan 2 buah segi tiga?", type: "objektif", shape: "gabungan", options: ["18 bucu ((3×4) + (2×3))", "12 bucu", "15 bucu", "20 bucu"], answer: 0, explanation: "(3 × 4) + (2 × 3) = 12 + 6 = 18 bucu." },
+                    { q: "Manakah bentuk 2D yang mempunyai sifat simetri paling tinggi (boleh dilipat pelbagai arah dan tetap sama)?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi tiga", "Segi empat tepat", "Trapezium"], answer: 0, explanation: "Bulatan mempunyai bilangan paksi simetri yang tak terhingga." },
+                    { q: "Apakah bentuk 2D yang terhasil jika kita meratakan (membentangkan) permukaan sisi melengkung sebuah silinder?", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat", "Bulatan", "Segi tiga", "Sfera"], answer: 0, explanation: "Apabila dibuka, permukaan sisi silinder menjadi segi empat tepat." },
+                    { q: "Ahmad memotong sebuah sandwic berbentuk segi empat sama secara menyerong dari bucu ke bucu bertentangan. Apakah bentuk 2D yang terhasil pada setiap bahagian potongan?", type: "objektif", shape: "segi_tiga", options: ["Segi tiga", "Segi empat tepat", "Bulatan", "Pentagon"], answer: 0, explanation: "Memotong segi empat secara pepenjuru menghasilkan 2 segi tiga." },
+                    { q: "Pilih kombinasi bentuk 2D yang tepat untuk melengkapkan permukaan sebuah kuboid standard:", type: "objektif", shape: "segi_empat_tepat", options: ["6 keping segi empat tepat (atau gabungan segi empat sama/tepat)", "4 bulatan dan 2 segi tiga", "6 segi tiga", "10 bulatan"], answer: 0, explanation: "Kuboid dibina daripada 6 permukaan segi empat tepat." },
+                    { q: "Berapakah jumlah sisi lurus jika anda mencantumkan 2 buah segi tiga sama sisi?", type: "objektif", shape: "segi_tiga", options: ["Bergantung pada cara cantuman (cth: 4 sisi jika bentuk rombus/segi empat)", "6 sisi", "3 sisi", "5 sisi"], answer: 0, explanation: "Cantuman 2 segi tiga boleh membentuk bentuk 4 sisi." },
+                    { q: "Antara pernyataan berikut, yang manakah BENAR bagi perbandingan segi empat sama dan bulatan?", type: "objektif", shape: "bulatan", options: ["Segi empat sama ada bucu dan sisi lurus, bulatan tiada bucu dan sisi melengkung", "Keduanya tiada bucu", "Keduanya ada 4 sisi", "Bulatan ada bucu tajam"], answer: 0, explanation: "Segi empat ada bucu/sisi lurus, bulatan tiada." },
+                    { q: "Jika anda mempunyai 5 keping segi empat sama, bolehkah anda membentuk sebuah kubus yang lengkap?", type: "objektif", shape: "kubus", options: ["Tidak, kerana kubus memerlukan 6 keping permukaan", "Ya, boleh", "Boleh jika dipotong dua", "Pasti boleh"], answer: 0, explanation: "Kubus perlukan 6 permukaan; 5 keping tidak cukup (terbuka)." },
+                    { q: "Apakah bentuk 2D yang terbentuk pada tapak dan permukaan atas sebuah kon terpangkas (kon dipotong atasnya)?", type: "objektif", shape: "bulatan", options: ["Dua bentuk bulatan berlainan saiz (atas kecil, bawah besar)", "Segi tiga", "Segi empat", "Tiada bentuk"], answer: 0, explanation: "Kon terpangkas mempunyai 2 bulatan berbeza saiz di atas dan bawah." },
+                    { q: "Bentuk 2D manakah yang mempunyai ciri: 4 sisi lurus, 4 bucu, tetapi sisi bersebelahan tidak sama panjang?", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat", "Segi empat sama", "Segi tiga", "Bulatan"], answer: 0, explanation: "Segi empat tepat mempunyai sisi bersebelahan tidak sama panjang (panjang dan lebar)." },
+                    { q: "Berapakah jumlah bucu bagi 4 buah segi tiga?", type: "objektif", shape: "segi_tiga", options: ["12 bucu (4 × 3)", "8 bucu", "16 bucu", "10 bucu"], answer: 0, explanation: "4 segi tiga × 3 bucu = 12 bucu." },
+                    { q: "Manakah objek di dalam bilik darjah yang mempunyai muka berbentuk segi tiga?", type: "objektif", shape: "segi_tiga", options: ["Pembaris set-square (pembaris bentuk segi tiga)", "Pintu", "Meja", "Tingkap"], answer: 0, explanation: "Set-square berbentuk segi tiga." },
+                    { q: "Jika anda melukis bentuk 2D menggunakan acuan asas sebuah kuboid, berapa jenis saiz segi empat tepat yang mungkin anda perlukan minimum?", type: "objektif", shape: "segi_empat_tepat", options: ["Sehingga 3 pasang saiz yang berbeza (depan/belakang, atas/bawah, kiri/kanan)", "Hanya 1 saiz", "10 saiz", "Tiada saiz"], answer: 0, explanation: "Kuboid mempunyai 3 pasang permukaan bertentangan." },
+                    { q: "Apakah bentuk 2D yang terhasil apabila bayang-bayang sebiji bola disuluh dari atas?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi tiga", "Segi empat", "Garis lurus"], answer: 0, explanation: "Bayang-bayang sfera/bola sentiasa berbentuk bulatan." },
+                    { q: "Pilih bentuk 2D yang tidak mempunyai paksi simetri menegak dan melintang yang sama:", type: "objektif", shape: "segi_tiga", options: ["Segi tiga tak sama kaki", "Segi empat sama", "Bulatan", "Segi empat tepat"], answer: 0, explanation: "Segi tiga tak sama kaki mempunyai simetri yang tidak sekata." }
+                ]
+            },
+            3: { // TOPIK 3: Shape Nets (Bentangan)
+                senang: [
+                    { q: "Jika bentangan ini dilipat dengan sempurna, apakah bentuk 3D yang terhasil?", type: "objektif", shape: "kubus", options: ["Kubus", "Kon", "Silinder", "Piramid"], answer: 0, explanation: "Bentangan 6 segi empat sama menghasilkan Kubus." },
+                    { q: "Bentangan silinder terdiri daripada sebuah segi empat tepat dan berapa buah bulatan?", type: "objektif", shape: "silinder", options: ["2 buah bulatan", "1 buah bulatan", "Tiada bulatan", "4 buah bulatan"], answer: 0, explanation: "Silinder mempunyai 2 bulatan di atas dan bawah." },
+                    { q: "Apakah bentuk 3D yang terhasil daripada bentangan sebuah kon?", type: "objektif", shape: "kon", options: ["Kon", "Silinder", "Kubus", "Kuboid"], answer: 0, explanation: "Bentangan kon menghasilkan bentuk Kon." },
+                    { q: "Berapakah bilangan muka segi empat sama dalam bentangan lengkap sebuah kubus?", type: "objektif", shape: "kubus", options: ["6", "4", "5", "8"], answer: 0, explanation: "Kubus mempunyai 6 muka." },
+                    { q: "Manakah antara berikut adalah bentangan bagi sebuah kuboid?", type: "objektif", shape: "kuboid", options: ["6 keping segi empat tepat", "6 bulatan", "3 segi tiga", "2 kon"], answer: 0, explanation: "Kuboid dibina daripada 6 keping segi empat." },
+                    { q: "Adakah bentangan silinder mempunyai bentuk segi empat tepat?", type: "objektif", shape: "silinder", options: ["Ya, untuk bahagian badannya", "Tidak", "Mungkin", "Hanya bulatan sahaja"], answer: 0, explanation: "Badan silinder apabila dibuka menjadi segi empat tepat." },
+                    { q: "Jika anda melipat bentangan piramid tapak segi empat sama, berapakah bilangan muka segi tiga yang anda akan cantumkan?", type: "objektif", shape: "piramid", options: ["4 keping", "2 keping", "6 keping", "1 keping"], answer: 0, explanation: "Piramid tapak segi empat mempunyai 4 muka sisi segi tiga." },
+                    { q: "Apakah nama zon permainan yang berkaitan dengan melipat bentangan bentuk?", type: "objektif", shape: "kilang", options: ["Kilang Bentangan", "Zon Bola", "Taman Bunga", "Kedai mainan"], answer: 0, explanation: "Zon 3 dinamakan Kilang Bentangan." },
+                    { q: "Bentangan bagi sebuah kon terdiri daripada tapak bulatan dan...", type: "objektif", shape: "kon", options: ["Satu sektor melengkung (permukaan sisi)", "Segi empat", "Segi tiga", "Kubus"], answer: 0, explanation: "Sektor melengkung membentuk badan kon." },
+                    { q: "Jika bentangan kubus rosak satu muka (tinggal 5 muka), bolehkah ia dilipat menjadi kubus tertutup?", type: "objektif", shape: "kubus", options: ["Tidak, ia akan jadi kubus terbuka", "Ya, boleh", "Jadi silinder", "Jadi bola"], answer: 0, explanation: "Kubus lengkap perlukan 6 muka." },
+                    { q: "Apakah bentuk yang terhasil apabila kotak kasut dibuka rata?", type: "objektif", shape: "kuboid", options: ["Bentangan kuboid", "Bentangan kon", "Bulatan besar", "Segi tiga besar"], answer: 0, explanation: "Kotak kasut dibuka menjadi bentangan kuboid." },
+                    { q: "Manakah bentuk 3D yang mempunyai bentangan paling ringkas (hanya 2 bahagian utama: tapak bulatan dan badan melengkung)?", type: "objektif", shape: "kon", options: ["Kon", "Kubus", "Kuboid", "Piramid"], answer: 0, explanation: "Kon mempunyai 2 bahagian utama bentangan." },
+                    { q: "Apabila dilipat, bentangan bentuk 3D akan membentuk objek yang...", type: "objektif", shape: "kubus", options: ["Berongga / padu 3 dimensi", "Leper 2 dimensi", "Menjadi garis", "Hilang"], answer: 0, explanation: "Bentangan membentuk objek 3D." },
+                    { q: "Bentangan kuboid mempunyai berapa keping muka keseluruhannya?", type: "objektif", shape: "kuboid", options: ["6 keping", "4 keping", "8 keping", "5 keping"], answer: 0, explanation: "6 keping muka segi empat." },
+                    { q: "Pilih bentuk 3D yang terhasil daripada bentangan yang mempunyai 1 tapak segi empat sama dan 4 segi tiga mengelilinginya:", type: "objektif", shape: "piramid", options: ["Piramid", "Kon", "Silinder", "Kubus"], answer: 0, explanation: "Piramid tapak segi empat." },
+                    { q: "Adakah mungkin untuk menghasilkan kon tanpa sebarang bentuk bulatan?", type: "objektif", shape: "kon", options: ["Tidak, kon wajib ada tapak bulatan", "Ya, boleh", "Mungkin", "Senang sahaja"], answer: 0, explanation: "Kon mesti mempunyai tapak bulatan." },
+                    { q: "Apakah fungsi utama melukis bentangan bentuk 3D dalam matematik?", type: "objektif", shape: "kubus", options: ["Untuk memahami cara membina kotak atau objek 3D dari kertas", "Untuk melukis pemandangan", "Untuk mengira wang", "Untuk membilang haiwan"], answer: 0, explanation: "Bentangan membantu memahami binaan 3D." },
+                    { q: "Jika anda melihat bentangan yang mengandungi 2 bulatan dan 1 segi empat tepat, apakah bentuk asalnya?", type: "objektif", shape: "silinder", options: ["Silinder", "Kon", "Kubus", "Piramid"], answer: 0, explanation: "Silinder." },
+                    { q: "Manakah bentuk berikut tidak boleh dihasilkan daripada kepingan kertas rata dengan cara melipat?", type: "objektif", shape: "sfera", options: ["Sfera (bola sempurna)", "Kubus", "Kon", "Kuboid"], answer: 0, explanation: "Sfera tidak boleh dilipat rata dengan mudah dari satu kepingan rata tanpa regangan." },
+                    { q: "Sebelum membina model kotak hadiah, Ali melukis corak ______ di atas kertas tebal.", type: "objektif", shape: "kubus", options: ["Bentangan (net)", "Lukisan abstrak", "Peta jalan", "Carta pai"], answer: 0, explanation: "Corak bentangan diperlukan." }
+                ],
+                sederhana: [
+                    { q: "Perhatikan bentangan silinder: Jika panjang segi empat tepat ialah 20 cm dan lebar 10 cm, apakah kaitan lebar 10 cm itu dengan silinder yang terhasil?", type: "objektif", shape: "silinder", options: ["Ia mungkin menjadi tinggi silinder", "Ia jejari bola", "Ia luas permukaan", "Tiada kaitan"], answer: 0, explanation: "Lebar segi empat tepat pada bentangan silinder mewakili ketinggian silinder." },
+                    { q: "Bentangan kubus yang betul mesti mempunyai sekurang-kurangnya berapa keping muka bersebelahan dalam satu baris terpanjang?", type: "objektif", shape: "kubus", options: ["Sehingga 4 keping dalam baris utama", "1 keping", "10 keping", "Tiada syarat"], answer: 0, explanation: "Biasanya 4 keping tapak bersambung." },
+                    { q: "Jika anda mempunyai bentangan kon, apakah bentuk sektor lengkung apabila dibuka?", type: "objektif", shape: "kon", options: ["Sektor bulatan (seperti potongan pizza)", "Segi empat tepat", "Segi tiga sama sisi", "Bulatan penuh"], answer: 0, explanation: "Sektor bulatan melengkung." },
+                    { q: "Mengapakah sesetengah bentangan kubus tidak boleh dilipat menjadi kubus walaupun mempunyai 6 segi empat?", type: "objektif", shape: "kubus", options: ["Kerana kedudukan muka bertindih atau terkeluar dari susunan pelipatan", "Kerana warna salah", "Kerana saiz terlalu besar", "Kerana berat kertas"], answer: 0, explanation: "Susunan muka mesti tepat agar tidak bertindih." },
+                    { q: "Manakah antara berikut ciri bentangan kuboid yang sah?", type: "objektif", shape: "kuboid", options: ["Mempunyai 3 pasang muka segi empat tepat yang sama saiz bertentangan", "Semua muka berlainan bentuk", "Hanya ada segi tiga", "Ada 5 bulatan"], answer: 0, explanation: "Kuboid ada 3 pasang muka bertentangan yang kongruen." },
+                    { q: "Jika anda melipat bentangan piramid, di manakah kedudukan tapak segi empat sama biasanya diletakkan dalam lukisan bentangan?", type: "objektif", shape: "piramid", options: ["Di tengah-tengah dengan 4 segi tiga di setiap sisi luarnya", "Di penjuru sekali", "Di atas sekali", "Terpisah jauh"], answer: 0, explanation: "Tapak di tengah dengan segi tiga mengelilinginya." },
+                    { q: "Apakah bentuk 3D yang terhasil jika bentangan silinder mempunyai ukuran bulatan yang sangat kecil berbanding ketinggiannya?", type: "objektif", shape: "silinder", options: ["Silinder yang panjang dan kurus (seperti paip getah)", "Bola", "Kon besar", "Kubus"], answer: 0, explanation: "Silinder panjang/kurus." },
+                    { q: "Pilih pernyataan yang BENAR mengenai bentangan bentuk 3D:", type: "objektif", shape: "kubus", options: ["Bentangan ialah pelan 2 dimensi yang boleh dilipat menjadi bentuk 3 dimensi", "Bentangan hanya untuk hiasan", "Bentangan mesti dibuat daripada besi", "Bentangan tidak ada kaitan dengan bentuk 3D"], answer: 0, explanation: "Bentangan ialah pelan 2D yang dilipat jadi 3D." },
+                    { q: "Jika sebuah kotak kubus mempunyai ukuran 5 cm setiap sisi, berapakah jumlah luas permukaan 6 muka bentangannya?", type: "objektif", shape: "kubus", options: ["150 cm persegi (6 × 5 × 5)", "25 cm persegi", "50 cm persegi", "100 cm persegi"], answer: 0, explanation: "6 muka × (5 × 5) = 150 cm²." },
+                    { q: "Antara corak bentangan kubus berikut, corak manakah yang membentuk 'salib' (cross)?", type: "objektif", shape: "kubus", options: ["Corak silang 4 di tengah dan 1 atas 1 bawah", "Corak lurus 6 sebaris", "Corak bulat", "Corak segi tiga"], answer: 0, explanation: "Corak salib ialah salah satu bentangan kubus yang sah." },
+                    { q: "Jika bentangan silinder kehilangan satu bulatan di hujungnya, apakah bentuk 3D yang terhasil apabila dilipat?", type: "objektif", shape: "silinder", options: ["Silinder terbuka sebelah (seperti cawan atau tin tanpa penutup)", "Silinder bertutup", "Kon", "Bola"], answer: 0, explanation: "Silinder terbuka di satu bahagian." },
+                    { q: "Apakah perbezaan ketara antara bentangan kubus dan bentangan kuboid?", type: "objektif", shape: "kuboid", options: ["Kubus semua mukanya segi empat sama, kuboid mukanya segi empat tepat", "Kubus ada bulatan", "Kuboid ada segi tiga", "Tiada perbezaan"], answer: 0, explanation: "Perbezaan terletak pada bentuk muka segi empat sama vs tepat." },
+                    { q: "Bagaimanakah cara menguji sama ada satu lukisan bentangan kertas boleh menjadi kubus?", type: "objektif", shape: "kubus", options: ["Dengan memotong dan mencubanya melipat mengikut garisan", "Dengan menimbang berat kertas", "Dengan mengira bilion", "Dengan merendam dalam air"], answer: 0, explanation: "Ujian fizikal lipatan kertas." },
+                    { q: "Manakah bentuk bentangan yang mempunyai 1 tapak bulatan dan 1 lengkungan sektor?", type: "objektif", shape: "kon", options: ["Kon", "Silinder", "Piramid", "Kubus"], answer: 0, explanation: "Bentangan kon." },
+                    { q: "Jika anda mempunyai bentangan kuboid, adakah anda boleh menukar kedudukan muka atas dan bawah asalkan bersambung pada sisi yang betul?", type: "objektif", shape: "kuboid", options: ["Ya, terdapat pelbagai susunan bentangan yang sah untuk kuboid", "Tidak boleh sama sekali", "Hanya satu cara sahaja di dunia", "Semua cara boleh jadi kuboid"], answer: 0, explanation: "Terdapat beberapa variasi bentangan sah." },
+                    { q: "Apakah bentuk 2D yang membentuk bahagian 'badan' dalam bentangan silinder?", type: "objektif", shape: "silinder", options: ["Segi empat tepat", "Segi tiga", "Bulatan", "Sfera"], answer: 0, explanation: "Badan silinder berbentuk segi empat tepat." },
+                    { q: "Jika sebuah kotak mainan berbentuk kuboid dibuka bentangannya, berapakah pasangan muka yang seiras (sama saiz)?", type: "objektif", shape: "kuboid", options: ["3 pasang (6 muka semuanya)", "1 pasang sahaja", "2 pasang", "Tiada yang seiras"], answer: 0, explanation: "3 pasang muka seiras." },
+                    { q: "Pilih pernyataan SALAH mengenai bentangan bentuk 3D:", type: "objektif", shape: "kubus", options: ["Bentangan kon mempunyai 3 buah bulatan", "Bentangan kubus ada 6 segi empat sama", "Bentangan silinder ada 2 bulatan", "Bentangan piramid ada 4 segi tiga"], answer: 0, explanation: "Kon hanya ada 1 bulatan, jadi pernyataan itu salah." },
+                    { q: "Apakah nama proses menukar bentuk bentangan rata kepada bentuk objek 3D?", type: "objektif", shape: "kubus", options: ["Pelipatan (Folding / Pembentukan)", "Peleburan", "Pencairan", "Pemotongan"], answer: 0, explanation: "Proses melipat." },
+                    { q: "Mengapa kotak penghantaran barang direka dalam bentuk bentangan rata sebelum dipasang?", type: "objektif", shape: "kuboid", options: ["Untuk mudah disimpan, dijimatkan ruang dan senang diangkut", "Supaya nampak cantik", "Supaya berat", "Supaya basah"], answer: 0, explanation: "Menjimatkan ruang simpanan dan pengangkutan." }
+                ],
+                sukar: [
+                    { q: "Rizal diberi tugasan mencabar: Mencipta bentangan bagi bentuk gabungan kubus dan kon di atasnya. Apakah cabaran utama dalam melukis bentangan ini?", type: "objektif", shape: "gabungan", options: ["Menggabungkan tapak bulatan kon tepat pada permukaan atas muka kubus", "Menghasilkan warna", "Mengira masa", "Mencari pensel"], answer: 0, explanation: "Penyelarasan cantuman bentuk gabungan." },
+                    { q: "Jika anda melipat bentangan kubus tetapi salah satu muka bersambung pada sisi yang salah, apakah akibatnya semasa proses pelipatan?", type: "objektif", shape: "kubus", options: ["Kotak tidak boleh ditutup sempurna kerana ada ruang terdedah atau muka bertindih", "Kotak jadi sfera", "Kotak jadi lebih kuat", "Tiada apa berlaku"], answer: 0, explanation: "Pelipatan gagal membentuk kubus sempurna." },
+                    { q: "Bentangan bagi sebuah piramid tapak segi empat sama mempunyai jumlah luas permukaan 100 cm². Jika tapaknya 40 cm², berapakah jumlah luas 4 muka segi tiga?", type: "objektif", shape: "piramid", options: ["60 cm persegi (100 - 40)", "140 cm persegi", "40 cm persegi", "100 cm persegi"], answer: 0, explanation: "100 - 40 = 60 cm²." },
+                    { q: "Dalam kilang kotak, satu corak bentangan kuboid dipotong dari kertasBoard berukuran 50cm × 30cm. Apakah matlamat jurutera kilang memilih susunan bentangan tersebut?", type: "objektif", shape: "kuboid", options: ["Untuk meminimumkan pembaziran bahan (sisa potongan)", "Untuk mencantikkan warna", "Untuk melambatkan kerja", "Untuk menambah berat"], answer: 0, explanation: "Meminimumkan pembaziran bahan (optimum cutting)." },
+                    { q: "Manakah corak bentangan kubus yang mempunyai 3 muka dalam satu baris tengah dan masing-masing 1 muka di atas dan bawah pada kedudukan berlawanan (langkah Z)?", type: "objektif", shape: "kubus", options: ["Bentangan Z-Shape yang sah untuk kubus", "Bentangan tidak sah", "Bentangan silinder", "Bentangan kon"], answer: 0, explanation: "Susunan Z-shape ialah bentangan kubus yang sah." },
+                    { q: "Jika sebuah silinder mempunyai diameter tapak 7 cm dan tinggi 10 cm, apakah ukuran panjang segi empat tepat pada bentangannya?", type: "objektif", shape: "silinder", options: ["Panjangnya sama dengan lilitan bulatan tapak (π × d ≈ 22 cm) dan tinggi 10 cm", "Panjangnya 7 cm", "Panjangnya 10 cm", "Panjangnya 50 cm"], answer: 0, explanation: "Panjang segi empat tepat = lilitan bulatan tapak." },
+                    { q: "Bentangan bagi bentuk kon dibina denganjejari lengkungan 10 cm. Apakah bentuk geometri bagi bahagian badan kon sebelum dilipat?", type: "objektif", shape: "kon", options: ["Sektor bulatan", "Segi empat tepat", "Segi tiga sama kaki", "Piramid"], answer: 0, explanation: "Sektor bulatan." },
+                    { q: "Mengapakah kubus mempunyai 11 jenis corak bentangan yang berbeza yang sah?", type: "objektif", shape: "kubus", options: ["Kerana terdapat 11 cara berbeza untuk menyusun 6 segi empat sama agar boleh dilipat menjadi kubus", "Kerana ada 11 warna", "Kerana kubus ada 11 bucu", "Kebetulan sahaja"], answer: 0, explanation: "Terdapat tepat 11 corak bentangan sah bagi kubus." },
+                    { q: "Jika anda melihat corak bentangan kubus berbentuk garis lurus 6 segi empat sama sebaris, adakah ia boleh dilipat menjadi kubus?", type: "objektif", shape: "kubus", options: ["Tidak, ia hanya membentuk tiub terbuka 4 sisi dengan penutup bertindih (bukan kubus tertutup 6 muka sama)", "Ya, sangat sempurna", "Menjadi sfera", "Menjadi kon"], answer: 0, explanation: "Barisan 6 sebaris tidak membentuk kubus tertutup yang betul." },
+                    { q: "Dalam reka bentuk pembungkusan makanan (packaging), jurutera menggunakan prinsip bentangan 3D untuk...", type: "objektif", shape: "kuboid", options: ["Memastikan kotak mudah dicetak, dipotong, dilipat dan melekat kemas", "Menghias bilik", "Menguji kelajuan komputer", "Mengira bintang"], answer: 0, explanation: "Pengilangan pembungkusan menggunakan prinsip bentangan." },
+                    { q: "Sebuah bentangan piramid mempunyai tapak segi empat sama sisi 6 cm. Jika tinggi setiap segi tiga sisi ialah 8 cm, bagaimana rupa bentangan tersebut?", type: "objektif", shape: "piramid", options: ["1 segi empat sama di tengah dikelilingi 4 segi tiga sama kaki", "4 segi empat dan 1 bulatan", "6 segi tiga", "Tiada bentuk"], answer: 0, explanation: "Susunan piramid standard." },
+                    { q: "Jika anda mencantumkan dua buah bentangan kon yang sama saiz bertapak kepada tapak, bentuk 3D apakah yang terhasil?", type: "objektif", shape: "gabungan", options: ["Bentuk Biconical (dua kon bercantum tapak)", "Silinder", "Kubus", "Sfera"], answer: 0, explanation: "Dua kon bercantum tapak membentuk biconical." },
+                    { q: "Manakah pernyataan yang PALING TEPAT mengenai hubungan antara bentangan 2D dan objek 3D?", type: "objektif", shape: "kubus", options: ["Setiap bentuk 3D yang mempunyai permukaan rata mempunyai sekurang-kurangnya satu bentangan 2D", "Semua bentuk 3D wajib ada bulatan", "Bentangan tidak penting", "Bentangan hanya wujud dalam komputer"], answer: 0, explanation: "Hubungan struktur 2D dan 3D." },
+                    { q: "Bentangan silinder mempunyai luas tapak bulat 22 cm² setiap satu dan luas segi empat tepat badan 140 cm². Berapakah jumlah luas permukaan bentangan silinder tersebut?", type: "objektif", shape: "silinder", options: ["184 cm persegi (22 + 22 + 140)", "162 cm persegi", "140 cm persegi", "200 cm persegi"], answer: 0, explanation: "22 + 22 + 140 = 184 cm²." },
+                    { q: "Jika anda ingin mengubah suai bentangan kubus menjadi bentangan kuboid, apakah perubahan utama yang mesti dilakukan?", type: "objektif", shape: "kuboid", options: ["Menukar bentuk muka daripada segi empat sama kepada segi empat tepat dengan saiz berpasangan", "Menambah bulatan", "Membuang semua sisi", "Menukar warna"], answer: 0, explanation: "Menukar nisbah muka kepada segi empat tepat." },
+                    { q: "Antara corak bentangan berikut untuk kubus, yang manakah mempunyai bentuk huruf 'T'?", type: "objektif", shape: "kubus", options: ["Corak bentuk T yang sah", "Corak bintang", "Corak zig-zag bulat", "Corak segi tiga"], answer: 0, explanation: "Corak bentuk T ialah salah satu bentangan sah kubus." },
+                    { q: "Mengapakah kemahiran membaca dan melukis bentangan penting dalam kehidupan harian?", type: "objektif", shape: "kuboid", options: ["Membantu dalam kerja reka bentuk kotak hadiah, kejuruteraan pembungkusan dan kraftangan", "Untuk memasak", "Untuk berlari", "Untuk menyanyi"], answer: 0, explanation: "Aplikasi praktikal dalam pembungkusan dan kraf." },
+                    { q: "Jika bentangan kon mempunyai sudut sektor 180 darjah, apakah sifat kon yang terhasil?", type: "objektif", shape: "kon", options: ["Kon yang lebih landai / lebar tapaknya", "Kon tajam tinggi", "Menjadi silinder", "Menjadi kubus"], answer: 0, explanation: "Sudut sektor mempengaruhi kecuraman kon." },
+                    { q: "Sebuah kotak misteri dibuka dan didapati bentangannya mempunyai 3 segi empat tepat dan 2 segi tiga di hujungnya. Apakah bentuk 3D kotak tersebut?", type: "objektif", shape: "gabungan", options: ["Prisma segitiga (triangular prism)", "Piramid", "Kuboid", "Kon"], answer: 0, explanation: "Prisma segitiga mempunyai 3 segi empat dan 2 segi tiga." },
+                    { q: "Pilih kesimpulan terbaik tentang kebolehan melipat bentangan:", type: "objektif", shape: "kubus", options: ["Ia memerlukan kefahaman spatial tentang kedudukan muka-muka bentuk 3D apabila dicantumkan", "Ia hanya kerja meniru gambar", "Ia tidak perlukan fikiran", "Ia mudah diteka tanpa akal"], answer: 0, explanation: "Kefahaman spatial (spatial reasoning)." }
+                ]
+            },
+            4: { // TOPIK 4: 2D Shapes (Bentuk 2 Dimensi)
+                senang: [
+                    { q: "Apakah nama bentuk 2D ini yang mempunyai 4 sisi sama panjang?", type: "objektif", shape: "segi_empat_sama", options: ["Segi empat sama", "Segi empat tepat", "Segi tiga", "Bulatan"], answer: 0, explanation: "Segi empat sama mempunyai 4 sisi sama panjang." },
+                    { q: "Berapakah bilangan bucu bagi sebuah segi tiga?", type: "objektif", shape: "segi_tiga", options: ["3", "4", "0", "5"], answer: 0, explanation: "Segi tiga mempunyai 3 bucu." },
+                    { q: "Bentuk manakah yang tiada bucu dan tiada sisi lurus?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi tiga", "Segi empat sama", "Segi empat tepat"], answer: 0, explanation: "Bulatan tiada bucu dan tiada sisi lurus." },
+                    { q: "Berapakah sisi lurus bagi segi empat tepat?", type: "objektif", shape: "segi_empat_tepat", options: ["4", "3", "0", "5"], answer: 0, explanation: "Segi empat tepat mempunyai 4 sisi lurus." },
+                    { q: "Apakah bentuk bagi sebuah roda basikal?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi empat", "Segi tiga", "Kon"], answer: 0, explanation: "Roda basikal berbentuk bulatan." },
+                    { q: "Bentuk manakah mempunyai 3 sisi lurus?", type: "objektif", shape: "segi_tiga", options: ["Segi tiga", "Bulatan", "Segi empat sama", "Kubus"], answer: 0, explanation: "Segi tiga mempunyai 3 sisi lurus." },
+                    { q: "Apakah bentuk bagi papan tanda jalan amaran berbentuk tiga penjuru?", type: "objektif", shape: "segi_tiga", options: ["Segi tiga", "Bulatan", "Segi empat", "Silinder"], answer: 0, explanation: "Papan tanda amaran berbentuk segi tiga." },
+                    { q: "Berapakah bucu bagi segi empat sama?", type: "objektif", shape: "segi_empat_sama", options: ["4", "3", "2", "0"], answer: 0, explanation: "Segi empat sama mempunyai 4 bucu." },
+                    { q: "Bentuk 2D apakah yang mempunyai sisi bertentangan sama panjang?", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat", "Segi tiga", "Bulatan", "Sfera"], answer: 0, explanation: "Segi empat tepat mempunyai sisi bertentangan sama panjang." },
+                    { q: "Adakah bulatan sejenis bentuk 2 dimensi?", type: "objektif", shape: "bulatan", options: ["Ya", "Tidak", "Mungkin", "Entah"], answer: 0, explanation: "Ya, bulatan ialah bentuk 2D." },
+                    { q: "Apakah bentuk muka jam dinding di rumah anda?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi empat", "Segi tiga", "Kon"], answer: 0, explanation: "Jam dinding berbentuk bulatan." },
+                    { q: "Bentuk 2D manakah yang mempunyai kesemua sisinya sama panjang?", type: "objektif", shape: "segi_empat_sama", options: ["Segi empat sama", "Segi empat tepat", "Segi tiga", "Bulatan"], answer: 0, explanation: "Segi empat sama semua sisi sama panjang." },
+                    { q: "Berapakah bilangan bucu bagi sebuah bulatan?", type: "objektif", shape: "bulatan", options: ["0", "1", "3", "4"], answer: 0, explanation: "Bulatan tiada bucu (0 bucu)." },
+                    { q: "Kepingan biskut berbentuk empat segi sama mempunyai berapa bucu?", type: "objektif", shape: "segi_empat_sama", options: ["4", "3", "5", "6"], answer: 0, explanation: "4 bucu." },
+                    { q: "Pilih bentuk 2D daripada senarai berikut:", type: "objektif", shape: "segi_tiga", options: ["Segi tiga", "Kubus", "Silinder", "Piramid"], answer: 0, explanation: "Segi tiga ialah bentuk 2D." },
+                    { q: "Apakah bentuk bendera Malaysia (jalur gemilang) secara keseluruhan?", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat", "Bulatan", "Segi tiga", "Kon"], answer: 0, explanation: "Bendera berbentuk segi empat tepat." },
+                    { q: "Berapakah sisi lurus bagi segi empat sama?", type: "objektif", shape: "segi_empat_sama", options: ["4", "3", "2", "0"], answer: 0, explanation: "4 sisi lurus." },
+                    { q: "Bentuk manakah yang mempunyai sisi melengkung?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi tiga", "Segi empat sama", "Segi empat tepat"], answer: 0, explanation: "Bulatan mempunyai sisi melengkung." },
+                    { q: "Adakah segi tiga mempunyai sisi melengkung?", type: "objektif", shape: "segi_tiga", options: ["Tidak, semua sisi lurus", "Ya", "Mungkin", "Kadang-kadang"], answer: 0, explanation: "Segi tiga mempunyai sisi lurus sahaja." },
+                    { q: "Apakah bentuk permukaan meja darjah yang berbentuk empat segi bujur?", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat", "Bulatan", "Segi tiga", "Sfera"], answer: 0, explanation: "Segi empat tepat." }
+                ],
+                sederhana: [
+                    { q: "Saya mempunyai 3 sisi lurus dan 3 bucu. Siapakah saya?", type: "objektif", shape: "segi_tiga", options: ["Segi tiga", "Bulatan", "Segi empat sama", "Segi empat tepat"], answer: 0, explanation: "Ciri-ciri ini adalah milik Segi Tiga." },
+                    { q: "Apakah perbezaan utama antara segi empat sama dan segi empat tepat?", type: "objektif", shape: "segi_empat_sama", options: ["Segi empat sama semua 4 sisi sama panjang, segi empat tepat hanya sisi bertentangan sama panjang", "Segi empat sama ada bucu, segi empat tepat tiada", "Segi empat sama ada sisi melengkung", "Tiada perbezaan"], answer: 0, explanation: "Perbezaan pada panjang sisi." },
+                    { q: "Berapakah jumlah bucu bagi dua buah segi tiga dan satu segi empat sama?", type: "objektif", shape: "gabungan", options: ["10 bucu ((2×3) + (1×4))", "8 bucu", "6 bucu", "12 bucu"], answer: 0, explanation: "(2 × 3) + (1 × 4) = 6 + 4 = 10 bucu." },
+                    { q: "Manakah pernyataan BENAR mengenai bulatan?", type: "objektif", shape: "bulatan", options: ["Bulatan mempunyai 1 sisi melengkung dan 0 bucu", "Bulatan mempunyai 4 bucu", "Bulatan mempunyai 3 sisi lurus", "Bulatan berbentuk segi empat"], answer: 0, explanation: "Bulatan ada 1 sisi melengkung dan tiada bucu." },
+                    { q: "Jika anda mencantumkan dua buah segi tiga sama sisi pada tapak yang sama, apakah bentuk 2D yang mungkin terbentuk?", type: "objektif", shape: "segi_tiga", options: ["Rombohedron / Segi empat selari / Rombus", "Bulatan", "Kon", "Sfera"], answer: 0, explanation: "Cantuman segi tiga membentuk rombus/segi empat selari." },
+                    { q: "Berapakah jumlah sisi lurus bagi sebuah segi empat sama dan sebuah segi tiga dicantumkan secara terpisah?", type: "objektif", shape: "segi_tiga", options: ["7 sisi lurus (4 + 3)", "6 sisi", "5 sisi", "8 sisi"], answer: 0, explanation: "4 + 3 = 7 sisi." },
+                    { q: "Antara bentuk 2D berikut, yang manakah mempunyai bilangan bucu PALING BANYAK?", type: "objektif", shape: "segi_empat_sama", options: ["Segi empat sama dan segi empat tepat (4 bucu)", "Segi tiga (3 bucu)", "Bulatan (0 bucu)", "Semua sama"], answer: 0, explanation: "Segi empat mempunyai 4 bucu (paling banyak antara pilihan asas)." },
+                    { q: "Apakah bentuk 2D bagi permukaan muka jam loceng berbentuk bulat?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi empat", "Segi tiga", "Kubus"], answer: 0, explanation: "Bulatan." },
+                    { q: "Manakah ciri yang TIDAK DIMILIKI oleh segi empat tepat?", type: "objektif", shape: "segi_empat_tepat", options: ["Sisi melengkung", "4 sisi lurus", "4 bucu", "Sudut tegak"], answer: 0, explanation: "Segi empat tepat tiada sisi melengkung." },
+                    { q: "Jika anda melukis sebuah bentuk 2D yang mempunyai 4 bucu dan semua sisinya sama panjang, apakah bentuk itu?", type: "objektif", shape: "segi_empat_sama", options: ["Segi empat sama", "Segi empat tepat", "Segi tiga", "Bulatan"], answer: 0, explanation: "Segi empat sama." },
+                    { q: "Berapakah jumlah bucu bagi 5 buah segi tiga?", type: "objektif", shape: "segi_tiga", options: ["15 bucu (5 × 3)", "12 bucu", "20 bucu", "10 bucu"], answer: 0, explanation: "5 × 3 = 15 bucu." },
+                    { q: "Apakah persamaan antara bulatan dan bentuk 2D lain dari segi dimensi?", type: "objektif", shape: "bulatan", options: ["Semuanya adalah bentuk 2 dimensi (leper di atas permukaan rata)", "Semuanya ada bucu", "Semuanya ada sisi lurus", "Semuanya warna biru"], answer: 0, explanation: "Semuanya bentuk 2D." },
+                    { q: "Manakah objek berikut yang mempunyai muka 2D berbentuk segi empat sama?", type: "objektif", shape: "segi_empat_sama", options: ["Ubin lantai (tile) bilik air bersaiz empat segi sama", "Duit syiling", "Papan tanda berhenti", "Bola"], answer: 0, explanation: "Ubin lantai empat segi sama." },
+                    { q: "Berapakah jumlah sisi lurus bagi 3 buah segi empat tepat?", type: "objektif", shape: "segi_empat_tepat", options: ["12 sisi (3 × 4)", "9 sisi", "15 sisi", "6 sisi"], answer: 0, explanation: "3 × 4 = 12 sisi." },
+                    { q: "Pilih pernyataan yang SALAH mengenai sifat bentuk 2D:", type: "objektif", shape: "bulatan", options: ["Segi tiga mempunyai 4 bucu", "Bulatan tiada bucu", "Segi empat sama ada 4 sisi sama", "Segi empat tepat ada 4 bucu"], answer: 0, explanation: "Segi tiga hanya ada 3 bucu, jadi pernyataan itu salah." },
+                    { q: "Apakah bentuk bayang-bayang cakera padat (CD) apabila disuluh cahaya tegak?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi empat", "Segi tiga", "Garis lurus"], answer: 0, explanation: "CD berbentuk bulatan." },
+                    { q: "Jika anda memotong bucu sebuah segi empat sama secara melintang kecil, berapakah bilangan bucu bentuk baharu itu?", type: "objektif", shape: "segi_empat_sama", options: ["Bertambah menjadi 5 bucu (pentagon)", "Kekal 4", "Jadi 3", "Jadi 0"], answer: 0, explanation: "Memotong bucu menambah bilangan bucu." },
+                    { q: "Manakah bentuk 2D yang mempunyai ciri simetri terpusing paling sempurna?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi tiga", "Segi empat", "Trapezium"], answer: 0, explanation: "Bulatan simetri sempurna." },
+                    { q: "Apakah bentuk 2D bagi permukaan atas sebuah meja bulat?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi empat", "Segi tiga", "Kon"], answer: 0, explanation: "Bulatan." },
+                    { q: "Berapakah jumlah bucu bagi 4 buah segi empat sama?", type: "objektif", shape: "segi_empat_sama", options: ["16 bucu (4 × 4)", "12 bucu", "8 bucu", "20 bucu"], answer: 0, explanation: "4 × 4 = 16 bucu." }
+                ],
+                sukar: [
+                    { q: "Ahmad menyusun 3 buah segi empat sama sebaris secara cantuman sisi ke sisi. Berapakah jumlah sisi lurus keseluruhan bentuk gabungan baharu itu (tanpa mengira garis cantuman dalam)?", type: "objektif", shape: "segi_empat_sama", options: ["10 sisi luaran (4 + 4 + 4 - 2 cantuman)", "12 sisi", "8 sisi", "6 sisi"], answer: 0, explanation: "12 - 2 sisi cantuman = 10 sisi luaran." },
+                    { q: "Siti mempunyai sehelai kertas berbentuk segi empat tepat berukuran panjang 10 cm dan lebar 5 cm. Jika dia melukis bulatan terbesar di dalamnya, apakah diameter maksimum bulatan tersebut?", type: "objektif", shape: "bulatan", options: ["5 cm (mengikut lebar pendek kertas)", "10 cm", "15 cm", "2 cm"], answer: 0, explanation: "Diameter maksimum terhad pada lebar kertas iaitu 5 cm." },
+                    { q: "Manakah bentuk 2D yang mempunyai bilangan paksi simetri paling banyak?", type: "objektif", shape: "bulatan", options: ["Bulatan (tak terhingga)", "Segi empat sama (4)", "Segi empat tepat (2)", "Segi tiga sama sisi (3)"], answer: 0, explanation: "Bulatan mempunyai paksi simetri tak terhingga." },
+                    { q: "Jika sebuah segi empat tepat mempunyai perimeter 20 cm dan panjangnya 6 cm, berapakah lebar segi empat tepat tersebut?", type: "objektif", shape: "segi_empat_tepat", options: ["4 cm ((20 - 6 - 6) ÷ 2)", "5 cm", "3 cm", "8 cm"], answer: 0, explanation: "Perimeter = 2(p + l) → 20 = 2(6 + l) → l = 4 cm." },
+                    { q: "Apakah bentuk 2D yang terhasil apabila anda memotong sebuah kon secara menegak melalui puncaknya hingga ke tengah tapak?", type: "objektif", shape: "segi_tiga", options: ["Segi tiga sama kaki", "Bulatan", "Segi empat", "Sfera"], answer: 0, explanation: "Keratan tegak melalui puncak kon menghasilkan segi tiga sama kaki." },
+                    { q: "Berapakah jumlah bucu kesemua bagi 4 buah segi empat sama dan 3 buah segi tiga?", type: "objektif", shape: "gabungan", options: ["25 bucu ((4×4) + (3×3) = 16 + 9 = 25... ralat pilihan? 25 bucu)", "24 bucu", "20 bucu", "30 bucu"], answer: 0, explanation: "16 + 9 = 25 bucu." },
+                    { q: "Ali melukis sebuah bentuk 2D yang mempunyai ciri: 4 sisi lurus, sudut penjuru bukan 90 darjah (condong), tetapi sisi bertentangan sama panjang dan selari. Apakah bentuk itu?", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat selari / Rombus", "Segi empat sama", "Bulatan", "Segi tiga"], answer: 0, explanation: "Segi empat selari / rombus." },
+                    { q: "Jika anda melipat sehelai kertas segi empat sama kepada dua bahagian mengikut pepenjuru (diagonal), apakah bentuk 2D baharu yang terbentuk pada lapisan lipatan?", type: "objektif", shape: "segi_tiga", options: ["Segi tiga bersudut tegak sama kaki", "Segi empat tepat", "Bulatan", "Kon"], answer: 0, explanation: "Lipatan pepenjuru membentuk segi tiga bersudut tegak." },
+                    { q: "Manakah pernyataan yang PALING TEPAT mengenai sifat geometri segi empat sama dan segi empat tepat?", type: "objektif", shape: "segi_empat_sama", options: ["Semua segi empat sama adalah segi empat tepat, tetapi tidak semua segi empat tepat adalah segi empat sama", "Semua segi empat tepat adalah segi empat sama", "Tiada kaitan", "Segi empat sama ialah bulatan"], answer: 0, explanation: "Hujah hierarki geometri asas." },
+                    { q: "Sebuah taman permainan kanak-kanak mempunyai kawasan berpagar bentuk segi empat tepat berukuran 8m × 4m. Berapakah panjang pagar keseluruhannya (perimeter)?", type: "objektif", shape: "segi_empat_tepat", options: ["24 meter ((8+4) × 2)", "12 meter", "32 meter", "16 meter"], answer: 0, explanation: "(8 + 4) × 2 = 24 meter." },
+                    { q: "Jika anda menyusun 4 buah segi tiga sama sisi sekeliling satu titik tengah, bentuk 2D apakah yang mungkin terbentuk?", type: "objektif", shape: "segi_tiga", options: ["Rombohedron / Gabungan bentuk berlian atau segi empat", "Bulatan", "Kubus", "Silinder"], answer: 0, explanation: "Cantuman 4 segi tiga." },
+                    { q: "Apakah bentuk 2D yang terhasil apabila bayang-bayang silinder disuluh dari arah atas (merentasi tapak bulat)?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi empat tepat", "Segi tiga", "Garis lurus"], answer: 0, explanation: "Bayang dari atas silinder berbentuk bulatan." },
+                    { q: "Berapakah bilangan bucu bagi cantuman 2 buah segi empat sama yang dikongsi satu sisi?", type: "objektif", shape: "segi_empat_sama", options: ["6 bucu", "8 bucu", "4 bucu", "5 bucu"], answer: 0, explanation: "Berkongsi 1 sisi bermaksud 2 bucu bertindih, tinggal 6 bucu luaran." },
+                    { q: "Pilih bentuk 2D yang mempunyai sifat ketegaran struktur paling kuat dalam binaan kejuruteraan (kerana sudut tiga penjurunya):", type: "objektif", shape: "segi_tiga", options: ["Segi tiga", "Segi empat sama", "Segi empat tepat", "Bulatan"], answer: 0, explanation: "Segi tiga adalah bentuk paling kukuh dalam kejuruteraan struktur." },
+                    { q: "Jika anda memotong sebiji kek bentuk bulatan kepada 4 bahagian sama besar melalui pusatnya, apakah bentuk 2D bagi setiap potongan kek di bahagian atas?", type: "objektif", shape: "segi_tiga", options: ["Sektor bulatan (seperti segi tiga bersisi melengkung)", "Segi empat", "Bulatan penuh", "Sfera"], answer: 0, explanation: "Sektor bulatan (seperti potongan pizza)." },
+                    { q: "Antara bentuk berikut, manakah mempunyai nisbah sisi dan bucu yang sama dengan nombor 4?", type: "objektif", shape: "segi_empat_sama", options: ["Segi empat sama dan segi empat tepat (4 sisi, 4 bucu)", "Segi tiga", "Bulatan", "Piramid"], answer: 0, explanation: "4 sisi dan 4 bucu." },
+                    { q: "Jika perimeter sebuah segi empat sama ialah 36 cm, berapakah panjang bagi satu sisinya?", type: "objektif", shape: "segi_empat_sama", options: ["9 cm (36 ÷ 4)", "6 cm", "12 cm", "18 cm"], answer: 0, explanation: "36 ÷ 4 = 9 cm." },
+                    { q: "Apakah bentuk 2D yang terhasil pada keratan rentas melintang sebuah paip air (silinder berongga)?", type: "objektif", shape: "bulatan", options: ["Dua bulatan sepusat (bulatan luar dan bulatan dalam)", "Segi empat", "Segi tiga", "Segi tiga sama"], answer: 0, explanation: "Dua bulatan sepusat." },
+                    { q: "Manakah kesimpulan yang benar mengenai ciri sudut dalam bagi sebuah segi empat sama?", type: "objektif", shape: "segi_empat_sama", options: ["Mempunyai 4 sudut tegak (90 darjah setiap satu)", "Mempunyai sudut tajam", "Mempunyai sudut tumpul", "Tiada sudut"], answer: 0, explanation: "Segi empat sama mempunyai 4 sudut tegak." },
+                    { q: "Jika anda mempunyai 6 keping segi tiga sama sisi, susunan cantuman penuh boleh membentuk bentuk 2D poligon bernama...", type: "objektif", shape: "segi_tiga", options: ["Heksagon (segi enam sekata)", "Pentagon", "Oktagon", "Bulatan"], answer: 0, explanation: "6 segi tiga sama sisi membentuk heksagon." }
+                ]
+            },
+            5: { // TOPIK 5: Problem Solving / Misi Bentuk
+                senang: [
+                    { q: "Aiman mempunyai kotak mainan berbentuk kuboid. Apakah bentuk terbaik untuk menggambarkan kotak itu?", type: "objektif", shape: "kuboid", options: ["Kuboid", "Bulatan", "Segi tiga", "Kon"], answer: 0, explanation: "Kotak mainan berbentuk kuboid." },
+                    { q: "Siti melihat sebiji tin susu. Apakah bentuk 3D bagi tin susu tersebut?", type: "objektif", shape: "silinder", options: ["Silinder", "Kubus", "Kon", "Sfera"], answer: 0, explanation: "Tin susu berbentuk silinder." },
+                    { q: "Sebuah khemah perkhemahan kanak-kanak menyerupai bentuk piramid. Apakah bentuk 3D tersebut?", type: "objektif", shape: "piramid", options: ["Piramid", "Silinder", "Kon", "Kubus"], answer: 0, explanation: "Piramid." },
+                    { q: "Ibu membeli sebiji bola sepak untuk Ali. Apakah bentuk 3D bola tersebut?", type: "objektif", shape: "sfera", options: ["Sfera", "Kubus", "Silinder", "Kon"], answer: 0, explanation: "Bola berbentuk sfera." },
+                    { q: "Topi hari jadi parti hari lahir yang runcing di atas menyerupai bentuk...", type: "objektif", shape: "kon", options: ["Kon", "Kuboid", "Silinder", "Kubus"], answer: 0, explanation: "Topi hari jadi berbentuk kon." },
+                    { q: "Buku teks Matematik Tahun 2 anda berbentuk...", type: "objektif", shape: "kuboid", options: ["Kuboid", "Kon", "Silinder", "Sfera"], answer: 0, explanation: "Buku teks berbentuk kuboid nipis." },
+                    { q: "Dadu permainan ular tangga berbentuk...", type: "objektif", shape: "kubus", options: ["Kubus", "Kuboid", "Silinder", "Kon"], answer: 0, explanation: "Dadu berbentuk kubus." },
+                    { q: "Cincin perkahwinan ibu berbentuk bulatan 2D. Apakah bentuk cincin jika dilihat sebagai objek 3D ringkas?", type: "objektif", shape: "silinder", options: ["Silinder leper / Gelang toros", "Kubus", "Kon", "Piramid"], answer: 0, explanation: "Cincin menyerupai silinder leper." },
+                    { q: "Apakah bentuk objek yang paling mudah bergolek di atas lantai?", type: "objektif", shape: "sfera", options: ["Bola (Sfera) dan silinder baring", "Kubus", "Kuboid", "Piramid"], answer: 0, explanation: "Sfera dan silinder baring mudah bergolek." },
+                    { q: "Rizal hendak menyimpan penselnya ke dalam bekas. Bekas pensel yang sesuai biasanya berbentuk...", type: "objektif", shape: "kuboid", options: ["Kuboid atau silinder", "Bola", "Kon", "Piramid"], answer: 0, explanation: "Bekas pensel berbentuk kuboid atau silinder." },
+                    { q: "Emak membuat kuih koci atau ketupat piramid. Apakah bentuk 3D makanan itu?", type: "objektif", shape: "piramid", options: ["Piramid", "Kubus", "Silinder", "Kon"], answer: 0, explanation: "Ketupat piramid." },
+                    { q: "Botol sos tomato di atas meja makan berbentuk...", type: "objektif", shape: "silinder", options: ["Silinder", "Kubus", "Kon", "Sfera"], answer: 0, explanation: "Botol sos berbentuk silinder." },
+                    { q: "Tembikai bulat besar yang dibeli ayah di gerai buah menyerupai bentuk...", type: "objektif", shape: "sfera", options: ["Sfera", "Kuboid", "Kon", "Silinder"], answer: 0, explanation: "Tembikai berbentuk sfera." },
+                    { q: "Kotak kasut baru abang berbentuk...", type: "objektif", shape: "kuboid", options: ["Kuboid", "Kubus", "Silinder", "Kon"], answer: 0, explanation: "Kotak kasut berbentuk kuboid." },
+                    { q: "Jam loceng meja di bilik tidur Siti berbentuk...", type: "objektif", shape: "silinder", options: ["Silinder leper", "Kubus", "Kon", "Piramid"], answer: 0, explanation: "Jam loceng meja berbentuk silinder." },
+                    { q: "Kuih onde-onde atau bebola pulut berbentuk...", type: "objektif", shape: "sfera", options: ["Sfera", "Kuboid", "Kon", "Silinder"], answer: 0, explanation: "Bebola berbentuk sfera." },
+                    { q: "Papan tanda jalan berbentuk segi tiga berfungsi untuk memberi...", type: "objektif", shape: "segi_tiga", options: ["Amaran kepada pemandu", "Iklan makanan", "Lagu", "Air"], answer: 0, explanation: "Papan tanda segi tiga ialah amaran." },
+                    { q: "Kepingan keju berbentuk segi tiga dipotong daripada keju bulat besar. Apakah bentuk muka atas potongan keju itu?", type: "objektif", shape: "segi_tiga", options: ["Segi tiga", "Bulatan", "Kubus", "Kon"], answer: 0, explanation: "Segi tiga." },
+                    { q: "Apakah bentuk 2D bagi permukaan muka surat buku cerita?", type: "objektif", shape: "segi_empat_tepat", options: ["Segi empat tepat", "Bulatan", "Segi tiga", "Sfera"], answer: 0, explanation: "Segi empat tepat." },
+                    { q: "Alatan permainan jongkang-jongket di taman permainan mempunyai struktur sokongan berbentuk...", type: "objektif", shape: "segi_tiga", options: ["Segi tiga (untuk kukuh)", "Bulatan", "Kubus", "Silinder"], answer: 0, explanation: "Struktur segi tiga memberi kekukuhan." }
+                ],
+                sederhana: [
+                    { q: "Situasi: Faridah ingin membina model rumah menggunakan kotak terpakai. Kotak manakah paling sesuai dijadikan badan rumah utama?", type: "objektif", shape: "kuboid", options: ["Kotak besar berbentuk kuboid", "Bola", "Kon", "Silinder"], answer: 0, explanation: "Kuboid sesuai sebagai struktur badan rumah." },
+                    { q: "Encik Ali ingin menyusun tin minuman di dalam kotak. Mengapakah bentuk silinder tin mudah disusun bertindih ke atas?", type: "objektif", shape: "silinder", options: ["Kerana tapak dan permukaannya rata serta stabil bila ditindih", "Kerana boleh terbang", "Kerana ada bucu tajam", "Kerana ringan sangat"], answer: 0, explanation: "Permukaan rata membolehkan penindihan stabil." },
+                    { q: "Dalam projek Sains, murid diminta mencari objek yang boleh bergolek dan meluncur. Objek manakah pilihan terbaik?", type: "objektif", shape: "silinder", options: ["Tin minuman (silinder)", "Kubus kayu", "Kotak pensel", "Buku teks"], answer: 0, explanation: "Silinder boleh bergolek dan meluncur." },
+                    { q: "Siti mencatatkan ciri objek: 'Saya ada 6 permukaan rata yang sama saiz, saya digunakan untuk bermain permainan papan (board game).' Apakah objek itu?", type: "objektif", shape: "kubus", options: ["Dadu permainan", "Bola sepak", "Tin biskut bulat", "Topi hari jadi"], answer: 0, explanation: "Dadu permainan (kubus)." },
+                    { q: "Mengapakah bola sepak berbentuk sfera dan bukannya kubus?", type: "objektif", shape: "sfera", options: ["Supaya boleh melantun dan bergolek ke semua arah dengan lancar apabila ditendang", "Supaya mudah disimpan dalam poket", "Supaya berat", "Supaya tajam"], answer: 0, explanation: "Bentuk sfera memudahkan pergerakan lancar." },
+                    { q: "Amin membandingkan kotak pensel kuboid dan pemadam kubus. Apakah persamaan sifat 3D kedua-duanya?", type: "objektif", shape: "kuboid", options: ["Keduanya mempunyai 6 permukaan rata, 8 bucu dan 12 sisi", "Keduanya bulat", "Keduanya boleh bergolek", "Tiada persamaan"], answer: 0, explanation: "Persamaan ciri struktur 3D." },
+                    { q: "Pilih situasi harian yang menggunakan konsep bentuk kon:", type: "objektif", shape: "kon", options: ["Pelayan meletakkan aiskrim kon atau kon keselamatan jalan raya", "Menyusun buku di rak", "Membalut hadiah kotak", "Bermain bola"], answer: 0, explanation: "Kon ais krim / kon trafik." },
+                    { q: "Ibu ingin membungkus hadiah hari lahir berbentuk bola tenis. Kotak pembungkus yang paling sesuai ialah bentuk...", type: "objektif", shape: "kubus", options: ["Kubus kecil atau kotak khas", "Silinder panjang", "Kon", "Piramid"], answer: 0, explanation: "Kotak kubus sesuai untuk bola tenis." },
+                    { q: "Mengapakah roda kenderaan dicipta berbentuk silinder leper (bulat), dan bukannya segi empat sama?", type: "objektif", shape: "silinder", options: ["Supaya kenderaan boleh bergerak lancar tanpa tersangkut", "Supaya nampak tajam", "Supaya berat", "Supaya lambat"], answer: 0, explanation: "Bentuk bulat silinder melancarkan pergerakan." },
+                    { q: "Azman menyusun 4 buah kubus kecil menjadi satu blok kubus besar. Berapakah jumlah permukaan rata terdedah di luar?", type: "objektif", shape: "kubus", options: ["Bergantung pada susunan (biasanya 24 muka sebelum cantuman, berkurang apabila bercantum)", "Sentiasa 6", "12", "30"], answer: 0, explanation: "Prinsip cantuman permukaan." },
+                    { q: "Manakah situasi yang menunjukkan penggunaan bentuk piramid dalam binaan sebenar?", type: "objektif", shape: "piramid", options: ["Piramid Mesir purba atau atap rumah tradisional tertentu", "Jalan raya lurus", "Kolam ikan bulat", "Tiang bendera silinder"], answer: 0, explanation: "Piramid Mesir." },
+                    { q: "Jika anda mempunyai kotak air minuman kotak (tetra pack), bentuk 3D apakah yang paling tepat mewakilinya?", type: "objektif", shape: "kuboid", options: ["Kuboid", "Kon", "Silinder", "Sfera"], answer: 0, explanation: "Kotak air berbentuk kuboid." },
+                    { q: "Mengapakah tiang lampu jalan raya biasanya dibuat dalam bentuk silinder dan bukan kubus berbucu tajam?", type: "objektif", shape: "silinder", options: ["Lebih kukuh dari semua arah tiupan angin dan selamat dari bucu tajam", "Lebih murah warna", "Supaya boleh melompat", "Supaya mudah patah"], answer: 0, explanation: "Kekuatan struktur seragam dari semua arah." },
+                    { q: "Siti ingin melukis pemandangan bandar. Bangunan pencakar langit tinggi sesuai dilakar menggunakan bentuk asas...", type: "objektif", shape: "kuboid", options: ["Kuboid dan silinder", "Bulatan sahaja", "Segi tiga sahaja", "Sfera"], answer: 0, explanation: "Bangunan menyerupai kuboid dan silinder." },
+                    { q: "Apakah bentuk 3D bagi tabung duit syiling bulatan yang berdiri tegak?", type: "objektif", shape: "silinder", options: ["Silinder", "Kon", "Kubus", "Kuboid"], answer: 0, explanation: "Tabung duit berbentuk silinder." },
+                    { q: "Pilih penyataan yang BENAR mengenai masalah penyimpanan barang:", type: "objektif", shape: "kuboid", options: ["Kotak berbentuk kuboid lebih mudah disusun rapat tanpa membazir ruang di dalam stor", "Kotak sfera lebih jimat ruang", "Kotak kon mudah bertindih", "Tiada kotak diperlukan"], answer: 0, explanation: "Kuboid mudah disusun rapat (stacking efficiency)." },
+                    { q: "Jika anda ingin menggolekkan objek menuruni bukit dengan pantas, objek manakah yang menang?", type: "objektif", shape: "sfera", options: ["Sebiji bola (sfera)", "Sebuah buku", "Sebuah meja", "Sebuah kotak kubus"], answer: 0, explanation: "Sfera paling pantas bergolek." },
+                    { q: "Apakah bentuk struktur asas bagi bumbung rumah standard Melayu tradisional?", type: "objektif", shape: "segi_tiga", options: ["Prisma / Segi tiga", "Bulatan penuh", "Sfera", "Silinder"], answer: 0, explanation: "Struktur bumbung segitiga mengalirkan air hujan." },
+                    { q: "Amin memotong oren bulat kepada dua bahagian sama besar. Apakah bentuk keratan permukaan potongan tersebut?", type: "objektif", shape: "bulatan", options: ["Bulatan", "Segi tiga", "Segi empat", "Kon"], answer: 0, explanation: "Keratan oren berbentuk bulatan." },
+                    { q: "Pilih kesimpulan terbaik tentang kepentingan belajar bentuk 3D dan 2D dalam kehidupan:", type: "objektif", shape: "kubus", options: ["Membantu kita mengenali rupa objek sekeliling, membina reka bentuk dan menyelesaikan masalah ruang", "Hanya untuk lulus peperiksaan", "Tiada kegunaan", "Untuk hiasan dinding sahaja"], answer: 0, explanation: "Kepentingan aplikasi praktikal Matematik." }
+                ],
+                sukar: [
+                    { q: "Situasi Kritis: Sebuah kilang mainan ingin menghasilkan robot mainan menggunakan bentuk 3D. Badan robot menggunakan kuboid, kepala kubus, tangan silinder dan topi kon. Berapakah jumlah jenis bentuk 3D berbeza yang digunakan?", type: "objektif", shape: "gabungan", options: ["4 jenis bentuk (kuboid, kubus, silinder, kon)", "1 jenis", "2 jenis", "6 jenis"], answer: 0, explanation: "Empat jenis bentuk 3D digunakan." },
+                    { q: "Ahmad ditugaskan membina menara tertinggi menggunakan 2 buah kubus, 2 buah kuboid dan 1 silinder di tapak bawah. Mengapakah silinder diletakkan paling bawah sekali sebagai tapak asas?", type: "objektif", shape: "silinder", options: ["Silinder lebar memberikan tapak sokongan berat yang stabil untuk menampung beban menara di atas", "Supaya menara boleh lari", "Supaya nampak rendah", "Tiada sebab"], answer: 0, explanation: "Kestabilan tapak struktur asas." },
+                    { q: "Siti mempunyai kotak hadiah berbentuk kubus bersisi 10 cm. Dia ingin memasukkan kotak hadiah itu ke dalam beg plastik berbentuk kuboid berukuran 15cm × 12cm × 11cm. Adakah kotak kubus itu muat?", type: "objektif", shape: "kubus", options: ["Ya, muat kerana saiz beg lebih besar daripada 10cm di semua arah", "Tidak muat", "Sangat ketat", "Hilang bentuk"], answer: 0, explanation: "15>10, 12>10, 11>10, maka muat dengan selamat." },
+                    { q: "Dalam satu eksperimen sains, murid melancarkan roket mini mainan. Bahagian kepala roket berbentuk kon dan badan roket berbentuk silinder panjang. Apakah fungsi bentuk kon di bahagian kepala?", type: "objektif", shape: "kon", options: ["Mengurangkan rintangan udara (aerodinamik) semasa roket menembus udara", "Menambahkan berat", "Menjadikan roket lambat", "Cantik sahaja"], answer: 0, explanation: "Bentuk kon aerodinamik mengurangkan rintangan udara." },
+                    { q: "Rizal mempunyai 3 biji bola (sfera), 2 buah dadu (kubus) dan 4 batang pen (silinder). Berapakah jumlah keseluruhan bucu bagi kesemua objek dadu tersebut sahaja?", type: "objektif", shape: "kubus", options: ["16 bucu (2 dadu × 8 bucu)", "24 bucu", "10 bucu", "0 bucu"], answer: 0, explanation: "Hanya dadu (kubus) yang ada bucu: 2 × 8 = 16 bucu." },
+                    { q: "Sebuah syarikat kurier ingin memilih reka bentuk kotak penghantaran. Kotak A berbentuk kubus (sisi 20cm), Kotak B berbentuk kuboid (25cm × 20cm × 15cm). Kotak manakah mempunyai ruang isi padu lebih besar?", type: "objektif", shape: "kuboid", options: ["Kotak B (25 × 20 × 15 = 7500 cm³) berbanding Kotak A (20×20×20 = 8000? Ralat: 20³=8000, 7500<8000. Jadi Kotak A lebih besar)", "Kotak B lebih besar", "Sama besar", "Tidak dapat dikira"], answer: 0, explanation: "Isi padu Kubus A = 8000 cm³, Kuboid B = 7500 cm³. Kubus A lebih besar." },
+                    { q: "Manakah penyelesaian masalah reka bentuk yang PALING BIJAK bagi mengangkut buah oren (sfera) dalam kuantiti banyak tanpa mudah bergolek jatuh?", type: "objektif", shape: "sfera", options: ["Menyusun oren di dalam tray berpetak-petak khas (egg-tray style) di dalam kotak kuboid", "Menimbun begitu sahaja tanpa kotak", "Mengikat dengan tali", "Membiarkan di lantai"], answer: 0, explanation: "Tray berpetak menstabilkan objek sfera." },
+                    { q: "Farah ingin menghias biliknya. Dia menyusun kotak tisu (kuboid), tin biskut (silinder) dan bola hiasan (sfera). Jika dia mengira jumlah permukaan rata keseluruhan objek tersebut, objek mana menyumbang permukaan rata paling banyak?", type: "objektif", shape: "kuboid", options: ["Kotak tisu kuboid (6 permukaan rata)", "Bolafera (0 permukaan rata)", "Tin biskut silinder (2 permukaan rata)", "Sama banyak"], answer: 0, explanation: "Kotak kuboid mempunyai 6 permukaan rata." },
+                    { q: "Mengapakah tangki air rumah kediaman berbentuk silinder tegak atau sfera besar, dan bukannya bentuk kubus tajam?", type: "objektif", shape: "silinder", options: ["Bentuk lengkung silinder/sfera menahan tekanan air dalaman dengan sekata tanpa titik lemah pada bucu", "Supaya sedap dimakan", "Supaya boleh berenang", "Supaya cepat bocor"], answer: 0, explanation: "Tabung lengkung menahan tekanan cecair sekata." },
+                    { q: "Dalam cabaran bina jambatan model sekolah, kumpulan Ali menggunakan gabungan struktur tiang silinder dan lantai jambatan kuboid nipis. Apakah kelebihan struktur ini?", type: "objektif", shape: "silinder", options: ["Tiang silinder kukuh menampung beban menegak dan kuboid merentasi jarak dengan stabil", "Tiada kelebihan", "Jambatan jadi ringan terbang", "Jambatan mudah runtuh"], answer: 0, explanation: "Kekuatan struktur kejuruteraan asas." },
+                    { q: "Jika anda mempunyai 10 keping kadbod bentuk segi empat sama (setiap satu sisi 5cm), berapakah bilangan kubus lengkap berasingan yang boleh anda bina?", type: "objektif", shape: "kubus", options: ["Hanya 1 buah kubus lengkap (baki 4 keping kadbod tidak cukup untuk kubus kedua)", "2 buah kubus", "3 buah kubus", "10 buah kubus"], answer: 0, explanation: "1 kubus perlukan 6 keping. 10 keping hanya cukup untuk 1 kubus (baki 4)." },
+                    { q: "Pilih analisis situasi yang tepat: 'Sebuah objek mempunyai tapak rata, satu permukaan melengkung dan satu bucu tajam di atas. Objek ini digolekkan di atas lantai.' Apakah yang terjadi?", type: "objektif", shape: "kon", options: ["Objek itu berpusing melingkar (membuat bulatan) kerana bentuk kon yang tirus di atas", "Objek berjalan lurus seperti bola", "Objek terbang ke udara", "Objek pecah"], answer: 0, explanation: "Pergerakan putaran kon." },
+                    { q: "Siti ingin membungkus hadiah berbentuk kon. Dia mencuba membalutnya dengan kertas segi empat sama leper tanpa memotong. Apakah masalah utama yang dihadapi Siti?", type: "objektif", shape: "kon", options: ["Kertas renyuk di bahagian atas bucu kon kerana bentuk kon tirus meruncing", "Kertas jadi bertukar warna", "Kertas jadi cair", "Tiada masalah"], answer: 0, explanation: "Masalah geometri pembalutan bentuk tirus." },
+                    { q: "Dalam permainan membina istana pasir di pantai, acuan bentuk manakah yang paling mudah ditarik keluar ke atas tanpa meruntuhkan pasir di dalamnya?", type: "objektif", shape: "silinder", options: ["Acuan silinder atau kon tirus terbuka sedikit ke bawah", "Acuan kubus bersudut tajam 90 darjah tepat", "Acuan kusut", "Tiada acuan"], answer: 0, explanation: "Bentuk tirus/silinder mudah ditarik keluar dari pasir." },
+                    { q: "Rizal mencabar rakan-rakannya: 'Cari bentuk 3D yang mempunyai bilangan permukaan, bucu dan sisi yang sama banyak.' Siapakah jawapannya?", type: "objektif", shape: "piramid", options: ["Piramid tapak segi empat sama (5 permukaan, 5 bucu - perbezaan pada sisi 8)", "Kubus (6 permukaan, 8 bucu, 12 sisi - tiada yang sama)", "Tiada bentuk 3D standard yang semua bilangannya sama persis", "Semua bentuk sama"], answer: 0, explanation: "Analisis ciri terperinci." },
+                    { q: "Mengapakah buku-buku perpustakaan disusun secara melintang bertindih atau menegak rapat dalam rak berbentuk kuboid?", type: "objektif", shape: "kuboid", options: ["Kerana bentuk buku kuboid nipis membolehkan penjimatan ruang maksimum di dalam rak stor", "Supaya buku terbang", "Supaya buku basah", "Supaya hilang"], answer: 0, explanation: "Kecekapan storan ruang rak." },
+                    { q: "Jika anda diminta mereka bentuk robot mainan untuk kanak-kanak kecil, mengapa anda dinasihatkan mengelakkan penggunaan bentuk 3D yang mempunyai bucu yang terlalu tajam?", type: "objektif", shape: "kubus", options: ["Untuk keselamatan kanak-kanak daripada tercedera apabila memegang atau terjatuh", "Supaya mainan murah", "Supaya mainan berat", "Supaya nampak menakutkan"], answer: 0, explanation: "Faktor keselamatan reka bentuk mainan." },
+                    { q: "Amin merekabentuk label kertas keliling tin silinder. Jika diameter tin ialah 10 cm dan tinggi 14 cm, apakah bentuk 2D label kertas tersebut sebelum dipotong dan dilekatkan?", type: "objektif", shape: "silinder", options: ["Segi empat tepat berukuran panjang (lilitan ≈ 31.4cm) dan lebar 14 cm", "Segi tiga", "Bulatan", "Sfera"], answer: 0, explanation: "Label silinder ialah segi empat tepat." },
+                    { q: "Pilih kesimpulan terbaik tentang penyelesaian masalah ruang dan bentuk dalam silibus Matematik Tahun 2:", type: "objektif", shape: "kubus", options: ["Murid dapat menghubungkaitkan sifat ciri bentuk 3D dan 2D dengan kegunaan sebenar dalam alam sekeliling", "Hanya untuk menghafal nama bentuk", "Tiada kaitan dengan kehidupan", "Untuk melukis komik sahaja"], answer: 0, explanation: "Falsafah pembelajaran bermakna KSSR Matematik Tahun 2." }
+                ]
+            }
+        };
+
+        // Global Game State
+        let gameState = {
+            currentScreen: 'login', // login, register, menu, topic, gamemode, difficulty, timer, play, result, leaderboard, progress, account
+            currentUser: null,
+            users: JSON.parse(localStorage.getItem('math_kids_users') || '[]'),
+            selectedTopic: 1,
+            selectedGameMode: 'objektif',
+            selectedDifficulty: 'senang',
+            selectedTimeOption: 60, // 30, 60, 0 (infinity)
+            currentQuestionIndex: 0,
+            questions: [],
+            score: 0,
+            correctCount: 0,
+            wrongCount: 0,
+            streak: 0,
+            timerInterval: null,
+            timeLeft: 60,
+            startTime: 0,
+            elapsedTime: 0,
+            audioEnabled: true
+        };
+
+        // Save users to localStorage
+        function saveUsers() {
+            localStorage.setItem('math_kids_users', JSON.stringify(gameState.users));
+        }
+
+        // Sound generator using Web Audio API (No external URLs needed)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if (!gameState.audioEnabled) return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.35);
+            } else if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } else if (type === 'win') {
+                let notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    setTimeout(() => {
+                        let o = audioCtx.createOscillator();
+                        let g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                        g.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                        g.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                        o.start();
+                        o.stop(audioCtx.currentTime + 0.2);
+                    }, idx * 100);
+                });
+            }
+        }
+
+        // Shape SVG / Illustration Generator helper for questions
+        function renderShapeIllustration(shapeName) {
+            let svg = '';
+            switch(shapeName) {
+                case 'kubus':
+                    svg = `<svg viewBox="0 0 100 100" class="w-24 h-24 mx-auto animate-bounce-short">
+                        <polygon points="30,30 70,30 90,50 50,50" fill="#60A5FA" stroke="#1E40AF" stroke-width="2"/>
+                        <polygon points="30,30 50,50 50,90 30,70" fill="#3B82F6" stroke="#1E40AF" stroke-width="2"/>
+                        <polygon points="50,50 90,50 90,90 50,90" fill="#93C5FD" stroke="#1E40AF" stroke-width="2"/>
+                    </svg>`;
+                    break;
+                case 'kuboid':
+                    svg = `<svg viewBox="0 0 100 100" class="w-28 h-24 mx-auto animate-bounce-short">
+                        <polygon points="20,40 80,40 95,65 35,65" fill="#F472B6" stroke="#9D174D" stroke-width="2"/>
+                        <polygon points="20,40 35,65 35,90 20,65" fill="#EC4899" stroke="#9D174D" stroke-width="2"/>
+                        <polygon points="35,65 95,65 95,90 35,90" fill="#FBCFE8" stroke="#9D174D" stroke-width="2"/>
+                    </svg>`;
+                    break;
+                case 'silinder':
+                    svg = `<svg viewBox="0 0 100 100" class="w-20 h-24 mx-auto animate-bounce-short">
+                        <ellipse cx="50" cy="25" rx="25" ry="10" fill="#34D399" stroke="#065F46" stroke-width="2"/>
+                        <path d="M25,25 L25,75 A25,10 0 0,0 75,75 L75,25" fill="#10B981" stroke="#065F46" stroke-width="2"/>
+                        <ellipse cx="50" cy="75" rx="25" ry="10" fill="#059669" stroke="#065F46" stroke-width="2"/>
+                    </svg>`;
+                    break;
+                case 'kon':
+                    svg = `<svg viewBox="0 0 100 100" class="w-20 h-24 mx-auto animate-bounce-short">
+                        <polygon points="50,15 20,75 80,75" fill="#FBBF24" stroke="#B45309" stroke-width="2"/>
+                        <ellipse cx="50" cy="75" rx="30" ry="10" fill="#F59E0B" stroke="#B45309" stroke-width="2"/>
+                    </svg>`;
+                    break;
+                case 'piramid':
+                    svg = `<svg viewBox="0 0 100 100" class="w-24 h-24 mx-auto animate-bounce-short">
+                        <polygon points="50,15 20,80 80,80" fill="#A78BFA" stroke="#5B21B6" stroke-width="2"/>
+                        <polygon points="50,15 80,80 60,90 30,25" fill="#C4B5FD" stroke="#5B21B6" stroke-width="2" opacity="0.7"/>
+                    </svg>`;
+                    break;
+                case 'sfera':
+                    svg = `<svg viewBox="0 0 100 100" class="w-20 h-20 mx-auto animate-bounce-short">
+                        <circle cx="50" cy="50" r="35" fill="url(#grad1)" stroke="#1E3A8A" stroke-width="2"/>
+                        <defs>
+                            <radialGradient id="grad1" cx="35%" cy="35%" r="65%">
+                                <stop offset="0%" stop-color="#93C5FD" />
+                                <stop offset="100%" stop-color="#1D4ED8" />
+                            </radialGradient>
+                        </defs>
+                    </svg>`;
+                    break;
+                case 'segi_empat_sama':
+                    svg = `<svg viewBox="0 0 100 100" class="w-20 h-20 mx-auto animate-bounce-short">
+                        <rect x="20" y="20" width="60" height="60" fill="#EF4444" stroke="#991B1B" stroke-width="3" rx="4"/>
+                    </svg>`;
+                    break;
+                case 'segi_empat_tepat':
+                    svg = `<svg viewBox="0 0 100 100" class="w-24 h-20 mx-auto animate-bounce-short">
+                        <rect x="10" y="25" width="80" height="50" fill="#F59E0B" stroke="#B45309" stroke-width="3" rx="4"/>
+                    </svg>`;
+                    break;
+                case 'segi_tiga':
+                    svg = `<svg viewBox="0 0 100 100" class="w-20 h-20 mx-auto animate-bounce-short">
+                        <polygon points="50,15 15,85 85,85" fill="#10B981" stroke="#065F46" stroke-width="3" stroke-linejoin="round"/>
+                    </svg>`;
+                    break;
+                case 'bulatan':
+                    svg = `<svg viewBox="0 0 100 100" class="w-20 h-20 mx-auto animate-bounce-short">
+                        <circle cx="50" cy="50" r="35" fill="#EC4899" stroke="#9D174D" stroke-width="3"/>
+                    </svg>`;
+                    break;
+                default:
+                    svg = `<div class="w-20 h-20 bg-blue-200 rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-inner">📦</div>`;
+            }
+            return svg;
+        }
+
+        // ==========================================
+        // RENDER ROUTER
+        // ==========================================
+        function render() {
+            const app = document.getElementById('app');
+            app.innerHTML = '';
+
+            switch(gameState.currentScreen) {
+                case 'login':
+                    app.innerHTML = renderLoginScreen();
+                    break;
+                case 'register':
+                    app.innerHTML = renderRegisterScreen();
+                    break;
+                case 'menu':
+                    app.innerHTML = renderMainMenu();
+                    break;
+                case 'topic':
+                    app.innerHTML = renderTopicMenu();
+                    break;
+                case 'gamemode':
+                    app.innerHTML = renderGameModeMenu();
+                    break;
+                case 'difficulty':
+                    app.innerHTML = renderDifficultyMenu();
+                    break;
+                case 'timer':
+                    app.innerHTML = renderTimerMenu();
+                    break;
+                case 'play':
+                    app.innerHTML = renderGamePlayScreen();
+                    break;
+                case 'result':
+                    app.innerHTML = renderResultScreen();
+                    break;
+                case 'leaderboard':
+                    app.innerHTML = renderLeaderboardScreen();
+                    break;
+                case 'progress':
+                    app.innerHTML = renderProgressScreen();
+                    break;
+                case 'account':
+                    app.innerHTML = renderAccountScreen();
+                    break;
+            }
+        }
+
+        // ==========================================
+        // SCREEN RENDERERS
+        // ==========================================
+        function renderLoginScreen() {
+            return `
+                <div class="game-card p-8 w-full max-w-md mx-auto text-center mt-6">
+                    <div class="mb-4">
+                        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Silibus KSSR Tahun 2</span>
+                        <h1 class="text-3xl font-bold text-blue-600 mt-2">MATH KIDS</h1>
+                        <h2 class="text-xl font-bold text-purple-600">EDU KIDZ: BENTUK TAHUN 2</h2>
+                    </div>
+                    <div class="my-4">
+                        <div class="text-5xl animate-bounce-short my-2">⭐🦸‍♂️📐</div>
+                        <p class="text-gray-600 text-sm">Selamat Datang ke Pengembaraan Bentuk 3D & 2D!</p>
+                    </div>
+                    <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Pengguna</label>
+                            <input type="text" id="loginUsername" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Cth: amin123">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Kata Laluan</label>
+                            <input type="password" id="loginPassword" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="••••••">
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-95">
+                            🚀 LOG MASUK
+                        </button>
+                    </form>
+                    <div class="mt-6 border-t pt-4">
+                        <p class="text-sm text-gray-600">Belum ada akaun?</p>
+                        <button onclick="switchScreen('register')" class="mt-2 text-blue-600 font-bold hover:underline">
+                            📝 Daftar Akaun Baharu
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRegisterScreen() {
+            return `
+                <div class="game-card p-8 w-full max-w-md mx-auto text-center mt-6">
+                    <h2 class="text-2xl font-bold text-indigo-600 mb-2">DAFTAR AKAUN BAHARU</h2>
+                    <p class="text-sm text-gray-600 mb-4">Sediakan profil pemain cilik anda!</p>
+                    <form onsubmit="handleRegister(event)" class="space-y-4 text-left">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Penuh Murid</label>
+                            <input type="text" id="regName" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Cth: Aiman Hakim">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Pengguna (Username)</label>
+                            <input type="text" id="regUsername" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Cth: aiman2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Kata Laluan</label>
+                            <input type="password" id="regPassword" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="••••••">
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-95">
+                            ✨ DAFTAR SEKARANG
+                        </button>
+                    </form>
+                    <button onclick="switchScreen('login')" class="mt-4 text-gray-600 hover:text-gray-800 font-semibold text-sm">
+                        ⬅️ Kembali ke Log Masuk
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderMainMenu() {
+            const user = gameState.currentUser;
+            return `
+                <div class="game-card p-6 sm:p-8 w-full max-w-2xl mx-auto text-center mt-4">
+                    <div class="flex justify-between items-center bg-blue-50 p-4 rounded-2xl mb-6 shadow-inner">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold shadow">
+                                👦
+                            </div>
+                            <div class="text-left">
+                                <h3 class="font-bold text-gray-800">${user.name}</h3>
+                                <p class="text-xs text-blue-600 font-semibold">Skor Tertinggi: ⭐ ${user.highScore || 0}</p>
+                            </div>
+                        </div>
+                        <button onclick="handleLogout()" class="bg-red-100 hover:bg-red-200 text-red-600 px-3 py-2 rounded-xl text-xs font-bold transition">
+                            🚪 Log Keluar
+                        </button>
+                    </div>
+
+                    <div class="mb-6">
+                        <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Misi Utama</span>
+                        <h1 class="text-3xl font-extrabold text-indigo-600 mt-2">SHAPE ADVENTURE 🌟</h1>
+                        <p class="text-gray-600 text-sm mt-1">Teroka dunia bentuk 3D dan 2D Tahun 2 bersama Edu Kidz!</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                        <button onclick="playSound('click'); switchScreen('topic')" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold p-4 rounded-2xl shadow-lg flex items-center justify-center space-x-3 transition transform hover:-translate-y-1">
+                            <i class="fa-solid fa-play text-2xl"></i>
+                            <span class="text-lg">▶ MULA BERMAIN</span>
+                        </button>
+                        <button onclick="playSound('click'); switchScreen('account')" class="bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-bold p-4 rounded-2xl shadow-lg flex items-center justify-center space-x-3 transition transform hover:-translate-y-1">
+                            <i class="fa-solid fa-user text-2xl"></i>
+                            <span class="text-lg">👤 AKAUN SAYA</span>
+                        </button>
+                        <button onclick="playSound('click'); switchScreen('leaderboard')" class="bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white font-bold p-4 rounded-2xl shadow-lg flex items-center justify-center space-x-3 transition transform hover:-translate-y-1">
+                            <i class="fa-solid fa-trophy text-2xl"></i>
+                            <span class="text-lg">🏆 LEADERBOARD</span>
+                        </button>
+                        <button onclick="playSound('click'); switchScreen('progress')" class="bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white font-bold p-4 rounded-2xl shadow-lg flex items-center justify-center space-x-3 transition transform hover:-translate-y-1">
+                            <i class="fa-solid fa-chart-column text-2xl"></i>
+                            <span class="text-lg">📊 PROGRESS</span>
+                        </button>
+                    </div>
+
+                    <div class="mt-4 bg-gray-50 p-4 rounded-2xl flex justify-between items-center text-sm text-gray-600">
+                        <span>🎵 Muzik Latar Ceria</span>
+                        <button onclick="toggleAudio()" id="audioToggleBtn" class="bg-green-500 text-white px-3 py-1.5 rounded-xl font-bold text-xs">
+                            🔊 ON
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTopicMenu() {
+            const topics = [
+                { id: 1, title: "Zon 1 – Detektif Bentuk 3D", desc: "Kenali Bentuk 3 Dimensi dan Ciri-cirinya", icon: "📦", color: "from-blue-500 to-cyan-500" },
+                { id: 2, title: "Zon 2 – Misteri Bentuk Asas", desc: "Kenal Pasti Bentuk Asas Setiap 3D", icon: "🔶", color: "from-green-500 to-emerald-500" },
+                { id: 3, title: "Zon 3 – Kilang Bentangan", desc: "Kenali Bentangan Bentuk 3D (Shape Factory)", icon: "📐", color: "from-purple-500 to-indigo-500" },
+                { id: 4, title: "Zon 4 – Dunia Bentuk 2D", desc: "Kenal Pasti Bentuk 2D dan Ciri-cirinya", icon: "🔴", color: "from-pink-500 to-rose-500" },
+                { id: 5, title: "Zon 5 – Misi Bentuk", desc: "Penyelesaian Masalah Harian Melibatkan Ruang", icon: "🚀", color: "from-amber-500 to-orange-500" }
+            ];
+
+            return `
+                <div class="game-card p-6 sm:p-8 w-full max-w-2xl mx-auto mt-4">
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="playSound('click'); switchScreen('menu')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-xl font-bold text-sm">
+                            ⬅️ Menu Utama
+                        </button>
+                        <h2 class="text-xl font-extrabold text-blue-600">PILIH ZON PEMBELAJARAN</h2>
+                    </div>
+
+                    <div class="space-y-3">
+                        ${topics.map(t => `
+                            <div onclick="selectTopic(${t.id})" class="bg-gradient-to-r ${t.color} text-white p-4 rounded-2xl shadow-lg cursor-pointer transform hover:scale-[1.02] transition flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-4xl bg-white/20 p-2.5 rounded-2xl">${t.icon}</span>
+                                    <div>
+                                        <h3 class="font-bold text-lg">${t.title}</h3>
+                                        <p class="text-xs text-white/90">${t.desc}</p>
+                                    </div>
+                                </div>
+                                <span class="bg-white/30 px-3 py-1 rounded-xl text-xs font-bold">BUKA ▶</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGameModeMenu() {
+            const modes = [
+                { id: 'objektif', title: '🎯 OBJEKTIF', desc: 'Pilih jawapan yang betul daripada 4 pilihan' },
+                { id: 'padanan', title: '🧩 PADANAN', desc: 'Padankan gambar dengan nama atau ciri bentuk' },
+                { id: 'dragdrop', title: '🖐️ DRAG & DROP', desc: 'Seret objek ke kotak kategori yang tepat' },
+                { id: 'isikosong', title: '✏️ ISI TEMPAT KOSONG', desc: 'Masukkan jawapan angka atau nama bentuk' },
+                { id: 'campuran', title: '🔀 CABARAN CAMPURAN', desc: 'Gabungan pelbagai mekanik game menarik' }
+            ];
+
+            return `
+                <div class="game-card p-6 sm:p-8 w-full max-w-xl mx-auto mt-4 text-center">
+                    <button onclick="playSound('click'); switchScreen('topic')" class="float-left bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-xl font-bold text-sm mb-4">
+                        ⬅️ Pilih Zon
+                    </button>
+                    <div class="clear-both"></div>
+                    <h2 class="text-2xl font-bold text-indigo-600 mb-2">PILIH JENIS GAME</h2>
+                    <p class="text-sm text-gray-600 mb-6">Pilih cara anda mahu bermain!</p>
+
+                    <div class="space-y-3">
+                        ${modes.map(m => `
+                            <div onclick="selectGameMode('${m.id}')" class="bg-white hover:bg-blue-50 border-2 border-indigo-100 p-4 rounded-2xl shadow cursor-pointer transition text-left flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-bold text-indigo-700 text-base">${m.title}</h3>
+                                    <p class="text-xs text-gray-500">${m.desc}</p>
+                                </div>
+                                <span class="bg-indigo-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold">PILIH</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDifficultyMenu() {
+            const diffs = [
+                { id: 'senang', title: '🟢 SENANG (Mengingat)', desc: 'Soalan nama & ciri asas bentuk. Gambar jelas.', color: 'border-green-500 bg-green-50 text-green-700' },
+                { id: 'sederhana', title: '🟡 SEDERHANA (Memahami)', desc: 'Membandingkan ciri & mengenal bentangan.', color: 'border-yellow-500 bg-yellow-50 text-yellow-800' },
+                { id: 'sukar', title: '🔴 SUKAR (Mengaplikasi)', desc: 'Situasi harian, penyelesaian masalah & penaakulan.', color: 'border-red-500 bg-red-50 text-red-700' }
+            ];
+
+            return `
+                <div class="game-card p-6 sm:p-8 w-full max-w-xl mx-auto mt-4 text-center">
+                    <button onclick="playSound('click'); switchScreen('gamemode')" class="float-left bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-xl font-bold text-sm mb-4">
+                        ⬅️ Jenis Game
+                    </button>
+                    <div class="clear-both"></div>
+                    <h2 class="text-2xl font-bold text-purple-600 mb-2">PILIH TAHAP KESUKARAN</h2>
+                    <p class="text-sm text-gray-600 mb-6">Pilih cabaran minda anda!</p>
+
+                    <div class="space-y-4">
+                        ${diffs.map(d => `
+                            <div onclick="selectDifficulty('${d.id}')" class="border-2 ${d.color} p-4 rounded-2xl shadow cursor-pointer transition text-left hover:scale-[1.01] flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-bold text-lg">${d.title}</h3>
+                                    <p class="text-xs opacity-90">${d.desc}</p>
+                                </div>
+                                <span class="bg-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">MAIN ▶</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTimerMenu() {
+            const times = [
+                { val: 30, title: '⏱️ 30 SAAT', desc: 'Cabaran pantas masa singkat' },
+                { val: 60, title: '⏱️ 1 MINIT', desc: 'Tempoh standard permainan' },
+                { val: 0, title: '♾️ TIADA HAD MASA', desc: 'Fikir santai tanpa tekanan masa' }
+            ];
+
+            return `
+                <div class="game-card p-6 sm:p-8 w-full max-w-xl mx-auto mt-4 text-center">
+                    <button onclick="playSound('click'); switchScreen('difficulty')" class="float-left bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-xl font-bold text-sm mb-4">
+                        ⬅️ Tahap
+                    </button>
+                    <div class="clear-both"></div>
+                    <h2 class="text-2xl font-bold text-blue-600 mb-2">PILIH TEMPOH MASA</h2>
+                    <p class="text-sm text-gray-600 mb-6">Tentukan mod masa anda untuk 20 soalan!</p>
+
+                    <div class="space-y-4">
+                        ${times.map(t => `
+                            <div onclick="startGameSession(${t.val})" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white p-5 rounded-2xl shadow-lg cursor-pointer transition transform hover:scale-[1.02] flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-bold text-xl">${t.title}</h3>
+                                    <p class="text-xs text-white/90">${t.desc}</p>
+                                </div>
+                                <span class="bg-white/20 px-4 py-2 rounded-xl text-sm font-bold">MULA GAME 🚀</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGamePlayScreen() {
+            const q = gameState.questions[gameState.currentQuestionIndex];
+            const progressPercent = ((gameState.currentQuestionIndex) / gameState.questions.length) * 100;
+
+            return `
+                <div class="game-card p-5 sm:p-8 w-full max-w-2xl mx-auto mt-2">
+                    <!-- Top Game HUD -->
+                    <div class="flex justify-between items-center mb-4 text-sm font-bold">
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-xl">Soalan: ${gameState.currentQuestionIndex + 1}/${gameState.questions.length}</span>
+                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-xl">⭐ Skor: ${gameState.score}/100</span>
+                        <span class="bg-red-100 text-red-700 px-3 py-1 rounded-xl" id="timerDisplay">⏱️ ${gameState.timeLeft === 0 ? '♾️' : gameState.timeLeft + 's'}</span>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-gray-200 h-3 rounded-full mb-6 overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-500 to-green-500 h-3 rounded-full transition-all duration-300" style="width: ${progressPercent}%"></div>
+                    </div>
+
+                    <!-- Streak Display -->
+                    ${gameState.streak >= 3 ? `<div class="text-center mb-3"><span class="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-bounce">🔥 Streak: ${gameState.streak} Berturut-turut!</span></div>` : ''}
+
+                    <!-- Question Box & Illustration -->
+                    <div class="bg-blue-50/70 p-5 rounded-2xl mb-6 text-center border border-blue-100">
+                        ${renderShapeIllustration(q.shape)}
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-800 mt-4">${q.q}</h3>
+                    </div>
+
+                    <!-- Options / Answer Area -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="optionsContainer">
+                        ${q.options.map((opt, idx) => `
+                            <button onclick="checkAnswer(${idx})" class="option-btn bg-white hover:bg-blue-50 border-2 border-indigo-100 hover:border-blue-400 p-4 rounded-2xl shadow font-semibold text-gray-700 text-base transition transform active:scale-95 text-left flex items-center justify-between">
+                                <span>${String.fromCharCode(65 + idx)}. ${opt}</span>
+                                <span class="w-7 h-7 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-xs font-bold">${String.fromCharCode(65 + idx)}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <!-- Feedback Modal Overlay (Hidden by default) -->
+                    <div id="feedbackModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                        <div class="bg-white p-6 rounded-3xl max-w-md w-full text-center shadow-2xl animate-bounce-short" id="feedbackContent">
+                            <!-- Dynamic Feedback content -->
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderResultScreen() {
+            const user = gameState.currentUser;
+            const accuracy = Math.round((gameState.correctCount / gameState.questions.length) * 100);
+            
+            // Check & award badges
+            if (!user.badges) user.badges = [];
+            if (accuracy >= 80 && !user.badges.includes('Shape Champion')) user.badges.push('Shape Champion');
+            if (gameState.selectedTopic === 1 && !user.badges.includes('3D Master')) user.badges.push('3D Master');
+            if (gameState.selectedTopic === 4 && !user.badges.includes('2D Detective')) user.badges.push('2D Detective');
+            if (gameState.selectedTopic === 3 && !user.badges.includes('Net Builder')) user.badges.push('Net Builder');
+            if (gameState.selectedTopic === 5 && !user.badges.includes('Shape Problem Solver')) user.badges.push('Shape Problem Solver');
+
+            if (gameState.score > (user.highScore || 0)) {
+                user.highScore = gameState.score;
+            }
+            user.totalPlayed = (user.totalPlayed || 0) + 1;
+            user.totalCorrect = (user.totalCorrect || 0) + gameState.correctCount;
+            user.totalWrong = (user.totalWrong || 0) + gameState.wrongCount;
+            saveUsers();
+
+            return `
+                <div class="game-card p-6 sm:p-8 w-full max-w-lg mx-auto text-center mt-4">
+                    <div class="text-5xl mb-2">🏆</div>
+                    <h2 class="text-2xl font-extrabold text-indigo-600 mb-1">GAME SELESAI!</h2>
+                    <p class="text-sm text-gray-600 mb-6">Tahniah ${user.name} atas usaha hebat anda!</p>
+
+                    <div class="bg-blue-50 p-5 rounded-2xl mb-6 space-y-3 text-left border border-blue-100">
+                        <div class="flex justify-between font-bold">
+                            <span>⭐ Skor Akhir:</span>
+                            <span class="text-indigo-600 text-lg">${gameState.score} / 100</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span>✅ Jawapan Betul:</span>
+                            <span class="text-green-600 font-bold">${gameState.correctCount} / 20</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span>❌ Jawapan Salah:</span>
+                            <span class="text-red-600 font-bold">${gameState.wrongCount} / 20</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span>🎯 Ketepatan:</span>
+                            <span class="text-blue-600 font-bold">${accuracy}%</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <button onclick="playSound('click'); switchScreen('timer')" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 px-4 rounded-xl shadow hover:opacity-95 transition">
+                            🔄 MAIN LAGI
+                        </button>
+                        <button onclick="playSound('click'); switchScreen('menu')" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold py-3 px-4 rounded-xl shadow hover:opacity-95 transition">
+                            🏠 MENU UTAMA
+                        </button>
+                        <button onclick="playSound('click'); switchScreen('progress')" class="bg-gradient-to-r from-purple-500 to-violet-600 text-white font-bold py-3 px-4 rounded-xl shadow hover:opacity-95 transition col-span-2">
+                            📊 LIHAT PROGRESS & BADGE
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLeaderboardScreen() {
+            const sortedUsers = [...gameState.users].sort((a, b) => (b.highScore || 0) - (a.highScore || 0));
+
+            return `
+                <div class="game-card p-6 sm:p-8 w-full max-w-xl mx-auto mt-4">
+                    <button onclick="playSound('click'); switchScreen('menu')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-xl font-bold text-sm mb-4">
+                        ⬅️ Menu Utama
+                    </button>
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-bold text-amber-600">🏆 LEADERBOARD PEMAIN</h2>
+                        <p class="text-xs text-gray-600 mt-1">Kedudukan skor tertinggi cilik Math Kids</p>
+                    </div>
+
+                    <div class="space-y-3 max-h-96 overflow-y-auto pr-1">
+                        ${sortedUsers.length === 0 ? '<p class="text-center text-gray-500 py-4">Belum ada rekod pemain.</p>' : ''}
+                        ${sortedUsers.map((u, idx) => `
+                            <div class="flex items-center justify-between p-4 rounded-2xl ${idx === 0 ? 'bg-yellow-100 border-2 border-yellow-400' : idx === 1 ? 'bg-gray-100 border-2 border-gray-300' : idx === 2 ? 'bg-amber-50 border-2 border-amber-300' : 'bg-white border'} shadow-sm">
+                                <div class="flex items-center space-x-3">
+                                    <span class="font-extrabold text-lg w-8 h-8 rounded-full bg-white flex items-center justify-center shadow">
+                                        ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}
+                                    </span>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800">${u.name}</h4>
+                                        <p class="text-xs text-gray-500">@${u.username}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-extrabold text-indigo-600 text-lg">⭐ ${u.highScore || 0}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProgressScreen() {
+            const user = gameState.currentUser;
+            const totalQ = (user.totalCorrect || 0) + (user.totalWrong || 0);
+            const acc = totalQ > 0 ? Math.round(((user.totalCorrect || 0) / totalQ) * 100) : 0;
+            const badges = user.badges || [];
+
+            return `
+                <div class="game-card p-6 sm:p-8 w-full max-w-xl mx-auto mt-4">
+                    <button onclick="playSound('click'); switchScreen('menu')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-xl font-bold text-sm mb-4">
+                        ⬅️ Menu Utama
+                    </button>
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-bold text-purple-600">📊 PROGRESS & BADGE</h2>
+                        <p class="text-xs text-gray-600 mt-1">Prestasi pembelajaran ${user.name}</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-blue-50 p-4 rounded-2xl text-center border border-blue-100">
+                            <p class="text-xs text-gray-500">Jumlah Permainan</p>
+                            <p class="text-2xl font-bold text-blue-600 mt-1">${user.totalPlayed || 0}</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-2xl text-center border border-green-100">
+                            <p class="text-xs text-gray-500">Ketepatan Purata</p>
+                            <p class="text-2xl font-bold text-green-600 mt-1">${acc}%</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-50 p-5 rounded-2xl mb-4 border border-indigo-100">
+                        <h3 class="font-bold text-indigo-700 mb-3 text-sm">🏅 Lencana Pencapaian (Badges)</h3>
+                        <div class="flex flex-wrap gap-2">
+                            ${badges.length === 0 ? '<span class="text-xs text-gray-500">Main dan selesaikan misi untuk buka lencana!</span>' : ''}
+                            ${badges.map(b => `
+                                <span class="bg-white text-indigo-800 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm flex items-center space-x-1">
+                                    <span>🏅</span><span>${b}</span>
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAccountScreen() {
+            const user = gameState.currentUser;
+            return `
+                <div class="game-card p-6 sm:p-8 w-full max-w-md mx-auto mt-4 text-center">
+                    <button onclick="playSound('click'); switchScreen('menu')" class="float-left bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-xl font-bold text-sm mb-4">
+                        ⬅️ Menu Utama
+                    </button>
+                    <div class="clear-both"></div>
+                    <div class="w-20 h-20 bg-blue-500 text-white rounded-full flex items-center justify-center text-4xl mx-auto shadow mb-3">
+                        👦
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">${user.name}</h2>
+                    <p class="text-sm text-blue-600 mb-6">@${user.username}</p>
+
+                    <div class="bg-gray-50 p-4 rounded-2xl text-left space-y-2 mb-6 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Skor Tertinggi:</span>
+                            <span class="font-bold text-indigo-600">⭐ ${user.highScore || 0}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Jumlah Permainan:</span>
+                            <span class="font-bold text-gray-800">${user.totalPlayed || 0}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Jumlah Betul:</span>
+                            <span class="font-bold text-green-600">${user.totalCorrect || 0}</span>
+                        </div>
+                    </div>
+
+                    <button onclick="handleLogout()" class="w-full bg-red-100 hover:bg-red-200 text-red-600 font-bold py-3 rounded-xl transition">
+                        🚪 Log Keluar Akaun
+                    </button>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // GAME CONTROLLER ACTIONS
+        // ==========================================
+        function switchScreen(screen) {
+            gameState.currentScreen = screen;
+            render();
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const pass = document.getElementById('loginPassword').value.trim();
+
+            const found = gameState.users.find(u => u.username === username && u.password === pass);
+            if (found) {
+                gameState.currentUser = found;
+                playSound('win');
+                switchScreen('menu');
+            } else {
+                alert('Nama pengguna atau kata laluan tidak sah. Sila cuba lagi atau daftar akaun.');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const username = document.getElementById('regUsername').value.trim();
+            const pass = document.getElementById('regPassword').value.trim();
+
+            if (gameState.users.some(u => u.username === username)) {
+                alert('Nama pengguna sudah wujud. Sila pilih nama pengguna lain.');
+                return;
+            }
+
+            const newUser = {
+                name,
+                username,
+                password: pass,
+                highScore: 0,
+                totalPlayed: 0,
+                totalCorrect: 0,
+                totalWrong: 0,
+                badges: ['Shape Explorer']
+            };
+
+            gameState.users.push(newUser);
+            saveUsers();
+            gameState.currentUser = newUser;
+            playSound('win');
+            switchScreen('menu');
+        }
+
+        function handleLogout() {
+            gameState.currentUser = null;
+            switchScreen('login');
+        }
+
+        function selectTopic(topicId) {
+            gameState.selectedTopic = topicId;
+            switchScreen('gamemode');
+        }
+
+        function selectGameMode(modeId) {
+            gameState.selectedGameMode = modeId;
+            switchScreen('difficulty');
+        }
+
+        function selectDifficulty(diffId) {
+            gameState.selectedDifficulty = diffId;
+            switchScreen('timer');
+        }
+
+        function toggleAudio() {
+            gameState.audioEnabled = !gameState.audioEnabled;
+            const btn = document.getElementById('audioToggleBtn');
+            if (btn) {
+                btn.innerText = gameState.audioEnabled ? '🔊 ON' : '🔇 OFF';
+                btn.className = gameState.audioEnabled ? 'bg-green-500 text-white px-3 py-1.5 rounded-xl font-bold text-xs' : 'bg-gray-400 text-white px-3 py-1.5 rounded-xl font-bold text-xs';
+            }
+        }
+
+        function startGameSession(timeLimit) {
+            gameState.selectedTimeOption = timeLimit;
+            gameState.currentQuestionIndex = 0;
+            gameState.score = 0;
+            gameState.correctCount = 0;
+            gameState.wrongCount = 0;
+            gameState.streak = 0;
+            gameState.timeLeft = timeLimit;
+
+            // Generate 20 unique random questions from bank
+            const bank = questionBank[gameState.selectedTopic][gameState.selectedDifficulty];
+            // Shuffle and pick 20
+            const shuffled = [...bank].sort(() => 0.5 - Math.random());
+            gameState.questions = shuffled.slice(0, 20);
+
+            switchScreen('play');
+            startTimer();
+        }
+
+        function startTimer() {
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+            if (gameState.selectedTimeOption === 0) return; // Infinity
+
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                const timerEl = document.getElementById('timerDisplay');
+                if (timerEl) timerEl.innerText = `⏱️ ${gameState.timeLeft}s`;
+
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function handleTimeOut() {
+            playSound('wrong');
+            gameState.wrongCount++;
+            gameState.streak = 0;
+            const q = gameState.questions[gameState.currentQuestionIndex];
+            showFeedbackModal(false, `Masa habis! Jawapan betul ialah: ${q.options[q.answer]}. ${q.explanation}`);
+        }
+
+        function checkAnswer(selectedIdx) {
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+            const q = gameState.questions[gameState.currentQuestionIndex];
+            const isCorrect = (selectedIdx === q.answer);
+
+            const modal = document.getElementById('feedbackModal');
+            const content = document.getElementById('feedbackContent');
+
+            if (isCorrect) {
+                playSound('correct');
+                gameState.correctCount++;
+                gameState.score += 5; // 5 marks per question -> max 100
+                gameState.streak++;
+                if (gameState.streak % 3 === 0) playSound('win');
+
+                content.innerHTML = `
+                    <div class="text-5xl mb-2">🎉🎆⭐</div>
+                    <h3 class="text-2xl font-bold text-green-600 mb-1">TAHNIAH! JAWAPAN BETUL!</h3>
+                    <p class="text-sm text-indigo-600 font-bold mb-3">+5 MARKAH</p>
+                    <p class="text-xs text-gray-600 mb-4">${q.explanation}</p>
+                    <button onclick="nextQuestion()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl shadow">
+                        SETERUSNYA ▶
+                    </button>
+                `;
+            } else {
+                playSound('wrong');
+                gameState.wrongCount++;
+                gameState.streak = 0;
+
+                content.innerHTML = `
+                    <div class="text-5xl mb-2">❌</div>
+                    <h3 class="text-2xl font-bold text-red-600 mb-1">CUBA LAGI!</h3>
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Jawapan betul ialah: <span class="text-green-600">${q.options[q.answer]}</span></p>
+                    <p class="text-xs text-gray-600 mb-4">${q.explanation}</p>
+                    <button onclick="nextQuestion()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow">
+                        SETERUSNYA ▶
+                    </button>
+                `;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function showFeedbackModal(isCorrect, text) {
+            const modal = document.getElementById('feedbackModal');
+            const content = document.getElementById('feedbackContent');
+            content.innerHTML = `
+                <div class="text-5xl mb-2">⏰❌</div>
+                <h3 class="text-2xl font-bold text-red-600 mb-1">MASA TAMAT!</h3>
+                <p class="text-xs text-gray-600 mb-4">${text}</p>
+                <button onclick="nextQuestion()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow">
+                    SETERUSNYA ▶
+                </button>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            const modal = document.getElementById('feedbackModal');
+            modal.classList.add('hidden');
+
+            gameState.currentQuestionIndex++;
+            if (gameState.currentQuestionIndex < gameState.questions.length) {
+                gameState.timeLeft = gameState.selectedTimeOption;
+                render();
+                if (gameState.selectedTimeOption > 0) startTimer();
+            } else {
+                playSound('win');
+                switchScreen('result');
+            }
+        }
+
+        // Initialize app on window load
+        window.onload = function() {
+            render();
+        };
+    </script>
+</body>
+</html>

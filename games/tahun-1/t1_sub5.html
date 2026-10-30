@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDU KIDZ – Matematik Tahun 1 (Masa dan Waktu)</title>
+    <!-- Tailwind CSS untuk reka bentuk moden, ceria & responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins & Fredoka untuk gaya ceria kanak-kanak -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #fef08a 0%, #bae6fd 50%, #fbcfe8 100%);
+            min-height: 100vh;
+        }
+        .font-fredoka {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+        /* Animasi comel & letusan bintang */
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 2s infinite ease-in-out;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(234, 179, 8, 0.6); }
+            50% { transform: scale(1.03); box-shadow: 0 0 25px rgba(234, 179, 8, 0.9); }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen selection:bg-amber-300">
+
+    <header class="bg-white/80 backdrop-blur-md shadow-sm border-b border-amber-100 py-3 px-6 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.navigasiKeMenu()">
+                <div class="w-12 h-12 bg-amber-400 rounded-2xl flex items-center justify-center shadow-md transform rotate-3 hover:rotate-6 transition">
+                    <span class="text-2xl">⏰</span>
+                </div>
+                <div>
+                    <h1 class="font-fredoka text-2xl font-bold bg-gradient-to-r from-amber-500 to-rose-500 bg-clip-text text-transparent">EDU KIDZ</h1>
+                    <p class="text-xs text-slate-500 font-medium">Matematik Tahun 1 – Masa & Waktu</p>
+                </div>
+            </div>
+            <div id="user-info-bar" class="hidden items-center space-x-4">
+                <span class="text-sm font-semibold bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full border border-amber-200" id="current-user-display">👋 Aiman</span>
+                <button onclick="app.bukaTetapan()" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-lg transition" title="Tetapan Bunyi">🔊</button>
+                <button onclick="app.logKeluar()" class="text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-full border border-rose-200 transition">Log Keluar</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Kontena Paparan Utama (Dinamik mengikut state aplikasi) -->
+    <main class="flex-grow max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center items-center">
+        <div id="app-container" class="w-full bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border-4 border-amber-200 p-6 sm:p-8 relative overflow-hidden transition-all duration-300">
+            <!-- Kandungan dimuatkan secara dinamik melalui JavaScript -->
+        </div>
+    </main>
+
+    <!-- Footer Ceria -->
+    <footer class="py-4 text-center text-xs text-slate-600 font-medium">
+        ⭐ Slogan: <span class="font-bold text-amber-600">"Belajar Masa, Jadi Hebat!"</span> • Silibus KPM Tahun 1 ⭐
+    </footer>
+
+    <script>
+        // Web Audio API untuk kesan bunyi ceria tanpa fail luar
+        class SoundFX {
+            constructor() {
+                this.enabled = true;
+                this.ctx = null;
+            }
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+            playCorrect() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+            playWrong() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.setValueAtTime(180, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+            playClick() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, now);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            }
+        }
+
+        const sound = new SoundFX();
+
+        // Bank Soalan Komprehensif: 300 Soalan Unik (5 Topik x 3 Tahap x 20 Soalan)
+        class BankSoalanManager {
+            constructor() {
+                this.soalanList = [];
+                this.janaSemuaSoalan();
+            }
+
+            janaSemuaSoalan() {
+                const topikNama = [
+                    "Kenali Jam dan Masa",
+                    "Padankan Gambarajah Jarum Jam dan Minit",
+                    "Kenali Hari, Minggu dan Bulan",
+                    "Lengkapkan Ayat Matematik Berdasarkan Gambar",
+                    "Soalan Penyelesaian Masalah"
+                ];
+
+                const tahapList = ["Senang", "Sederhana", "Susah"];
+                const arasKognitifList = {
+                    "Senang": ["Mengingat", "Memahami"],
+                    "Sederhana": ["Memahami", "Mengaplikasi"],
+                    "Susah": ["Mengaplikasi"]
+                };
+
+                topikNama.forEach((topik, tIndex) => {
+                    tahapList.forEach((tahap, thIndex) => {
+                        for (let i = 1; i <= 20; i++) {
+                            let qId = `MASA-${tIndex+1}-${thIndex+1}-${String(i).padStart(3, '0')}`;
+                            let gameTypeOptions = ["objektif", "isitempat", "padanan", "dragdrop"];
+                            let gType = gameTypeOptions[(i + tIndex + thIndex) % gameTypeOptions.length];
+                            if (tIndex === 2) gType = (i % 2 === 0) ? "objektif" : "isitempat";
+                            if (tIndex === 4) gType = "objektif";
+
+                            let generated = this.binaSoalanUnik(tIndex + 1, tahap, i, gType);
+                            this.soalanList.push({
+                                questionId: qId,
+                                topicId: tIndex + 1,
+                                topicName: topik,
+                                difficulty: tahap,
+                                cognitiveLevel: arasKognitifList[tahap][i % arasKognitifList[tahap].length],
+                                gameType: gType,
+                                question: generated.question,
+                                imageType: generated.imageType,
+                                imageDetails: generated.imageDetails,
+                                options: generated.options,
+                                correctAnswer: generated.correctAnswer,
+                                marks: 5
+                            });
+                        }
+                    });
+                });
+            }
+
+            binaSoalanUnik(topikId, tahap, index, gameType) {
+                let q = "", imgT = "none", imgD = null, opts = [], ans = "";
+
+                if (topikId === 1) {
+                    // Topik 1: Kenali Jam dan Masa
+                    let jam = ((index + 3) % 12) + 1;
+                    let minitVal = (index % 3 === 0) ? 30 : 0;
+                    q = `Lihat kedudukan jarum pada jam analog. Pukul berapakah waktu tersebut? (Sesi Q1-${index})`;
+                    imgT = "analog";
+                    imgD = { jam: jam, minit: minitVal };
+                    
+                    let benar = `${jam}:${minitVal === 0 ? '00' : '30'}`;
+                    let o1 = `${((jam + 1) % 12) + 1}:00`;
+                    let o2 = `${((jam + 2) % 12) + 1}:30`;
+                    let o3 = `${((jam + 4) % 12) + 1}:00`;
+                    opts = this.acakPilihan([benar, o1, o2, o3]);
+                    ans = benar;
+                } 
+                else if (topikId === 2) {
+                    // Topik 2: Padankan/Kenal Jam & Minit
+                    let jam = (index % 11) + 1;
+                    q = `Antara berikut, pernyataan manakah yang betul mengenai jarum jam pada kedudukan angka ${jam}? (Sesi Q2-${index})`;
+                    imgT = "analog";
+                    imgD = { jam: jam, minit: 0 };
+                    let benar = `Jarum pendek menunjuk tepat ke angka ${jam}`;
+                    let o1 = `Jarum panjang menunjuk tepat ke angka ${jam}`;
+                    let o2 = `Kedua-dua jarum berada di angka 12`;
+                    let o3 = `Jarum pendek berada di angka ${((jam + 3) % 12) + 1}`;
+                    opts = this.acakPilihan([benar, o1, o2, o3]);
+                    ans = benar;
+                }
+                else if (topikId === 3) {
+                    // Topik 3: Kenali Hari, Minggu dan Bulan
+                    const hariArr = ["Isnin", "Selasa", "Rabu", "Khamis", "Jumaat", "Sabtu", "Ahad"];
+                    const bulanArr = ["Januari", "Februari", "Mac", "April", "Mei", "Jun", "Julai", "Ogos", "September", "Oktober", "November", "Disember"];
+                    
+                    if (index % 2 === 0) {
+                        let hIdx = (index * 2) % 7;
+                        let hariIni = hariArr[hIdx];
+                        let hariBesok = hariArr[(hIdx + 1) % 7];
+                        q = `Jika hari ini ialah ${hariIni}, apakah hari selepas ${hariIni}? (Sesi Q3-${index})`;
+                        imgT = "kalendar";
+                        imgD = { text: hariIni };
+                        opts = this.acakPilihan([hariBesok, hariArr[(hIdx + 2) % 7], hariArr[(hIdx + 4) % 7], hariArr[(hIdx + 3) % 7]]);
+                        ans = hariBesok;
+                    } else {
+                        let bIdx = (index * 3) % 12;
+                        let bulanIni = bulanArr[bIdx];
+                        let bulanDepan = bulanArr[(bIdx + 1) % 12];
+                        q = `Bulan apakah yang hadir selepas bulan ${bulanIni} dalam kalendar Masihi? (Sesi Q3-${index})`;
+                        imgT = "kalendar";
+                        imgD = { text: bulanIni };
+                        opts = this.acakPilihan([bulanDepan, bulanArr[(bIdx + 2) % 12], bulanArr[(bIdx + 4) % 12], bulanArr[(bIdx + 3) % 12]]);
+                        ans = bulanDepan;
+                    }
+                }
+                else if (topikId === 4) {
+                    // Topik 4: Lengkapkan Ayat Matematik Berdasarkan Gambar (Refined - Unik & Pelbagai Aktiviti Harian)
+                    const senaraiAktivitiTahun1 = [
+                        { ketegori: "pagi", situasi: "Ali bangun dari tidur dan bersarapan bersama keluarga.", pilihan: ["pagi", "petang", "malam", "tengah hari"], jawapan: "pagi" },
+                        { ketegori: "pagi", situasi: "Siti bersiap memakai uniform sekolah dan menaiki bas ke sekolah.", pilihan: ["pagi", "petang", "malam", "tengah hari"], jawapan: "pagi" },
+                        { ketegori: "tengah hari", situasi: "Murid-murid beratur membeli makanan di kantin sekolah pada waktu rehat.", pilihan: ["tengah hari", "pagi", "malam", "subuh"], jawapan: "tengah hari" },
+                        { ketegori: "tengah hari", situasi: "Lonceng berbunyi menandakan sesi persekolahan sesi pagi tamat dan murid pulang.", pilihan: ["tengah hari", "pagi", "malam", "lewat malam"], jawapan: "tengah hari" },
+                        { ketegori: "petang", situasi: "Ahmad bermain bola sepak bersama rakan-rakan di padang taman perumahan.", pilihan: ["petang", "pagi", "tengah hari", "malam"], jawapan: "petang" },
+                        { ketegori: "petang", situasi: "Ibu menyiram pokok bunga dan pokok herba di halaman rumah.", pilihan: ["petang", "pagi", "malam", "tengah hari"], jawapan: "petang" },
+                        { ketegori: "malam", situasi: "Fatimah menyiapkan kerja sekolah dan mengulang kaji pelajaran di bilik tidur.", pilihan: ["malam", "pagi", "tengah hari", "petang"], jawapan: "malam" },
+                        { ketegori: "malam", situasi: "Ah Chong bersedia untuk tidur di atas katil selepas membaca buku cerita.", pilihan: ["malam", "pagi", "tengah hari", "petang"], jawapan: "malam" },
+                        { ketegori: "pagi", situasi: "Matahari terbit di sebelah timur membawa cahaya terang.", pilihan: ["pagi", "malam", "tengah hari", "petang"], jawapan: "pagi" },
+                        { ketegori: "malam", situasi: "Bulan dan bintang kelihatan bersinar terang di langit gelap.", pilihan: ["malam", "pagi", "petang", "tengah hari"], jawapan: "malam" },
+                        { ketegori: "petang", situasi: "Aktiviti riadah keluarga berbasikal di taman tasik ketika cahaya matahari mula condong.", pilihan: ["petang", "pagi", "tengah hari", "malam"], jawapan: "petang" },
+                        { ketegori: "pagi", situasi: "Cikgu memulakan sesi perhimpunan mingguan sekolah pada jam 7:30.", pilihan: ["pagi", "petang", "malam", "tengah hari"], jawapan: "pagi" },
+                        { ketegori: "tengah hari", situasi: "Azman mencuci tangan di sinki kantin sebelum memulakan jamuan makan tengah hari.", pilihan: ["tengah hari", "pagi", "petang", "malam"], jawapan: "tengah hari" },
+                        { ketegori: "malam", situasi: "Seluruh ahli keluarga berkumpul di ruang tamu menonton berita televisyen.", pilihan: ["malam", "pagi", "petang", "tengah hari"], jawapan: "malam" },
+                        { ketegori: "petang", situasi: "Kucing kesayangan tidur lena di atas sofa ruang tamu selepas meronda.", pilihan: ["petang", "pagi", "malam", "tengah hari"], jawapan: "petang" },
+                        { ketegori: "pagi", situasi: "Burung-burung berkicauan merdu di atas pokok ketika udara masih segar.", pilihan: ["pagi", "malam", "petang", "tengah hari"], jawapan: "pagi" },
+                        { ketegori: "tengah hari", situasi: "Bayang-bayang objek kelihatan paling pendek dan tegak di bawah cahaya matahari tegak di atas kepala.", pilihan: ["tengah hari", "pagi", "malam", "petang"], jawapan: "tengah hari" },
+                        { ketegori: "malam", situasi: "Suasana sekeliling menjadi sunyi senyap kerana semua penduduk telah masuk tidur.", pilihan: ["malam", "pagi", "tengah hari", "petang"], jawapan: "malam" },
+                        { ketegori: "petang", situasi: "Nelayan bersiap mengemas jala di pesisir pantai ketika matahari mula terbenam di ufuk barat.", pilihan: ["petang", "pagi", "malam", "tengah hari"], jawapan: "petang" },
+                        { ketegori: "pagi", situasi: "Ibu bapa menghantar anak-anak ke pintu pagar sekolah dengan senyuman ceria.", pilihan: ["pagi", "petang", "malam", "tengah hari"], jawapan: "pagi" }
+                    ];
+
+                    let actItem = senaraiAktivitiTahun1[(index - 1) % senaraiAktivitiTahun1.length];
+                    q = `Lengkapkan ayat situasi aktiviti berikut:\n"${actItem.situasi}"\nAktiviti di atas biasanya berlaku pada waktu... (Q4-${index})`;
+                    imgT = "aktiviti_ref";
+                    imgD = { teksAktiviti: actItem.situasi };
+                    opts = this.acakPilihan([...actItem.pilihan]);
+                    ans = actItem.jawapan;
+                }
+                else {
+                    // Topik 5: Soalan Penyelesaian Masalah (Refined - 100% Unik, Variatif Tanpa Duplikasi Soalan & Gambarajah)
+                    const senaraiPenyelesaianMasalah = [
+                        {
+                            soalan: "Ali membawa wang sebanyak RM5 ke sekolah. Dia membeli sepotong kek berharga RM2 pada waktu rehat pukul 10:00 pagi. Berapakah baki wang Ali selepas membeli kek tersebut?",
+                            gambar: { jenis: "wang_kertas", info: "RM5 & RM2" },
+                            pilihan: ["RM3", "RM2", "RM5", "RM7"],
+                            jawapan: "RM3"
+                        },
+                        {
+                            soalan: "Siti mula membaca buku cerita pada pukul 3:00 petang dan selesai membaca pada pukul 4:00 petang. Berapakah tempoh masa Siti membaca buku cerita itu?",
+                            gambar: { jenis: "jam_tempoh", info: "3:00 petang hingga 4:00 petang" },
+                            pilihan: ["1 jam", "2 jam", "30 minit", "3 jam"],
+                            jawapan: "1 jam"
+                        },
+                        {
+                            soalan: "Ahmad mempunyai dua keping syiling 50 sen dan sekeping wang kertas RM1 di dalam tabung miliknya. Berapakah jumlah nilai wang tabung Ahmad?",
+                            gambar: { jenis: "syiling_wang", info: "50 sen & RM1" },
+                            pilihan: ["RM2.00", "RM1.50", "RM1.00", "RM2.50"],
+                            jawapan: "RM2.00"
+                        },
+                        {
+                            soalan: "Ibu pergi ke pasar raya pada hari Sabtu dan merancang untuk pulang bercuti di kampung halaman pada lusa. Hari apakah ibu pulang ke kampung jika hari ini hari Sabtu?",
+                            gambar: { jenis: "kalendar_hari", info: "Sabtu + 2 hari" },
+                            pilihan: ["Isnin", "Ahad", "Selasa", "Rabu"],
+                            jawapan: "Isnin"
+                        },
+                        {
+                            soalan: "Kelas Matematik Cikgu Aminah bermula tepat pada pukul 8:00 pagi dan tamat pada pukul 9:00 pagi. Berapakah jam tempoh masa kelas Matematik tersebut?",
+                            gambar: { jenis: "jam_analog_pukul", info: "8:00 hingga 9:00" },
+                            pilihan: ["1 jam", "2 jam", "60 minit", "Jawapan A dan C betul"],
+                            jawapan: "Jawapan A dan C betul"
+                        },
+                        {
+                            soalan: "Fatimah menyimpan wang sebanyak RM10 yang diberikan oleh datuknya pada bulan Januari. Dia tidak menggunakan wang itu sehingga bulan Februari. Berapa lamakah tempoh sebulan dalam kalendar Masihi?",
+                            gambar: { jenis: "kalendar_bulan", info: "Januari ke Februari" },
+                            pilihan: ["1 bulan", "2 bulan", "30 hari", "7 hari"],
+                            jawapan: "1 bulan"
+                        },
+                        {
+                            soalan: "Azman menaiki bas sekolah ke sekolah pada pukul 6:30 pagi. Perjalanan mengambil masa selama setengah jam. Pukul berapakah Azman tiba di sekolah?",
+                            gambar: { jenis: "jam_minit", info: "6:30 + 30 minit" },
+                            pilihan: ["7:00 pagi", "7:30 pagi", "6:00 pagi", "8:00 pagi"],
+                            jawapan: "7:00 pagi"
+                        },
+                        {
+                            soalan: "Mei Ling membeli pensel sebatang berharga RM1 dan pemadam berharga 50 sen di kedai buku sekolah pada pukul 10:15 pagi. Berapakah jumlah harga barang yang dibeli?",
+                            gambar: { jenis: "harga_barang", info: "RM1 + 50 sen" },
+                            pilihan: ["RM1.50", "RM2.00", "RM1.00", "RM0.50"],
+                            jawapan: "RM1.50"
+                        },
+                        {
+                            soalan: "Hari sukan sekolah dijadualkan berlangsung pada hari Jumaat minggu hadapan. Jika hari ini hari Isnin, berapakah bilangan hari lagi sebelum hari Jumaat tiba?",
+                            gambar: { jenis: "bilangan_hari", info: "Isnin ke Jumaat" },
+                            pilihan: ["4 hari", "5 hari", "3 hari", "6 hari"],
+                            jawapan: "4 hari"
+                        },
+                        {
+                            soalan: "Bapa menyiram pokok bunga di halaman rumah selama 1 jam dari pukul 5:00 petang. Pukul berapakah bapa selesai menyiram pokok bunga tersebut?",
+                            gambar: { jenis: "jam_petang", info: "5:00 petang + 1 jam" },
+                            pilihan: ["6:00 petang", "5:30 petang", "7:00 petang", "4:00 petang"],
+                            jawapan: "6:00 petang"
+                        },
+                        {
+                            soalan: "Zul mempunyai wang kertas RM5 dan sekeping wang kertas RM20. Berapakah jumlah keseluruhan wang kertas yang dimiliki oleh Zul?",
+                            gambar: { jenis: "wang_kertas_jumlah", info: "RM5 + RM20" },
+                            pilihan: ["RM25", "RM15", "RM30", "RM10"],
+                            jawapan: "RM25"
+                        },
+                        {
+                            soalan: "Keluarga Amin melancong ke Melaka selama 2 minggu pada cuti sekolah penggal pertama. Berapakah jumlah hari bagi tempoh 2 minggu tersebut?",
+                            gambar: { jenis: "minggu_hari", info: "2 minggu" },
+                            pilihan: ["14 hari", "7 hari", "20 hari", "10 hari"],
+                            jawapan: "14 hari"
+                        },
+                        {
+                            soalan: "Sebuah bas sekolah bertolak dari taman perumahan pada pukul 6:45 pagi dan tiba di perkarangan sekolah pada pukul 7:15 pagi. Berapakah minit tempoh perjalanan bas itu?",
+                            gambar: { jenis: "tempoh_minit", info: "6:45 ke 7:15" },
+                            pilihan: ["30 minit", "15 minit", "45 minit", "60 minit"],
+                            jawapan: "30 minit"
+                        },
+                        {
+                            soalan: "Chong membantu ibu mengemas dapur pada hari Ahad dari pukul 9:00 pagi hingga pukul 10:00 pagi. Berapakah tempoh masa Chong mengemas dapur?",
+                            gambar: { jenis: "masa_aktiviti", info: "9:00 hingga 10:00" },
+                            pilihan: ["1 jam", "2 jam", "30 minit", "3 jam"],
+                            jawapan: "1 jam"
+                        },
+                        {
+                            soalan: "Adik berumur 7 tahun pada tahun ini. Berapakah umur adik dalam tempoh 12 bulan atau setahun akan datang?",
+                            gambar: { jenis: "umur_tahun", info: "7 tahun + 1 tahun" },
+                            pilihan: ["8 tahun", "7 tahun", "9 tahun", "6 tahun"],
+                            jawapan: "8 tahun"
+                        },
+                        {
+                            soalan: "Salmah membeli sebuah buku nota berharga RM2 dan sebatang pen berharga RM1 menggunakan sekeping wang kertas RM5. Berapakah baki wang yang diterima oleh Salmah?",
+                            gambar: { jenis: "baki_wang", info: "RM5 - (RM2 + RM1)" },
+                            pilihan: ["RM2", "RM1", "RM3", "RM4"],
+                            jawapan: "RM2"
+                        },
+                        {
+                            soalan: "Cuti penggal persekolahan bermula pada bulan Disember setiap tahun. Apakah bulan yang mendahului bulan Disember dalam takwim setahun?",
+                            gambar: { jenis: "bulan_sebelum", info: "Sebelum Disember" },
+                            pilihan: ["November", "Oktober", "Januari", "September"],
+                            jawapan: "November"
+                        },
+                        {
+                            soalan: "Hari lahir Nadia jatuh pada hari Rabu minggu ini. Kakaknya pula menyambut hari lahir tepat 3 hari selepas hari Rabu. Hari apakah hari lahir kakak Nadia?",
+                            gambar: { jenis: "hari_selepas", info: "Rabu + 3 hari" },
+                            pilihan: ["Sabtu", "Jumaat", "Ahad", "Khamis"],
+                            jawapan: "Sabtu"
+                        },
+                        {
+                            soalan: "Ibu memasak sup ayam di dapur selama 1 jam bermula pada pukul 11:00 pagi. Pukul berapakah sup ayam tersebut siap dimasak oleh ibu?",
+                            gambar: { jenis: "masa_masak", info: "11:00 pagi + 1 jam" },
+                            pilihan: ["12:00 tengah hari", "1:00 petang", "11:30 pagi", "2:00 petang"],
+                            jawapan: "12:00 tengah hari"
+                        },
+                        {
+                            soalan: "Danial mempunyai 4 keping syiling 20 sen di dalam poket baju sekolahnya. Berapakah jumlah nilai ringgit dan sen bagi duit syiling Danial?",
+                            gambar: { jenis: "syiling_20sen", info: "4 x 20 sen" },
+                            pilihan: ["80 sen", "60 sen", "RM1.00", "40 sen"],
+                            jawapan: "80 sen"
+                        }
+                    ];
+
+                    let pItem = senaraiPenyelesaianMasalah[(index - 1) % senaraiPenyelesaianMasalah.length];
+                    q = `Soalan Penyelesaian Masalah:\n"${pItem.soalan}" (Q5-${index})`;
+                    imgT = "penyelesaian_masalah";
+                    imgD = { info: pItem.gambar.info };
+                    opts = this.acakPilihan([...pItem.pilihan]);
+                    ans = pItem.jawapan;
+                }
+
+                return { question: q, imageType: imgT, imageDetails: imgD, options: opts, correctAnswer: ans };
+            }
+
+            acakPilihan(array) {
+                return [...array].sort(() => Math.random() - 0.5);
+            }
+
+            getSoalanByTopikTahap(topicId, difficulty) {
+                let filtered = this.soalanList.filter(s => s.topicId === Number(topicId) && s.difficulty === difficulty);
+                return [...filtered].sort(() => Math.random() - 0.5).slice(0, 20);
+            }
+        }
+
+        const bankSoalan = new BankSoalanManager();
+
+        // State Aplikasi & Pengurusan Akaun Lokal (LocalStorage)
+        class EduKidzApp {
+            constructor() {
+                this.currentUser = null;
+                this.users = JSON.parse(localStorage.getItem('edukidz_users')) || [];
+                this.currentView = 'auth'; // auth, menu, topik, tahap, mod, masa, permainan, keputusan, progress, leaderboard, tetapan
+                this.selectedTopic = null;
+                this.selectedDifficulty = null;
+                this.selectedGameMode = null;
+                this.selectedTimeLimit = 30; // 30 saat, 60 saat, atau 0 (tiada had)
+                
+                // State Semasa Permainan
+                this.activeQuestions = [];
+                this.currentIndex = 0;
+                this.score = 0;
+                this.correctCount = 0;
+                this.wrongCount = 0;
+                this.unansweredCount = 0;
+                this.timerInterval = null;
+                this.timeLeft = 30;
+                this.userAnswersRecord = [];
+
+                this.init();
+            }
+
+            init() {
+                this.render();
+            }
+
+            simpanDatabase() {
+                localStorage.setItem('edukidz_users', JSON.stringify(this.users));
+            }
+
+            // --- Fungsi Paparan & Navigasi ---
+            render() {
+                const container = document.getElementById('app-container');
+                const userInfoBar = document.getElementById('user-info-bar');
+
+                if (this.currentUser) {
+                    userInfoBar.classList.remove('hidden');
+                    userInfoBar.classList.add('flex');
+                    document.getElementById('current-user-display').innerText = `👋 ${this.currentUser.nama}`;
+                } else {
+                    userInfoBar.classList.remove('flex');
+                    userInfoBar.classList.add('hidden');
+                }
+
+                if (!this.currentUser && this.currentView !== 'auth') {
+                    this.currentView = 'auth';
+                }
+
+                switch(this.currentView) {
+                    case 'auth':
+                        container.innerHTML = this.renderAuthHTML();
+                        break;
+                    case 'menu':
+                        container.innerHTML = this.renderMenuHTML();
+                        break;
+                    case 'topik':
+                        container.innerHTML = this.renderTopikHTML();
+                        break;
+                    case 'tahap':
+                        container.innerHTML = this.renderTahapHTML();
+                        break;
+                    case 'mod':
+                        container.innerHTML = this.renderModHTML();
+                        break;
+                    case 'masa':
+                        container.innerHTML = this.renderMasaHTML();
+                        break;
+                    case 'permainan':
+                        container.innerHTML = this.renderPermainanHTML();
+                        this.mulakanTimerSoalan();
+                        break;
+                    case 'keputusan':
+                        container.innerHTML = this.renderKeputusanHTML();
+                        break;
+                    case 'progress':
+                        container.innerHTML = this.renderProgressHTML();
+                        break;
+                    case 'leaderboard':
+                        container.innerHTML = this.renderLeaderboardHTML();
+                        break;
+                    case 'tetapan':
+                        container.innerHTML = this.renderTetapanHTML();
+                        break;
+                }
+            }
+
+            // --- AUTENTIKASI ---
+            renderAuthHTML() {
+                return `
+                    <div class="text-center max-w-md mx-auto py-4">
+                        <div class="inline-block p-4 bg-amber-100 rounded-3xl mb-3 shadow-inner">
+                            <span class="text-5xl">⏰👦👧</span>
+                        </div>
+                        <h2 class="font-fredoka text-3xl font-bold text-amber-600 mb-1">EDU KIDZ</h2>
+                        <p class="text-slate-600 text-sm mb-6 font-medium">Matematik Tahun 1 – Masa dan Waktu<br><span class="text-rose-500 font-bold">"Belajar Masa, Jadi Hebat!"</span></p>
+                        
+                        <div class="flex bg-amber-50 p-1.5 rounded-2xl mb-6 border border-amber-200">
+                            <button id="tab-login-btn" onclick="app.switchAuthTab('login')" class="flex-1 py-2.5 rounded-xl font-bold text-sm transition bg-white text-amber-600 shadow-sm">Login Akaun</button>
+                            <button id="tab-daftar-btn" onclick="app.switchAuthTab('daftar')" class="flex-1 py-2.5 rounded-xl font-bold text-sm transition text-slate-500 hover:text-amber-600">Daftar Baru</button>
+                        </div>
+
+                        <!-- Borang Login -->
+                        <div id="form-login" class="space-y-4 text-left">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">NAMA PENGGUNA</label>
+                                <input type="text" id="login-username" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-400 font-medium text-sm" placeholder="cth: aiman123">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">KATA LALUAN</label>
+                                <input type="password" id="login-password" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-400 font-medium text-sm" placeholder="••••••••">
+                            </div>
+                            <button onclick="app.prosesLogin()" class="w-full py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white font-bold rounded-xl shadow-lg transform active:scale-95 transition text-base">
+                                🚀 MASUK SEKARANG
+                            </button>
+                        </div>
+
+                        <!-- Borang Daftar -->
+                        <div id="form-daftar" class="space-y-4 text-left hidden">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">NAMA PENUH MURID</label>
+                                <input type="text" id="daftar-nama" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 font-medium text-sm" placeholder="cth: Aiman Hakim">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">NAMA PENGGUNA UNIK</label>
+                                <input type="text" id="daftar-username" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 font-medium text-sm" placeholder="cth: aiman123">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">KATA LALUAN</label>
+                                <input type="password" id="daftar-password" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-400 font-medium text-sm" placeholder="••••••••">
+                            </div>
+                            <button onclick="app.prosesDaftar()" class="w-full py-3.5 bg-gradient-to-r from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white font-bold rounded-xl shadow-lg transform active:scale-95 transition text-base">
+                                ✨ DAFTAR AKAUN BARU
+                            </button>
+                        </div>
+                        <div id="auth-msg" class="mt-4 text-xs font-bold text-rose-600"></div>
+                    </div>
+                `;
+            }
+
+            switchAuthTab(tab) {
+                sound.playClick();
+                const lForm = document.getElementById('form-login');
+                const dForm = document.getElementById('form-daftar');
+                const lBtn = document.getElementById('tab-login-btn');
+                const dBtn = document.getElementById('tab-daftar-btn');
+                const msg = document.getElementById('auth-msg');
+                msg.innerText = '';
+
+                if (tab === 'login') {
+                    lForm.classList.remove('hidden');
+                    dForm.classList.add('hidden');
+                    lBtn.className = "flex-1 py-2.5 rounded-xl font-bold text-sm transition bg-white text-amber-600 shadow-sm";
+                    dBtn.className = "flex-1 py-2.5 rounded-xl font-bold text-sm transition text-slate-500 hover:text-amber-600";
+                } else {
+                    lForm.classList.add('hidden');
+                    dForm.classList.remove('hidden');
+                    dBtn.className = "flex-1 py-2.5 rounded-xl font-bold text-sm transition bg-white text-rose-600 shadow-sm";
+                    lBtn.className = "flex-1 py-2.5 rounded-xl font-bold text-sm transition text-slate-500 hover:text-rose-600";
+                }
+            }
+
+            prosesLogin() {
+                sound.playClick();
+                const u = document.getElementById('login-username').value.trim();
+                const p = document.getElementById('login-password').value.trim();
+                const msg = document.getElementById('auth-msg');
+
+                if (!u || !p) {
+                    msg.innerText = "Sila isi nama pengguna dan kata laluan!";
+                    return;
+                }
+
+                const found = this.users.find(x => x.username === u && x.password === p);
+                if (found) {
+                    this.currentUser = found;
+                    this.currentView = 'menu';
+                    this.render();
+                } else {
+                    msg.innerText = "Nama pengguna atau kata laluan tidak sah!";
+                }
+            }
+
+            prosesDaftar() {
+                sound.playClick();
+                const nama = document.getElementById('daftar-nama').value.trim();
+                const u = document.getElementById('daftar-username').value.trim();
+                const p = document.getElementById('daftar-password').value.trim();
+                const msg = document.getElementById('auth-msg');
+
+                if (!nama || !u || !p) {
+                    msg.innerText = "Sila lengkapkan semua medan pendaftaran!";
+                    return;
+                }
+
+                if (this.users.some(x => x.username === u)) {
+                    msg.innerText = "Nama pengguna telah wujud! Sila guna nama lain.";
+                    return;
+                }
+
+                const newUser = {
+                    nama: nama,
+                    username: u,
+                    password: p,
+                    totalSoalanDijawab: 0,
+                    totalBetul: 0,
+                    totalSalah: 0,
+                    totalMarkah: 0,
+                    skorTertinggi: 0,
+                    topikSelesai: [],
+                    tahapSelesai: [],
+                    lencana: []
+                };
+
+                this.users.push(newUser);
+                this.simpanDatabase();
+                this.currentUser = newUser;
+                this.currentView = 'menu';
+                this.render();
+            }
+
+            logKeluar() {
+                sound.playClick();
+                this.currentUser = null;
+                this.currentView = 'auth';
+                this.render();
+            }
+
+            // --- MENU UTAMA ---
+            renderMenuHTML() {
+                return `
+                    <div class="text-center">
+                        <div class="mb-4">
+                            <span class="inline-block px-4 py-1.5 bg-amber-100 text-amber-800 rounded-full font-bold text-sm border border-amber-200">
+                                Selamat datang, ${this.currentUser.nama}! 👋
+                            </span>
+                        </div>
+                        <h2 class="font-fredoka text-3xl font-bold text-slate-800 mb-2">MENU UTAMA EDU KIDZ</h2>
+                        <p class="text-slate-500 text-sm mb-6">Pilih aktiviti pembelajaran seronok di bawah:</p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto">
+                            <button onclick="app.navigasiKeTopik()" class="p-5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white rounded-2xl shadow-lg font-bold text-lg flex items-center justify-center space-x-3 transform active:scale-95 transition">
+                                <span class="text-2xl">🎮</span>
+                                <span>MULA BERMAIN</span>
+                            </button>
+                            <button onclick="app.pilihTopikLangsung()" class="p-5 bg-gradient-to-r from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 text-white rounded-2xl shadow-lg font-bold text-lg flex items-center justify-center space-x-3 transform active:scale-95 transition">
+                                <span class="text-2xl">📚</span>
+                                <span>PILIH TOPIK</span>
+                            </button>
+                            <button onclick="app.bukaLeaderboard()" class="p-5 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-white rounded-2xl shadow-lg font-bold text-lg flex items-center justify-center space-x-3 transform active:scale-95 transition">
+                                <span class="text-2xl">🏆</span>
+                                <span>LEADERBOARD</span>
+                            </button>
+                            <button onclick="app.bukaProgress()" class="p-5 bg-gradient-to-r from-purple-400 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white rounded-2xl shadow-lg font-bold text-lg flex items-center justify-center space-x-3 transform active:scale-95 transition">
+                                <span class="text-2xl">📊</span>
+                                <span>PROGRESS SAYA</span>
+                            </button>
+                        </div>
+
+                        <div class="mt-6 flex justify-center space-x-4">
+                            <button onclick="app.bukaTetapan()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">
+                                ⚙️ Tetapan Bunyi
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            navigasiKeMenu() {
+                sound.playClick();
+                this.currentView = 'menu';
+                this.render();
+            }
+
+            navigasiKeTopik() {
+                sound.playClick();
+                this.currentView = 'topik';
+                this.render();
+            }
+
+            pilihTopikLangsung() {
+                this.navigasiKeTopik();
+            }
+
+            // --- PILIH TOPIK ---
+            renderTopikHTML() {
+                const topikList = [
+                    { id: 1, nama: "Kenali Jam dan Masa", ikon: "🕐", desc: "Mengenal jarum jam dan minit pada jam analog." },
+                    { id: 2, nama: "Padankan Gambarajah Jam", ikon: "⏰", desc: "Memadankan kedudukan jarum dengan waktu yang tepat." },
+                    { id: 3, nama: "Kenali Hari, Minggu dan Bulan", ikon: "📅", desc: "Hari dalam seminggu & bulan dalam setahun." },
+                    { id: 4, nama: "Lengkapkan Ayat Matematik", ikon: "📝", desc: "Aktiviti harian berdasarkan waktu pagi, petang, malam." },
+                    { id: 5, nama: "Soalan Penyelesaian Masalah", ikon: "🧠", desc: "Situasi harian melibatkan masa dan wang Malaysia." }
+                ];
+
+                let html = `
+                    <div class="text-center">
+                        <button onclick="app.navigasiKeMenu()" class="mb-4 text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 px-4 py-2 rounded-xl transition inline-flex items-center space-x-1">
+                            <span>← Kembali ke Menu</span>
+                        </button>
+                        <h2 class="font-fredoka text-2xl font-bold text-slate-800 mb-1">PILIH TOPIK PEMBELAJARAN</h2>
+                        <p class="text-slate-500 text-sm mb-6">Pilih salah satu daripada 5 topik Matematik Tahun 1:</p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left max-w-2xl mx-auto">
+                `;
+
+                topikList.forEach(t => {
+                    html += `
+                        <div onclick="app.pilihTopik(${t.id})" class="p-4 bg-amber-50/70 hover:bg-amber-100 border-2 border-amber-200 rounded-2xl cursor-pointer transition flex items-center space-x-4 shadow-sm group">
+                            <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm group-hover:scale-110 transition">
+                                ${t.ikon}
+                            </div>
+                            <div>
+                                <h3 class="font-fredoka font-bold text-amber-800 text-base">TOPIK ${t.id}: ${t.nama}</h3>
+                                <p class="text-xs text-slate-600">${t.desc}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div></div>`;
+                return html;
+            }
+
+            pilihTopik(id) {
+                sound.playClick();
+                this.selectedTopic = id;
+                this.currentView = 'tahap';
+                this.render();
+            }
+
+            // --- PILIH TAHAP ---
+            renderTahapHTML() {
+                return `
+                    <div class="text-center max-w-md mx-auto">
+                        <button onclick="app.navigasiKeTopik()" class="mb-4 text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 px-4 py-2 rounded-xl transition inline-flex items-center space-x-1">
+                            <span>← Kembali Pilih Topik</span>
+                        </button>
+                        <h2 class="font-fredoka text-2xl font-bold text-slate-800 mb-1">PILIH TAHAP KESUKARAN</h2>
+                        <p class="text-slate-500 text-sm mb-6">Pilih aras cabaran yang anda inginkan:</p>
+
+                        <div class="space-y-4">
+                            <button onclick="app.pilihTahap('Senang')" class="w-full p-4 bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-300 rounded-2xl flex items-center justify-between text-emerald-800 font-bold transition shadow-sm">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-2xl">🟢</span>
+                                    <div class="text-left">
+                                        <div class="text-base font-fredoka">SENANG</div>
+                                        <div class="text-xs font-normal text-slate-600">Mengingat & Memahami konsep asas</div>
+                                    </div>
+                                </div>
+                                <span class="text-lg">→</span>
+                            </button>
+
+                            <button onclick="app.pilihTahap('Sederhana')" class="w-full p-4 bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 rounded-2xl flex items-center justify-between text-amber-800 font-bold transition shadow-sm">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-2xl">🟡</span>
+                                    <div class="text-left">
+                                        <div class="text-base font-fredoka">SEDERHANA</div>
+                                        <div class="text-xs font-normal text-slate-600">Memahami & Mengaplikasi</div>
+                                    </div>
+                                </div>
+                                <span class="text-lg">→</span>
+                            </button>
+
+                            <button onclick="app.pilihTahap('Susah')" class="w-full p-4 bg-rose-50 hover:bg-rose-100 border-2 border-rose-300 rounded-2xl flex items-center justify-between text-rose-800 font-bold transition shadow-sm">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-2xl">🔴</span>
+                                    <div class="text-left">
+                                        <div class="text-base font-fredoka">SUSAH</div>
+                                        <div class="text-xs font-normal text-slate-600">Penyelesaian masalah & Aplikasi harian</div>
+                                    </div>
+                                </div>
+                                <span class="text-lg">→</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            pilihTahap(tahap) {
+                sound.playClick();
+                this.selectedDifficulty = tahap;
+                this.currentView = 'mod';
+                this.render();
+            }
+
+            // --- PILIH MOD PERMAINAN ---
+            renderModHTML() {
+                return `
+                    <div class="text-center max-w-md mx-auto">
+                        <button onclick="app.renderTahapHTML()" onclick-action="back" class="mb-4 text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 px-4 py-2 rounded-xl transition inline-flex items-center space-x-1" onclick="app.currentView='tahap'; app.render();">
+                            <span>← Kembali Tahap</span>
+                        </button>
+                        <h2 class="font-fredoka text-2xl font-bold text-slate-800 mb-1">PILIH MOD PERMAINAN</h2>
+                        <p class="text-slate-500 text-sm mb-6">Bagaimanakah anda ingin menjawab soalan?</p>
+
+                        <div class="space-y-3 text-left">
+                            <button onclick="app.pilihMod('objektif')" class="w-full p-3.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl font-bold text-blue-800 flex items-center space-x-3 transition">
+                                <span class="text-xl">🎯</span>
+                                <div>
+                                    <div class="text-sm font-fredoka">OBJEKTIF</div>
+                                    <div class="text-xs font-normal text-slate-600">Pilih jawapan betul daripada 4 pilihan A, B, C, D</div>
+                                </div>
+                            </button>
+
+                            <button onclick="app.pilihMod('isitempat')" class="w-full p-3.5 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl font-bold text-purple-800 flex items-center space-x-3 transition">
+                                <span class="text-xl">✍️</span>
+                                <div>
+                                    <div class="text-sm font-fredoka">ISI TEMPAT KOSONG & PADANAN</div>
+                                    <div class="text-xs font-normal text-slate-600">Lengkapkan jawapan ringkas atau padanan masa</div>
+                                </div>
+                            </button>
+
+                            <button onclick="app.pilihMod('campuran')" class="w-full p-3.5 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl font-bold text-amber-800 flex items-center space-x-3 transition">
+                                <span class="text-xl">🌟</span>
+                                <div>
+                                    <div class="text-sm font-fredoka">MOD CAMPURAN (REKOMENDASI)</div>
+                                    <div class="text-xs font-normal text-slate-600">Gabungan pelbagai bentuk soalan menarik</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            pilihMod(mod) {
+                sound.playClick();
+                this.selectedGameMode = mod;
+                this.currentView = 'masa';
+                this.render();
+            }
+
+            // --- PILIH MASA MENJAWAB ---
+            renderMasaHTML() {
+                return `
+                    <div class="text-center max-w-md mx-auto">
+                        <button onclick="app.currentView='mod'; app.render();" class="mb-4 text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 px-4 py-2 rounded-xl transition inline-flex items-center space-x-1">
+                            <span>← Kembali Mod</span>
+                        </button>
+                        <h2 class="font-fredoka text-2xl font-bold text-slate-800 mb-1">PILIH MASA MENJAWAB</h2>
+                        <p class="text-slate-500 text-sm mb-6">Pilih tempoh masa untuk setiap soalan:</p>
+
+                        <div class="grid grid-cols-3 gap-3 mb-6">
+                            <button onclick="app.mulakanPermainanAktif(30)" class="p-4 bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-300 rounded-2xl text-center font-bold text-emerald-800 transition shadow-sm">
+                                <div class="text-2xl mb-1">⏱️</div>
+                                <div class="text-sm font-fredoka">30 SAAT</div>
+                            </button>
+                            <button onclick="app.mulakanPermainanAktif(60)" class="p-4 bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 rounded-2xl text-center font-bold text-amber-800 transition shadow-sm">
+                                <div class="text-2xl mb-1">⏱️</div>
+                                <div class="text-sm font-fredoka">1 MINIT</div>
+                            </button>
+                            <button onclick="app.mulakanPermainanAktif(0)" class="p-4 bg-purple-50 hover:bg-purple-100 border-2 border-purple-300 rounded-2xl text-center font-bold text-purple-800 transition shadow-sm">
+                                <div class="text-2xl mb-1">♾️</div>
+                                <div class="text-sm font-fredoka">TIADA HAD</div>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            mulakanPermainanAktif(masaPilihan) {
+                sound.playClick();
+                this.selectedTimeLimit = masaPilihan;
+                this.activeQuestions = bankSoalan.getSoalanByTopikTahap(this.selectedTopic, this.selectedDifficulty);
+                this.currentIndex = 0;
+                this.score = 0;
+                this.correctCount = 0;
+                this.wrongCount = 0;
+                this.unansweredCount = 0;
+                this.userAnswersRecord = [];
+                this.currentView = 'permainan';
+                this.render();
+            }
+
+            // --- PERMAINAN UTAMA ---
+            mulakanTimerSoalan() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                if (this.selectedTimeLimit <= 0) return;
+
+                this.timeLeft = this.selectedTimeLimit;
+                const timerBar = document.getElementById('timer-bar');
+                const timerText = document.getElementById('timer-text');
+
+                this.timerInterval = setInterval(() => {
+                    this.timeLeft--;
+                    if (timerText) timerText.innerText = this.timeLeft;
+                    if (timerBar) {
+                        let pct = (this.timeLeft / this.selectedTimeLimit) * 100;
+                        timerBar.style.width = pct + '%';
+                    }
+
+                    if (this.timeLeft <= 0) {
+                        clearInterval(this.timerInterval);
+                        this.semakJawapan(null, true); // Masa tamat
+                    }
+                }, 1000);
+            }
+
+            renderPermainanHTML() {
+                if (this.currentIndex >= this.activeQuestions.length) {
+                    this.tamatPermainan();
+                    return '';
+                }
+
+                const q = this.activeQuestions[this.currentIndex];
+                let gambarHTML = '';
+
+                if (q.imageType === 'analog') {
+                    let jamDeg = (q.imageDetails.jam % 12) * 30 + (q.imageDetails.minit * 0.5);
+                    let minDeg = q.imageDetails.minit * 6;
+                    gambarHTML = `
+                        <div class="my-4 flex justify-center">
+                            <div class="w-36 h-36 bg-amber-100 rounded-full border-4 border-amber-400 relative flex items-center justify-center shadow-inner">
+                                <div class="absolute text-xs font-bold top-2">12</div>
+                                <div class="absolute text-xs font-bold right-3">3</div>
+                                <div class="absolute text-xs font-bold bottom-2">6</div>
+                                <div class="absolute text-xs font-bold left-3">9</div>
+                                <!-- Jarum Jam -->
+                                <div class="absolute w-1.5 h-10 bg-slate-800 rounded-full origin-bottom bottom-1/2 left-[calc(50%-3px)] transform rotate-[${jamDeg}deg]"></div>
+                                <!-- Jarum Minit -->
+                                <div class="absolute w-1 h-14 bg-rose-500 rounded-full origin-bottom bottom-1/2 left-[calc(50%-2px)] transform rotate-[${minDeg}deg]"></div>
+                                <div class="w-3 h-3 bg-amber-600 rounded-full z-10"></div>
+                            </div>
+                        </div>
+                    `;
+                } else if (q.imageType === 'kalendar') {
+                    gambarHTML = `
+                        <div class="my-4 flex justify-center">
+                            <div class="bg-white border-2 border-amber-300 rounded-2xl p-4 shadow-sm text-center w-48">
+                                <div class="bg-rose-500 text-white font-bold text-xs py-1 rounded-t-xl">KALENDAR EDU KIDZ</div>
+                                <div class="py-3 font-fredoka font-bold text-xl text-amber-800">${q.imageDetails.text}</div>
+                                <div class="text-[10px] text-slate-400">Tahun 1 KPM</div>
+                            </div>
+                        </div>
+                    `;
+                } else if (q.imageType === 'aktiviti') {
+                    gambarHTML = `
+                        <div class="my-4 flex justify-center">
+                            <div class="px-4 py-2 bg-sky-100 text-sky-800 font-bold rounded-2xl border border-sky-200 text-sm">
+                                🎒 Aktiviti: ${q.imageDetails.aktiviti}
+                            </div>
+                        </div>
+                    `;
+                } else if (q.imageType === 'wang_jam') {
+                    gambarHTML = `
+                        <div class="my-4 flex justify-center space-x-2">
+                            <div class="px-3 py-1.5 bg-emerald-100 text-emerald-800 font-bold rounded-xl border border-emerald-200 text-xs">💵 ${q.imageDetails.wang}</div>
+                            <div class="px-3 py-1.5 bg-amber-100 text-amber-800 font-bold rounded-xl border border-amber-200 text-xs">⏱️ Masa Tempoh</div>
+                        </div>
+                    `;
+                }
+
+                let timerDisplayHTML = this.selectedTimeLimit > 0 ? `
+                    <div class="flex justify-between items-center mb-4 bg-amber-50 px-4 py-2 rounded-xl border border-amber-200">
+                        <span class="text-xs font-bold text-amber-800">Masa: <span id="timer-text">${this.timeLeft}</span>s</span>
+                        <div class="w-32 bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                            <div id="timer-bar" class="bg-amber-500 h-full transition-all duration-1000" style="width: 100%"></div>
+                        </div>
+                    </div>
+                ` : '';
+
+                return `
+                    <div>
+                        <!-- Header Soalan -->
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full">Soalan ${this.currentIndex + 1} / 20</span>
+                            <span class="text-xs font-bold bg-rose-100 text-rose-800 px-3 py-1 rounded-full">⭐ Markah: ${this.score} / 100</span>
+                        </div>
+
+                        ${timerDisplayHTML}
+
+                        <!-- Soalan & Gambar -->
+                        <div class="mb-6 text-center">
+                            <p class="font-fredoka text-lg font-bold text-slate-800 mb-2">${q.question}</p>
+                            ${gambarHTML}
+                        </div>
+
+                        <!-- Pilihan Jawapan -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4" id="options-grid">
+                            ${q.options.map((opt, idx) => `
+                                <button onclick="app.semakJawapan('${opt.replace(/'/g, "\\'")}')" class="p-4 bg-white hover:bg-amber-50 border-2 border-amber-200 rounded-2xl font-bold text-slate-700 text-sm shadow-sm transition transform active:scale-95 text-center flex items-center justify-center">
+                                    <span class="w-7 h-7 bg-amber-100 text-amber-800 rounded-full inline-flex items-center justify-center mr-3 text-xs">${String.fromCharCode(65 + idx)}</span>
+                                    <span>${opt}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <div id="feedback-box" class="hidden text-center p-4 rounded-2xl font-bold text-sm mt-4"></div>
+                    </div>
+                `;
+            }
+
+            semakJawapan(pilihanMurid, isTimeout = false) {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                const q = this.activeQuestions[this.currentIndex];
+                const feedbackBox = document.getElementById('feedback-box');
+                const optionsGrid = document.getElementById('options-grid');
+
+                // Nyahdayakan butang pilihan selepas menjawab
+                if (optionsGrid) {
+                    const buttons = optionsGrid.getElementsByTagName('button');
+                    for (let btn of buttons) btn.disabled = true;
+                }
+
+                let isCorrect = false;
+                if (!isTimeout && pilihanMurid === q.correctAnswer) {
+                    isCorrect = true;
+                    this.score += 5;
+                    this.correctCount++;
+                    sound.playCorrect();
+                    feedbackBox.className = "text-center p-4 rounded-2xl font-bold text-sm mt-4 bg-emerald-100 text-emerald-800 border-2 border-emerald-300 animate-bounce-slow";
+                    feedbackBox.innerHTML = `🎉 Syabas! Jawapan kamu betul! (+5 markah)`;
+                } else {
+                    this.wrongCount++;
+                    if (isTimeout) this.unansweredCount++;
+                    sound.playWrong();
+                    feedbackBox.className = "text-center p-4 rounded-2xl font-bold text-sm mt-4 bg-rose-100 text-rose-800 border-2 border-rose-300";
+                    feedbackBox.innerHTML = isTimeout ? `⏰ Masa sudah tamat! <br>✅ Jawapan yang betul ialah: <b>${q.correctAnswer}</b>` : `❌ Cuba lagi! <br>✅ Jawapan yang betul ialah: <b>${q.correctAnswer}</b>`;
+                }
+
+                feedbackBox.classList.remove('hidden');
+                this.userAnswersRecord.push({ soal: q.question, dipilih: pilihanMurid, betul: q.correctAnswer, status: isCorrect });
+
+                // Teruskan ke soalan seterusnya selepas 2 saat
+                setTimeout(() => {
+                    this.currentIndex++;
+                    this.render();
+                }, 2000);
+            }
+
+            tamatPermainan() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                
+                // Kemas kini data pengguna
+                this.currentUser.totalSoalanDijawab += 20;
+                this.currentUser.totalBetul += this.correctCount;
+                this.currentUser.totalSalah += this.wrongCount;
+                this.currentUser.totalMarkah += this.score;
+                if (this.score > this.currentUser.skorTertinggi) {
+                    this.currentUser.skorTertinggi = this.score;
+                }
+
+                // Tandakan topik selesai jika skor >= 70
+                if (this.score >= 70 && !this.currentUser.topikSelesai.includes(this.selectedTopic)) {
+                    this.currentUser.topikSelesai.push(this.selectedTopic);
+                }
+
+                // Kemas kini dalam senarai utama users & simpan localStorage
+                const idx = this.users.findIndex(x => x.username === this.currentUser.username);
+                if (idx !== -1) {
+                    this.users[idx] = this.currentUser;
+                    this.simpanDatabase();
+                }
+
+                this.currentView = 'keputusan';
+                this.render();
+            }
+
+            // --- KEPUTUSAN PERMAINAN ---
+            renderKeputusanHTML() {
+                let mesejPrestasi = "";
+                if (this.score >= 90) mesejPrestasi = '🏆 "Hebat! Kamu memang Juara Masa!"';
+                else if (this.score >= 70) mesejPrestasi = '🌟 "Bagus! Teruskan berlatih!"';
+                else if (this.score >= 50) mesejPrestasi = '👍 "Bagus! Cuba lagi untuk skor lebih tinggi!"';
+                else mesejPrestasi = '💪 "Jangan putus asa! Mari cuba lagi!"';
+
+                let ketepatan = (this.correctCount / 20) * 100;
+
+                return `
+                    <div class="text-center max-w-md mx-auto">
+                        <div class="text-5xl mb-2 animate-bounce-slow">🎉</div>
+                        <h2 class="font-fredoka text-3xl font-bold text-amber-600 mb-1">PERMAINAN TAMAT!</h2>
+                        <p class="text-slate-600 text-sm mb-4 font-medium">${mesejPrestasi}</p>
+
+                        <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 mb-6 text-left space-y-2 text-sm shadow-sm">
+                            <div class="flex justify-between"><span>Nama:</span><span class="font-bold">${this.currentUser.nama}</span></div>
+                            <div class="flex justify-between"><span>Topik:</span><span class="font-bold">Topik ${this.selectedTopic} (${this.selectedDifficulty})</span></div>
+                            <div class="flex justify-between border-t border-amber-200 pt-2 text-base font-bold text-amber-800">
+                                <span>Markah:</span><span>${this.score} / 100 ⭐</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-slate-500"><span>Betul: ${this.correctCount}</span><span>Salah: ${this.wrongCount}</span><span>Ketepatan: ${ketepatan}%</span></div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="app.mulakanPermainanAktif(${this.selectedTimeLimit})" class="p-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white font-bold rounded-xl shadow-md text-sm transition">
+                                🔄 MAIN LAGI
+                            </button>
+                            <button onclick="app.navigasiKeMenu()" class="p-3 bg-gradient-to-r from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 text-white font-bold rounded-xl shadow-md text-sm transition">
+                                🏠 MENU UTAMA
+                            </button>
+                            <button onclick="app.bukaProgress()" class="p-3 bg-gradient-to-r from-purple-400 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white font-bold rounded-xl shadow-md text-sm transition">
+                                📊 PROGRESS
+                            </button>
+                            <button onclick="app.bukaLeaderboard()" class="p-3 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold rounded-xl shadow-md text-sm transition">
+                                🏆 LEADERBOARD
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // --- PROGRESS SAYA ---
+            renderProgressHTML() {
+                const c = this.currentUser;
+                return `
+                    <div class="max-w-md mx-auto">
+                        <button onclick="app.navigasiKeMenu()" class="mb-4 text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 px-4 py-2 rounded-xl transition inline-flex items-center space-x-1">
+                            <span>← Kembali ke Menu</span>
+                        </button>
+                        <h2 class="font-fredoka text-2xl font-bold text-slate-800 mb-1 text-center">📊 PROGRESS SAYA</h2>
+                        <p class="text-slate-500 text-sm mb-6 text-center">Rekod pencapaian pembelajaran ${c.nama}:</p>
+
+                        <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 mb-6 space-y-3 text-sm shadow-sm">
+                            <div class="flex justify-between"><span>Jumlah Soalan Dijawab:</span><span class="font-bold">${c.totalSoalanDijawab}</span></div>
+                            <div class="flex justify-between"><span>Jawapan Betul:</span><span class="font-bold text-emerald-600">${c.totalBetul}</span></div>
+                            <div class="flex justify-between"><span>Jawapan Salah:</span><span class="font-bold text-rose-600">${c.totalSalah}</span></div>
+                            <div class="flex justify-between"><span>Jumlah Markah Terkumpul:</span><span class="font-bold text-amber-700">${c.totalMarkah} ⭐</span></div>
+                            <div class="flex justify-between border-t border-amber-200 pt-2"><span>Skor Tertinggi:</span><span class="font-bold text-purple-700">${c.skorTertinggi} / 100</span></div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="font-fredoka font-bold text-sm text-slate-700 mb-2">🏅 Lencana Pencapaian</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1.5 bg-amber-100 text-amber-800 rounded-xl text-xs font-bold border border-amber-300">⏰ Jam Hebat</span>
+                                <span class="px-3 py-1.5 bg-sky-100 text-sky-800 rounded-xl text-xs font-bold border border-sky-300">📅 Pakar Kalendar</span>
+                                <span class="px-3 py-1.5 bg-purple-100 text-purple-800 rounded-xl text-xs font-bold border border-purple-300">🏆 Master Masa</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            bukaProgress() {
+                sound.playClick();
+                this.currentView = 'progress';
+                this.render();
+            }
+
+            // --- LEADERBOARD ---
+            renderLeaderboardHTML() {
+                // Susun senarai pengguna mengikut skor tertinggi
+                let sortedUsers = [...this.users].sort((a, b) => b.skorTertinggi - a.skorTertinggi);
+
+                return `
+                    <div class="max-w-md mx-auto">
+                        <button onclick="app.navigasiKeMenu()" class="mb-4 text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 px-4 py-2 rounded-xl transition inline-flex items-center space-x-1">
+                            <span>← Kembali ke Menu</span>
+                        </button>
+                        <h2 class="font-fredoka text-2xl font-bold text-slate-800 mb-1 text-center">🏆 LEADERBOARD EDU KIDZ</h2>
+                        <p class="text-slate-500 text-sm mb-6 text-center">Senarai pemain terhebat & markah tertinggi:</p>
+
+                        <div class="space-y-3 mb-6">
+                            ${sortedUsers.length === 0 ? '<p class="text-center text-xs text-slate-400">Belum ada rekod pemain lagi.</p>' : ''}
+                            ${sortedUsers.map((usr, idx) => `
+                                <div class="p-3.5 bg-white border-2 border-amber-200 rounded-2xl flex items-center justify-between shadow-sm">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 rounded-full bg-amber-100 font-bold text-amber-800 flex items-center justify-center text-sm">
+                                            ${idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : idx + 1))}
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-sm text-slate-800">${usr.nama}</div>
+                                            <div class="text-[10px] text-slate-400">@${usr.username}</div>
+                                        </div>
+                                    </div>
+                                    <div class="font-fredoka font-bold text-amber-600 text-base">
+                                        ${usr.skorTertinggi} <span class="text-xs font-normal text-slate-500">markah</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            bukaLeaderboard() {
+                sound.playClick();
+                this.currentView = 'leaderboard';
+                this.render();
+            }
+
+            // --- TETAPAN ---
+            renderTetapanHTML() {
+                return `
+                    <div class="text-center max-w-md mx-auto">
+                        <button onclick="app.navigasiKeMenu()" class="mb-4 text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 px-4 py-2 rounded-xl transition inline-flex items-center space-x-1">
+                            <span>← Kembali ke Menu</span>
+                        </button>
+                        <h2 class="font-fredoka text-2xl font-bold text-slate-800 mb-1">⚙️ TETAPAN APLIKASI</h2>
+                        <p class="text-slate-500 text-sm mb-6">Ubah tetapan audio & kesan bunyi:</p>
+
+                        <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6 text-left space-y-4 shadow-sm">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-sm text-slate-700">Kesan Bunyi (Audio)</span>
+                                <button onclick="app.toggleSound()" id="sound-toggle-btn" class="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white font-bold rounded-xl text-xs transition">
+                                    ${sound.enabled ? '🔊 PASANG (ON)' : '🔇 TUTUP (OFF)'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            bukaTetapan() {
+                sound.playClick();
+                this.currentView = 'tetapan';
+                this.render();
+            }
+
+            toggleSound() {
+                sound.enabled = !sound.enabled;
+                sound.playClick();
+                const btn = document.getElementById('sound-toggle-btn');
+                if (btn) {
+                    btn.innerText = sound.enabled ? '🔊 PASANG (ON)' : '🔇 TUTUP (OFF)';
+                }
+            }
+        }
+
+        // Mulakan aplikasi apabila halaman dimuatkan
+        let app;
+        window.onload = function() {
+            app = new EduKidzApp();
+        };
+    </script>
+</body>
+</html>

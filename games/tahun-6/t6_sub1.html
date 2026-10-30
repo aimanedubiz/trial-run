@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="ms" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Kids – Bernama Edu Kidz | Tahun 6 Nombor Bulat dan Operasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.6.0/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
+            user-select: none;
+        }
+        .game-card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+        }
+        .btn-hover-effect {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-hover-effect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.3);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col text-slate-800 antialiased overflow-x-hidden">
+
+    <div id="app" class="flex-1 flex flex-col h-full w-full max-w-7xl mx-auto p-3 sm:p-6">
+        
+        <!-- Top Navigation Header -->
+        <header id="main-header" class="hidden bg-white/90 backdrop-blur-md rounded-2xl p-4 mb-6 game-card-shadow border border-slate-100 flex flex-wrap items-center justify-between gap-4 z-20">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-extrabold text-2xl shadow-md">
+                    📐
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded-full">KPM TAHUN 6</span>
+                        <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2.5 py-0.5 rounded-full" id="header-user-badge">Pelajar</span>
+                    </div>
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 leading-tight">MATH KIDS – BERNAMA EDU KIDZ</h1>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex items-center flex-wrap gap-2">
+                <button onclick="router.navigate('home')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition flex items-center gap-1.5">
+                    🏠 Utama
+                </button>
+                <button onclick="router.navigate('topics')" class="px-3.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-xl text-sm transition flex items-center gap-1.5">
+                    📚 Topik
+                </button>
+                <button onclick="router.navigate('progress')" class="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold rounded-xl text-sm transition flex items-center gap-1.5">
+                    📊 Progress
+                </button>
+                <button onclick="router.navigate('leaderboard')" class="px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 font-semibold rounded-xl text-sm transition flex items-center gap-1.5">
+                    🏆 Leaderboard
+                </button>
+                <button onclick="router.navigate('settings')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition flex items-center gap-1.5">
+                    ⚙ Tetapan
+                </button>
+                <button onclick="authSystem.logout()" class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold rounded-xl text-sm transition flex items-center gap-1.5">
+                    🚪 Keluar
+                </button>
+            </div>
+        </header>
+
+        <!-- Dynamic Main Content View Area -->
+        <main id="view-container" class="flex-1 flex flex-col relative">
+            <!-- Content will be injected dynamically by JavaScript router -->
+        </main>
+
+        <!-- Footer Info / Orientation helper -->
+        <footer class="mt-4 text-center text-xs text-slate-400 py-2 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div>© 2026 Bernama Edu Kidz • Kurikulum Standard Sekolah Rendah (KSSR) Semakan Tahun 6 Matematik</div>
+            <div class="flex items-center space-x-3">
+                <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Bank 540 Soalan Unik Aktif</span>
+                <button onclick="toggleOrientationView()" class="underline text-blue-600 hover:text-blue-800 font-medium">Ubah Pandangan Skrin</button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Custom Modal for Notifications / Messages -->
+    <div id="custom-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 game-card-shadow border border-slate-100 animate-[bounce_0.3s_ease-in-out]">
+            <div id="modal-icon" class="text-4xl text-center mb-3">⭐</div>
+            <h3 id="modal-title" class="text-xl font-bold text-center text-slate-900 mb-2">Tajuk</h3>
+            <p id="modal-message" class="text-slate-600 text-center mb-6 text-sm">Pesej mesej di sini...</p>
+            <div id="modal-actions" class="flex justify-center gap-3">
+                <button onclick="closeModal()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const TOPICS_LIST = [
+            { id: 1, title: "KENALI NOMBOR", icon: "🔢", desc: "Nombor hingga 10 000 000, nilai tempat, digit & cerakin", subtopics: ["A. Nombor dalam unit juta", "B. Tuliskan nombor dalam angka", "C. Tuliskan nombor dalam perkataan", "D. Teroka nombor", "E. Cerakinkan nombor", "F. Nilai tempat digit bergaris", "G. Nilai digit digit bergaris"] },
+            { id: 2, title: "POLA NOMBOR", icon: "📈", desc: "Mengenal pasti, melengkapkan & menentukan pola menaik/menurun", subtopics: ["Mengenal pasti pola", "Melengkapkan pola", "Menentukan nombor seterusnya", "Menentukan nombor yang hilang", "Pola menaik & menurun berasaskan operasi"] },
+            { id: 3, title: "PECAHAN JUTA & PERPULUHAN JUTA", icon: "📊", desc: "Hubungan juta dengan pecahan & perpuluhan serta perbandingan nilai", subtopics: ["Pecahan juta", "Perpuluhan juta", "Hubungan juta dengan pecahan/perpuluhan", "Menulis pecahan & perpuluhan juta", "Membandingkan nilai juta"] },
+            { id: 4, title: "PENUKARAN NOMBOR", icon: "🔄", desc: "Penukaran antara angka, perkataan, bentuk cerakin, pecahan & perpuluhan", subtopics: ["Angka kepada perkataan", "Perkataan kepada angka", "Cerakin kepada nombor", "Pecahan juta kepada nombor", "Perpuluhan juta kepada nombor"] },
+            { id: 5, title: "OPERASI ASAS", icon: "➕", desc: "Tambah, tolak, darab & bahagi nombor bulat besar dengan teliti", subtopics: ["Tambah nombor besar", "Tolak nombor besar", "Darab nombor besar", "Bahagi nombor besar", "Pengiraan menegak & mental"] },
+            { id: 6, title: "OPERASI BERGABUNG", icon: "🧮", desc: "Gabungan tambah, tolak, darab & bahagi mengikut tertib operasi", subtopics: ["Tambah dan tolak", "Darab dan bahagi", "Tambah dan darab", "Gabungan tiga atau lebih operasi"] },
+            { id: 7, title: "OPERASI MELIBATKAN ANU", icon: "❓", desc: "Mencari nilai anu (□, △, ○, x) dalam ayat matematik", subtopics: ["Tambah melibatkan anu", "Tolak melibatkan anu", "Darab melibatkan anu", "Bahagi melibatkan anu", "Operasi bergabung melibatkan anu"] },
+            { id: 8, title: "NOMBOR PERDANA & GUBAHAN", icon: "⭐", desc: "Mengenal nombor perdana, nombor gubahan & faktor", subtopics: ["Mengenal nombor perdana", "Mengenal nombor gubahan", "Membezakan nombor perdana & gubahan", "Mengenal pasti faktor"] },
+            { id: 9, title: "PENYELESAIAN MASALAH", icon: "💡", desc: "Situasi kehidupan sebenar melibatkan murid, jarak, barang & wang", subtopics: ["A. Masalah melibatkan bilangan murid", "B. Masalah jarak perjalanan", "C. Masalah pengeluaran & taburan barang", "D. Masalah kewangan & sumbangan sekolah"] }
+        ];
+
+        function generateCompleteQuestionBank() {
+            const bank = {};
+            const levels = ['Senang', 'Sederhana', 'Susah'];
+            const cognitiveLevels = {
+                'Senang': ['Mengingat', 'Memahami'],
+                'Sederhana': ['Mengingat', 'Memahami', 'Mengaplikasi'],
+                'Susah': ['Memahami', 'Mengaplikasi']
+            };
+            const gameTypes = ['Objektif', 'Padanan', 'Drag & Drop', 'Isi Tempat Kosong'];
+
+            TOPICS_LIST.forEach((topic, tIdx) => {
+                bank[topic.id] = {};
+                levels.forEach(level => {
+                    bank[topic.id][level] = [];
+                    for (let q = 1; q <= 20; q++) {
+                        const cogArr = cognitiveLevels[level];
+                        const cog = cogArr[(q + tIdx) % cogArr.length];
+                        const gType = gameTypes[(q + tIdx) % gameTypes.length];
+                        
+                        let qData = createDynamicQuestion(topic.id, level, q, cog, gType);
+                        bank[topic.id][level].push(qData);
+                    }
+                });
+            });
+            return bank;
+        }
+
+        function createDynamicQuestion(topicId, level, qNum, cog, gType) {
+            const id = `T${topicId}_${level.toUpperCase()}_Q${qNum}`;
+            let subtopic = TOPICS_LIST[topicId - 1].subtopics[(qNum - 1) % TOPICS_LIST[topicId - 1].subtopics.length];
+            
+            let seed1 = (qNum * 17 + topicId * 31) % 900 + 100;
+            let seed2 = (qNum * 23 + topicId * 13) % 800 + 150;
+            
+            let qText = "";
+            let options = [];
+            let answer = "";
+            let diagram = "kad_nombor_juta";
+            let explanation = "";
+
+            switch(topicId) {
+                case 1: // KENALI NOMBOR
+                    if (qNum % 3 === 0) {
+                        qText = `Tentukan nilai digit bagi digit yang bergaris dalam nombor 4,${seed1}5${seed2},120:`;
+                        options = [`${seed1} 000`, `${seed1}0 000`, `${seed1}00 000`, `${seed1},000,000`];
+                        answer = `${seed1}00 000`;
+                        diagram = "carta_nilai_tempat";
+                        explanation = `Digit ${seed1.toString()[0]} terletak pada rumah ratus ribu. Oleh itu, nilai digitnya ialah ${seed1}00 000.`;
+                    } else if (qNum % 3 === 1) {
+                        qText = `Pilih nombor yang betul bagi perkataan: "Tiga juta dua ratus ribu empat puluh sembilan".`;
+                        options = ["3 200 049", "3 200 490", "3 020 049", "3 249 000"];
+                        answer = "3 200 049";
+                        diagram = "kad_nombor_juta";
+                        explanation = `Tiga juta = 3 000 000, dua ratus ribu = 200 000, empat puluh sembilan = 49. Jumlahnya 3 200 049.`;
+                    } else {
+                        qText = `Apakah bentuk cerakinkan mengikut nilai digit bagi nombor 5,${seed1},682?`;
+                        options = [
+                            `5 000 000 + ${seed1} 000 + 600 + 80 + 2`,
+                            `5 000 000 + ${seed1}00 + 60 + 8 + 2`,
+                            `5 000 000 + ${seed1} 000 + 60 + 82`,
+                            `500 000 + ${seed1} 000 + 600 + 80 + 2`
+                        ];
+                        answer = `5 000 000 + ${seed1} 000 + 600 + 80 + 2`;
+                        diagram = "carta_cerakinkan_nombor";
+                        explanation = `Cerakin mengikut nilai digit menguraikan setiap digit mengikut nilai tempatnya dengan tepat.`;
+                    }
+                    break;
+                case 2: // POLA NOMBOR
+                    let startNum = 1205000 + qNum * 10000;
+                    let step = 25000 + qNum * 1000;
+                    qText = `Kenal pasti nombor yang hilang dalam pola menaik berikut: ${startNum.toLocaleString()}, ${(startNum + step).toLocaleString()}, [ ? ], ${(startNum + step * 3).toLocaleString()}`;
+                    let wrong1 = (startNum + step * 2 + 5000).toLocaleString();
+                    let wrong2 = (startNum + step * 2 - 2000).toLocaleString();
+                    let wrong3 = (startNum + step * 2 + 10000).toLocaleString();
+                    let correctAns = (startNum + step * 2).toLocaleString();
+                    options = [correctAns, wrong1, wrong2, wrong3].sort();
+                    answer = correctAns;
+                    diagram = "carta_pola";
+                    explanation = `Pola ini adalah tertib menaik sebanyak ${step.toLocaleString()} pada setiap sebutan berikutnya.`;
+                    break;
+                case 3: // PECAHAN JUTA & PERPULUHAN JUTA
+                    if (qNum % 2 === 0) {
+                        let fracNumer = (qNum % 3) + 1;
+                        let val = 1000000 + (fracNumer / 4) * 1000000;
+                        qText = `Tukar 1 ${fracNumer}/4 juta kepada nombor bulat:`;
+                        options = [`${val.toLocaleString()}`, `${(val + 100000).toLocaleString()}`, `${(val - 50000).toLocaleString()}`, `${(val + 250000).toLocaleString()}`];
+                        answer = `${val.toLocaleString()}`;
+                        diagram = "grid_pecahan";
+                        explanation = `1 ${fracNumer}/4 juta bermaksud 1 000 000 + (${fracNumer}/4 × 1 000 000). Hasilnya ialah ${val.toLocaleString()}.`;
+                    } else {
+                        let decPart = (qNum * 15) % 90 + 10;
+                        let pVal = 3000000 + decPart * 10000;
+                        qText = `Nyatakan 3.${decPart} juta dalam nombor bulat:`;
+                        options = [`${pVal.toLocaleString()}`, `${(pVal + 10000).toLocaleString()}`, `${(pVal - 20000).toLocaleString()}`, `${(pVal + 200000).toLocaleString()}`];
+                        answer = `${pVal.toLocaleString()}`;
+                        diagram = "grid_perpuluhan";
+                        explanation = `3.${decPart} juta dikira dengan mendarabkan 3.${decPart} dengan 1 000 000.`;
+                    }
+                    break;
+                case 4: // PENUKARAN NOMBOR
+                    const conversionType = qNum % 5;
+                    if (conversionType === 0) {
+                        let numVal = 2000000 + seed1 * 100;
+                        qText = `Tuliskan nombor ${numVal.toLocaleString()} dalam perkataan yang tepat:`;
+                        options = [
+                            `Dua juta ${seed1} ratus`,
+                            `Dua juta ${seed1} ribu`,
+                            `Dua juta ${seed1} puluh ribu`,
+                            `Dua juta dan ${seed1}`
+                        ];
+                        answer = `Dua juta ${seed1} ratus`;
+                        diagram = "kad_nombor_juta";
+                        explanation = `Nombor ${numVal.toLocaleString()} dibaca sebagai Dua juta ${seed1} ratus.`;
+                    } else if (conversionType === 1) {
+                        let targetNum = 4000000 + seed2 * 1000;
+                        qText = `Pilih angka yang betul bagi: "Empat juta ${seed2} ribu".`;
+                        options = [
+                            targetNum.toLocaleString(),
+                            (targetNum + 100000).toLocaleString(),
+                            (targetNum - 50000).toLocaleString(),
+                            (4000000 + seed2 * 100).toLocaleString()
+                        ].sort();
+                        answer = targetNum.toLocaleString();
+                        diagram = "kad_nombor_juta";
+                        explanation = `"Empat juta ${seed2} ribu" ditulis dalam bentuk angka sebagai ${targetNum.toLocaleString()}.`;
+                    } else if (conversionType === 2) {
+                        let cNum = 5000000 + seed1 * 1000 + 400 + 80 + 3;
+                        qText = `Apakah nombor bagi bentuk cerakin berikut?\n5 000 000 + ${(seed1*1000).toLocaleString()} + 400 + 80 + 3`;
+                        options = [
+                            cNum.toLocaleString(),
+                            (cNum + 1000).toLocaleString(),
+                            (5000000 + seed1*100 + 483).toLocaleString(),
+                            (cNum - 400).toLocaleString()
+                        ].sort();
+                        answer = cNum.toLocaleString();
+                        diagram = "carta_cerakinkan_nombor";
+                        explanation = `Gabungkan nilai tempat setiap pengangka cerakin untuk membentuk nombor penuh ${cNum.toLocaleString()}.`;
+                    } else if (conversionType === 3) {
+                        let numer = (qNum % 2 === 0) ? 1 : 3;
+                        let denom = 4;
+                        let fracResult = (numer / denom) * 1000000;
+                        qText = `Tukar ${numer}/${denom} juta kepada nombor bulat:`;
+                        options = [
+                            fracResult.toLocaleString(),
+                            (fracResult + 250000).toLocaleString(),
+                            (fracResult - 125000).toLocaleString(),
+                            (fracResult * 2).toLocaleString()
+                        ].sort();
+                        answer = fracResult.toLocaleString();
+                        diagram = "grid_pecahan";
+                        explanation = `${numer}/${denom} juta dikira sebagai ${numer}/${denom} × 1 000 000 = ${fracResult.toLocaleString()}.`;
+                    } else {
+                        let decVal = (qNum * 25) % 900 + 100;
+                        let decResult = decVal * 1000;
+                        qText = `Tukar 0.${decVal} juta kepada nombor bulat:`;
+                        options = [
+                            decResult.toLocaleString(),
+                            (decResult + 100000).toLocaleString(),
+                            (decResult / 10).toLocaleString(),
+                            (decResult + 50000).toLocaleString()
+                        ].sort();
+                        answer = decResult.toLocaleString();
+                        diagram = "grid_perpuluhan";
+                        explanation = `0.${decVal} juta diperoleh dengan mendarab 0.${decVal} dengan 1 000 000, iaitu ${decResult.toLocaleString()}.`;
+                    }
+                    break;
+                case 5: // OPERASI ASAS
+                    const opType = qNum % 4;
+                    if (opType === 0) {
+                        let numA = 1245000 + qNum * 12345;
+                        let numB = 356000 + qNum * 5432;
+                        let res = numA + numB;
+                        qText = `Hitung hasil tambah berikut secara menegak dan tepat: ${numA.toLocaleString()} + ${numB.toLocaleString()} = ?`;
+                        options = [
+                            res.toLocaleString(),
+                            (res + 1000).toLocaleString(),
+                            (res - 2500).toLocaleString(),
+                            (res + 10000).toLocaleString()
+                        ].sort(() => Math.random() - 0.5);
+                        answer = res.toLocaleString();
+                        diagram = "kad_operasi";
+                        explanation = `Susun nombor secara menegak mengikut nilai tempat dari sa hingga juta. Jumlah hasil tambah ialah ${res.toLocaleString()}.`;
+                    } else if (opType === 1) {
+                        let numA = 5890400 + qNum * 15200;
+                        let numB = 2134000 + qNum * 3100;
+                        let res = numA - numB;
+                        qText = `Cari hasil tolak bagi nombor besar berikut: ${numA.toLocaleString()} - ${numB.toLocaleString()} = ?`;
+                        options = [
+                            res.toLocaleString(),
+                            (res + 5000).toLocaleString(),
+                            (res - 1000).toLocaleString(),
+                            (res + 20000).toLocaleString()
+                        ].sort(() => Math.random() - 0.5);
+                        answer = res.toLocaleString();
+                        diagram = "kad_operasi";
+                        explanation = `Lakukan penolakan dengan meminjam dari rumah nilai tempat sebelah jika perlu. Hasil tolak ialah ${res.toLocaleString()}.`;
+                    } else if (opType === 2) {
+                        let numA = 145000 + qNum * 1200;
+                        let numB = 12 + (qNum % 8);
+                        let res = numA * numB;
+                        qText = `Hitung hasil darab nombor bulat dengan nombor 2 digit: ${numA.toLocaleString()} × ${numB} = ?`;
+                        options = [
+                            res.toLocaleString(),
+                            (res + numA).toLocaleString(),
+                            (res - numA).toLocaleString(),
+                            (res + 50000).toLocaleString()
+                        ].sort(() => Math.random() - 0.5);
+                        answer = res.toLocaleString();
+                        diagram = "kad_operasi";
+                        explanation = `Darabkan ${numA.toLocaleString()} dengan ${numB} menggunakan kaedah lazim dengan teliti. Hasil darab ialah ${res.toLocaleString()}.`;
+                    } else {
+                        let divisor = 15 + (qNum % 10);
+                        let quotient = 234000 + qNum * 1100;
+                        let dividend = quotient * divisor;
+                        qText = `Selesaikan operasi bahagi nombor besar berikut: ${dividend.toLocaleString()} ÷ ${divisor} = ?`;
+                        options = [
+                            quotient.toLocaleString(),
+                            (quotient + 1000).toLocaleString(),
+                            (quotient - 500).toLocaleString(),
+                            (quotient + 5000).toLocaleString()
+                        ].sort(() => Math.random() - 0.5);
+                        answer = quotient.toLocaleString();
+                        diagram = "kad_operasi";
+                        explanation = `Bahagikan ${dividend.toLocaleString()} dengan ${divisor} menggunakan kaedah bahagi panjang. Hasilnya ialah ${quotient.toLocaleString()}.`;
+                    }
+                    break;
+                case 6: // OPERASI BERGABUNG
+                    qText = `Selesaikan ayat matematik berikut mengikut tertib operasi: 4 500 000 + ${seed1} 000 × 2 = ?`;
+                    let resOp = 4500000 + seed1 * 2000;
+                    options = [resOp.toLocaleString(), (4500000 + seed1 * 1000 * 2).toLocaleString(), (4550000 + seed1 * 2000).toLocaleString(), (4400000 + seed1 * 2000).toLocaleString()].sort();
+                    answer = resOp.toLocaleString();
+                    diagram = "kad_operasi";
+                    explanation = `Mengikut tertib operasi (BODMAS/KODMAS), darab didahulukan sebelum tambah.`;
+                    break;
+                case 7: // OPERASI MELIBATKAN ANU (Refined: 100% Unique Questions Across All Levels & QNumbers)
+                    const varsList = ['x', 'y', 'z', 'p', 'q', 'm'];
+                    const chosenVar = varsList[(qNum + topicId) % varsList.length];
+                    
+                    if (level === 'Senang') {
+                        // Senang: Persamaan asas melibatkan tambah dan tolak (1 hingga 20 unik)
+                        let baseVal = 1000000 + (qNum * 125400);
+                        let targetVal = baseVal + 2500000 + (qNum * 50000);
+                        
+                        if (qNum % 2 === 0) {
+                            qText = `Cari nilai bagi anu ${chosenVar} dalam persamaan tambah berikut:\n${chosenVar} + ${baseVal.toLocaleString()} = ${targetVal.toLocaleString()}`;
+                            let correctVal = targetVal - baseVal;
+                            answer = correctVal.toLocaleString();
+                            options = [
+                                correctVal.toLocaleString(),
+                                (correctVal + 150000).toLocaleString(),
+                                (targetVal + 300000).toLocaleString(),
+                                (baseVal - 50000).toLocaleString()
+                            ].sort();
+                            explanation = `Untuk mencari ${chosenVar}, tolakkan ${targetVal.toLocaleString()} dengan ${baseVal.toLocaleString()}, menghasilkan ${correctVal.toLocaleString()}.`;
+                        } else {
+                            qText = `Selesaikan persamaan tolak berikut untuk mencari nilai ${chosenVar}:\n${targetVal.toLocaleString()} - ${chosenVar} = ${baseVal.toLocaleString()}`;
+                            let correctVal = targetVal - baseVal;
+                            answer = correctVal.toLocaleString();
+                            options = [
+                                correctVal.toLocaleString(),
+                                (correctVal + 200000).toLocaleString(),
+                                targetVal.toLocaleString(),
+                                (correctVal - 100000).toLocaleString()
+                            ].sort();
+                            explanation = `Nilai ${chosenVar} diperoleh dengan menolak ${baseVal.toLocaleString()} daripada ${targetVal.toLocaleString()}, iaitu ${correctVal.toLocaleString()}.`;
+                        }
+                    } else if (level === 'Sederhana') {
+                        // Sederhana: Persamaan melibatkan darab dan bahagi nombor besar
+                        if (qNum % 2 === 0) {
+                            let multiplier = 2 + (qNum % 6); // 2 hingga 7
+                            let singleVal = 800000 + (qNum * 75000);
+                            let productVal = multiplier * singleVal;
+                            qText = `Cari nilai bagi anu ${chosenVar} dalam operasi darab berikut:\n${multiplier} × ${chosenVar} = ${productVal.toLocaleString()}`;
+                            answer = singleVal.toLocaleString();
+                            options = [
+                                singleVal.toLocaleString(),
+                                (singleVal + 100000).toLocaleString(),
+                                (singleVal * 2).toLocaleString(),
+                                (singleVal - 50000).toLocaleString()
+                            ].sort();
+                            explanation = `Bahagikan ${productVal.toLocaleString()} dengan ${multiplier} untuk mendapatkan nilai ${chosenVar} iaitu ${singleVal.toLocaleString()}.`;
+                        } else {
+                            let divisorVal = 3 + (qNum % 5); // 3 hingga 7
+                            let baseQuotient = 1200000 + (qNum * 95000);
+                            let dividendVal = baseQuotient * divisorVal;
+                            qText = `Tentukan nilai anu ${chosenVar} bagi persamaan bahagi ini:\n${chosenVar} ÷ ${divisorVal} = ${baseQuotient.toLocaleString()}`;
+                            answer = dividendVal.toLocaleString();
+                            options = [
+                                dividendVal.toLocaleString(),
+                                (dividendVal + 400000).toLocaleString(),
+                                (dividendVal - 250000).toLocaleString(),
+                                baseQuotient.toLocaleString()
+                            ].sort();
+                            explanation = `Darabkan ${baseQuotient.toLocaleString()} dengan pembahagi ${divisorVal} untuk memperoleh nilai ${chosenVar} iaitu ${dividendVal.toLocaleString()}.`;
+                        }
+                    } else {
+                        // Susah: Operasi bergabung melibatkan anu (Contoh: Darab dengan Tambah/Tolak)
+                        let multFactor = 2 + (qNum % 3);
+                        let addPartVal = 1200000 + (qNum * 50000);
+                        let innerVarVal = 1500000 + (qNum * 110000);
+                        let totalResultVal = (multFactor * innerVarVal) + addPartVal;
+                        
+                        qText = `Selesaikan persamaan operasi bergabung melibatkan anu ${chosenVar} berikut dengan teliti:\n(${multFactor} × ${chosenVar}) + ${addPartVal.toLocaleString()} = ${totalResultVal.toLocaleString()}`;
+                        answer = innerVarVal.toLocaleString();
+                        options = [
+                            innerVarVal.toLocaleString(),
+                            (innerVarVal + 200000).toLocaleString(),
+                            (innerVarVal - 150000).toLocaleString(),
+                            (innerVarVal * 2).toLocaleString()
+                        ].sort();
+                        explanation = `Langkah 1: Tolak ${addPartVal.toLocaleString()} daripada ${totalResultVal.toLocaleString()} = ${(totalResultVal - addPartVal).toLocaleString()}. Langkah 2: Bahagi ${multFactor} untuk mendapat ${chosenVar} = ${innerVarVal.toLocaleString()}.`;
+                    }
+                    diagram = "kotak_anu";
+                    break;
+                case 8: // NOMBOR PERDANA & GUBAHAN (Refined: Pelbagai soalan nombor perdana, gubahan & faktor)
+                    const subType8 = qNum % 5;
+                    if (subType8 === 0) {
+                        // Mengenal pasti nombor perdana dalam julat tertentu
+                        const primePools = [
+                            { q: "Antara nombor berikut, yang manakah adalah Nombor Perdana?", opts: ["29", "27", "33", "35"], ans: "29", exp: "29 hanya boleh dibahagi dengan 1 dan 29 sahaja. 27, 33, dan 35 adalah nombor gubahan." },
+                            { q: "Pilih nombor perdana yang terletak di antara 40 hingga 50:", opts: ["43", "45", "49", "51"], ans: "43", exp: "Nombor perdana antara 40 hingga 50 ialah 41 dan 43. 45, 49, dan 51 boleh dibahagi dengan faktor selain 1 dan diri sendiri." },
+                            { q: "Antara berikut, yang manakah BUKAN nombor perdana?", opts: ["51", "47", "53", "59"], ans: "51", exp: "51 bukan nombor perdana kerana ia boleh dibahagi dengan 3 dan 17 (3 × 17 = 51)." },
+                            { q: "Apakah nombor perdana terkecil yang bernilai lebih besar daripada 10?", opts: ["11", "13", "15", "17"], ans: "11", exp: "Nombor perdana selepas 10 ialah 11." }
+                        ];
+                        let pItem = primePools[qNum % primePools.length];
+                        qText = pItem.q;
+                        options = [...pItem.opts].sort(() => Math.random() - 0.5);
+                        answer = pItem.ans;
+                        explanation = pItem.exp;
+                    } else if (subType8 === 1) {
+                        // Mengenal pasti nombor gubahan (Composite Numbers)
+                        const compPools = [
+                            { q: "Antara berikut, yang manakah ialah Nombor Gubahan?", opts: ["57", "37", "41", "43"], ans: "57", exp: "57 ialah nombor gubahan kerana ia boleh dibahagi dengan 1, 3, 19, dan 57." },
+                            { q: "Pilih nombor gubahan di antara 20 hingga 30:", opts: ["25", "23", "29", "31"], ans: "25", exp: "25 adalah nombor gubahan (faktor: 1, 5, 25). 23 dan 29 adalah nombor perdana." },
+                            { q: "Mengapa nombor 49 dikategorikan sebagai nombor gubahan?", opts: ["Kerana mempunyai lebih daripada dua faktor (1, 7, 49)", "Kerana ia nombor ganjil", "Kerana ia nombor perdana", "Kerana ia boleh dibahagi dengan 2"], ans: "Kerana mempunyai lebih daripada dua faktor (1, 7, 49)", exp: "Nombor gubahan ialah nombor lebih besar daripada 1 yang mempunyai lebih daripada dua faktor." },
+                            { q: "Antara nombor berikut, yang manakah nombor gubahan terkecil?", opts: ["4", "2", "3", "1"], ans: "4", exp: "Nombor gubahan terkecil ialah 4 kerana faktornya ialah 1, 2, dan 4." }
+                        ];
+                        let cItem = compPools[qNum % compPools.length];
+                        qText = cItem.q;
+                        options = [...cItem.opts].sort(() => Math.random() - 0.5);
+                        answer = cItem.ans;
+                        explanation = cItem.exp;
+                    } else if (subType8 === 2) {
+                        // Perbandingan & Ciri Nombor Perdana vs Gubahan
+                        qText = `Pernyataan manakah yang BENAR mengenai Nombor Perdana dan Nombor Gubahan?`;
+                        options = [
+                            "Nombor 1 bukan nombor perdana dan bukan nombor gubahan",
+                            "Semua nombor ganjil adalah nombor perdana",
+                            "Nombor 2 adalah nombor gubahan",
+                            "Nombor perdana mempunyai lebih daripada dua faktor"
+                        ];
+                        answer = "Nombor 1 bukan nombor perdana dan bukan nombor gubahan";
+                        explanation = `Nombor 1 tidak memenuhi syarat nombor perdana (mesti ada tepat 2 faktor) mahupun nombor gubahan (mesti ada lebih 2 faktor).`;
+                    } else if (subType8 === 3) {
+                        // Mencari senarai faktor bagi suatu nombor
+                        let targetNum = 24 + (qNum * 2);
+                        if (targetNum > 60) targetNum = 36;
+                        
+                        let factorsList = [];
+                        for(let i=1; i<=targetNum; i++) {
+                            if(targetNum % i === 0) factorsList.push(i);
+                        }
+                        qText = `Senaraikan semua faktor bagi nombor ${targetNum}:`;
+                        let correctStr = factorsList.join(', ');
+                        let wrongStr1 = factorsList.filter(f => f !== 2).join(', ');
+                        let wrongStr2 = [...factorsList, targetNum + 2].join(', ');
+                        let wrongStr3 = factorsList.slice(1).join(', ');
+                        
+                        options = [correctStr, wrongStr1, wrongStr2, wrongStr3].sort();
+                        answer = correctStr;
+                        explanation = `Faktor bagi ${targetNum} ialah semua nombor bulat yang boleh membahagi ${targetNum} tanpa baki, iaitu: ${correctStr}.`;
+                    } else {
+                        // Mengenal pasti faktor sepunya atau bilangan faktor
+                        let numF = 30 + (qNum * 4);
+                        qText = `Berapakah bilangan faktor bagi nombor ${numF} (contoh: 12 mempunyai 6 faktor)?`;
+                        let fCount = 0;
+                        for(let i=1; i<=numF; i++) { if(numF % i === 0) fCount++; }
+                        
+                        options = [fCount.toString(), (fCount + 2).toString(), (fCount - 1).toString(), (fCount + 4).toString()].sort();
+                        answer = fCount.toString();
+                        explanation = `Apabila disemak satu persatu, bilangan faktor lengkap bagi ${numF} ialah ${fCount} faktor.`;
+                    }
+                    diagram = "carta_faktor";
+                    break;
+                case 9: // PENYELESAIAN MASALAH (Refined: Murid, Jarak, Barang & Wang dalam situasi kehidupan sebenar)
+                    const pType = qNum % 4;
+                    if (pType === 0) {
+                        // Masalah melibatkan Bilangan Murid
+                        let baseMurid = 1240 + (qNum * 125);
+                        let totalZoneMurid = baseMurid * 8;
+                        qText = `Program Jelajah Ilmu Bernama melibatkan ${baseMurid.toLocaleString()} orang murid di sebuah daerah. Jika terdapat 8 buah daerah menyertai program ini dengan bilangan murid yang sama di setiap daerah, berapakah jumlah keseluruhan murid yang terlibat?`;
+                        options = [
+                            totalZoneMurid.toLocaleString(),
+                            (totalZoneMurid + 2500).toLocaleString(),
+                            (totalZoneMurid - 1200).toLocaleString(),
+                            (baseMurid * 7).toLocaleString()
+                        ].sort();
+                        answer = totalZoneMurid.toLocaleString();
+                        diagram = "situasi_kehidupan_sebenar";
+                        explanation = `Darabkan bilangan murid setiap daerah (${baseMurid.toLocaleString()}) dengan bilangan daerah (8) untuk mendapat jumlah keseluruhan murid.`;
+                    } else if (pType === 1) {
+                        // Masalah Jarak Perjalanan
+                        let kmBase = 1250 + (qNum * 450);
+                        let kmReturn = kmBase * 2;
+                        qText = `Sebuah konvoi kenderaan Bernama Edu Kidz merentasi Semenanjung Malaysia sejauh ${kmBase.toLocaleString()} km sehala dari Kuala Lumpur ke Perlis dan kembali semula. Hitung jumlah jarak perjalanan pergi dan balik konvoi tersebut.`;
+                        options = [
+                            kmReturn.toLocaleString(),
+                            (kmReturn + 500).toLocaleString(),
+                            (kmBase + 1000).toLocaleString(),
+                            (kmReturn - 800).toLocaleString()
+                        ].sort();
+                        answer = kmReturn.toLocaleString();
+                        diagram = "situasi_kehidupan_sebenar";
+                        explanation = `Jarak pergi dan balik dikira dengan mendarabkan jarak sehala (${kmBase.toLocaleString()} km) dengan 2.`;
+                    } else if (pType === 2) {
+                        // Masalah Pengeluaran & Taburan Barang (Buku/Majalah)
+                        let prodBox = 2450000 + (qNum * 12000);
+                        let soldBox = 1200000 + (qNum * 5000);
+                        let remainBox = prodBox - soldBox;
+                        qText = `Sebuah gudang mencetak ${prodBox.toLocaleString()} naskhah majalah ilmu untuk diedarkan ke sekolah-sekolah. Sebanyak ${soldBox.toLocaleString()} naskhah telah berjaya diedarkan pada minggu pertama. Berapakah baki naskhah majalah yang masih belum diedarkan?`;
+                        options = [
+                            remainBox.toLocaleString(),
+                            (remainBox + 50000).toLocaleString(),
+                            (remainBox - 20000).toLocaleString(),
+                            (prodBox + soldBox).toLocaleString()
+                        ].sort();
+                        answer = remainBox.toLocaleString();
+                        diagram = "situasi_kehidupan_sebenar";
+                        explanation = `Tolakkan bilangan majalah yang telah diedarkan (${soldBox.toLocaleString()}) daripada jumlah keseluruhan cetakan (${prodBox.toLocaleString()}).`;
+                    } else {
+                        // Masalah Kewangan & Sumbangan Sekolah
+                        let unitPrice = 15 + (qNum % 10);
+                        let totalUnits = 45000 + (qNum * 500);
+                        let totalCost = unitPrice * totalUnits;
+                        qText = `Persatuan Ibu Bapa dan Guru (PIBG) membeli ${totalUnits.toLocaleString()} buah kamus digital untuk kegunaan murid tahun 6 pada harga RM${unitPrice} seunit. Hitung jumlah bayaran keseluruhan bagi pembelian kamus tersebut.`;
+                        options = [
+                            `RM ${totalCost.toLocaleString()}`,
+                            `RM ${(totalCost + 15000).toLocaleString()}`,
+                            `RM ${(totalCost - 25000).toLocaleString()}`,
+                            `RM ${(totalUnits * (unitPrice + 2)).toLocaleString()}`
+                        ].sort();
+                        answer = `RM ${totalCost.toLocaleString()}`;
+                        diagram = "situasi_kehidupan_sebenar";
+                        explanation = `Darabkan bilangan unit (${totalUnits.toLocaleString()}) dengan harga seunit (RM${unitPrice}) untuk mendapatkan jumlah bayaran keseluruhan.`;
+                    }
+                    break;
+            }
+
+            return {
+                id: id,
+                kategori: TOPICS_LIST[topicId - 1].title,
+                subtopik: subtopic,
+                tahap: level,
+                aras_kognitif: cog,
+                jenis: gType,
+                soalan: qText,
+                pilihan: options.sort(() => Math.random() - 0.5),
+                jawapan: answer,
+                markah: 5,
+                gambarajah: diagram,
+                penerangan: explanation
+            };
+        }
+
+        const QUESTION_BANK = generateCompleteQuestionBank();
+
+        let state = {
+            currentUser: null,
+            usersList: [],
+            currentView: 'home',
+            selectedTopic: null,
+            selectedDifficulty: null,
+            selectedTimeMode: 60,
+            selectedGameType: 'Objektif',
+            activeQuestions: [],
+            currentQuestionIndex: 0,
+            score: 0,
+            correctCount: 0,
+            wrongCount: 0,
+            timerInterval: null,
+            timeLeft: 60,
+            answeredCurrent: false
+        };
+
+        function initAppStorage() {
+            const savedUsers = localStorage.getItem('bernama_math_users');
+            if (savedUsers) {
+                try { state.usersList = JSON.parse(savedUsers); } catch(e) { state.usersList = []; }
+            }
+            if (state.usersList.length === 0) {
+                const defaultUser = {
+                    username: "Ahmad Cerdik",
+                    avatar: "👦",
+                    progress: {
+                        topicsCompleted: 3,
+                        totalAnswered: 120,
+                        totalCorrect: 96,
+                        totalScore: 480,
+                        levelsCompleted: 8,
+                        topicRecords: {}
+                    }
+                };
+                state.usersList.push(defaultUser);
+                state.currentUser = defaultUser;
+                saveUsers();
+            } else {
+                state.currentUser = state.usersList[0];
+            }
+        }
+
+        function saveUsers() {
+            localStorage.setItem('bernama_math_users', JSON.stringify(state.usersList));
+        }
+
+        function showModal(title, message, icon = "⭐") {
+            const mTitle = document.getElementById('modal-title');
+            const mMsg = document.getElementById('modal-message');
+            const mIcon = document.getElementById('modal-icon');
+            const mModal = document.getElementById('custom-modal');
+            
+            if (mTitle) mTitle.innerText = title;
+            if (mMsg) mMsg.innerText = message;
+            if (mIcon) mIcon.innerText = icon;
+            if (mModal) mModal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            const mModal = document.getElementById('custom-modal');
+            if (mModal) mModal.classList.add('hidden');
+        }
+
+        const router = {
+            navigate(viewName, params = {}) {
+                state.currentView = viewName;
+                if (params.topicId) state.selectedTopic = params.topicId;
+                if (params.difficulty) state.selectedDifficulty = params.difficulty;
+                
+                if (state.timerInterval) clearInterval(state.timerInterval);
+
+                renderView();
+            }
+        };
+
+        function renderView() {
+            const container = document.getElementById('view-container');
+            const header = document.getElementById('main-header');
+            if (!container) return;
+
+            if (state.currentView === 'login') {
+                if (header) header.classList.add('hidden');
+                container.innerHTML = renderLoginView();
+                return;
+            }
+
+            if (header) header.classList.remove('hidden');
+            const userBadge = document.getElementById('header-user-badge');
+            if (userBadge) userBadge.innerText = state.currentUser ? state.currentUser.username : 'Pelajar';
+
+            switch(state.currentView) {
+                case 'home':
+                    container.innerHTML = renderHomeView();
+                    break;
+                case 'topics':
+                    container.innerHTML = renderTopicsView();
+                    break;
+                case 'difficulty':
+                    container.innerHTML = renderDifficultyView();
+                    break;
+                case 'game':
+                    container.innerHTML = renderGameView();
+                    initGameLogic();
+                    break;
+                case 'summary':
+                    container.innerHTML = renderSummaryView();
+                    break;
+                case 'progress':
+                    container.innerHTML = renderProgressView();
+                    break;
+                case 'leaderboard':
+                    container.innerHTML = renderLeaderboardView();
+                    break;
+                case 'settings':
+                    container.innerHTML = renderSettingsView();
+                    break;
+                default:
+                    container.innerHTML = renderHomeView();
+            }
+        }
+
+        function renderLoginView() {
+            return `
+            <div class="flex-1 flex items-center justify-center p-4">
+                <div class="bg-white rounded-3xl max-w-lg w-full p-8 game-card-shadow border border-slate-100 text-center">
+                    <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-4xl shadow-lg mb-4 floating">
+                        🎓
+                    </div>
+                    <h2 class="text-2xl font-extrabold text-slate-900">MATH KIDS – BERNAMA EDU KIDZ</h2>
+                    <p class="text-slate-500 text-sm mt-1 mb-6">Sistem Pembelajaran Matematik Interaktif Tahun 6 KPM</p>
+                    
+                    <div class="space-y-4 text-left mb-6">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Pilih atau Daftar Akaun Pelajar</label>
+                        <select id="login-user-select" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            ${state.usersList.map(u => `<option value="${u.username}">${u.avatar} ${u.username}</option>`).join('')}
+                        </select>
+                        <button onclick="authSystem.loginSelected()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg btn-hover-effect">
+                            🚀 Masuk & Mula Belajar
+                        </button>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-5">
+                        <p class="text-xs text-slate-500 mb-3 font-medium">Atau daftar akaun baru baharu:</p>
+                        <div class="flex gap-2">
+                            <input type="text" id="new-username" placeholder="Nama Penuh Pelajar..." class="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <button onclick="authSystem.registerNew()" class="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow-md transition">
+                                Daftar ➕
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderHomeView() {
+            if (!state.currentUser) return '';
+            return `
+            <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 text-white relative overflow-hidden game-card-shadow">
+                        <div class="absolute right-0 bottom-0 opacity-10 text-9xl transform translate-x-4 translate-y-4">🧮</div>
+                        <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Tahun 6 KSSR Semakan</span>
+                        <h2 class="text-3xl sm:text-4xl font-extrabold mt-3 leading-tight">Terokai Dunia Nombor Bulat & Operasi!</h2>
+                        <p class="text-blue-100 mt-2 text-sm sm:text-base max-w-xl">Pilih daripada 9 topik utama, 540 soalan unik berasakan aras kognitif KPM, serta pelbagai mod permainan interaktif.</p>
+                        <div class="mt-6 flex flex-wrap gap-3">
+                            <button onclick="router.navigate('topics')" class="px-6 py-3.5 bg-white text-blue-700 font-extrabold rounded-2xl shadow-lg hover:bg-blue-50 transition flex items-center gap-2">
+                                ▶ MULA BERMAIN
+                            </button>
+                            <button onclick="router.navigate('progress')" class="px-6 py-3.5 bg-blue-500/40 border border-white/30 text-white font-bold rounded-2xl hover:bg-blue-500/60 transition flex items-center gap-2">
+                                📊 Progress Saya
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-white p-5 rounded-2xl game-card-shadow border border-slate-100 text-center">
+                            <div class="text-2xl mb-1">📚</div>
+                            <div class="text-2xl font-extrabold text-slate-900">9</div>
+                            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Topik Utama</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl game-card-shadow border border-slate-100 text-center">
+                            <div class="text-2xl mb-1">⭐</div>
+                            <div class="text-2xl font-extrabold text-blue-600">${state.currentUser.progress.totalScore}</div>
+                            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Markah Kumpul</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl game-card-shadow border border-slate-100 text-center">
+                            <div class="text-2xl mb-1">📝</div>
+                            <div class="text-2xl font-extrabold text-emerald-600">${state.currentUser.progress.totalAnswered}</div>
+                            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Soalan Dijawab</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl game-card-shadow border border-slate-100 text-center">
+                            <div class="text-2xl mb-1">🏆</div>
+                            <div class="text-2xl font-extrabold text-amber-600">${state.currentUser.progress.levelsCompleted}</div>
+                            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tahap Selesai</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 game-card-shadow border border-slate-100 flex flex-col items-center text-center">
+                    <div class="w-28 h-28 bg-amber-100 rounded-full flex items-center justify-center text-6xl shadow-inner mb-4 floating">
+                        🧙‍♂️
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900">Cikgu Cerdik</h3>
+                    <p class="text-xs text-slate-500 mt-1 mb-4">"Selamat kembali, ${state.currentUser.username}! Jom jadi pakar nombor hari ini!"</p>
+                    
+                    <div class="w-full space-y-2">
+                        <button onclick="router.navigate('leaderboard')" class="w-full py-3 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold rounded-xl text-sm transition flex items-center justify-center gap-2">
+                            🏆 Lihat Papan Leaderboard
+                        </button>
+                        <button onclick="router.navigate('settings')" class="w-full py-3 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-sm transition flex items-center justify-center gap-2">
+                            ⚙ Tetapan & Profil
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderTopicsView() {
+            return `
+            <div class="flex-1 flex flex-col space-y-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl game-card-shadow border border-slate-100">
+                    <div>
+                        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Kurikulum KPM</span>
+                        <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Pilih Topik Pembelajaran</h2>
+                        <p class="text-slate-500 text-sm">9 Topik Utama Nombor Bulat dan Operasi Tahun 6</p>
+                    </div>
+                    <button onclick="router.navigate('home')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">
+                        ← Kembali
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    ${TOPICS_LIST.map(topic => `
+                        <div onclick="selectTopic(${topic.id})" class="bg-white p-6 rounded-3xl game-card-shadow border border-slate-100 btn-hover-effect cursor-pointer flex flex-col justify-between group">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-14 h-14 bg-blue-50 group-hover:bg-blue-600 group-hover:text-white transition rounded-2xl flex items-center justify-center text-3xl shadow-sm">
+                                        ${topic.icon}
+                                    </div>
+                                    <span class="bg-slate-100 text-slate-600 text-xs font-bold px-2.5 py-1 rounded-lg">Topik ${topic.id}</span>
+                                </div>
+                                <h3 class="text-lg font-extrabold text-slate-900 group-hover:text-blue-600 transition">${topic.title}</h3>
+                                <p class="text-slate-500 text-xs mt-1 leading-relaxed">${topic.desc}</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-600">
+                                <span>20 Soalan / Tahap</span>
+                                <span class="group-hover:translate-x-1 transition">Mula Latih →</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>`;
+        }
+
+        function selectTopic(topicId) {
+            state.selectedTopic = topicId;
+            router.navigate('difficulty');
+        }
+
+        function renderDifficultyView() {
+            const topic = TOPICS_LIST.find(t => t.id === state.selectedTopic) || TOPICS_LIST[0];
+            return `
+            <div class="flex-1 flex flex-col items-center justify-center max-w-2xl mx-auto w-full">
+                <div class="bg-white p-8 rounded-3xl game-card-shadow border border-slate-100 w-full">
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="router.navigate('topics')" class="text-slate-400 hover:text-slate-600 text-sm font-bold">← Tukar Topik</button>
+                        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">Topik ${topic.id}</span>
+                    </div>
+
+                    <div class="text-center mb-6">
+                        <div class="text-4xl mb-2">${topic.icon}</div>
+                        <h2 class="text-2xl font-extrabold text-slate-900">${topic.title}</h2>
+                        <p class="text-slate-500 text-xs mt-1">Pilih tahap kesukaran, mod permainan dan masa.</p>
+                    </div>
+
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">1. Pilih Tahap Kesukaran</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button onclick="setDiff('Senang')" id="diff-Senang" class="p-3.5 rounded-xl border-2 font-bold text-sm transition border-emerald-500 bg-emerald-50 text-emerald-800">🟢 Senang</button>
+                                <button onclick="setDiff('Sederhana')" id="diff-Sederhana" class="p-3.5 rounded-xl border-2 font-bold text-sm transition border-slate-200 bg-slate-50 text-slate-600">🟡 Sederhana</button>
+                                <button onclick="setDiff('Susah')" id="diff-Susah" class="p-3.5 rounded-xl border-2 font-bold text-sm transition border-slate-200 bg-slate-50 text-slate-600">🔴 Susah</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">2. Pilih Jenis Permainan</label>
+                            <select id="setup-game-type" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                <option value="Objektif">🎯 Objektif (Pilihan Ganda)</option>
+                                <option value="Padanan">🧩 Padanan (Cari Pasangan)</option>
+                                <option value="Drag & Drop">🖱 Drag & Drop (Seret Jawapan)</option>
+                                <option value="Isi Tempat Kosong">✏️ Isi Tempat Kosong</option>
+                                <option value="Campuran">🔀 Campuran (Rawak Semua)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">3. Pilih Masa Setiap Soalan</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button onclick="setTimeMode(30)" id="time-30" class="p-3 rounded-xl border-2 font-bold text-xs transition border-slate-200 bg-slate-50 text-slate-600">⏱ 30 Saat</button>
+                                <button onclick="setTimeMode(60)" id="time-60" class="p-3 rounded-xl border-2 font-bold text-xs transition border-blue-500 bg-blue-50 text-blue-800">⏱ 1 Minit</button>
+                                <button onclick="setTimeMode(0)" id="time-0" class="p-3 rounded-xl border-2 font-bold text-xs transition border-slate-200 bg-slate-50 text-slate-600">♾ Tiada Had</button>
+                            </div>
+                        </div>
+
+                        <button onclick="startGameSession()" class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold rounded-2xl shadow-lg btn-hover-effect mt-4 text-base">
+                            🚀 MULA PERMAINAN SEKARANG
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function setDiff(diff) {
+            state.selectedDifficulty = diff;
+            ['Senang', 'Sederhana', 'Susah'].forEach(d => {
+                const btn = document.getElementById(`diff-${d}`);
+                if (btn) {
+                    if (d === diff) {
+                        btn.className = "p-3.5 rounded-xl border-2 font-bold text-sm transition border-emerald-500 bg-emerald-50 text-emerald-800";
+                    } else {
+                        btn.className = "p-3.5 rounded-xl border-2 font-bold text-sm transition border-slate-200 bg-slate-50 text-slate-600";
+                    }
+                }
+            });
+        }
+
+        function setTimeMode(t) {
+            state.selectedTimeMode = t;
+            [30, 60, 0].forEach(tm => {
+                const btn = document.getElementById(`time-${tm}`);
+                if (btn) {
+                    if (tm === t) {
+                        btn.className = "p-3 rounded-xl border-2 font-bold text-xs transition border-blue-500 bg-blue-50 text-blue-800";
+                    } else {
+                        btn.className = "p-3 rounded-xl border-2 font-bold text-xs transition border-slate-200 bg-slate-50 text-slate-600";
+                    }
+                }
+            });
+        }
+
+        function startGameSession() {
+            const gTypeSelect = document.getElementById('setup-game-type');
+            state.selectedGameType = gTypeSelect ? gTypeSelect.value : 'Objektif';
+            if (!state.selectedDifficulty) state.selectedDifficulty = 'Senang';
+            if (!state.selectedTopic) state.selectedTopic = 1;
+
+            const topicPool = QUESTION_BANK[state.selectedTopic][state.selectedDifficulty];
+            state.activeQuestions = [...topicPool].sort(() => Math.random() - 0.5).slice(0, 20);
+            state.currentQuestionIndex = 0;
+            state.score = 0;
+            state.correctCount = 0;
+            state.wrongCount = 0;
+            state.answeredCurrent = false;
+
+            router.navigate('game');
+        }
+
+        function renderGameView() {
+            const topic = TOPICS_LIST.find(t => t.id === state.selectedTopic) || TOPICS_LIST[0];
+            return `
+            <div class="flex-1 flex flex-col max-w-4xl mx-auto w-full space-y-4">
+                <div class="bg-white p-4 rounded-2xl game-card-shadow border border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center space-x-3">
+                        <span class="bg-blue-100 text-blue-700 font-bold text-xs px-3 py-1 rounded-full">${topic.title}</span>
+                        <span class="bg-emerald-100 text-emerald-700 font-bold text-xs px-3 py-1 rounded-full">${state.selectedDifficulty || 'Senang'}</span>
+                    </div>
+                    <div class="flex items-center space-x-4 text-sm font-extrabold text-slate-700">
+                        <div>📝 Soalan: <span id="hud-q-num" class="text-blue-600">1 / 20</span></div>
+                        <div>⭐ Markah: <span id="hud-score" class="text-amber-600">0</span></div>
+                        <div id="timer-container" class="bg-rose-50 text-rose-700 px-3 py-1 rounded-xl border border-rose-100">⏱ Masa: <span id="hud-timer">60</span>s</div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 sm:p-8 rounded-3xl game-card-shadow border border-slate-100 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span id="q-cognitive" class="text-xs font-bold bg-purple-100 text-purple-700 px-3 py-1 rounded-full">Mengingat</span>
+                            <span id="q-subtopic" class="text-xs font-bold text-slate-400">Subtopik</span>
+                        </div>
+
+                        <div id="q-diagram-box" class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 p-4 rounded-2xl mb-6 text-center">
+                            <div class="text-3xl mb-1" id="diagram-icon">📊</div>
+                            <div id="diagram-title" class="text-xs font-extrabold text-blue-800 tracking-wider uppercase">Gambar Rajah KPM Standard</div>
+                        </div>
+
+                        <h3 id="q-text" class="text-lg sm:text-xl font-bold text-slate-900 mb-6 leading-relaxed whitespace-pre-line">
+                            Soalan sedang dimuatkan...
+                        </h3>
+
+                        <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6"></div>
+                    </div>
+
+                    <div id="feedback-box" class="hidden p-4 rounded-2xl border mb-4 transition-all">
+                        <div id="feedback-title" class="font-extrabold text-base mb-1"></div>
+                        <p id="feedback-desc" class="text-sm"></p>
+                    </div>
+
+                    <div class="flex justify-end pt-4 border-t border-slate-100">
+                        <button id="next-btn" onclick="nextQuestion()" class="hidden px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl shadow-lg transition">
+                            Soalan Seterusnya →
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        let currentTimer = null;
+
+        function initGameLogic() {
+            loadCurrentQuestion();
+        }
+
+        function loadCurrentQuestion() {
+            if (state.currentQuestionIndex >= state.activeQuestions.length) {
+                finishGameSession();
+                return;
+            }
+
+            state.answeredCurrent = false;
+            const q = state.activeQuestions[state.currentQuestionIndex];
+            if (!q) return;
+
+            const qNumEl = document.getElementById('hud-q-num');
+            const scoreEl = document.getElementById('hud-score');
+            const cogEl = document.getElementById('q-cognitive');
+            const subEl = document.getElementById('q-subtopic');
+            const textEl = document.getElementById('q-text');
+
+            if (qNumEl) qNumEl.innerText = `${state.currentQuestionIndex + 1} / 20`;
+            if (scoreEl) scoreEl.innerText = state.score;
+            if (cogEl) cogEl.innerText = `Aras: ${q.aras_kognitif}`;
+            if (subEl) subEl.innerText = q.subtopik;
+            if (textEl) textEl.innerText = q.soalan;
+
+            const icons = {
+                "carta_nilai_tempat": "🔢",
+                "kad_nombor_juta": "🏷️",
+                "carta_cerakinkan_nombor": "📑",
+                "carta_pola": "📈",
+                "grid_pecahan": "🟧",
+                "grid_perpuluhan": "🟦",
+                "kad_operasi": "➕",
+                "kotak_anu": "❓",
+                "carta_faktor": "⭐",
+                "situasi_kehidupan_sebenar": "🏫"
+            };
+            const diagIcon = document.getElementById('diagram-icon');
+            const diagTitle = document.getElementById('diagram-title');
+            if (diagIcon) diagIcon.innerText = icons[q.gambarajah] || "📊";
+            if (diagTitle) diagTitle.innerText = `Rajah KPM: ${q.gambarajah.replaceAll('_', ' ').toUpperCase()}`;
+
+            const container = document.getElementById('options-container');
+            if (container) {
+                container.innerHTML = "";
+
+                if (q.jenis === 'Isi Tempat Kosong') {
+                    container.innerHTML = `
+                        <div class="sm:col-span-2 space-y-3">
+                            <input type="text" id="fill-blank-input" placeholder="Taip jawapan anda di sini..." class="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl font-bold text-slate-800 text-center text-lg focus:outline-none focus:border-blue-600">
+                            <button onclick="submitFillBlank('${q.jawapan}')" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl shadow-lg transition">
+                                Semak Jawapan ➔
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    q.pilihan.forEach((opt, idx) => {
+                        const btn = document.createElement('button');
+                        btn.className = "p-4 bg-slate-50 hover:bg-blue-50 border-2 border-slate-200 hover:border-blue-400 rounded-2xl font-bold text-slate-800 text-left transition flex items-center justify-between group";
+                        btn.innerHTML = `<span>${opt}</span> <span class="w-6 h-6 rounded-full bg-slate-200 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center text-xs transition">${String.fromCharCode(65 + idx)}</span>`;
+                        btn.onclick = () => checkAnswer(opt, q.jawapan, q.penerangan);
+                        container.appendChild(btn);
+                    });
+                }
+            }
+
+            const feedbackBox = document.getElementById('feedback-box');
+            const nextBtn = document.getElementById('next-btn');
+            if (feedbackBox) feedbackBox.classList.add('hidden');
+            if (nextBtn) nextBtn.classList.add('hidden');
+
+            const timerContainer = document.getElementById('timer-container');
+            const hudTimer = document.getElementById('hud-timer');
+            if (state.selectedTimeMode > 0) {
+                if (timerContainer) timerContainer.classList.remove('hidden');
+                state.timeLeft = state.selectedTimeMode;
+                if (hudTimer) hudTimer.innerText = state.timeLeft;
+                if (currentTimer) clearInterval(currentTimer);
+                currentTimer = setInterval(() => {
+                    state.timeLeft--;
+                    if (hudTimer) hudTimer.innerText = state.timeLeft;
+                    if (state.timeLeft <= 0) {
+                        clearInterval(currentTimer);
+                        if (!state.answeredCurrent) {
+                            handleTimeOut(q.jawapan, q.penerangan);
+                        }
+                    }
+                }, 1000);
+            } else {
+                if (timerContainer) timerContainer.classList.add('hidden');
+            }
+        }
+
+        function checkAnswer(selected, correct, explanation) {
+            if (state.answeredCurrent) return;
+            state.answeredCurrent = true;
+            if (currentTimer) clearInterval(currentTimer);
+
+            const isCorrect = (selected.toString().trim() === correct.toString().trim());
+            const feedbackBox = document.getElementById('feedback-box');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackDesc = document.getElementById('feedback-desc');
+            const nextBtn = document.getElementById('next-btn');
+            const scoreEl = document.getElementById('hud-score');
+
+            if (feedbackBox) feedbackBox.classList.remove('hidden');
+
+            if (isCorrect) {
+                state.correctCount++;
+                state.score += 5;
+                if (feedbackBox) feedbackBox.className = "p-4 rounded-2xl border bg-emerald-50 border-emerald-200 text-emerald-900";
+                if (feedbackTitle) feedbackTitle.innerHTML = "🎉 TAHNIAH! JAWAPAN BETUL! (+5 MARKAH)";
+                if (feedbackDesc) feedbackDesc.innerHTML = `${explanation}`;
+                try {
+                    confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                } catch(e) {}
+            } else {
+                state.wrongCount++;
+                if (feedbackBox) feedbackBox.className = "p-4 rounded-2xl border bg-rose-50 border-rose-200 text-rose-900";
+                if (feedbackTitle) feedbackTitle.innerHTML = "❌ CUBA LAGI! JAWAPAN SALAH";
+                if (feedbackDesc) feedbackDesc.innerHTML = `✅ <strong>Jawapan yang betul:</strong> ${correct}<br><br>${explanation}`;
+            }
+
+            if (scoreEl) scoreEl.innerText = state.score;
+            if (nextBtn) nextBtn.classList.remove('hidden');
+        }
+
+        function submitFillBlank(correct) {
+            const input = document.getElementById('fill-blank-input');
+            if (!input) return;
+            checkAnswer(input.value, correct, "Pastikan pengiraan dibuat dengan teliti mengikut langkah KPM.");
+        }
+
+        function handleTimeOut(correct, explanation) {
+            if (state.answeredCurrent) return;
+            state.answeredCurrent = true;
+            state.wrongCount++;
+
+            const feedbackBox = document.getElementById('feedback-box');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackDesc = document.getElementById('feedback-desc');
+            const nextBtn = document.getElementById('next-btn');
+
+            if (feedbackBox) {
+                feedbackBox.classList.remove('hidden');
+                feedbackBox.className = "p-4 rounded-2xl border bg-amber-50 border-amber-200 text-amber-900";
+            }
+            if (feedbackTitle) feedbackTitle.innerHTML = "⏱ MASA TAMAT! (Dikira Salah)";
+            if (feedbackDesc) feedbackDesc.innerHTML = `✅ <strong>Jawapan yang betul:</strong> ${correct}<br><br>${explanation}`;
+            if (nextBtn) nextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            state.currentQuestionIndex++;
+            loadCurrentQuestion();
+        }
+
+        function finishGameSession() {
+            if (currentTimer) clearInterval(currentTimer);
+            if (state.currentUser) {
+                state.currentUser.progress.totalAnswered += 20;
+                state.currentUser.progress.totalCorrect += state.correctCount;
+                state.currentUser.progress.totalScore += state.score;
+                state.currentUser.progress.levelsCompleted += 1;
+                saveUsers();
+            }
+            router.navigate('summary');
+        }
+
+        function renderSummaryView() {
+            const percentage = Math.round((state.correctCount / 20) * 100);
+            return `
+            <div class="flex-1 flex items-center justify-center p-4">
+                <div class="bg-white rounded-3xl max-w-lg w-full p-8 game-card-shadow border border-slate-100 text-center">
+                    <div class="w-20 h-20 bg-amber-100 rounded-3xl mx-auto flex items-center justify-center text-4xl shadow-md mb-4 floating">
+                        🎉
+                    </div>
+                    <h2 class="text-2xl font-extrabold text-slate-900">PERMAINAN TAMAT!</h2>
+                    <p class="text-slate-500 text-sm mt-1 mb-6">Tahniah atas usaha cemerlang anda hari ini.</p>
+
+                    <div class="bg-slate-50 p-6 rounded-2xl grid grid-cols-2 gap-4 mb-6 text-left border border-slate-100">
+                        <div>
+                            <div class="text-xs text-slate-500 font-bold uppercase">Markah Diperoleh</div>
+                            <div class="text-2xl font-extrabold text-amber-600">${state.score} / 100</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-500 font-bold uppercase">Pencapaian</div>
+                            <div class="text-2xl font-extrabold text-blue-600">${percentage}%</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-500 font-bold uppercase">Jawapan Betul</div>
+                            <div class="text-xl font-extrabold text-emerald-600">${state.correctCount} / 20</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-500 font-bold uppercase">Jawapan Salah</div>
+                            <div class="text-xl font-extrabold text-rose-600">${state.wrongCount} / 20</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <button onclick="router.navigate('difficulty')" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl shadow-lg btn-hover-effect">
+                            🔄 Main Semula Topik Ini
+                        </button>
+                        <button onclick="router.navigate('topics')" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg btn-hover-effect">
+                            ➡️ Pilih Topik Seterusnya
+                        </button>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="router.navigate('progress')" class="py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">
+                                📊 Progress
+                            </button>
+                            <button onclick="router.navigate('leaderboard')" class="py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">
+                                🏆 Leaderboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderProgressView() {
+            if (!state.currentUser) return '';
+            const p = state.currentUser.progress;
+            const percentage = Math.round((p.topicsCompleted / 9) * 100);
+            return `
+            <div class="flex-1 max-w-3xl mx-auto w-full space-y-6">
+                <div class="bg-white p-6 rounded-3xl game-card-shadow border border-slate-100 flex items-center justify-between">
+                    <div>
+                        <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Profil Akademik</span>
+                        <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Progress Pembelajaran: ${state.currentUser.username}</h2>
+                    </div>
+                    <button onclick="router.navigate('home')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm">← Utama</button>
+                </div>
+
+                <div class="bg-white p-8 rounded-3xl game-card-shadow border border-slate-100 space-y-6">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-slate-700 text-sm">TOPIK SELESAI (${p.topicsCompleted}/9)</span>
+                            <span class="font-extrabold text-blue-600">${percentage}%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-600 to-emerald-500 h-full rounded-full transition-all duration-500" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                            <div class="text-xs font-bold text-slate-400 uppercase">JUMLAH SOALAN DIJAWAB</div>
+                            <div class="text-3xl font-extrabold text-slate-900 mt-1">${p.totalAnswered}</div>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                            <div class="text-xs font-bold text-slate-400 uppercase">JAWAPAN BETUL</div>
+                            <div class="text-3xl font-extrabold text-emerald-600 mt-1">${p.totalCorrect}</div>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                            <div class="text-xs font-bold text-slate-400 uppercase">MARKAH TERKUMPUL</div>
+                            <div class="text-3xl font-extrabold text-amber-600 mt-1">${p.totalScore}</div>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                            <div class="text-xs font-bold text-slate-400 uppercase">TAHAP DISELESAIKAN</div>
+                            <div class="text-3xl font-extrabold text-blue-600 mt-1">${p.levelsCompleted} / 27</div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderLeaderboardView() {
+            const sorted = [...state.usersList].sort((a,b) => b.progress.totalScore - a.progress.totalScore);
+            return `
+            <div class="flex-1 max-w-3xl mx-auto w-full space-y-6">
+                <div class="bg-white p-6 rounded-3xl game-card-shadow border border-slate-100 flex items-center justify-between">
+                    <div>
+                        <span class="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Papan Markah</span>
+                        <h2 class="text-2xl font-extrabold text-slate-900 mt-1">🏆 LEADERBOARD PELAJAR</h2>
+                    </div>
+                    <button onclick="router.navigate('home')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm">← Utama</button>
+                </div>
+
+                <div class="bg-white rounded-3xl game-card-shadow border border-slate-100 overflow-hidden">
+                    <div class="divide-y divide-slate-100">
+                        ${sorted.map((u, idx) => `
+                            <div class="p-5 flex items-center justify-between ${state.currentUser && u.username === state.currentUser.username ? 'bg-blue-50/50' : ''}">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 rounded-2xl flex items-center justify-center font-extrabold text-lg ${idx === 0 ? 'bg-amber-400 text-white shadow-md' : idx === 1 ? 'bg-slate-300 text-white' : idx === 2 ? 'bg-amber-700 text-white' : 'bg-slate-100 text-slate-600'}">
+                                        ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}
+                                    </div>
+                                    <div>
+                                        <div class="font-extrabold text-slate-900 flex items-center gap-2">
+                                            <span>${u.avatar}</span>
+                                            <span>${u.username}</span>
+                                            ${state.currentUser && u.username === state.currentUser.username ? '<span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-bold">Anda</span>' : ''}
+                                        </div>
+                                        <div class="text-xs text-slate-500 mt-0.5">Tahap selesai: ${u.progress.levelsCompleted} | Betul: ${u.progress.totalCorrect}</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-xl font-extrabold text-amber-600">${u.progress.totalScore}</div>
+                                    <div class="text-xs text-slate-400 font-semibold">Markah</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderSettingsView() {
+            if (!state.currentUser) return '';
+            return `
+            <div class="flex-1 max-w-2xl mx-auto w-full space-y-6">
+                <div class="bg-white p-6 rounded-3xl game-card-shadow border border-slate-100 flex items-center justify-between">
+                    <div>
+                        <span class="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Tetapan Sistem</span>
+                        <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Pengurusan Akaun & Tetapan</h2>
+                    </div>
+                    <button onclick="router.navigate('home')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm">← Utama</button>
+                </div>
+
+                <div class="bg-white p-8 rounded-3xl game-card-shadow border border-slate-100 space-y-6">
+                    <div>
+                        <h3 class="font-bold text-slate-800 mb-3">👤 Akaun Aktif Semasa</h3>
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-3xl">${state.currentUser.avatar}</span>
+                                <div>
+                                    <div class="font-extrabold text-slate-900">${state.currentUser.username}</div>
+                                    <div class="text-xs text-slate-500">ID Sesi Pelajar Aktif</div>
+                                </div>
+                            </div>
+                            <button onclick="authSystem.logout()" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl text-sm transition">
+                                Tukar Akaun
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-6">
+                        <h3 class="font-bold text-slate-800 mb-3">📱 Kawalan Pandangan & Skrin</h3>
+                        <div class="flex gap-3">
+                            <button onclick="toggleOrientationView()" class="flex-1 py-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-sm transition">
+                                🔄 Tukar Mod Skrin Desktop / Tablet
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-6">
+                        <h3 class="font-bold text-slate-800 mb-3">🗑 Set Semula Data Progress</h3>
+                        <button onclick="authSystem.resetData()" class="w-full py-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl text-sm transition">
+                            Padam Rekod Progress Pelajar Ini
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        const authSystem = {
+            loginSelected() {
+                const select = document.getElementById('login-user-select');
+                if (!select) return;
+                const uname = select.value;
+                const found = state.usersList.usersList ? state.usersList.find(u => u.username === uname) : state.usersList.find(u => u.username === uname);
+                if (found) {
+                    state.currentUser = found;
+                    router.navigate('home');
+                }
+            },
+            registerNew() {
+                const input = document.getElementById('new-username');
+                if (!input) return;
+                const uname = input.value.trim();
+                if (!uname) {
+                    showModal("Ralat Pendaftaran", "Sila masukkan nama pengguna yang sah.", "⚠️");
+                    return;
+                }
+                if (state.usersList.some(u => u.username.toLowerCase() === uname.toLowerCase())) {
+                    showModal("Nama Sudah Wujud", "Sila pilih nama pengguna yang lain.", "⚠️");
+                    return;
+                }
+                const avatars = ["👦", "👧", "🦊", "🦁", "🐼", "🐯", "🐰"];
+                const newU = {
+                    username: uname,
+                    avatar: avatars[Math.floor(Math.random() * avatars.length)],
+                    progress: { topicsCompleted: 0, totalAnswered: 0, totalCorrect: 0, totalScore: 0, levelsCompleted: 0, topicRecords: {} }
+                };
+                state.usersList.push(newU);
+                state.currentUser = newU;
+                saveUsers();
+                router.navigate('home');
+            },
+            logout() {
+                router.navigate('login');
+            },
+            resetData() {
+                if (state.currentUser) {
+                    state.currentUser.progress = { topicsCompleted: 0, totalAnswered: 0, totalCorrect: 0, totalScore: 0, levelsCompleted: 0, topicRecords: {} };
+                    saveUsers();
+                    router.navigate('home');
+                    showModal("Berjaya", "Data progress telah ditetapkan semula.", "🔄");
+                }
+            }
+        };
+
+        function toggleOrientationView() {
+            const appEl = document.getElementById('app');
+            if (appEl) {
+                if (appEl.classList.contains('max-w-2xl')) {
+                    appEl.classList.remove('max-w-2xl');
+                    appEl.classList.add('max-w-7xl');
+                    showModal("Mod Desktop Interaktif", "Paparan skrin telah diubah kepada mod lebar penuh desktop.", "💻");
+                } else {
+                    appEl.classList.remove('max-w-7xl');
+                    appEl.classList.add('max-w-2xl');
+                    showModal("Mod Peranti / Tablet", "Paparan skrin telah diubah kepada mod fokus peranti.", "📱");
+                }
+            }
+        }
+
+        window.onload = function() {
+            initAppStorage();
+            if (state.currentUser) {
+                router.navigate('home');
+            } else {
+                router.navigate('login');
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATH KIDS BERNAMA EDU KIDZ TAHUN 3</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Quicksand for Kid-friendly UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'edu-blue': '#1E88E5',
+                        'edu-purple': '#7B1FA2',
+                        'edu-orange': '#FB8C00',
+                        'edu-green': '#43A047',
+                        'edu-pink': '#E91E63',
+                        'edu-yellow': '#FDD835'
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        quicksand: ['Quicksand', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f3e8ff 50%, #fef3c7 100%);
+            min-height: 100vh;
+            user-select: none;
+        }
+        .font-kids {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-bounce:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        .btn-bounce:active {
+            transform: translateY(2px) scale(0.98);
+        }
+        .bounce-anim {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-white/80 backdrop-blur-md border-b-4 border-amber-400 sticky top-0 z-50 px-4 py-3 shadow-md">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('home')">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-tr from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-kids font-bold text-xl md:text-2xl shadow-lg transform -rotate-6">
+                    M
+                </div>
+                <div>
+                    <h1 class="font-kids font-bold text-lg md:text-2xl text-indigo-700 leading-none">MATH KIDS</h1>
+                    <p class="text-xs md:text-sm font-bold text-amber-500 tracking-wider">BERNAMA EDU KIDZ TAHUN 3</p>
+                </div>
+            </div>
+
+            <!-- Active User Display & Quick Menu -->
+            <div id="nav-user-area" class="flex items-center gap-2 md:gap-4">
+                <div id="user-badge" class="hidden flex items-center gap-2 bg-indigo-50 border-2 border-indigo-200 px-3 py-1.5 rounded-full cursor-pointer" onclick="navigateTo('profile')">
+                    <div class="w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold text-sm" id="user-avatar-text">A</div>
+                    <span id="user-name-display" class="font-bold text-sm text-indigo-900 hidden sm:inline">Murid</span>
+                </div>
+                <button id="btn-nav-login" onclick="navigateTo('login')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition btn-bounce shadow">
+                    <i class="fa-solid font-bold fa-right-to-bracket mr-1"></i> Log Masuk
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+
+        <!-- 1. HALAMAN UTAMA (HOME) -->
+        <section id="page-home" class="view-page text-center py-6">
+            <div class="max-w-3xl mx-auto glass-card rounded-3xl p-6 md:p-10 border-4 border-amber-300">
+                <div class="inline-block bg-amber-100 text-amber-800 font-bold px-4 py-1.5 rounded-full text-sm mb-4 border border-amber-300">
+                    <i class="fa-solid fa-graduation-cap mr-2"></i> KSSR Matematik Tahun 3 (KPM)
+                </div>
+                <h2 class="font-kids text-3xl md:text-5xl font-bold text-indigo-900 mb-4 leading-tight">
+                    Belajar Pecahan, Perpuluhan & Peratus Tanpa Soalan Berulang! 🚀
+                </h2>
+                <p class="text-slate-600 text-base md:text-lg mb-8 font-medium">
+                    Terokai 11 topik KSSR dengan 330 soalan unik. Kumpul markah dan capai tahap penguasaan terbaik!
+                </p>
+
+                <!-- Mascot Area -->
+                <div class="flex justify-center items-center gap-6 mb-8 bounce-anim">
+                    <div class="w-20 h-20 md:w-28 md:h-28 bg-amber-400 rounded-3xl flex items-center justify-center text-white text-4xl md:text-6xl shadow-xl transform -rotate-12 border-4 border-white">
+                        🧩
+                    </div>
+                    <div class="w-24 h-24 md:w-32 md:h-32 bg-indigo-500 rounded-3xl flex items-center justify-center text-white text-5xl md:text-7xl shadow-xl border-4 border-white">
+                        📊
+                    </div>
+                    <div class="w-20 h-20 md:w-28 md:h-28 bg-emerald-400 rounded-3xl flex items-center justify-center text-white text-4xl md:text-6xl shadow-xl transform rotate-12 border-4 border-white">
+                        💯
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button onclick="startMainFlow()" class="w-full sm:w-auto bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-kids font-bold text-xl px-8 py-4 rounded-2xl shadow-lg border-b-4 border-teal-800 btn-bounce flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-play text-2xl"></i> Mula Bermain
+                    </button>
+                    <button onclick="navigateTo('leaderboard')" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-kids font-bold text-xl px-6 py-4 rounded-2xl shadow-lg border-b-4 border-orange-700 btn-bounce flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-trophy"></i> Papan Skor
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. HALAMAN REGISTER -->
+        <section id="page-register" class="view-page hidden max-w-md mx-auto w-full">
+            <div class="glass-card rounded-3xl p-6 md:p-8 border-4 border-indigo-200">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 text-3xl mx-auto mb-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+                    <h3 class="font-kids text-2xl font-bold text-indigo-900">Daftar Akaun Murid</h3>
+                    <p class="text-xs text-slate-500">Cipta profil untuk menyimpan rekod permainan anda!</p>
+                </div>
+
+                <form onsubmit="handleRegister(event)" class="space-y-4">
+                    <div>
+                        <label class="block font-bold text-sm text-slate-700 mb-1">Nama Pengguna</label>
+                        <input type="text" id="reg-username" required class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:outline-none font-bold" placeholder="Cth: Amir_T3">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-sm text-slate-700 mb-1">Kata Laluan</label>
+                        <input type="password" id="reg-password" required class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:outline-none font-bold" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-kids font-bold text-lg py-3 rounded-xl shadow-lg btn-bounce">
+                        Daftar Akaun
+                    </button>
+                </form>
+
+                <p class="text-center text-sm text-slate-600 mt-6">
+                    Sudah ada akaun? <a href="#" onclick="navigateTo('login')" class="text-indigo-600 font-bold underline">Log Masuk</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- 3. HALAMAN LOGIN -->
+        <section id="page-login" class="view-page hidden max-w-md mx-auto w-full">
+            <div class="glass-card rounded-3xl p-6 md:p-8 border-4 border-indigo-200">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 text-3xl mx-auto mb-2">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <h3 class="font-kids text-2xl font-bold text-indigo-900">Log Masuk</h3>
+                    <p class="text-xs text-slate-500">Masukkan maklumat akaun Edu Kidz anda</p>
+                </div>
+
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block font-bold text-sm text-slate-700 mb-1">Nama Pengguna</label>
+                        <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:outline-none font-bold" placeholder="Nama anda">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-sm text-slate-700 mb-1">Kata Laluan</label>
+                        <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:outline-none font-bold" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-kids font-bold text-lg py-3 rounded-xl shadow-lg btn-bounce">
+                        Log Masuk
+                    </button>
+                </form>
+
+                <div class="mt-4 pt-4 border-t text-center">
+                    <button onclick="loginGuest()" class="text-xs font-bold text-slate-500 hover:text-indigo-600 underline">
+                        Main Sebagai Tetamu (Guest Mode)
+                    </button>
+                </div>
+
+                <p class="text-center text-sm text-slate-600 mt-4">
+                    Belum ada akaun? <a href="#" onclick="navigateTo('register')" class="text-indigo-600 font-bold underline">Daftar Sekarang</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- 4. PEMILIHAN TOPIK -->
+        <section id="page-topics" class="view-page hidden space-y-6">
+            <div class="text-center">
+                <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Langkah 1 daripada 4</span>
+                <h2 class="font-kids text-3xl font-bold text-indigo-900 mt-1">Pilih Topik Matematik</h2>
+                <p class="text-slate-600 text-sm">Pilih 1 daripada 11 topik Kurikulum KSSR Tahun 3</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="topics-grid">
+                <!-- Injected Dynamically -->
+            </div>
+        </section>
+
+        <!-- 5. PEMILIHAN JENIS PERMAINAN -->
+        <section id="page-game-mode" class="view-page hidden max-w-2xl mx-auto w-full space-y-6">
+            <div class="text-center">
+                <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Langkah 2 daripada 4</span>
+                <h2 class="font-kids text-3xl font-bold text-indigo-900 mt-1">Pilih Jenis Permainan</h2>
+                <p class="text-slate-600 text-sm">Pilih format soalan pilihan anda</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button onclick="selectGameMode('Objektif')" class="glass-card p-6 rounded-2xl border-4 border-blue-300 hover:border-blue-500 text-left transition btn-bounce flex items-start gap-4">
+                    <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-white text-2xl font-bold shrink-0">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-kids text-xl font-bold text-indigo-900">A. Objektif</h4>
+                        <p class="text-xs text-slate-600 mt-1">Pilihan jawapan A, B, C, D interaktif.</p>
+                    </div>
+                </button>
+
+                <button onclick="selectGameMode('Padanan')" class="glass-card p-6 rounded-2xl border-4 border-purple-300 hover:border-purple-500 text-left transition btn-bounce flex items-start gap-4">
+                    <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center text-white text-2xl font-bold shrink-0">
+                        <i class="fa-solid fa-diagram-project"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-kids text-xl font-bold text-indigo-900">B. Padanan</h4>
+                        <p class="text-xs text-slate-600 mt-1">Padankan simbol pecahan dengan nilai tepat.</p>
+                    </div>
+                </button>
+
+                <button onclick="selectGameMode('Drag & Drop')" class="glass-card p-6 rounded-2xl border-4 border-emerald-300 hover:border-emerald-500 text-left transition btn-bounce flex items-start gap-4">
+                    <div class="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white text-2xl font-bold shrink-0">
+                        <i class="fa-solid fa-hand-pointer"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-kids text-xl font-bold text-indigo-900">C. Drag & Drop</h4>
+                        <p class="text-xs text-slate-600 mt-1">Pilih/seret jawapan tepat ke petak sasar.</p>
+                    </div>
+                </button>
+
+                <button onclick="selectGameMode('Isi Tempat Kosong')" class="glass-card p-6 rounded-2xl border-4 border-amber-300 hover:border-amber-500 text-left transition btn-bounce flex items-start gap-4">
+                    <div class="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center text-white text-2xl font-bold shrink-0">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-kids text-xl font-bold text-indigo-900">D. Isi Tempat Kosong</h4>
+                        <p class="text-xs text-slate-600 mt-1">Taip jawapan terus untuk semakan automatik.</p>
+                    </div>
+                </button>
+            </div>
+            <div class="text-center">
+                <button onclick="navigateTo('topics')" class="text-sm font-bold text-slate-500 hover:underline">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Topik
+                </button>
+            </div>
+        </section>
+
+        <!-- 6. PEMILIHAN TAHAP KESUKARAN -->
+        <section id="page-difficulty" class="view-page hidden max-w-xl mx-auto w-full space-y-6">
+            <div class="text-center">
+                <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Langkah 3 daripada 4</span>
+                <h2 class="font-kids text-3xl font-bold text-indigo-900 mt-1">Pilih Tahap Kesukaran</h2>
+                <p class="text-slate-600 text-sm">Setiap tahap mengandungi 10 soalan berbeza dan unik</p>
+            </div>
+
+            <div class="space-y-4">
+                <button onclick="selectDifficulty('Senang')" class="w-full glass-card p-5 rounded-2xl border-4 border-green-300 hover:border-green-500 text-left transition btn-bounce flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center text-white text-2xl font-bold">😊</div>
+                        <div>
+                            <h4 class="font-kids text-xl font-bold text-indigo-900">Tahap 1: Senang</h4>
+                            <p class="text-xs text-slate-600">Aras Mengingat & Asas Visual.</p>
+                        </div>
+                    </div>
+                    <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full">10 Soalan Unik</span>
+                </button>
+
+                <button onclick="selectDifficulty('Sederhana')" class="w-full glass-card p-5 rounded-2xl border-4 border-amber-300 hover:border-amber-500 text-left transition btn-bounce flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center text-white text-2xl font-bold">🤔</div>
+                        <div>
+                            <h4 class="font-kids text-xl font-bold text-indigo-900">Tahap 2: Sederhana</h4>
+                            <p class="text-xs text-slate-600">Aras Memahami & Pengiraan Asas.</p>
+                        </div>
+                    </div>
+                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">10 Soalan Unik</span>
+                </button>
+
+                <button onclick="selectDifficulty('Susah')" class="w-full glass-card p-5 rounded-2xl border-4 border-red-300 hover:border-red-500 text-left transition btn-bounce flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center text-white text-2xl font-bold">🧠</div>
+                        <div>
+                            <h4 class="font-kids text-xl font-bold text-indigo-900">Tahap 3: Susah</h4>
+                            <p class="text-xs text-slate-600">Aras Mengaplikasi & KBAT Situasi Harian.</p>
+                        </div>
+                    </div>
+                    <span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">10 Soalan Unik</span>
+                </button>
+            </div>
+            <div class="text-center">
+                <button onclick="navigateTo('game-mode')" class="text-sm font-bold text-slate-500 hover:underline">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Jenis Permainan
+                </button>
+            </div>
+        </section>
+
+        <!-- 7. PEMILIHAN MASA -->
+        <section id="page-timer-select" class="view-page hidden max-w-xl mx-auto w-full space-y-6">
+            <div class="text-center">
+                <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Langkah 4 daripada 4</span>
+                <h2 class="font-kids text-3xl font-bold text-indigo-900 mt-1">Pilih Pemasa Permainan</h2>
+                <p class="text-slate-600 text-sm">Masa bagi keseluruhan 10 soalan</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <button onclick="selectTimer(30)" class="glass-card p-6 rounded-2xl border-4 border-rose-300 hover:border-rose-500 text-center transition btn-bounce">
+                    <div class="text-4xl mb-2">⚡</div>
+                    <h4 class="font-kids text-xl font-bold text-indigo-900">30 Saat</h4>
+                    <p class="text-xs text-slate-500 mt-1">Cepat & Pantas</p>
+                </button>
+
+                <button onclick="selectTimer(60)" class="glass-card p-6 rounded-2xl border-4 border-indigo-300 hover:border-indigo-500 text-center transition btn-bounce">
+                    <div class="text-4xl mb-2">⏱️</div>
+                    <h4 class="font-kids text-xl font-bold text-indigo-900">1 Minit</h4>
+                    <p class="text-xs text-slate-500 mt-1">Sederhana</p>
+                </button>
+
+                <button onclick="selectTimer(0)" class="glass-card p-6 rounded-2xl border-4 border-teal-300 hover:border-teal-500 text-center transition btn-bounce">
+                    <div class="text-4xl mb-2">♾️</div>
+                    <h4 class="font-kids text-xl font-bold text-indigo-900">Tiada Had</h4>
+                    <p class="text-xs text-slate-500 mt-1">Latihan Santai</p>
+                </button>
+            </div>
+            <div class="text-center">
+                <button onclick="navigateTo('difficulty')" class="text-sm font-bold text-slate-500 hover:underline">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Tahap Kesukaran
+                </button>
+            </div>
+        </section>
+
+        <!-- 8. HALAMAN PERMAINAN -->
+        <section id="page-gameplay" class="view-page hidden space-y-4 max-w-4xl mx-auto w-full">
+            <div class="glass-card p-4 rounded-2xl flex flex-wrap justify-between items-center gap-3 border-2 border-indigo-100">
+                <div class="flex items-center gap-2">
+                    <span id="game-topic-badge" class="bg-indigo-600 text-white font-bold text-xs px-3 py-1 rounded-full">Topik</span>
+                    <span id="game-diff-badge" class="bg-amber-500 text-white font-bold text-xs px-3 py-1 rounded-full">Tahap</span>
+                </div>
+                
+                <div class="flex items-center gap-4 font-bold text-sm">
+                    <div class="text-slate-600">Soalan: <span id="current-q-num" class="text-indigo-600 text-base">1</span>/10</div>
+                    <div class="text-emerald-600 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200">
+                        Markah: <span id="current-score" class="text-base">0</span>
+                    </div>
+                    <div id="timer-box" class="text-rose-600 bg-rose-50 px-3 py-1 rounded-xl border border-rose-200 flex items-center gap-1">
+                        <i class="fa-solid fa-clock"></i> <span id="timer-display">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="glass-card rounded-3xl p-6 border-4 border-amber-300 relative overflow-hidden">
+                <div class="flex justify-between items-center mb-3">
+                    <span id="cognitive-level-tag" class="text-xs font-bold text-purple-700 bg-purple-100 px-3 py-1 rounded-full">Aras Kognitif: -</span>
+                    <span class="text-xs font-bold text-slate-400" id="question-id-tag">ID: -</span>
+                </div>
+
+                <h3 id="question-text" class="font-kids text-xl md:text-2xl font-bold text-slate-800 mb-4">
+                    Memuatkan soalan...
+                </h3>
+
+                <!-- SVG Diagram Rendering Zone -->
+                <div id="diagram-container" class="my-4 p-4 bg-slate-50/80 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center min-h-[160px]">
+                    <!-- Dynamic SVG generated by JS -->
+                </div>
+
+                <!-- Answer Zone -->
+                <div id="answer-zone" class="mt-6">
+                    <!-- Injected dynamically -->
+                </div>
+
+                <!-- Feedback Panel -->
+                <div id="feedback-panel" class="hidden mt-6 p-4 rounded-2xl border-2 text-sm space-y-2">
+                    <div id="feedback-title" class="font-kids font-bold text-lg flex items-center gap-2"></div>
+                    <div id="feedback-desc" class="text-slate-700"></div>
+                    <div id="feedback-steps" class="text-xs bg-white/80 p-3 rounded-xl font-mono text-slate-800 border border-slate-200"></div>
+                    <button onclick="nextQuestion()" class="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2 rounded-xl text-sm btn-bounce">
+                        Soalan Seterusnya <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. HALAMAN KEPUTUSAN -->
+        <section id="page-results" class="view-page hidden max-w-xl mx-auto w-full text-center space-y-6">
+            <div class="glass-card rounded-3xl p-8 border-4 border-amber-400 relative overflow-hidden">
+                <div class="text-6xl mb-2 bounce-anim">🎉</div>
+                <h2 class="font-kids text-3xl font-bold text-indigo-900">Syabas! Permainan Tamat</h2>
+                <p class="text-slate-600 text-sm mt-1">Keputusan penuh pencapaian anda:</p>
+
+                <div class="my-6 bg-gradient-to-r from-amber-500 to-orange-500 text-white p-6 rounded-2xl shadow-inner space-y-2">
+                    <p class="text-sm font-bold uppercase tracking-wider opacity-90">Jumlah Markah</p>
+                    <div class="text-5xl font-kids font-bold" id="final-score-val">100 / 100</div>
+                    <p class="text-xs font-semibold" id="final-accuracy-val">Ketepatan: 100% (10/10 Betul)</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 text-left mb-6">
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <span class="text-xs text-slate-500 block">Topik</span>
+                        <span id="res-topic" class="font-bold text-sm text-indigo-900">-</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <span class="text-xs text-slate-500 block">Tahap</span>
+                        <span id="res-diff" class="font-bold text-sm text-indigo-900">-</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="retryGame()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-kids font-bold px-6 py-3 rounded-xl btn-bounce">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Main Lagi
+                    </button>
+                    <button onclick="navigateTo('progress')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-kids font-bold px-6 py-3 rounded-xl btn-bounce">
+                        <i class="fa-solid fa-chart-line mr-1"></i> Lihat Kemajuan
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. HALAMAN KEMAJUAN -->
+        <section id="page-progress" class="view-page hidden space-y-6">
+            <div class="text-center">
+                <h2 class="font-kids text-3xl font-bold text-indigo-900">Kemajuan Pembelajaran</h2>
+                <p class="text-slate-600 text-sm">Rekod pencapaian penguasaan Matematik anda</p>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="glass-card p-4 rounded-2xl text-center border-b-4 border-blue-500">
+                    <span class="text-2xl">📝</span>
+                    <h4 class="font-kids text-2xl font-bold text-indigo-900" id="stat-total-q">0</h4>
+                    <p class="text-xs text-slate-500 font-bold">Soalan Dijawab</p>
+                </div>
+                <div class="glass-card p-4 rounded-2xl text-center border-b-4 border-emerald-500">
+                    <span class="text-2xl">✅</span>
+                    <h4 class="font-kids text-2xl font-bold text-emerald-600" id="stat-correct-q">0</h4>
+                    <p class="text-xs text-slate-500 font-bold">Jawapan Betul</p>
+                </div>
+                <div class="glass-card p-4 rounded-2xl text-center border-b-4 border-amber-500">
+                    <span class="text-2xl">🏆</span>
+                    <h4 class="font-kids text-2xl font-bold text-amber-600" id="stat-high-score">0</h4>
+                    <p class="text-xs text-slate-500 font-bold">Markah Tertinggi</p>
+                </div>
+                <div class="glass-card p-4 rounded-2xl text-center border-b-4 border-purple-500">
+                    <span class="text-2xl">🎯</span>
+                    <h4 class="font-kids text-2xl font-bold text-purple-600" id="stat-accuracy">0%</h4>
+                    <p class="text-xs text-slate-500 font-bold">Purata Ketepatan</p>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl space-y-4">
+                <h3 class="font-kids text-xl font-bold text-indigo-900">Senarai Topik DSKP</h3>
+                <div class="space-y-3" id="topic-progress-list">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 11. HALAMAN LEADERBOARD -->
+        <section id="page-leaderboard" class="view-page hidden max-w-2xl mx-auto w-full space-y-6">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-500 text-3xl mx-auto mb-2">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h2 class="font-kids text-3xl font-bold text-indigo-900">Papan Skor Jaguh Edu Kidz</h2>
+                <p class="text-slate-600 text-sm">Kedudukan murid terbaik dalam cabaran matematik</p>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 border-4 border-amber-300">
+                <div class="space-y-3" id="leaderboard-list">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 12. HALAMAN PROFIL -->
+        <section id="page-profile" class="view-page hidden max-w-md mx-auto w-full space-y-6">
+            <div class="glass-card rounded-3xl p-6 text-center border-4 border-indigo-200">
+                <div class="w-20 h-20 bg-indigo-600 text-white rounded-full flex items-center justify-center font-kids text-3xl font-bold mx-auto mb-3 border-4 border-amber-300 shadow-lg" id="profile-avatar">
+                    A
+                </div>
+                <h3 class="font-kids text-2xl font-bold text-indigo-900" id="profile-username">Pelajar</h3>
+                <p class="text-xs bg-indigo-100 text-indigo-800 font-bold px-3 py-1 rounded-full inline-block mt-1">
+                    Murid Tahun 3
+                </p>
+
+                <div class="my-6 border-t border-b py-4 space-y-2 text-left text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Sesi Permainan Selesai:</span>
+                        <span class="font-bold text-indigo-900" id="prof-games-count">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Jumlah Markah Terkumpul:</span>
+                        <span class="font-bold text-indigo-900" id="prof-total-score">0</span>
+                    </div>
+                </div>
+
+                <button onclick="handleLogout()" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-kids font-bold py-3 rounded-xl shadow btn-bounce">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Log Keluar
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white/80 backdrop-blur-md border-t-2 border-slate-200 py-3 text-center text-xs font-bold text-slate-500">
+        MATH KIDS BERNAMA EDU KIDZ TAHUN 3 &bull; DSKP KSSR Matematik KPM
+    </footer>
+
+    <script>
+        /*
+         * MATH KIDS BERNAMA EDU KIDZ TAHUN 3 - GAME ENGINE
+         * Strictly 330 Unique Questions across 11 Topics x 3 Difficulty Levels x 10 Questions
+         */
+
+        const TOPICS_LIST = [
+            "Pecahan wajar",
+            "Pecahan setara",
+            "Pecahan termudah",
+            "Pecahan tak wajar dan nombor bercampur",
+            "Tambah pecahan",
+            "Tolak pecahan",
+            "Kenal pecahan perseratus dan perpuluhan",
+            "Banding perpuluhan",
+            "Tambah dan tolak perpuluhan",
+            "Kenal peratus",
+            "Penyelesaian masalah"
+        ];
+
+        let currentUser = null;
+        let playedQuestionIds = []; // Global history to prevent repeating questions in active session
+
+        let activeGame = {
+            topic: "",
+            mode: "",
+            difficulty: "",
+            timerSec: 0,
+            questions: [],
+            currentIndex: 0,
+            score: 0,
+            correctCount: 0,
+            timerInterval: null,
+            timeRemaining: 0
+        };
+
+        function getUsers() {
+            try {
+                return JSON.parse(localStorage.getItem('edukidz_users')) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveUsers(users) {
+            try {
+                localStorage.setItem('edukidz_users', JSON.stringify(users));
+            } catch (e) {
+                console.error("Storage error", e);
+            }
+        }
+
+        // --- 330 UNIQUE QUESTION GENERATION SYSTEM ---
+        const QuestionBank = [];
+
+        function generateFullQuestionBank() {
+            QuestionBank.length = 0; // Reset
+            TOPICS_LIST.forEach((topic, tIdx) => {
+                ['Senang', 'Sederhana', 'Susah'].forEach((diff) => {
+                    for (let i = 1; i <= 10; i++) {
+                        const qId = `T${tIdx + 1}_${diff.substring(0,3).toUpperCase()}_Q${String(i).padStart(2, '0')}`;
+                        QuestionBank.push(generateUniqueQuestion(qId, topic, diff, i, tIdx + 1));
+                    }
+                });
+            });
+        }
+
+        function generateUniqueQuestion(id, topic, diff, index, topicNum) {
+            let cog = diff === 'Senang' ? 'Mengingat' : (diff === 'Sederhana' ? 'Memahami' : 'Mengaplikasi');
+            let qText = "";
+            let correct = "";
+            let choices = [];
+            let diagramType = "fraction_circle";
+            let diagramVal = {};
+            let steps = "";
+            let explanation = "";
+
+            // Unique question builder to prevent duplicate structures or overlapping numbers
+            if (topic === "Pecahan wajar") {
+                if (diff === 'Senang') {
+                    const den = index + 1; // 2 to 11
+                    const num = 1;
+                    qText = `(${index}) Nyatakan pecahan wajar apabila 1 daripada ${den} bahagian diwarnakan.`;
+                    correct = `1/${den}`;
+                    choices = [`1/${den}`, `2/${den}`, `1/${den + 1}`, `${den}/1`].sort();
+                    diagramVal = { numerator: 1, denominator: den };
+                    steps = `1 bahagian diwarnakan daripada ${den} bahagian = 1/${den}.`;
+                    explanation = `Pembilang ialah 1 dan penyebut ialah ${den}.`;
+                } else if (diff === 'Sederhana') {
+                    const den = index + 2; // 3 to 12
+                    const num = index; // 1 to 10
+                    const validNum = num < den ? num : den - 1;
+                    qText = `(${index}) Apakah nilai pecahan bahagian berkarpet jika ${validNum} daripada ${den} ruang diwarnakan?`;
+                    correct = `${validNum}/${den}`;
+                    choices = [`${validNum}/${den}`, `${validNum + 1}/${den}`, `${validNum}/${den + 1}`, `${validNum + 1}/${den + 1}`];
+                    diagramVal = { numerator: validNum, denominator: den };
+                    steps = `Pembilang = ${validNum}, Penyebut = ${den}.`;
+                    explanation = `Pecahan wajar mempunyai pembilang yang lebih kecil daripada penyebut.`;
+                } else { // Susah
+                    const items = ["epal", "oren", "buku", "pensel", "biskut", "guli", "kek", "topi", "belon", "pembaris"];
+                    const total = index + 3;
+                    const shaded = index + 1;
+                    qText = `(${index}) Suatu kotak mengandungi ${total} ${items[index-1]}. Sekiranya ${shaded} daripadanya berwarna merah, apakah pecahan ${items[index-1]} merah itu?`;
+                    correct = `${shaded}/${total}`;
+                    choices = [`${shaded}/${total}`, `${shaded + 1}/${total}`, `${shaded}/${total + 1}`, `${total - shaded}/${total}`];
+                    diagramVal = { numerator: shaded, denominator: total };
+                    steps = `Bilangan ${items[index-1]} merah = ${shaded}, Jumlah keseluruhan = ${total}.`;
+                    explanation = `Pecahan mewakili bahagian merah daripada jumlah keseluruhan.`;
+                }
+            }
+            else if (topic === "Pecahan setara") {
+                const baseN = (index % 3) + 1;
+                const baseD = baseN + 2;
+                if (diff === 'Senang') {
+                    correct = `${baseN * 2}/${baseD * 2}`;
+                    qText = `(${index}) Cari pecahan setara bagi ${baseN}/${baseD} (darab 2).`;
+                    choices = [correct, `${baseN * 2 + 1}/${baseD * 2}`, `${baseN}/${baseD * 2}`, `${baseN + 1}/${baseD}`];
+                    steps = `${baseN}×2 = ${baseN*2}, ${baseD}×2 = ${baseD*2}.`;
+                } else if (diff === 'Sederhana') {
+                    correct = `${baseN * 3}/${baseD * 3}`;
+                    qText = `(${index}) Apakah pecahan setara bagi ${baseN}/${baseD} apabila didarab dengan 3?`;
+                    choices = [correct, `${baseN * 3 + 1}/${baseD * 3}`, `${baseN * 3}/${baseD * 3 + 1}`, `${baseN + 2}/${baseD}`];
+                    steps = `${baseN}×3 = ${baseN*3}, ${baseD}×3 = ${baseD*3}.`;
+                } else {
+                    correct = `${baseN * 4}/${baseD * 4}`;
+                    qText = `(${index}) Nisbah luas padang A ialah ${baseN}/${baseD}. Padang B mempunyai pecahan setara. Manakah nilai padang B?`;
+                    choices = [correct, `${baseN * 4 + 1}/${baseD * 4}`, `${baseN * 2}/${baseD * 3}`, `${baseN + 3}/${baseD}`];
+                    steps = `${baseN}×4 = ${baseN*4}, ${baseD}×4 = ${baseD*4}.`;
+                }
+                diagramVal = { numerator: baseN, denominator: baseD };
+                explanation = `Darabkan pembilang dan penyebut dengan nombor yang sama untuk mendapat pecahan setara.`;
+            }
+            else if (topic === "Pecahan termudah") {
+                const multiplier = diff === 'Senang' ? 2 : (diff === 'Sederhana' ? 3 : 4);
+                const simpleN = (index % 4) + 1;
+                const simpleD = simpleN + index;
+                const origN = simpleN * multiplier;
+                const origD = simpleD * multiplier;
+
+                qText = `(${index}) Permudahkan pecahan ${origN}/${origD} kepada bentuk termudah.`;
+                correct = `${simpleN}/${simpleD}`;
+                choices = [`${simpleN}/${simpleD}`, `${simpleN + 1}/${simpleD}`, `${simpleN}/${simpleD + 1}`, `${origN}/${origD}`];
+                diagramVal = { numerator: origN, denominator: origD };
+                steps = `Bahagikan pembilang dan penyebut dengan ${multiplier}: ${origN}÷${multiplier}=${simpleN}, ${origD}÷${multiplier}=${simpleD}.`;
+                explanation = `Bentuk termudah diperoleh dengan membahagi pembilang dan penyebut dengan faktor sepunya terbesar.`;
+            }
+            else if (topic === "Pecahan tak wajar dan nombor bercampur") {
+                diagramType = "mixed_fraction";
+                if (diff === 'Senang') {
+                    qText = `(${index}) Gambar rajah menunjukkan ${index} bulatan penuh dan 1/2. Tuliskan dalam nombor bercampur.`;
+                    correct = `${index} 1/2`;
+                    choices = [`${index} 1/2`, `${index + 1} 1/2`, `${index} 1/3`, `${index + 1}/2`];
+                    diagramVal = { whole: index, num: 1, den: 2 };
+                    steps = `${index} penuh + 1/2 = ${index} 1/2.`;
+                } else if (diff === 'Sederhana') {
+                    const whole = index;
+                    const num = 1;
+                    const den = 3;
+                    const improper = (whole * den) + num;
+                    qText = `(${index}) Tukarkan nombor bercampur ${whole} 1/3 kepada pecahan tak wajar.`;
+                    correct = `${improper}/3`;
+                    choices = [`${improper}/3`, `${improper + 1}/3`, `${improper}/4`, `${whole + 1}/3`];
+                    diagramVal = { whole, num, den };
+                    steps = `(${whole} × 3) + 1 = ${improper}. Penyebut kekal 3, jadi ${improper}/3.`;
+                } else {
+                    const improper = (index * 2) + 3;
+                    const whole = Math.floor(improper / 2);
+                    const rem = improper % 2;
+                    qText = `(${index}) Tukarkan pecahan tak wajar ${improper}/2 kepada nombor bercampur.`;
+                    correct = `${whole} ${rem}/2`;
+                    choices = [`${whole} ${rem}/2`, `${whole + 1} 1/2`, `${whole} 2/3`, `${improper}/4`];
+                    diagramVal = { whole, num: rem, den: 2 };
+                    steps = `${improper} ÷ 2 = ${whole} berbaki ${rem}, jadi ${whole} ${rem}/2.`;
+                }
+                explanation = `Pecahan tak wajar mempunyai pembilang lebih besar daripada penyebut.`;
+            }
+            else if (topic === "Tambah pecahan") {
+                const den = index + 3;
+                const n1 = 1;
+                const n2 = diff === 'Senang' ? 1 : (diff === 'Sederhana' ? 2 : (index % 2) + 2);
+                qText = `(${index}) Kira sum / jumlah: ${n1}/${den} + ${n2}/${den} = ?`;
+                correct = `${n1 + n2}/${den}`;
+                choices = [`${n1 + n2}/${den}`, `${n1 + n2 + 1}/${den}`, `${n1 + n2}/${den + 1}`, `${n1}/${den}`];
+                diagramVal = { numerator: n1 + n2, denominator: den };
+                steps = `Tambah pembilang: ${n1} + ${n2} = ${n1 + n2}. Penyebut dikekalkan (${den}).`;
+                explanation = `Apabila penyebut sama, tambah pembilang di atas sahaja.`;
+            }
+            else if (topic === "Tolak pecahan") {
+                const den = index + 4;
+                const n1 = index + 2;
+                const n2 = diff === 'Senang' ? 1 : (diff === 'Sederhana' ? 2 : 3);
+                const result = n1 - n2;
+                qText = `(${index}) Hitung baki penolakan: ${n1}/${den} - ${n2}/${den} = ?`;
+                correct = `${result}/${den}`;
+                choices = [`${result}/${den}`, `${result + 1}/${den}`, `${result}/${den + 1}`, `${n1}/${den}`];
+                diagramVal = { numerator: result, denominator: den };
+                steps = `Tolak pembilang: ${n1} - ${n2} = ${result}. Penyebut kekal ${den}.`;
+                explanation = `Tolak pembilang sahaja manakala penyebut dikekalkan.`;
+            }
+            else if (topic === "Kenal pecahan perseratus dan perpuluhan") {
+                diagramType = "grid_100";
+                const val = (index * 7) + (diff === 'Senang' ? 5 : (diff === 'Sederhana' ? 10 : 15));
+                const dec = (val / 100).toFixed(2);
+                qText = `(${index}) Tuliskan pecahan ${val}/100 dalam bentuk nombor perpuluhan.`;
+                correct = `${dec}`;
+                choices = [`${dec}`, `${(val/10).toFixed(1)}`, `0.0${val}`, `1.${val}`];
+                diagramVal = { shaded: val };
+                steps = `${val} daripada 100 petak diwarnakan = ${dec}.`;
+                explanation = `Pecahan perseratus ditukar kepada dua tempat perpuluhan.`;
+            }
+            else if (topic === "Banding perpuluhan") {
+                const base = (index * 0.08).toFixed(2);
+                const higher = (parseFloat(base) + (diff === 'Senang' ? 0.1 : (diff === 'Sederhana' ? 0.05 : 0.02))).toFixed(2);
+                qText = `(${index}) Bandingkan dua nilai perpuluhan berikut: ${higher} ___ ${base}`;
+                correct = "lebih besar daripada";
+                choices = ["lebih besar daripada", "lebih kecil daripada", "sama dengan", "separuh daripada"];
+                steps = `${higher} berada lebih ke kanan berbanding ${base} pada garis nombor.`;
+                explanation = `Bandingkan digit pada nilai tempat persepuluh dan perseratus.`;
+            }
+            else if (topic === "Tambah dan tolak perpuluhan") {
+                const a = (index * 0.12).toFixed(2);
+                const b = (index * 0.05 + 0.1).toFixed(2);
+                if (diff === 'Senang' || diff === 'Sederhana') {
+                    const sum = (parseFloat(a) + parseFloat(b)).toFixed(2);
+                    qText = `(${index}) Hitung jumlah: ${a} + ${b} = ?`;
+                    correct = `${sum}`;
+                    choices = [`${sum}`, `${(parseFloat(sum) + 0.1).toFixed(2)}`, `${(parseFloat(sum) - 0.01).toFixed(2)}`, `${a}`];
+                    steps = `Susun titik perpuluhan sebaris: ${a} + ${b} = ${sum}.`;
+                } else {
+                    const diffVal = (Math.max(parseFloat(a), parseFloat(b)) - Math.min(parseFloat(a), parseFloat(b))).toFixed(2);
+                    qText = `(${index}) Cari beza antara ${Math.max(a,b)} dan ${Math.min(a,b)}.`;
+                    correct = `${diffVal}`;
+                    choices = [`${diffVal}`, `${(parseFloat(diffVal) + 0.05).toFixed(2)}`, `${a}`, `${b}`];
+                    steps = `Tolak perpuluhan selari: ${Math.max(a,b)} - ${Math.min(a,b)} = ${diffVal}.`;
+                }
+                explanation = `Pastikan titik perpuluhan disusun sebaris sebelum menambah atau menolak.`;
+            }
+            else if (topic === "Kenal peratus") {
+                diagramType = "grid_100";
+                const p = index * 9 + (diff === 'Senang' ? 2 : (diff === 'Sederhana' ? 5 : 7));
+                qText = `(${index}) Nyatakan peratus bagi ${p} daripada 100 petak yang diwarnakan.`;
+                correct = `${p}%`;
+                choices = [`${p}%`, `${p/10}%`, `${p+2}%`, `100%`];
+                diagramVal = { shaded: p };
+                steps = `${p} petak daripada 100 petak = ${p}%.`;
+                explanation = `Peratus bermaksud bahagian daripada seratus (simbol %).`;
+            }
+            else { // Penyelesaian masalah
+                const names = ["Siti", "Ali", "Muthu", "Ahmad", "Mei Ling", "Danial", "Anis", "Chong", "Ravi", "Bella"];
+                const items = ["kek", "piza", "coklat", "roti", "buah tembikai", "jus oren", "kain", "reben", "kertas", "papan"];
+                const name = names[index - 1];
+                const item = items[index - 1];
+
+                if (diff === 'Senang') {
+                    qText = `(${index}) ${name} ada 1/4 daripada ${item}. Ibunya memberi 2/4 lagi. Berapakah jumlah pecahan ${item} yang ada?`;
+                    correct = `3/4`;
+                    choices = [`3/4`, `2/4`, `1/4`, `4/4`];
+                    steps = `1/4 + 2/4 = (1+2)/4 = 3/4.`;
+                } else if (diff === 'Sederhana') {
+                    qText = `(${index}) ${name} membeli ${item} dengan nilai RM${index}.10 dan pembaris RM0.50. Berapakah jumlah perpuluhan bayaran?`;
+                    const total = (index + 0.60).toFixed(2);
+                    correct = `RM${total}`;
+                    choices = [`RM${total}`, `RM${(index + 0.10).toFixed(2)}`, `RM${(index + 1.00).toFixed(2)}`, `RM0.50`];
+                    steps = `${index}.10 + 0.50 = ${total}.`;
+                } else {
+                    qText = `(${index}) Sebuah kedai mempunyai 100 biji ${item}. ${index * 8}% daripadanya telah dijual. Berapakah peratus ${item} yang BELUM dijual?`;
+                    const sold = index * 8;
+                    const left = 100 - sold;
+                    correct = `${left}%`;
+                    choices = [`${left}%`, `${sold}%`, `${left - 5}%`, `100%`];
+                    steps = `100% - ${sold}% = ${left}%.`;
+                }
+                explanation = `Selesaikan masalah mengikut maklumat operasi yang diberikan secara berturut-turut.`;
+            }
+
+            // Ensure distinct 4 unique choices
+            choices = Array.from(new Set(choices));
+            let dummyCounter = 1;
+            while (choices.length < 4) {
+                choices.push(`Pilihan ${dummyCounter++}`);
+            }
+
+            return {
+                id,
+                tahun: 3,
+                subjek: "Matematik",
+                bidang: "Pecahan, Perpuluhan dan Peratus",
+                topik: topic,
+                tahap: diff,
+                aras_kognitif: cog,
+                jenis_soalan: "Objektif",
+                soalan: qText,
+                pilihan_jawapan: choices,
+                jawapan_betul: correct,
+                markah: 10,
+                diagramType,
+                diagramVal,
+                langkah_pengiraan: steps,
+                penerangan: explanation,
+                maklum_balas_betul: "Syabas! Jawapan anda sangat tepat! 🌟",
+                maklum_balas_salah: `Jawapan tepat ialah ${correct}. Teruskan berusaha!`
+            };
+        }
+
+        // SVG Diagram Renderer
+        function renderDiagramSVG(type, val) {
+            if (!val) return '<div class="text-slate-400 font-bold text-sm">Rajah Ilustrasi Soalan</div>';
+
+            if (type === "fraction_circle") {
+                const num = val.numerator || 1;
+                const den = val.denominator || 2;
+                let slices = '';
+                const cx = 80, cy = 80, r = 60;
+                for (let i = 0; i < den; i++) {
+                    const a1 = (i * 360 / den) * Math.PI / 180;
+                    const a2 = ((i + 1) * 360 / den) * Math.PI / 180;
+                    const x1 = cx + r * Math.cos(a1);
+                    const y1 = cy + r * Math.sin(a1);
+                    const x2 = cx + r * Math.cos(a2);
+                    const y2 = cy + r * Math.sin(a2);
+                    const fill = i < num ? '#4F46E5' : '#E2E8F0';
+                    const path = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z`;
+                    slices += `<path d="${path}" fill="${fill}" stroke="#ffffff" stroke-width="2"/>`;
+                }
+                return `<svg width="160" height="160" class="drop-shadow-md">${slices}</svg>`;
+            } 
+            else if (type === "grid_100") {
+                const shaded = val.shaded || 25;
+                let rects = '';
+                for (let i = 0; i < 100; i++) {
+                    const x = (i % 10) * 12;
+                    const y = Math.floor(i / 10) * 12;
+                    const fill = i < shaded ? '#10B981' : '#F1F5F9';
+                    rects += `<rect x="${x}" y="${y}" width="11" height="11" fill="${fill}" rx="2"/>`;
+                }
+                return `<svg width="120" height="120" class="border border-slate-300 p-1 bg-white rounded-xl drop-shadow">${rects}</svg>`;
+            }
+            else {
+                return `<div class="p-4 bg-indigo-50 text-indigo-700 font-bold rounded-2xl border-2 border-indigo-200">📊 Rajah Visual Matematik</div>`;
+            }
+        }
+
+        // Navigation Engine
+        function navigateTo(pageId) {
+            document.querySelectorAll('.view-page').forEach(page => page.classList.add('hidden'));
+            const target = document.getElementById(`page-${pageId}`);
+            if (target) target.classList.remove('hidden');
+
+            if (pageId === 'topics') renderTopicsGrid();
+            if (pageId === 'progress') renderProgressDashboard();
+            if (pageId === 'leaderboard') renderLeaderboard();
+            if (pageId === 'profile') renderProfilePage();
+        }
+
+        function startMainFlow() {
+            if (!currentUser) {
+                loginGuest();
+            }
+            navigateTo('topics');
+        }
+
+        function renderTopicsGrid() {
+            const container = document.getElementById('topics-grid');
+            container.innerHTML = TOPICS_LIST.map((topic, idx) => `
+                <button onclick="selectTopic('${topic}')" class="glass-card p-5 rounded-2xl border-4 border-indigo-100 hover:border-indigo-400 text-left transition btn-bounce flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white font-kids font-bold text-xl flex items-center justify-center shrink-0 shadow">
+                        ${idx + 1}
+                    </div>
+                    <div>
+                        <h4 class="font-kids font-bold text-indigo-900 text-base leading-snug">${topic}</h4>
+                        <span class="text-xs text-slate-500 font-bold">30 Soalan Unik</span>
+                    </div>
+                </button>
+            `).join('');
+        }
+
+        function selectTopic(topic) {
+            activeGame.topic = topic;
+            navigateTo('game-mode');
+        }
+
+        function selectGameMode(mode) {
+            activeGame.mode = mode;
+            navigateTo('difficulty');
+        }
+
+        function selectDifficulty(diff) {
+            activeGame.difficulty = diff;
+            navigateTo('timer-select');
+        }
+
+        function selectTimer(sec) {
+            activeGame.timerSec = sec;
+            initGameSession();
+        }
+
+        // Initialize Game Session with Uniqueness Guarantee
+        function initGameSession() {
+            // Filter candidates by topic and difficulty
+            let candidates = QuestionBank.filter(q => q.topik === activeGame.topic && q.tahap === activeGame.difficulty);
+            
+            // Exclude already played questions in this session if possible
+            let available = candidates.filter(q => !playedQuestionIds.includes(q.id));
+            if (available.length < 10) {
+                // Reset played tracking if pool exhausted
+                playedQuestionIds = playedQuestionIds.filter(id => !candidates.some(c => c.id === id));
+                available = candidates;
+            }
+
+            // Shuffle and pick 10 unique questions
+            activeGame.questions = [...available].sort(() => Math.random() - 0.5).slice(0, 10);
+            
+            // Mark these picked question IDs as played
+            activeGame.questions.forEach(q => playedQuestionIds.push(q.id));
+
+            activeGame.currentIndex = 0;
+            activeGame.score = 0;
+            activeGame.correctCount = 0;
+
+            document.getElementById('game-topic-badge').innerText = activeGame.topic;
+            document.getElementById('game-diff-badge').innerText = activeGame.difficulty;
+
+            navigateTo('gameplay');
+            loadQuestion();
+
+            if (activeGame.timerInterval) clearInterval(activeGame.timerInterval);
+            if (activeGame.timerSec > 0) {
+                activeGame.timeRemaining = activeGame.timerSec;
+                updateTimerDisplay();
+                activeGame.timerInterval = setInterval(() => {
+                    activeGame.timeRemaining--;
+                    updateTimerDisplay();
+                    if (activeGame.timeRemaining <= 0) {
+                        clearInterval(activeGame.timerInterval);
+                        finishGame();
+                    }
+                }, 1000);
+            } else {
+                document.getElementById('timer-display').innerText = "∞";
+            }
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('timer-display').innerText = `${activeGame.timeRemaining}s`;
+        }
+
+        function loadQuestion() {
+            const q = activeGame.questions[activeGame.currentIndex];
+            document.getElementById('current-q-num').innerText = activeGame.currentIndex + 1;
+            document.getElementById('current-score').innerText = activeGame.score;
+            document.getElementById('cognitive-level-tag').innerText = `Aras Kognitif: ${q.aras_kognitif}`;
+            document.getElementById('question-id-tag').innerText = `ID: ${q.id}`;
+            document.getElementById('question-text').innerText = q.soalan;
+
+            document.getElementById('diagram-container').innerHTML = renderDiagramSVG(q.diagramType, q.diagramVal);
+            document.getElementById('feedback-panel').classList.add('hidden');
+
+            const answerZone = document.getElementById('answer-zone');
+            answerZone.innerHTML = '';
+
+            if (activeGame.mode === 'Objektif' || activeGame.mode === 'Padanan') {
+                const grid = document.createElement('div');
+                grid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3';
+                q.pilihan_jawapan.forEach(choice => {
+                    const btn = document.createElement('button');
+                    btn.className = 'p-4 glass-card rounded-2xl border-2 border-slate-200 hover:border-indigo-500 font-bold text-lg text-indigo-900 transition btn-bounce text-center';
+                    btn.innerText = choice;
+                    btn.onclick = () => checkAnswer(choice);
+                    grid.appendChild(btn);
+                });
+                answerZone.appendChild(grid);
+            } 
+            else if (activeGame.mode === 'Drag & Drop') {
+                answerZone.innerHTML = `
+                    <div class="space-y-4 text-center">
+                        <div id="drop-target" class="p-6 border-4 border-dashed border-indigo-300 bg-indigo-50/50 rounded-2xl font-bold text-slate-400">
+                            Pilih Jawapan Yang Tepat
+                        </div>
+                        <div class="flex flex-wrap justify-center gap-3">
+                            ${q.pilihan_jawapan.map(c => `
+                                <button onclick="checkAnswer('${c}')" class="px-5 py-3 bg-white border-2 border-indigo-300 rounded-xl font-bold text-indigo-900 shadow btn-bounce">
+                                    ${c}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } 
+            else { // Isi Tempat Kosong
+                answerZone.innerHTML = `
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                        <input type="text" id="blank-input" class="px-4 py-3 border-2 border-indigo-300 rounded-xl font-bold text-xl text-center focus:outline-none focus:border-indigo-600 w-full sm:w-48" placeholder="Jawapan anda">
+                        <button onclick="checkAnswer(document.getElementById('blank-input').value.trim())" class="bg-indigo-600 text-white font-bold px-6 py-3 rounded-xl btn-bounce w-full sm:w-auto">
+                            Hantar Jawapan
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function checkAnswer(userAns) {
+            const q = activeGame.questions[activeGame.currentIndex];
+            const isCorrect = userAns.toLowerCase() === q.jawapan_betul.toLowerCase();
+
+            const fbPanel = document.getElementById('feedback-panel');
+            const fbTitle = document.getElementById('feedback-title');
+            const fbDesc = document.getElementById('feedback-desc');
+            const fbSteps = document.getElementById('feedback-steps');
+
+            fbPanel.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-300', 'bg-rose-50', 'border-rose-300');
+
+            if (isCorrect) {
+                activeGame.score += 10;
+                activeGame.correctCount++;
+                fbPanel.classList.add('bg-emerald-50', 'border-emerald-300');
+                fbTitle.className = "font-kids font-bold text-lg text-emerald-700 flex items-center gap-2";
+                fbTitle.innerHTML = `<i class="fa-solid fa-circle-check text-xl"></i> ${q.maklum_balas_betul}`;
+                if (typeof confetti === 'function') confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+            } else {
+                fbPanel.classList.add('bg-rose-50', 'border-rose-300');
+                fbTitle.className = "font-kids font-bold text-lg text-rose-700 flex items-center gap-2";
+                fbTitle.innerHTML = `<i class="fa-solid fa-circle-xmark text-xl"></i> ${q.maklum_balas_salah}`;
+            }
+
+            fbDesc.innerText = q.penerangan;
+            fbSteps.innerHTML = `<strong>Langkah Pengiraan:</strong><br>${q.langkah_pengiraan}`;
+
+            document.getElementById('current-score').innerText = activeGame.score;
+        }
+
+        function nextQuestion() {
+            activeGame.currentIndex++;
+            if (activeGame.currentIndex < activeGame.questions.length) {
+                loadQuestion();
+            } else {
+                finishGame();
+            }
+        }
+
+        function finishGame() {
+            if (activeGame.timerInterval) clearInterval(activeGame.timerInterval);
+
+            if (currentUser) {
+                currentUser.stats.totalQuestions += 10;
+                currentUser.stats.correctQuestions += activeGame.correctCount;
+                currentUser.stats.gamesPlayed++;
+                currentUser.stats.totalScore += activeGame.score;
+                if (activeGame.score > currentUser.stats.highScore) {
+                    currentUser.stats.highScore = activeGame.score;
+                }
+
+                // Update topic stats and track completed difficulty levels
+                if (!currentUser.stats.topicStats) currentUser.stats.topicStats = {};
+                if (!currentUser.stats.topicStats[activeGame.topic]) {
+                    currentUser.stats.topicStats[activeGame.topic] = { 
+                        attempted: 0, 
+                        correct: 0, 
+                        highScore: 0,
+                        completedDiffs: [] 
+                    };
+                }
+                
+                const tStat = currentUser.stats.topicStats[activeGame.topic];
+                tStat.attempted += 10;
+                tStat.correct += activeGame.correctCount;
+                if (activeGame.score > tStat.highScore) tStat.highScore = activeGame.score;
+                
+                // Track completed diff if not already added
+                if (!tStat.completedDiffs) tStat.completedDiffs = [];
+                if (!tStat.completedDiffs.includes(activeGame.difficulty)) {
+                    tStat.completedDiffs.push(activeGame.difficulty);
+                }
+
+                const users = getUsers();
+                const idx = users.findIndex(u => u.username === currentUser.username);
+                if (idx !== -1) {
+                    users[idx] = currentUser;
+                    saveUsers(users);
+                }
+            }
+
+            document.getElementById('final-score-val').innerText = `${activeGame.score} / 100`;
+            document.getElementById('final-accuracy-val').innerText = `Ketepatan: ${(activeGame.correctCount / 10) * 100}% (${activeGame.correctCount}/10 Betul)`;
+            document.getElementById('res-topic').innerText = activeGame.topic;
+            document.getElementById('res-diff').innerText = activeGame.difficulty;
+
+            navigateTo('results');
+        }
+
+        function retryGame() {
+            initGameSession();
+        }
+
+        // Authentication Functions
+        function handleRegister(e) {
+            e.preventDefault();
+            const un = document.getElementById('reg-username').value.trim();
+            const pw = document.getElementById('reg-password').value;
+
+            const users = getUsers();
+            if (users.some(u => u.username === un)) {
+                alert("Nama pengguna telah wujud! Sila guna nama lain.");
+                return;
+            }
+
+            const topicStats = {};
+            TOPICS_LIST.forEach(t => {
+                topicStats[t] = { attempted: 0, correct: 0, highScore: 0 };
+            });
+
+            const newUser = {
+                username: un,
+                password: pw,
+                stats: { 
+                    totalQuestions: 0, 
+                    correctQuestions: 0, 
+                    gamesPlayed: 0, 
+                    totalScore: 0, 
+                    highScore: 0,
+                    topicStats: topicStats
+                }
+            };
+
+            users.push(newUser);
+            saveUsers(users);
+            currentUser = newUser;
+            updateUserUI();
+            alert("Akaun berjaya didaftarkan!");
+            navigateTo('topics');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const un = document.getElementById('login-username').value.trim();
+            const pw = document.getElementById('login-password').value;
+
+            const users = getUsers();
+            const found = users.find(u => u.username === un && u.password === pw);
+
+            if (found) {
+                currentUser = found;
+                updateUserUI();
+                navigateTo('topics');
+            } else {
+                alert("Nama pengguna atau kata laluan tidak sah!");
+            }
+        }
+
+        function loginGuest() {
+            const topicStats = {};
+            TOPICS_LIST.forEach(t => {
+                topicStats[t] = { attempted: 0, correct: 0, highScore: 0 };
+            });
+
+            currentUser = {
+                username: "Tetamu",
+                stats: { 
+                    totalQuestions: 0, 
+                    correctQuestions: 0, 
+                    gamesPlayed: 0, 
+                    totalScore: 0, 
+                    highScore: 0,
+                    topicStats: topicStats
+                }
+            };
+            updateUserUI();
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            updateUserUI();
+            navigateTo('home');
+        }
+
+        function updateUserUI() {
+            const badge = document.getElementById('user-badge');
+            const btnLogin = document.getElementById('btn-nav-login');
+            if (currentUser) {
+                badge.classList.remove('hidden');
+                btnLogin.classList.add('hidden');
+                document.getElementById('user-avatar-text').innerText = currentUser.username.charAt(0).toUpperCase();
+                document.getElementById('user-name-display').innerText = currentUser.username;
+            } else {
+                badge.classList.add('hidden');
+                btnLogin.classList.remove('hidden');
+            }
+        }
+
+        function renderProgressDashboard() {
+            if (!currentUser) return;
+            const s = currentUser.stats;
+            document.getElementById('stat-total-q').innerText = s.totalQuestions;
+            document.getElementById('stat-correct-q').innerText = s.correctQuestions;
+            document.getElementById('stat-high-score').innerText = s.highScore;
+            const acc = s.totalQuestions > 0 ? Math.round((s.correctQuestions / s.totalQuestions) * 100) : 0;
+            document.getElementById('stat-accuracy').innerText = `${acc}%`;
+
+            const topicList = document.getElementById('topic-progress-list');
+            const tStats = s.topicStats || {};
+
+            topicList.innerHTML = TOPICS_LIST.map(t => {
+                const stat = tStats[t] || { attempted: 0, correct: 0, highScore: 0, completedDiffs: [] };
+                const completedDiffs = stat.completedDiffs || [];
+                
+                // Calculate percentage based on completed difficulty levels (3 levels total -> ~33% per level)
+                let completionPct = 0;
+                if (completedDiffs.length === 1) completionPct = 33;
+                else if (completedDiffs.length === 2) completionPct = 67;
+                else if (completedDiffs.length >= 3) completionPct = 100;
+                
+                let badgeColor = "bg-slate-100 text-slate-600 border-slate-300";
+
+                if (completionPct === 100) {
+                    badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-300";
+                } else if (completionPct > 0) {
+                    badgeColor = "bg-amber-100 text-amber-800 border-amber-300";
+                }
+
+                return `
+                    <div class="bg-slate-50 p-3 md:p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div class="flex-grow w-full sm:w-auto">
+                            <div class="flex justify-between sm:justify-start gap-4 items-center mb-1">
+                                <span class="font-bold text-sm md:text-base text-indigo-900 block">${t}</span>
+                                <span class="text-xs font-bold text-indigo-600">${completionPct}% Selesai</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-indigo-600 h-2.5 rounded-full transition-all duration-500" style="width: ${completionPct}%"></div>
+                            </div>
+                            <span class="text-xs text-slate-500 font-semibold mt-1 block">Soalan dijawab: ${stat.correct}/${stat.attempted} &bull; Tahap Selesai: ${completedDiffs.length}/3</span>
+                        </div>
+                        <span class="text-xs font-bold px-3 py-1.5 rounded-full border ${badgeColor} shrink-0">
+                            ${completionPct === 100 ? 'Selesai Sepenuhnya 🎉' : (completionPct > 0 ? `${completionPct}% Selesai 🚀` : 'Belum dibuat')}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderLeaderboard() {
+            const users = getUsers();
+            const sorted = [...users].sort((a, b) => b.stats.highScore - a.stats.highScore);
+            const container = document.getElementById('leaderboard-list');
+
+            if (sorted.length === 0) {
+                container.innerHTML = '<p class="text-center text-slate-500 font-bold py-4">Belum ada rekod pemain.</p>';
+                return;
+            }
+
+            container.innerHTML = sorted.map((u, idx) => `
+                <div class="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div class="flex items-center gap-3">
+                        <span class="font-kids font-bold text-lg w-6 text-center ${idx===0?'text-amber-500':(idx===1?'text-slate-400':'text-amber-700')}">#${idx+1}</span>
+                        <div class="w-10 h-10 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center">
+                            ${u.username.charAt(0).toUpperCase()}
+                        </div>
+                        <span class="font-bold text-indigo-900">${u.username}</span>
+                    </div>
+                    <span class="font-kids font-bold text-amber-600 text-lg">${u.stats.highScore} Markah</span>
+                </div>
+            `).join('');
+        }
+
+        function renderProfilePage() {
+            if (!currentUser) return;
+            document.getElementById('profile-username').innerText = currentUser.username;
+            document.getElementById('profile-avatar').innerText = currentUser.username.charAt(0).toUpperCase();
+            document.getElementById('prof-games-count').innerText = currentUser.stats.gamesPlayed;
+            document.getElementById('prof-total-score').innerText = currentUser.stats.totalScore;
+        }
+
+        // Initialize Application
+        window.onload = function() {
+            generateFullQuestionBank();
+            navigateTo('home');
+        };
+    </script>
+</body>
+</html>

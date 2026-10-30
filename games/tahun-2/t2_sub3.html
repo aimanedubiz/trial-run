@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧮 MATH KIDS – EDU KIDZ | Tahun 2 - Pecahan & Perpuluhan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Fredoka', 'Quicksand', 'sans-serif'],
+                    },
+                    colors: {
+                        kidBlue: '#3B82F6',
+                        kidYellow: '#F59E0B',
+                        kidGreen: '#10B981',
+                        kidPink: '#EC4899',
+                        kidPurple: '#8B5CF6',
+                        kidOrange: '#F97316',
+                        kidBg: '#F0F9FF'
+                    },
+                    boxShadow: {
+                        'fun': '0 8px 0 0 rgba(0, 0, 0, 0.15)',
+                        'fun-sm': '0 4px 0 0 rgba(0, 0, 0, 0.15)',
+                        'fun-pink': '0 6px 0 0 #DB2777',
+                        'fun-blue': '0 6px 0 0 #2563EB',
+                        'fun-green': '0 6px 0 0 #059669',
+                        'fun-yellow': '0 6px 0 0 #D97706',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Fredoka', 'Quicksand', sans-serif;
+            background-color: #E0F2FE;
+            background-image: radial-gradient(#BAE6FD 2px, transparent 2px);
+            background-size: 24px 24px;
+            user-select: none;
+        }
+        .bounce-hover {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .bounce-hover:hover {
+            transform: scale(1.04) translateY(-3px);
+        }
+        .bounce-hover:active {
+            transform: scale(0.96) translateY(2px);
+        }
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+        .floating-element {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+        @keyframes pulseSuccess {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+        .pulse-success {
+            animation: pulseSuccess 0.5s ease-in-out;
+        }
+        .slice-path {
+            cursor: pointer;
+            transition: fill 0.2s ease, transform 0.2s ease;
+        }
+        .slice-path:hover {
+            filter: brightness(1.1);
+        }
+        /* Confetti canvas overlay */
+        #fxCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between">
+    <!-- Confetti Canvas -->
+    <canvas id="fxCanvas"></canvas>
+
+    <script>
+        // Web Audio API Sound Synthesizer (No external audio files needed)
+        const AudioEngine = {
+            ctx: null,
+            enabled: true,
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) this.ctx = new AudioCtx();
+                }
+            },
+            playBtnClick() {
+                if (!this.enabled || !this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, this.ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.08);
+                } catch(e){}
+            },
+            playCorrect() {
+                if (!this.enabled || !this.ctx) return;
+                try {
+                    const now = this.ctx.currentTime;
+                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                    notes.forEach((freq, idx) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.2, now + idx * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(now + idx * 0.08);
+                        osc.stop(now + idx * 0.08 + 0.25);
+                    });
+                } catch(e){}
+            },
+            playWrong() {
+                if (!this.enabled || !this.ctx) return;
+                try {
+                    const now = this.ctx.currentTime;
+                    const notes = [300, 220];
+                    notes.forEach((freq, idx) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'sawtooth';
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.15, now + idx * 0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.15 + 0.2);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(now + idx * 0.15);
+                        osc.stop(now + idx * 0.15 + 0.2);
+                    });
+                } catch(e){}
+            },
+            playFanfare() {
+                if (!this.enabled || !this.ctx) return;
+                try {
+                    const now = this.ctx.currentTime;
+                    const tune = [
+                        {f: 523.25, d: 0.15}, {f: 523.25, d: 0.15}, {f: 523.25, d: 0.15},
+                        {f: 659.25, d: 0.4}, {f: 783.99, d: 0.4}, {f: 1046.50, d: 0.6}
+                    ];
+                    let curTime = now;
+                    tune.forEach(note => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.value = note.f;
+                        gain.gain.setValueAtTime(0.25, curTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, curTime + note.d);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(curTime);
+                        osc.stop(curTime + note.d);
+                        curTime += note.d;
+                    });
+                } catch(e){}
+            }
+        };
+    </script>
+
+    <script>
+        // SVG Vector Generator Engine for Fraction Visuals
+        const VisualRenderer = {
+            // Render equal pie/circle slice diagram
+            renderPie(total, shaded, width = 180, height = 180, theme = 'pizza') {
+                const cx = width / 2;
+                const cy = height / 2;
+                const r = Math.min(width, height) / 2 - 12;
+                let paths = '';
+                const sliceAngle = (Math.PI * 2) / total;
+
+                // Color schemes based on food theme
+                let fillColor = '#F59E0B'; // pizza cheese
+                let unfillColor = '#FDE68A';
+                let strokeColor = '#D97706';
+
+                if (theme === 'cake') {
+                    fillColor = '#EC4899';
+                    unfillColor = '#FBCFE8';
+                    strokeColor = '#DB2777';
+                } else if (theme === 'watermelon') {
+                    fillColor = '#EF4444';
+                    unfillColor = '#FECACA';
+                    strokeColor = '#DC2626';
+                } else if (theme === 'blue') {
+                    fillColor = '#3B82F6';
+                    unfillColor = '#BFDBFE';
+                    strokeColor = '#1D4ED8';
+                }
+
+                if (total === 1) {
+                    const color = (shaded >= 1) ? fillColor : unfillColor;
+                    return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" class="mx-auto drop-shadow-md">
+                        <circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}" stroke="${strokeColor}" stroke-width="4"/>
+                    </svg>`;
+                }
+
+                for (let i = 0; i < total; i++) {
+                    const startA = i * sliceAngle - Math.PI / 2;
+                    const endA = (i + 1) * sliceAngle - Math.PI / 2;
+                    const x1 = cx + r * Math.cos(startA);
+                    const y1 = cy + r * Math.sin(startA);
+                    const x2 = cx + r * Math.cos(endA);
+                    const y2 = cy + r * Math.sin(endA);
+                    const largeArc = sliceAngle > Math.PI ? 1 : 0;
+                    const pathData = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                    const color = i < shaded ? fillColor : unfillColor;
+
+                    paths += `<path d="${pathData}" fill="${color}" stroke="${strokeColor}" stroke-width="3.5" stroke-linejoin="round"/>`;
+                    
+                    // Add topping detail if pizza
+                    if (theme === 'pizza' && i < shaded) {
+                        const midA = startA + sliceAngle / 2;
+                        const tx = cx + (r * 0.6) * Math.cos(midA);
+                        const ty = cy + (r * 0.6) * Math.sin(midA);
+                        paths += `<circle cx="${tx}" cy="${ty}" r="${r * 0.12}" fill="#DC2626"/>`;
+                    }
+                }
+
+                return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" class="mx-auto drop-shadow-md">
+                    ${paths}
+                </svg>`;
+            },
+
+            // Render Bar or Grid (e.g. 10-parts strip or chocolate bar)
+            renderBar(total, shaded, width = 260, height = 70, theme = 'chocolate') {
+                let rects = '';
+                const itemW = (width - 12) / total;
+                let stroke = '#78350F';
+                let fill = '#92400E';
+                let unfill = '#FEF3C7';
+
+                if (theme === 'grid10') {
+                    stroke = '#2563EB';
+                    fill = '#3B82F6';
+                    unfill = '#DBEAFE';
+                } else if (theme === 'fruit') {
+                    stroke = '#059669';
+                    fill = '#10B981';
+                    unfill = '#D1FAE5';
+                }
+
+                for (let i = 0; i < total; i++) {
+                    const x = 6 + i * itemW;
+                    const curFill = i < shaded ? fill : unfill;
+                    rects += `<rect x="${x}" y="6" width="${itemW - 2}" height="${height - 12}" rx="6" fill="${curFill}" stroke="${stroke}" stroke-width="3"/>`;
+                    // Grid dots
+                    if (i < shaded) {
+                        rects += `<circle cx="${x + itemW/2}" cy="${height/2}" r="4" fill="rgba(255,255,255,0.6)"/>`;
+                    }
+                }
+
+                return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" class="mx-auto drop-shadow-md">
+                    ${rects}
+                </svg>`;
+            },
+
+            // Render interactive colorable grid/pie for Topic 2
+            renderInteractive(total, selectedIndices, width = 240, height = 180, shapeType = 'pie') {
+                let markup = '';
+                if (shapeType === 'pie') {
+                    const cx = width / 2;
+                    const cy = height / 2;
+                    const r = Math.min(width, height) / 2 - 12;
+                    const sliceAngle = (Math.PI * 2) / total;
+
+                    for (let i = 0; i < total; i++) {
+                        const startA = i * sliceAngle - Math.PI / 2;
+                        const endA = (i + 1) * sliceAngle - Math.PI / 2;
+                        const x1 = cx + r * Math.cos(startA);
+                        const y1 = cy + r * Math.sin(startA);
+                        const x2 = cx + r * Math.cos(endA);
+                        const y2 = cy + r * Math.sin(endA);
+                        const largeArc = sliceAngle > Math.PI ? 1 : 0;
+                        const pathData = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                        const isSelected = selectedIndices.includes(i);
+                        const fillColor = isSelected ? '#10B981' : '#E2E8F0';
+
+                        markup += `<path d="${pathData}" fill="${fillColor}" stroke="#047857" stroke-width="3.5" class="slice-path" onclick="toggleInteractivePart(${i})" />`;
+                    }
+                } else {
+                    // Bar layout
+                    const itemW = (width - 16) / total;
+                    for (let i = 0; i < total; i++) {
+                        const x = 8 + i * itemW;
+                        const isSelected = selectedIndices.includes(i);
+                        const fillColor = isSelected ? '#3B82F6' : '#E2E8F0';
+                        markup += `<rect x="${x}" y="10" width="${itemW - 3}" height="${height - 20}" rx="8" fill="${fillColor}" stroke="#1D4ED8" stroke-width="3" class="slice-path" onclick="toggleInteractivePart(${i})" />`;
+                    }
+                }
+                return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" class="mx-auto cursor-pointer">
+                    ${markup}
+                </svg>`;
+            }
+        };
+    </script>
+
+    <script>
+        // Global Question Bank Generator (Guarantees 20 unique questions per topic per level)
+        const QuestionGenerator = {
+            generateSessionQuestions(topicId, difficulty) {
+                const list = [];
+                const usedKeys = new Set();
+                let attempts = 0;
+
+                while (list.length < 20 && attempts < 500) {
+                    attempts++;
+                    const q = this.createSingleQuestion(topicId, difficulty, list.length + 1);
+                    const key = q.questionText + "_" + JSON.stringify(q.correctAnswer) + "_" + (q.visualHtml || '');
+                    if (!usedKeys.has(key)) {
+                        usedKeys.add(key);
+                        list.push(q);
+                    }
+                }
+
+                // Fallback top-up if unique combinations are exhausted before 20
+                while (list.length < 20) {
+                    const q = this.createSingleQuestion(topicId, difficulty, list.length + 1);
+                    list.push(q);
+                }
+
+                return list;
+            },
+
+            createSingleQuestion(topicId, difficulty, index) {
+                // Topic switch
+                switch (topicId) {
+                    case 1: return this.genTopic1(difficulty, index);
+                    case 2: return this.genTopic2(difficulty, index);
+                    case 3: return this.genTopic3(difficulty, index);
+                    case 4: return this.genTopic4(difficulty, index);
+                    case 5: return this.genTopic5(difficulty, index);
+                    case 6: return this.genTopic6(difficulty, index);
+                    case 7: return this.genTopic7(difficulty, index);
+                    case 8: return this.genTopic8(difficulty, index);
+                    default: return this.genTopic1(difficulty, index);
+                }
+            },
+
+            // Helper for random integer in range
+            randInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            },
+
+            // Helper to shuffle array
+            shuffle(arr) {
+                return [...arr].sort(() => Math.random() - 0.5);
+            },
+
+            // TOPIK 1: KENALI PECAHAN
+            genTopic1(diff, idx) {
+                const denominators = diff === 'easy' ? [2, 3, 4] : (diff === 'medium' ? [4, 5, 6, 8] : [5, 6, 8, 10]);
+                const denom = denominators[this.randInt(0, denominators.length - 1)];
+                const num = this.randInt(1, denom - 1);
+                
+                const qType = idx % 3; // 0: Fraction from diagram, 1: Numerator question, 2: Denominator question
+
+                if (qType === 0) {
+                    const theme = ['pizza', 'cake', 'watermelon', 'blue'][this.randInt(0, 3)];
+                    const visualHtml = VisualRenderer.renderPie(denom, num, 180, 180, theme);
+                    const correctStr = `${num}/${denom}`;
+                    
+                    // Choices
+                    const choices = new Set([correctStr]);
+                    choices.add(`${denom - num}/${denom}`);
+                    choices.add(`${num}/${denom + 1}`);
+                    choices.add(`${num + 1}/${denom}`);
+                    while (choices.size < 4) {
+                        choices.add(`${this.randInt(1, 9)}/${denom}`);
+                    }
+
+                    return {
+                        id: `T1_${diff}_${idx}_${Date.now()}`,
+                        topicId: 1,
+                        gameType: 'objective',
+                        cognitive: 'Mengingat',
+                        questionText: 'Apakah pecahan bagi bahagian yang diwarnakan dalam gambar di bawah?',
+                        visualHtml: visualHtml,
+                        options: this.shuffle(Array.from(choices)),
+                        correctAnswer: correctStr,
+                        explanation: `Pecahan ialah ${correctStr} kerana ${num} daripada ${denom} bahagian telah diwarnakan.`
+                    };
+                } else if (qType === 1) {
+                    const choices = this.shuffle([num.toString(), denom.toString(), (num + 1).toString(), (denom - num).toString()]);
+                    return {
+                        id: `T1_${diff}_${idx}_${Date.now()}`,
+                        topicId: 1,
+                        gameType: 'objective',
+                        cognitive: 'Mengingat',
+                        questionText: `Dalam pecahan <span class="text-kidBlue font-bold text-3xl">${num}/${denom}</span>, manakah nombor <b>PENGANGKA</b> (nombor di atas)?`,
+                        visualHtml: VisualRenderer.renderPie(denom, num, 140, 140, 'pizza'),
+                        options: choices,
+                        correctAnswer: num.toString(),
+                        explanation: `Pengangka ialah nombor di sebelah ATAS garisan pecahan, iaitu ${num}.`
+                    };
+                } else {
+                    const choices = this.shuffle([denom.toString(), num.toString(), (denom + 2).toString(), (num + 1).toString()]);
+                    return {
+                        id: `T1_${diff}_${idx}_${Date.now()}`,
+                        topicId: 1,
+                        gameType: 'objective',
+                        cognitive: 'Mengingat',
+                        questionText: `Dalam pecahan <span class="text-kidPink font-bold text-3xl">${num}/${denom}</span>, manakah nombor <b>PENYEBUT</b> (nombor di bawah)?`,
+                        visualHtml: VisualRenderer.renderPie(denom, num, 140, 140, 'cake'),
+                        options: choices,
+                        correctAnswer: denom.toString(),
+                        explanation: `Penyebut ialah jumlah keseluruhan bahagian di BUKAN/ATAS iaitu nombor di sebelah BAWAH (${denom}).`
+                    };
+                }
+            },
+
+            // TOPIK 2: WARNAKAN PECAHAN
+            genTopic2(diff, idx) {
+                const denomList = diff === 'easy' ? [2, 3, 4] : (diff === 'medium' ? [4, 5, 6, 8] : [6, 8, 10]);
+                const denom = denomList[this.randInt(0, denomList.length - 1)];
+                const num = this.randInt(1, denom - 1);
+                const shapeType = idx % 2 === 0 ? 'pie' : 'bar';
+
+                return {
+                    id: `T2_${diff}_${idx}_${Date.now()}`,
+                    topicId: 2,
+                    gameType: 'colorable',
+                    cognitive: 'Memahami',
+                    questionText: `Sila tekan bahagian pada gambarajah untuk mewarnakan pecahan <b><span class="text-kidGreen text-2xl">${num}/${denom}</span></b>:`,
+                    denom: denom,
+                    targetNum: num,
+                    shapeType: shapeType,
+                    correctAnswer: num,
+                    explanation: `Untuk mewarnakan ${num}/${denom}, anda perlu menekan tepat ${num} bahagian daripada ${denom} bahagian sama besar.`
+                };
+            },
+
+            // TOPIK 3: BANDINGKAN PECAHAN
+            genTopic3(diff, idx) {
+                const denomChoices = diff === 'easy' ? [2, 3, 4, 5] : (diff === 'medium' ? [4, 5, 6, 8] : [6, 8, 9, 10]);
+                const denom = denomChoices[this.randInt(0, denomChoices.length - 1)];
+                const n1 = this.randInt(1, denom - 1);
+                let n2 = this.randInt(1, denom - 1);
+                if (n1 === n2) n2 = (n1 % (denom - 1)) + 1;
+
+                let symbol = '=';
+                if (n1 > n2) symbol = '>';
+                if (n1 < n2) symbol = '<';
+
+                const visualHtml = `<div class="flex items-center justify-center gap-4 my-2">
+                    <div class="text-center">
+                        ${VisualRenderer.renderPie(denom, n1, 120, 120, 'pizza')}
+                        <span class="font-bold text-xl text-slate-700">${n1}/${denom}</span>
+                    </div>
+                    <div class="text-3xl font-black text-kidPink animate-pulse">?</div>
+                    <div class="text-center">
+                        ${VisualRenderer.renderPie(denom, n2, 120, 120, 'cake')}
+                        <span class="font-bold text-xl text-slate-700">${n2}/${denom}</span>
+                    </div>
+                </div>`;
+
+                return {
+                    id: `T3_${diff}_${idx}_${Date.now()}`,
+                    topicId: 3,
+                    gameType: 'objective',
+                    cognitive: 'Memahami',
+                    questionText: `Bandingkan dua pecahan ini. Pilih simbol perbandingan yang betul: <br><b>${n1}/${denom} &nbsp; [ &nbsp;?&nbsp; ] &nbsp; ${n2}/${denom}</b>`,
+                    visualHtml: visualHtml,
+                    options: ['>', '<', '='],
+                    correctAnswer: symbol,
+                    explanation: `${n1}/${denom} adalah ${symbol === '>' ? 'LEBIH BESAR daripada' : 'LEBIH KECIL daripada'} ${n2}/${denom}.`
+                };
+            },
+
+            // TOPIK 4: TUKAR PECAHAN KEPADA PERPULUHAN
+            genTopic4(diff, idx) {
+                const num = this.randInt(1, 9);
+                const fracStr = `${num}/10`;
+                const decStr = (num / 10).toFixed(1);
+
+                const choices = this.shuffle([decStr, `0.0${num}`, `${num}.0`, `0.${num > 5 ? num-1 : num+1}`]);
+
+                return {
+                    id: `T4_${diff}_${idx}_${Date.now()}`,
+                    topicId: 4,
+                    gameType: 'objective',
+                    cognitive: 'Memahami',
+                    questionText: `Tukarkan pecahan persepuluh <b><span class="text-kidBlue text-3xl">${fracStr}</span></b> kepada nombor perpuluhan:`,
+                    visualHtml: VisualRenderer.renderBar(10, num, 250, 60, 'grid10'),
+                    options: choices,
+                    correctAnswer: decStr,
+                    explanation: `${fracStr} bersamaan dengan ${decStr} kerana ${num} bahagian daripada 10 ialah ${decStr}.`
+                };
+            },
+
+            // TOPIK 5: BANDINGKAN PERPULUHAN
+            genTopic5(diff, idx) {
+                const d1 = (this.randInt(1, 9) / 10);
+                let d2 = (this.randInt(1, 9) / 10);
+                if (d1 === d2) d2 = (d1 > 0.5 ? d1 - 0.1 : d1 + 0.1);
+                
+                const d1Str = d1.toFixed(1);
+                const d2Str = d2.toFixed(1);
+
+                let symbol = d1 > d2 ? '>' : '<';
+
+                const visualHtml = `<div class="flex items-center justify-center gap-4 my-2">
+                    <div class="text-center">
+                        ${VisualRenderer.renderBar(10, Math.round(d1*10), 130, 50, 'grid10')}
+                        <span class="font-bold text-lg text-blue-600">${d1Str}</span>
+                    </div>
+                    <div class="text-2xl font-bold text-kidPink">VS</div>
+                    <div class="text-center">
+                        ${VisualRenderer.renderBar(10, Math.round(d2*10), 130, 50, 'fruit')}
+                        <span class="font-bold text-lg text-emerald-600">${d2Str}</span>
+                    </div>
+                </div>`;
+
+                return {
+                    id: `T5_${diff}_${idx}_${Date.now()}`,
+                    topicId: 5,
+                    gameType: 'objective',
+                    cognitive: 'Memahami',
+                    questionText: `Bandingkan nilai perpuluhan berikut: <br><b>${d1Str} &nbsp; [ &nbsp;?&nbsp; ] &nbsp; ${d2Str}</b>`,
+                    visualHtml: visualHtml,
+                    options: ['>', '<', '='],
+                    correctAnswer: symbol,
+                    explanation: `${d1Str} adalah ${symbol === '>' ? 'lebih besar daripada' : 'lebih kecil daripada'} ${d2Str}.`
+                };
+            },
+
+            // TOPIK 6: BANDINGKAN PECAHAN DAN PERPULUHAN
+            genTopic6(diff, idx) {
+                const num = this.randInt(1, 9);
+                const fracStr = `${num}/10`;
+                
+                let targetDecVal;
+                const mode = idx % 3;
+                if (mode === 0) {
+                    targetDecVal = num / 10; // equal
+                } else if (mode === 1) {
+                    targetDecVal = Math.min(0.9, (num + this.randInt(1, 2)) / 10);
+                } else {
+                    targetDecVal = Math.max(0.1, (num - this.randInt(1, 2)) / 10);
+                }
+
+                const targetDecStr = targetDecVal.toFixed(1);
+                const fracVal = num / 10;
+                let symbol = '=';
+                if (fracVal > targetDecVal) symbol = '>';
+                if (fracVal < targetDecVal) symbol = '<';
+
+                return {
+                    id: `T6_${diff}_${idx}_${Date.now()}`,
+                    topicId: 6,
+                    gameType: 'objective',
+                    cognitive: 'Memahami',
+                    questionText: `Pilih simbol perbandingan yang betul antara pecahan dan perpuluhan ini: <br><b><span class="text-kidPurple font-bold">${fracStr}</span> &nbsp; [ &nbsp;?&nbsp; ] &nbsp; <span class="text-kidOrange font-bold">${targetDecStr}</span></b>`,
+                    visualHtml: VisualRenderer.renderBar(10, num, 240, 60, 'grid10'),
+                    options: ['>', '<', '='],
+                    correctAnswer: symbol,
+                    explanation: `${fracStr} adalah bernilai ${(num/10).toFixed(1)}. Jadi ${fracStr} ${symbol === '=' ? 'sama dengan' : (symbol === '>' ? 'lebih besar daripada' : 'lebih kecil daripada')} ${targetDecStr}.`
+                };
+            },
+
+            // TOPIK 7: LENGKAPKAN AYAT MATEMATIK
+            genTopic7(diff, idx) {
+                const num = this.randInt(1, 9);
+                const decVal = (num / 10).toFixed(1);
+
+                return {
+                    id: `T7_${diff}_${idx}_${Date.now()}`,
+                    topicId: 7,
+                    gameType: 'fillBlank',
+                    cognitive: 'Mengaplikasi',
+                    questionText: `Daripada 10 bahagian sama besar, <b>${num}</b> bahagian diwarnakan. <br>Lengkapkan ayat matematik: <b>${num}/10 = ____</b>`,
+                    visualHtml: VisualRenderer.renderBar(10, num, 250, 60, 'grid10'),
+                    correctAnswer: decVal,
+                    explanation: `Daripada 10 bahagian, ${num} bahagian bersamaan pecahan ${num}/10 dan ditukar kepada perpuluhan ${decVal}.`
+                };
+            },
+
+            // TOPIK 8: PENYELESAIAN MASALAH
+            genTopic8(diff, idx) {
+                const items = [
+                    { name: 'Pizza', denom: 4, unit: 'potong pizza', icon: '🍕', theme: 'pizza' },
+                    { name: 'Kek Cawan', denom: 5, unit: 'kek cawan', icon: '🧁', theme: 'cake' },
+                    { name: 'Coklat', denom: 10, unit: 'keping coklat', icon: '🍫', theme: 'chocolate' },
+                    { name: 'Tembikai', denom: 8, unit: 'potong tembikai', icon: '🍉', theme: 'watermelon' }
+                ];
+
+                const item = items[idx % items.length];
+                const eaten = this.randInt(1, item.denom - 1);
+                
+                const isDecimal = item.denom === 10 && (idx % 2 === 0);
+
+                if (isDecimal) {
+                    const ans = (eaten / 10).toFixed(1);
+                    const choices = this.shuffle([ans, `0.0${eaten}`, `${eaten}.0`, `0.${eaten < 5 ? eaten + 2 : eaten - 1}`]);
+                    return {
+                        id: `T8_${diff}_${idx}_${Date.now()}`,
+                        topicId: 8,
+                        gameType: 'objective',
+                        cognitive: 'Mengaplikasi',
+                        questionText: `Ali ada 10 keping coklat ${item.icon}. Dia makan <b>${eaten}</b> keping daripadanya. Berapakah <b>perpuluhan</b> coklat yang telah dimakan Ali?`,
+                        visualHtml: VisualRenderer.renderBar(10, eaten, 240, 60, 'chocolate'),
+                        options: choices,
+                        correctAnswer: ans,
+                        explanation: `Ali makan ${eaten} daripada 10 keping coklat, iaitu ${eaten}/10 = ${ans}.`
+                    };
+                } else {
+                    const ansStr = `${eaten}/${item.denom}`;
+                    const choices = new Set([ansStr]);
+                    choices.add(`${item.denom - eaten}/${item.denom}`);
+                    choices.add(`${eaten}/${item.denom + 1}`);
+                    choices.add(`${eaten + 1}/${item.denom}`);
+                    while (choices.size < 4) choices.add(`${this.randInt(1, 3)}/${item.denom}`);
+
+                    return {
+                        id: `T8_${diff}_${idx}_${Date.now()}`,
+                        topicId: 8,
+                        gameType: 'objective',
+                        cognitive: 'Mengaplikasi',
+                        questionText: `Siti membeli sebiji ${item.name} ${item.icon} yang dibahagikan kepada <b>${item.denom}</b> bahagian sama besar. Dia memberi <b>${eaten}</b> bahagian kepada adiknya. Apakah <b>pecahan</b> bahagian yang diberi?`,
+                        visualHtml: VisualRenderer.renderPie(item.denom, eaten, 160, 160, item.theme),
+                        options: this.shuffle(Array.from(choices)),
+                        correctAnswer: ansStr,
+                        explanation: `Siti memberi ${eaten} daripada ${item.denom} bahagian, maka pecahannya ialah ${ansStr}.`
+                    };
+                }
+            }
+        };
+    </script>
+
+    <script>
+        // State Management for Current Session & User Persistence
+        const AppState = {
+            currentUser: null,
+            usersDb: {},
+            
+            // Current Game Configuration
+            activeTopic: 1,
+            activeDifficulty: 'easy', // 'easy', 'medium', 'hard'
+            activeGameType: 'objective',
+            timerMode: 0, // 0: No limit, 30: 30s, 60: 60s
+            
+            // Current Playing Session Data
+            sessionQuestions: [],
+            currentQIdx: 0,
+            score: 0,
+            correctCount: 0,
+            wrongCount: 0,
+            timerInterval: null,
+            timeLeft: 0,
+            selectedInteractiveIndices: [],
+
+            init() {
+                // Load local database or seed default kid accounts
+                const saved = localStorage.getItem('MATHKIDS_USERS_DB');
+                if (saved) {
+                    try { this.usersDb = JSON.parse(saved); } catch(e){}
+                }
+                
+                if (Object.keys(this.usersDb).length === 0) {
+                    // Seed initial demo profile
+                    this.usersDb['murid1'] = {
+                        username: 'murid1',
+                        name: 'Aiman Hafiz',
+                        password: '123',
+                        score: 350,
+                        highScore: 95,
+                        totalPlayed: 5,
+                        totalAnswered: 100,
+                        totalCorrect: 82,
+                        totalWrong: 18,
+                        topicProgress: {1: 90, 2: 70, 3: 50, 4: 40, 5: 20, 6: 10, 7: 0, 8: 0}
+                    };
+                    this.saveDb();
+                }
+            },
+
+            saveDb() {
+                localStorage.setItem('MATHKIDS_USERS_DB', JSON.stringify(this.usersDb));
+            },
+
+            registerUser(username, name, password) {
+                if (this.usersDb[username]) return { success: false, msg: 'Nama pengguna telah wujud!' };
+                this.usersDb[username] = {
+                    username,
+                    name,
+                    password,
+                    score: 0,
+                    highScore: 0,
+                    totalPlayed: 0,
+                    totalAnswered: 0,
+                    totalCorrect: 0,
+                    totalWrong: 0,
+                    topicProgress: {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0}
+                };
+                this.saveDb();
+                return { success: true };
+            },
+
+            loginUser(username, password) {
+                const u = this.usersDb[username];
+                if (!u || u.password !== password) {
+                    return { success: false, msg: 'Nama pengguna atau kata laluan salah!' };
+                }
+                this.currentUser = u;
+                return { success: true };
+            },
+
+            updateUserProgress(sessionScore, correct, wrong, topicId) {
+                if (!this.currentUser) return;
+                const u = this.currentUser;
+                u.totalPlayed += 1;
+                u.totalAnswered += (correct + wrong);
+                u.totalCorrect += correct;
+                u.totalWrong += wrong;
+                u.score += sessionScore;
+                if (sessionScore > u.highScore) {
+                    u.highScore = sessionScore;
+                }
+                // Upgrade topic progress %
+                const totalQ = (this.sessionQuestions && this.sessionQuestions.length) ? this.sessionQuestions.length : 20;
+                const percent = Math.round((correct / totalQ) * 100);
+                if (percent > (u.topicProgress[topicId] || 0)) {
+                    u.topicProgress[topicId] = percent;
+                }
+                this.saveDb();
+            }
+        };
+        AppState.init();
+    </script>
+
+    <!-- MAIN APPLICATION WRAPPER -->
+    <div id="app" class="max-w-4xl mx-auto p-3 sm:p-5 flex-1 flex flex-col justify-between">
+        
+        <!-- HEADER TITLE BAR -->
+        <header class="bg-white rounded-3xl p-4 shadow-fun border-4 border-kidBlue mb-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showScreen('screen-main-menu')">
+                <div class="bg-kidYellow text-white text-3xl p-3 rounded-2xl shadow-fun-sm floating-element">
+                    🧮
+                </div>
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-black text-kidBlue tracking-wide flex items-center gap-2">
+                        MATH KIDS <span class="text-sm bg-kidPink text-white px-2 py-0.5 rounded-full font-bold">⭐ EDU KIDZ</span>
+                    </h1>
+                    <p class="text-xs sm:text-sm font-bold text-slate-500">
+                        📚 TAHUN 2 &nbsp;|&nbsp; ➗ PECAHAN & PERPULUHAN
+                    </p>
+                </div>
+            </div>
+
+            <!-- User Info Pill -->
+            <div id="userInfoHeader" class="hidden flex items-center gap-3 bg-sky-50 px-4 py-2 rounded-2xl border-2 border-sky-200">
+                <div class="text-right">
+                    <div id="headerUserName" class="font-bold text-slate-700 text-sm">Adik Comel</div>
+                    <div id="headerUserScore" class="text-xs text-kidGreen font-black">⭐ 0 Markah</div>
+                </div>
+                <button onclick="logout()" title="Log Keluar" class="bg-red-500 hover:bg-red-600 text-white w-9 h-9 rounded-xl flex items-center justify-center bounce-hover shadow-fun-sm">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN SCREEN CONTAINER -->
+        <main class="flex-1 flex flex-col justify-center">
+
+            <!-- 1. LOGIN / REGISTER SCREEN -->
+            <div id="screen-auth" class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border-4 border-kidPurple max-w-md mx-auto w-full">
+                <!-- Tabs -->
+                <div class="flex border-b-4 border-purple-100 mb-6 font-bold text-lg">
+                    <button id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-center text-kidPurple border-b-4 border-kidPurple -mb-1">LOG MASUK</button>
+                    <button id="tab-register-btn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-center text-slate-400">DAFTAR AKAUN</button>
+                </div>
+
+                <!-- Form Login -->
+                <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1"><i class="fa-solid fa-user text-kidPurple"></i> Nama Pengguna</label>
+                        <input type="text" id="login-username" required placeholder="Contoh: murid1" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 focus:border-kidPurple outline-none font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1"><i class="fa-solid fa-key text-kidPurple"></i> Kata Laluan</label>
+                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 focus:border-kidPurple outline-none font-bold">
+                    </div>
+                    <button type="submit" class="w-full bg-kidPurple text-white py-3.5 rounded-2xl font-black text-lg shadow-fun hover:bg-purple-600 bounce-hover">
+                        <i class="fa-solid fa-right-to-bracket mr-2"></i> LOG MASUK
+                    </button>
+                    <p class="text-xs text-center text-slate-500 font-bold mt-2">Akaun Contoh: <b>murid1</b> | Kata Laluan: <b>123</b></p>
+                </form>
+
+                <!-- Form Register -->
+                <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Nama Pengguna (ID)</label>
+                        <input type="text" id="reg-username" required placeholder="Contoh: danial88" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 focus:border-kidPink outline-none font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Nama Murid / Pemain</label>
+                        <input type="text" id="reg-name" required placeholder="Contoh: Danial Hakimi" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 focus:border-kidPink outline-none font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Kata Laluan</label>
+                        <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 focus:border-kidPink outline-none font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Sahkan Kata Laluan</label>
+                        <input type="password" id="reg-confirm" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 focus:border-kidPink outline-none font-bold">
+                    </div>
+                    <button type="submit" class="w-full bg-kidPink text-white py-3.5 rounded-2xl font-black text-lg shadow-fun hover:bg-pink-600 bounce-hover">
+                        <i class="fa-solid fa-user-plus mr-2"></i> DAFTAR AKAUN BAHARU
+                    </button>
+                </form>
+            </div>
+
+            <!-- 2. MAIN MENU SCREEN -->
+            <div id="screen-main-menu" class="hidden space-y-4">
+                <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-kidYellow text-center relative overflow-hidden">
+                    <div class="text-5xl mb-2 floating-element">⭐ 🍕 🍰 🎈</div>
+                    <h2 class="text-3xl sm:text-4xl font-black text-slate-800">Selamat Datang, <span id="menuPlayerName" class="text-kidBlue">Pemain</span>!</h2>
+                    <p class="text-slate-600 font-bold mt-1">Mari belajar Pecahan & Perpuluhan sambil bermain!</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button onclick="startQuickGame()" class="bg-gradient-to-r from-emerald-400 to-emerald-500 text-white p-5 rounded-3xl font-black text-xl shadow-fun-green flex items-center justify-between bounce-hover">
+                        <span class="flex items-center gap-3"><i class="fa-solid fa-play text-3xl"></i> MULA BERMAIN</span>
+                        <i class="fa-solid fa-chevron-right text-2xl"></i>
+                    </button>
+                    <button onclick="showScreen('screen-select-topic')" class="bg-gradient-to-r from-blue-400 to-blue-500 text-white p-5 rounded-3xl font-black text-xl shadow-fun-blue flex items-center justify-between bounce-hover">
+                        <span class="flex items-center gap-3"><i class="fa-solid fa-book-open text-3xl"></i> PILIH TOPIK</span>
+                        <i class="fa-solid fa-chevron-right text-2xl"></i>
+                    </button>
+                    <button onclick="renderProgressScreen(); showScreen('screen-progress')" class="bg-gradient-to-r from-purple-400 to-purple-500 text-white p-5 rounded-3xl font-black text-xl shadow-fun flex items-center justify-between bounce-hover">
+                        <span class="flex items-center gap-3"><i class="fa-solid fa-chart-line text-3xl"></i> PROGRESS SAYA</span>
+                        <i class="fa-solid fa-chevron-right text-2xl"></i>
+                    </button>
+                    <button onclick="renderLeaderboardScreen(); showScreen('screen-leaderboard')" class="bg-gradient-to-r from-amber-400 to-amber-500 text-white p-5 rounded-3xl font-black text-xl shadow-fun-yellow flex items-center justify-between bounce-hover">
+                        <span class="flex items-center gap-3"><i class="fa-solid fa-trophy text-3xl"></i> LEADERBOARD</span>
+                        <i class="fa-solid fa-chevron-right text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="flex justify-center gap-4 pt-2">
+                    <button onclick="renderProfileScreen(); showScreen('screen-profile')" class="bg-white text-slate-700 px-5 py-3 rounded-2xl font-bold border-2 border-slate-200 shadow-sm hover:bg-slate-50 flex items-center gap-2 bounce-hover">
+                        <i class="fa-solid fa-user-circle text-kidBlue text-xl"></i> PROFIL
+                    </button>
+                    <button onclick="toggleAudio()" id="btnAudioToggle" class="bg-white text-slate-700 px-5 py-3 rounded-2xl font-bold border-2 border-slate-200 shadow-sm hover:bg-slate-50 flex items-center gap-2 bounce-hover">
+                        <i class="fa-solid fa-volume-high text-kidGreen text-xl"></i> BUNYI: ON
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. SELECT TOPIC SCREEN -->
+            <div id="screen-select-topic" class="hidden space-y-4">
+                <div class="flex items-center justify-between bg-white p-4 rounded-3xl border-4 border-kidBlue shadow-md">
+                    <h2 class="text-2xl font-black text-kidBlue flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group"></i> PILIH TOPIK MATEMATIK
+                    </h2>
+                    <button onclick="showScreen('screen-main-menu')" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl font-bold bounce-hover">
+                        <i class="fa-solid fa-arrow-left"></i> KEMBALI
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="topicGrid">
+                    <!-- Dynamic rendering of 8 topics -->
+                </div>
+            </div>
+
+            <!-- 4. GAME CONFIG & SETUP MODAL -->
+            <div id="screen-game-config" class="hidden bg-white rounded-3xl p-6 sm:p-8 shadow-xl border-4 border-kidGreen max-w-lg mx-auto w-full space-y-5">
+                <div class="text-center">
+                    <span id="configTopicBadge" class="bg-kidGreen text-white font-black px-4 py-1.5 rounded-full text-sm uppercase tracking-wider">Topik 1</span>
+                    <h2 id="configTopicTitle" class="text-2xl font-black text-slate-800 mt-2">Kenali Pecahan</h2>
+                </div>
+
+                <!-- Difficulty selection -->
+                <div>
+                    <label class="block font-black text-slate-700 mb-2"> Pilih Tahap Kesukaran:</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setDiff('easy')" id="diff-easy" class="diff-btn bg-emerald-100 text-emerald-800 border-4 border-emerald-400 p-3 rounded-2xl font-black text-center bounce-hover">
+                            🟢 MUDAH
+                        </button>
+                        <button onclick="setDiff('medium')" id="diff-medium" class="diff-btn bg-amber-50 text-amber-700 border-2 border-amber-200 p-3 rounded-2xl font-black text-center bounce-hover">
+                            🟡 SEDERHANA
+                        </button>
+                        <button onclick="setDiff('hard')" id="diff-hard" class="diff-btn bg-red-50 text-red-700 border-2 border-red-200 p-3 rounded-2xl font-black text-center bounce-hover">
+                            🔴 SUSAH
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Timer selection -->
+                <div>
+                    <label class="block font-black text-slate-700 mb-2"> Pilih Pemasa Soalan:</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setTimerMode(30)" id="timer-30" class="timer-btn bg-blue-50 text-blue-700 border-2 border-blue-200 p-3 rounded-2xl font-black text-center bounce-hover">
+                            ⏱️ 30 Saat
+                        </button>
+                        <button onclick="setTimerMode(60)" id="timer-60" class="timer-btn bg-blue-50 text-blue-700 border-2 border-blue-200 p-3 rounded-2xl font-black text-center bounce-hover">
+                            ⏱️ 1 Minit
+                        </button>
+                        <button onclick="setTimerMode(0)" id="timer-0" class="timer-btn bg-indigo-100 text-indigo-800 border-4 border-indigo-400 p-3 rounded-2xl font-black text-center bounce-hover">
+                            ♾️ Tiada Had
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button onclick="showScreen('screen-select-topic')" class="flex-1 bg-slate-200 text-slate-700 py-3 rounded-2xl font-bold bounce-hover">BATAL</button>
+                    <button onclick="launchGameplay()" class="flex-2 bg-kidGreen text-white py-3.5 px-6 rounded-2xl font-black text-lg shadow-fun-green hover:bg-emerald-600 bounce-hover">
+                        ▶ MULA MAIN!
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5. GAMEPLAY SCREEN -->
+            <div id="screen-gameplay" class="hidden space-y-4">
+                <!-- Top HUD -->
+                <div class="bg-white rounded-3xl p-4 shadow-md border-4 border-kidBlue flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-kidBlue text-white font-black px-3 py-1 rounded-xl text-sm" id="gameplayTopicBadge">TOPIK 1</span>
+                        <span class="bg-emerald-500 text-white font-black px-3 py-1 rounded-xl text-sm" id="gameplayScoreDisplay">⭐ SKOR: 0 / 100</span>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <div class="font-black text-slate-700" id="gameplayQCounter">📝 SOALAN: 1 / 20</div>
+                        <div id="gameplayTimerContainer" class="hidden bg-amber-100 text-amber-800 border-2 border-amber-400 px-3 py-1 rounded-xl font-black text-sm">
+                            ⏱️ <span id="gameplayTimerVal">30</span>s
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-slate-200 flex flex-col justify-between min-h-[380px]">
+                    <!-- Question Prompt -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span id="gameplayCognitive" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Aras: Mengingat</span>
+                            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">+5 Markah</span>
+                        </div>
+                        <h3 id="gameplayQuestionText" class="text-xl sm:text-2xl font-black text-slate-800 leading-snug">
+                            Soalan dimuatkan...
+                        </h3>
+                    </div>
+
+                    <!-- Visual Container -->
+                    <div id="gameplayVisualContainer" class="my-4 py-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center min-h-[140px]">
+                        <!-- Visual SVG rendered dynamically -->
+                    </div>
+
+                    <!-- Answer Area (Objective / Interactive / Input) -->
+                    <div id="gameplayAnswerArea" class="mt-2">
+                        <!-- Options generated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. ANSWER FEEDBACK MODAL OVERLAY -->
+            <div id="modal-feedback" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border-4 border-slate-800 text-center space-y-4 animate-bounce-short">
+                    <div id="feedbackIcon" class="text-6xl">🎉</div>
+                    <h3 id="feedbackTitle" class="text-3xl font-black text-slate-800">Syabas!</h3>
+                    <p id="feedbackMsg" class="text-lg font-bold text-slate-600">Jawapan Betul!</p>
+                    <div id="feedbackExplanation" class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-3 text-sm text-amber-900 font-bold text-left hidden">
+                        <!-- Explanation text -->
+                    </div>
+                    <button onclick="nextQuestion()" class="w-full bg-kidBlue text-white py-3.5 rounded-2xl font-black text-lg shadow-fun-blue hover:bg-blue-600 bounce-hover">
+                        ➡️ SOALAN SETERUSNYA
+                    </button>
+                </div>
+            </div>
+
+            <!-- 7. GAME OVER / SUMMARY SCREEN -->
+            <div id="screen-summary" class="hidden bg-white rounded-3xl p-6 sm:p-8 shadow-xl border-4 border-kidYellow max-w-xl mx-auto w-full text-center space-y-5">
+                <div class="text-6xl floating-element">🎉 🏆 ✨</div>
+                <h2 class="text-3xl sm:text-4xl font-black text-slate-800">PERMAINAN TAMAT!</h2>
+                
+                <div class="bg-amber-50 rounded-3xl p-6 border-4 border-amber-200 space-y-3">
+                    <div class="text-4xl sm:text-5xl font-black text-kidYellow" id="summaryScore">⭐ 85 / 100</div>
+                    <div class="flex justify-center gap-6 text-slate-700 font-bold text-lg">
+                        <span class="text-emerald-600"><i class="fa-solid fa-circle-check"></i> Betul: <b id="summaryCorrect">17</b></span>
+                        <span class="text-red-500"><i class="fa-solid fa-circle-xmark"></i> Salah: <b id="summaryWrong">3</b></span>
+                        <span class="text-blue-600"><i class="fa-solid fa-percent"></i> <b id="summaryPercent">85%</b></span>
+                    </div>
+                </div>
+
+                <div id="summaryMotivation" class="text-lg font-black text-kidPurple bg-purple-50 p-4 rounded-2xl border-2 border-purple-200">
+                    "Hebat! Anda sangat menguasai topik ini!"
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                    <button onclick="launchGameplay()" class="bg-kidGreen text-white p-3 rounded-2xl font-black shadow-fun-green bounce-hover col-span-2 sm:col-span-1">
+                        🔄 MAIN LAGI
+                    </button>
+                    <button onclick="showScreen('screen-select-topic')" class="bg-kidBlue text-white p-3 rounded-2xl font-black shadow-fun-blue bounce-hover">
+                        📚 TOPIK
+                    </button>
+                    <button onclick="renderProgressScreen(); showScreen('screen-progress')" class="bg-kidPurple text-white p-3 rounded-2xl font-black shadow-fun bounce-hover">
+                        📊 PROGRESS
+                    </button>
+                    <button onclick="renderLeaderboardScreen(); showScreen('screen-leaderboard')" class="bg-amber-500 text-white p-3 rounded-2xl font-black shadow-fun-yellow bounce-hover">
+                        🏆 RANKING
+                    </button>
+                    <button onclick="showScreen('screen-main-menu')" class="bg-slate-700 text-white p-3 rounded-2xl font-black shadow-fun bounce-hover col-span-2 sm:col-span-2">
+                        🏠 MENU UTAMA
+                    </button>
+                </div>
+            </div>
+
+            <!-- 8. PROGRESS DASHBOARD SCREEN -->
+            <div id="screen-progress" class="hidden space-y-4">
+                <div class="flex items-center justify-between bg-white p-4 rounded-3xl border-4 border-kidPurple shadow-md">
+                    <h2 class="text-2xl font-black text-kidPurple flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line"></i> PROGRESS PEMBELAJARAN SAYA
+                    </h2>
+                    <button onclick="showScreen('screen-main-menu')" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl font-bold bounce-hover">
+                        <i class="fa-solid fa-arrow-left"></i> KEMBALI
+                    </button>
+                </div>
+
+                <!-- Stats Summary Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="progressStatsCards">
+                    <!-- Stat cards dynamically rendered -->
+                </div>
+
+                <!-- Topic Progress Bars -->
+                <div class="bg-white rounded-3xl p-6 shadow-md border-4 border-slate-200 space-y-4">
+                    <h3 class="text-xl font-black text-slate-800">Kemajuan Mengikut Topik</h3>
+                    <div class="space-y-3" id="topicProgressBarList">
+                        <!-- Progress bars rendered dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. LEADERBOARD SCREEN -->
+            <div id="screen-leaderboard" class="hidden space-y-4">
+                <div class="flex items-center justify-between bg-white p-4 rounded-3xl border-4 border-amber-400 shadow-md">
+                    <h2 class="text-2xl font-black text-amber-600 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy"></i> LEADERBOARD EDU KIDZ
+                    </h2>
+                    <button onclick="showScreen('screen-main-menu')" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl font-bold bounce-hover">
+                        <i class="fa-solid fa-arrow-left"></i> KEMBALI
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-slate-200 space-y-3" id="leaderboardList">
+                    <!-- Ranked items rendered here -->
+                </div>
+            </div>
+
+            <!-- 10. PROFILE & SETTINGS SCREEN -->
+            <div id="screen-profile" class="hidden bg-white rounded-3xl p-6 sm:p-8 shadow-xl border-4 border-kidBlue max-w-lg mx-auto w-full space-y-5">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-black text-kidBlue"><i class="fa-solid fa-user-gear"></i> PROFIL SELESAI</h2>
+                    <button onclick="showScreen('screen-main-menu')" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl font-bold bounce-hover">KEMBALI</button>
+                </div>
+
+                <div class="text-center bg-blue-50 rounded-2xl p-4 border-2 border-blue-200">
+                    <div class="text-5xl mb-2">🧑‍🎓</div>
+                    <div id="profileNameDisplay" class="text-2xl font-black text-slate-800">Nama Pemain</div>
+                    <div id="profileUsernameDisplay" class="text-sm font-bold text-slate-500">@username</div>
+                </div>
+
+                <div class="space-y-2 text-slate-700 font-bold" id="profileStatsList">
+                    <!-- Stats details -->
+                </div>
+
+                <button onclick="logout()" class="w-full bg-red-500 text-white py-3 rounded-2xl font-black shadow-fun-sm hover:bg-red-600 bounce-hover">
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i> LOG KELUAR AKAUN
+                </button>
+            </div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="mt-6 text-center text-xs text-slate-500 font-bold py-2">
+            🧮 MATH KIDS – EDU KIDZ &copy; Tahun 2 Matematik Sekolah Rendah Malaysia
+        </footer>
+    </div>
+
+    <script>
+        // TOPICS DATA CONFIGURATION (8 Topics)
+        const TOPICS_DATA = [
+            { id: 1, title: 'Kenali Pecahan', desc: 'Kenal pengangka, penyebut & gambarajah', icon: '🍕', color: 'border-kidBlue bg-blue-50 text-kidBlue' },
+            { id: 2, title: 'Warnakan Pecahan', desc: 'Warnakan bahagian gambar mengikut pecahan', icon: '🎨', color: 'border-kidGreen bg-emerald-50 text-kidGreen' },
+            { id: 3, title: 'Bandingkan Pecahan', desc: 'Bandingkan dua pecahan menggunakan >, < atau =', icon: '⚖️', color: 'border-kidPink bg-pink-50 text-kidPink' },
+            { id: 4, title: 'Tukar Pecahan kepada Perpuluhan', desc: 'Tukar pecahan persepuluh kepada 0.X', icon: '🔢', color: 'border-kidPurple bg-purple-50 text-kidPurple' },
+            { id: 5, title: 'Bandingkan Perpuluhan', desc: 'Bandingkan nombor perpuluhan', icon: '📊', color: 'border-kidOrange bg-orange-50 text-kidOrange' },
+            { id: 6, title: 'Bandingkan Pecahan & Perpuluhan', desc: 'Bandingkan nilai pecahan dengan perpuluhan', icon: '🔄', color: 'border-amber-400 bg-amber-50 text-amber-600' },
+            { id: 7, title: 'Lengkapkan Ayat Matematik', desc: 'Isi tempat kosong berdasarkan gambarajah', icon: '✏️', color: 'border-sky-400 bg-sky-50 text-sky-600' },
+            { id: 8, title: 'Penyelesaian Masalah', desc: 'Soalan cerita situasi harian kanak-kanak', icon: '💡', color: 'border-red-400 bg-red-50 text-red-600' }
+        ];
+
+        // SCREEN NAVIGATION SYSTEM
+        function showScreen(screenId) {
+            AudioEngine.playBtnClick();
+            const screens = ['screen-auth', 'screen-main-menu', 'screen-select-topic', 'screen-game-config', 'screen-gameplay', 'screen-summary', 'screen-progress', 'screen-leaderboard', 'screen-profile'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+            const target = document.getElementById(screenId);
+            if (target) target.classList.remove('hidden');
+
+            // Header User pill visibility
+            const userPill = document.getElementById('userInfoHeader');
+            if (AppState.currentUser) {
+                userPill.classList.remove('hidden');
+                document.getElementById('headerUserName').innerText = AppState.currentUser.name;
+                document.getElementById('headerUserScore').innerText = `⭐ ${AppState.currentUser.score} Markah`;
+                document.getElementById('menuPlayerName').innerText = AppState.currentUser.name;
+            } else {
+                userPill.classList.add('hidden');
+            }
+        }
+
+        // AUTHENTICATION TAB SWITCHING
+        function switchAuthTab(tab) {
+            AudioEngine.playBtnClick();
+            if (tab === 'login') {
+                document.getElementById('form-login').classList.remove('hidden');
+                document.getElementById('form-register').classList.add('hidden');
+                document.getElementById('tab-login-btn').className = 'flex-1 py-2 text-center text-kidPurple border-b-4 border-kidPurple -mb-1';
+                document.getElementById('tab-register-btn').className = 'flex-1 py-2 text-center text-slate-400';
+            } else {
+                document.getElementById('form-login').classList.add('hidden');
+                document.getElementById('form-register').classList.remove('hidden');
+                document.getElementById('tab-register-btn').className = 'flex-1 py-2 text-center text-kidPink border-b-4 border-kidPink -mb-1';
+                document.getElementById('tab-login-btn').className = 'flex-1 py-2 text-center text-slate-400';
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('login-username').value.trim();
+            const p = document.getElementById('login-password').value.trim();
+            const res = AppState.loginUser(u, p);
+            if (res.success) {
+                showScreen('screen-main-menu');
+            } else {
+                alert(res.msg);
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const u = document.getElementById('reg-username').value.trim();
+            const n = document.getElementById('reg-name').value.trim();
+            const p = document.getElementById('reg-password').value.trim();
+            const c = document.getElementById('reg-confirm').value.trim();
+
+            if (p !== c) {
+                alert('Kata laluan tidak sepadan!');
+                return;
+            }
+
+            const res = AppState.registerUser(u, n, p);
+            if (res.success) {
+                AppState.loginUser(u, p);
+                showScreen('screen-main-menu');
+            } else {
+                alert(res.msg);
+            }
+        }
+
+        function logout() {
+            AudioEngine.playBtnClick();
+            AppState.currentUser = null;
+            showScreen('screen-auth');
+        }
+
+        // RENDER TOPIC SELECTION GRID
+        function renderTopicGrid() {
+            const container = document.getElementById('topicGrid');
+            container.innerHTML = '';
+            TOPICS_DATA.forEach(t => {
+                const btn = document.createElement('div');
+                btn.className = `bg-white rounded-3xl p-5 border-4 ${t.color.split(' ')[0]} shadow-md hover:shadow-lg cursor-pointer bounce-hover flex items-center justify-between gap-4`;
+                btn.onclick = () => openGameConfig(t.id);
+                btn.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="text-4xl p-3 bg-slate-50 rounded-2xl border-2 border-slate-100">${t.icon}</div>
+                        <div>
+                            <span class="text-xs font-black uppercase text-slate-400">TOPIK ${t.id}</span>
+                            <h3 class="text-lg font-black text-slate-800 leading-tight">${t.title}</h3>
+                            <p class="text-xs font-bold text-slate-500 mt-0.5">${t.desc}</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xl"></i>
+                `;
+                container.appendChild(btn);
+            });
+        }
+        renderTopicGrid();
+
+        function openGameConfig(topicId) {
+            AppState.activeTopic = topicId;
+            const t = TOPICS_DATA.find(x => x.id === topicId);
+            document.getElementById('configTopicBadge').innerText = `TOPIK ${t.id}`;
+            document.getElementById('configTopicTitle').innerText = t.title;
+            setDiff('easy');
+            setTimerMode(0);
+            showScreen('screen-game-config');
+        }
+
+        function startQuickGame() {
+            openGameConfig(1);
+        }
+
+        function setDiff(diff) {
+            AudioEngine.playBtnClick();
+            AppState.activeDifficulty = diff;
+            document.querySelectorAll('.diff-btn').forEach(btn => {
+                btn.className = 'diff-btn bg-slate-50 text-slate-600 border-2 border-slate-200 p-3 rounded-2xl font-black text-center bounce-hover';
+            });
+            if (diff === 'easy') {
+                document.getElementById('diff-easy').className = 'diff-btn bg-emerald-100 text-emerald-800 border-4 border-emerald-400 p-3 rounded-2xl font-black text-center bounce-hover';
+            } else if (diff === 'medium') {
+                document.getElementById('diff-medium').className = 'diff-btn bg-amber-100 text-amber-800 border-4 border-amber-400 p-3 rounded-2xl font-black text-center bounce-hover';
+            } else {
+                document.getElementById('diff-hard').className = 'diff-btn bg-red-100 text-red-800 border-4 border-red-400 p-3 rounded-2xl font-black text-center bounce-hover';
+            }
+        }
+
+        function setTimerMode(sec) {
+            AudioEngine.playBtnClick();
+            AppState.timerMode = sec;
+            document.querySelectorAll('.timer-btn').forEach(btn => {
+                btn.className = 'timer-btn bg-slate-50 text-slate-600 border-2 border-slate-200 p-3 rounded-2xl font-black text-center bounce-hover';
+            });
+            document.getElementById(`timer-${sec}`).className = 'timer-btn bg-indigo-100 text-indigo-800 border-4 border-indigo-400 p-3 rounded-2xl font-black text-center bounce-hover';
+        }
+
+        // LAUNCH GAMEPLAY SESSION
+        function launchGameplay() {
+            AudioEngine.playBtnClick();
+            AppState.sessionQuestions = QuestionGenerator.generateSessionQuestions(AppState.activeTopic, AppState.activeDifficulty);
+            AppState.currentQIdx = 0;
+            AppState.score = 0;
+            AppState.correctCount = 0;
+            AppState.wrongCount = 0;
+            
+            showScreen('screen-gameplay');
+            renderCurrentQuestion();
+        }
+
+        function renderCurrentQuestion() {
+            if (AppState.timerInterval) clearInterval(AppState.timerInterval);
+
+            if (!AppState.sessionQuestions || AppState.currentQIdx >= AppState.sessionQuestions.length) {
+                finishGameSession();
+                return;
+            }
+
+            const q = AppState.sessionQuestions[AppState.currentQIdx];
+            if (!q) {
+                finishGameSession();
+                return;
+            }
+
+            AppState.selectedInteractiveIndices = [];
+
+            // Update Top HUD
+            document.getElementById('gameplayTopicBadge').innerText = `TOPIK ${q.topicId}`;
+            document.getElementById('gameplayScoreDisplay').innerText = `⭐ SKOR: ${AppState.score} / ${AppState.sessionQuestions.length * 5}`;
+            document.getElementById('gameplayQCounter').innerText = `📝 SOALAN: ${AppState.currentQIdx + 1} / ${AppState.sessionQuestions.length}`;
+            document.getElementById('gameplayCognitive').innerText = `Aras Kognitif: ${q.cognitive}`;
+
+            // Handle Timer
+            const timerBox = document.getElementById('gameplayTimerContainer');
+            if (AppState.timerMode > 0) {
+                timerBox.classList.remove('hidden');
+                AppState.timeLeft = AppState.timerMode;
+                document.getElementById('gameplayTimerVal').innerText = AppState.timeLeft;
+                AppState.timerInterval = setInterval(() => {
+                    AppState.timeLeft--;
+                    document.getElementById('gameplayTimerVal').innerText = AppState.timeLeft;
+                    if (AppState.timeLeft <= 0) {
+                        clearInterval(AppState.timerInterval);
+                        processAnswer(null, true); // Timeout
+                    }
+                }, 1000);
+            } else {
+                timerBox.classList.add('hidden');
+            }
+
+            // Render Prompt & Visual
+            document.getElementById('gameplayQuestionText').innerHTML = q.questionText;
+            document.getElementById('gameplayVisualContainer').innerHTML = q.visualHtml || '';
+
+            // Render Input Controls
+            const answerContainer = document.getElementById('gameplayAnswerArea');
+            answerContainer.innerHTML = '';
+
+            if (q.gameType === 'colorable') {
+                answerContainer.innerHTML = `
+                    <div id="interactiveArea">
+                        ${VisualRenderer.renderInteractive(q.denom, [], 260, 180, q.shapeType)}
+                    </div>
+                    <button onclick="submitInteractiveAnswer()" class="w-full mt-4 bg-kidGreen text-white py-3.5 rounded-2xl font-black text-lg shadow-fun-green hover:bg-emerald-600 bounce-hover">
+                        <i class="fa-solid fa-check"></i> HANTAR JAWAPAN
+                    </button>
+                `;
+            } else if (q.gameType === 'fillBlank') {
+                answerContainer.innerHTML = `
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="blankInput" placeholder="Taip jawapan..." class="flex-1 px-5 py-3.5 rounded-2xl border-4 border-kidBlue text-center font-black text-2xl outline-none">
+                        <button onclick="submitBlankAnswer()" class="bg-kidBlue text-white px-8 py-3.5 rounded-2xl font-black text-lg shadow-fun-blue hover:bg-blue-600 bounce-hover">
+                            HANTAR
+                        </button>
+                    </div>
+                `;
+            } else { // Objective A, B, C, D
+                const colors = ['bg-blue-500 shadow-fun-blue hover:bg-blue-600', 'bg-pink-500 shadow-fun-pink hover:bg-pink-600', 'bg-emerald-500 shadow-fun-green hover:bg-emerald-600', 'bg-amber-500 shadow-fun-yellow hover:bg-amber-600'];
+                const grid = document.createElement('div');
+                grid.className = 'grid grid-cols-2 gap-3';
+                
+                q.options.forEach((opt, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = `${colors[i % 4]} text-white p-4 rounded-2xl font-black text-xl text-center bounce-hover flex items-center justify-center gap-2`;
+                    btn.innerHTML = `<span>${opt}</span>`;
+                    btn.onclick = () => processAnswer(opt);
+                    grid.appendChild(btn);
+                });
+                answerContainer.appendChild(grid);
+            }
+        }
+
+        // Toggle interactive slice for Topic 2
+        window.toggleInteractivePart = function(index) {
+            AudioEngine.playBtnClick();
+            const q = AppState.sessionQuestions[AppState.currentQIdx];
+            const idxPos = AppState.selectedInteractiveIndices.indexOf(index);
+            if (idxPos > -1) {
+                AppState.selectedInteractiveIndices.splice(idxPos, 1);
+            } else {
+                AppState.selectedInteractiveIndices.push(index);
+            }
+            document.getElementById('interactiveArea').innerHTML = VisualRenderer.renderInteractive(q.denom, AppState.selectedInteractiveIndices, 260, 180, q.shapeType);
+        };
+
+        function submitInteractiveAnswer() {
+            const count = AppState.selectedInteractiveIndices.length;
+            processAnswer(count);
+        }
+
+        function submitBlankAnswer() {
+            const val = document.getElementById('blankInput').value.trim();
+            processAnswer(val);
+        }
+
+        function processAnswer(userAns, isTimeout = false) {
+            if (AppState.timerInterval) clearInterval(AppState.timerInterval);
+            const q = AppState.sessionQuestions[AppState.currentQIdx];
+
+            let isCorrect = false;
+            if (!isTimeout && userAns !== null) {
+                if (typeof q.correctAnswer === 'number') {
+                    isCorrect = (Number(userAns) === q.correctAnswer);
+                } else {
+                    isCorrect = (String(userAns).trim() === String(q.correctAnswer).trim());
+                }
+            }
+
+            const modal = document.getElementById('modal-feedback');
+            const icon = document.getElementById('feedbackIcon');
+            const title = document.getElementById('feedbackTitle');
+            const msg = document.getElementById('feedbackMsg');
+            const exp = document.getElementById('feedbackExplanation');
+
+            if (isCorrect) {
+                AudioEngine.playCorrect();
+                triggerFireworks();
+                AppState.score += 5;
+                AppState.correctCount++;
+                icon.innerText = '🎉';
+                title.innerText = 'Syabas!';
+                title.className = 'text-3xl font-black text-emerald-600';
+                msg.innerText = 'Jawapan Betul! (+5 Markah)';
+                exp.classList.add('hidden');
+            } else {
+                AudioEngine.playWrong();
+                AppState.wrongCount++;
+                icon.innerText = '❌';
+                title.innerText = isTimeout ? 'Masa Tamat!' : 'Belum Tepat!';
+                title.className = 'text-3xl font-black text-red-500';
+                msg.innerHTML = `Jawapan yang betul ialah: <b>${q.correctAnswer}</b>`;
+                exp.classList.remove('hidden');
+                exp.innerText = q.explanation || `Jawapan yang betul ialah ${q.correctAnswer}.`;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            AudioEngine.playBtnClick();
+            document.getElementById('modal-feedback').classList.add('hidden');
+            AppState.currentQIdx++;
+            renderCurrentQuestion();
+        }
+
+        function finishGameSession() {
+            AudioEngine.playFanfare();
+            triggerFireworks();
+
+            AppState.updateUserProgress(AppState.score, AppState.correctCount, AppState.wrongCount, AppState.activeTopic);
+
+            document.getElementById('summaryScore').innerText = `⭐ ${AppState.score} / 100`;
+            document.getElementById('summaryCorrect').innerText = AppState.correctCount;
+            document.getElementById('summaryWrong').innerText = AppState.wrongCount;
+            const percent = Math.round((AppState.score / 100) * 100);
+            document.getElementById('summaryPercent').innerText = `${percent}%`;
+
+            const mot = document.getElementById('summaryMotivation');
+            if (percent >= 90) mot.innerText = "🌟 Hebat! Anda sangat menguasai topik ini!";
+            else if (percent >= 70) mot.innerText = "👍 Syabas! Teruskan berlatih untuk cemerlang!";
+            else if (percent >= 50) mot.innerText = "🙂 Bagus! Cuba lagi untuk tingkatkan skor.";
+            else mot.innerText = "💪 Jangan berputus asa. Mari berlatih lagi!";
+
+            showScreen('screen-summary');
+        }
+
+        // RENDER PROGRESS DASHBOARD
+        function renderProgressScreen() {
+            if (!AppState.currentUser) return;
+            const u = AppState.currentUser;
+
+            // Stats cards
+            const cards = document.getElementById('progressStatsCards');
+            const avg = u.totalPlayed > 0 ? Math.round(u.score / u.totalPlayed) : 0;
+            cards.innerHTML = `
+                <div class="bg-blue-50 p-4 rounded-2xl border-2 border-blue-200 text-center">
+                    <div class="text-xs font-bold text-slate-500">Jumlah Permainan</div>
+                    <div class="text-2xl font-black text-kidBlue">${u.totalPlayed}</div>
+                </div>
+                <div class="bg-emerald-50 p-4 rounded-2xl border-2 border-emerald-200 text-center">
+                    <div class="text-xs font-bold text-slate-500">Jawapan Betul</div>
+                    <div class="text-2xl font-black text-kidGreen">${u.totalCorrect}</div>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-2xl border-2 border-purple-200 text-center">
+                    <div class="text-xs font-bold text-slate-500">Skor Tertinggi</div>
+                    <div class="text-2xl font-black text-kidPurple">${u.highScore}</div>
+                </div>
+                <div class="bg-amber-50 p-4 rounded-2xl border-2 border-amber-200 text-center">
+                    <div class="text-xs font-bold text-slate-500">Purata Markah</div>
+                    <div class="text-2xl font-black text-amber-600">${avg}</div>
+                </div>
+            `;
+
+            // Progress Bar List
+            const list = document.getElementById('topicProgressBarList');
+            list.innerHTML = '';
+            TOPICS_DATA.forEach(t => {
+                const pct = u.topicProgress[t.id] || 0;
+                const row = document.createElement('div');
+                row.className = 'space-y-1';
+                row.innerHTML = `
+                    <div class="flex justify-between text-sm font-bold text-slate-700">
+                        <span>${t.icon} Topik ${t.id}: ${t.title}</span>
+                        <span>${pct}%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden border border-slate-200">
+                        <div class="bg-kidGreen h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                    </div>
+                `;
+                list.appendChild(row);
+            });
+        }
+
+        // RENDER LEADERBOARD
+        function renderLeaderboardScreen() {
+            const list = document.getElementById('leaderboardList');
+            list.innerHTML = '';
+
+            const users = Object.values(AppState.usersDb).sort((a, b) => b.score - a.score);
+
+            users.slice(0, 10).forEach((u, idx) => {
+                const item = document.createElement('div');
+                let badge = `<span class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-black flex items-center justify-center">${idx + 1}</span>`;
+                if (idx === 0) badge = `<span class="w-9 h-9 rounded-full bg-amber-400 text-white font-black text-xl flex items-center justify-center shadow-md">🥇</span>`;
+                if (idx === 1) badge = `<span class="w-9 h-9 rounded-full bg-slate-300 text-white font-black text-xl flex items-center justify-center shadow-md">🥈</span>`;
+                if (idx === 2) badge = `<span class="w-9 h-9 rounded-full bg-amber-600 text-white font-black text-xl flex items-center justify-center shadow-md">🥉</span>`;
+
+                item.className = 'flex items-center justify-between p-3 rounded-2xl border-2 border-slate-100 hover:bg-slate-50';
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        ${badge}
+                        <div>
+                            <div class="font-black text-slate-800 text-base">${u.name}</div>
+                            <div class="text-xs font-bold text-slate-400">Soalan Dijawab: ${u.totalAnswered}</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-black text-kidGreen">⭐ ${u.score}</div>
+                        <div class="text-xs font-bold text-slate-400">High Score: ${u.highScore}</div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // RENDER USER PROFILE
+        function renderProfileScreen() {
+            if (!AppState.currentUser) return;
+            const u = AppState.currentUser;
+            document.getElementById('profileNameDisplay').innerText = u.name;
+            document.getElementById('profileUsernameDisplay').innerText = `@${u.username}`;
+
+            document.getElementById('profileStatsList').innerHTML = `
+                <div class="flex justify-between py-2 border-b border-slate-100"><span>Jumlah Skor Terkumpul:</span> <b class="text-kidGreen">⭐ ${u.score}</b></div>
+                <div class="flex justify-between py-2 border-b border-slate-100"><span>Skor Tertinggi 1 Game:</span> <b class="text-kidPurple">${u.highScore}</b></div>
+                <div class="flex justify-between py-2 border-b border-slate-100"><span>Bilangan Game Dimainkan:</span> <b>${u.totalPlayed}</b></div>
+                <div class="flex justify-between py-2 border-b border-slate-100"><span>Jumlah Soalan Betul:</span> <b class="text-emerald-600">${u.totalCorrect}</b></div>
+                <div class="flex justify-between py-2"><span>Jumlah Soalan Salah:</span> <b class="text-red-500">${u.totalWrong}</b></div>
+            `;
+        }
+
+        function toggleAudio() {
+            AudioEngine.enabled = !AudioEngine.enabled;
+            document.getElementById('btnAudioToggle').innerHTML = AudioEngine.enabled ? 
+                '<i class="fa-solid fa-volume-high text-kidGreen text-xl"></i> BUNYI: ON' : 
+                '<i class="fa-solid fa-volume-xmark text-red-500 text-xl"></i> BUNYI: OFF';
+        }
+
+        // FIREWORKS CONFETTI CANVAS EFFECT
+        function triggerFireworks() {
+            const canvas = document.getElementById('fxCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#3B82F6', '#EC4899', '#10B981', '#F59E0B', '#8B5CF6'];
+
+            for (let i = 0; i < 60; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 12,
+                    vy: (Math.random() - 0.5) * 12,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    radius: Math.random() * 6 + 3,
+                    alpha: 1
+                });
+            }
+
+            let frame = 0;
+            function animateFX() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.15; // gravity
+                    p.alpha -= 0.02;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = Math.max(0, p.alpha);
+                    ctx.fill();
+                });
+
+                frame++;
+                if (frame < 50) requestAnimationFrame(animateFX);
+                else ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            animateFX();
+        }
+
+        // INITIAL LOAD EVENT
+        window.onload = function() {
+            AudioEngine.init();
+            showScreen('screen-auth');
+        };
+    </script>
+</body>
+</html>

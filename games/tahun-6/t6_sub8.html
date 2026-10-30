@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="ms" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Kids – Edu Kidz Tahun 6 | Pengurusan Data & Kebolehjadian</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti for Fireworks/Celebrations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(99, 102, 241, 0.8); }
+        }
+        .glow-effect { animation: pulseGlow 3s infinite; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 text-slate-100 h-full min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- TOP BAR / HEADER -->
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-4 py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.goHome()">
+                <div class="bg-gradient-to-tr from-indigo-600 to-pink-500 p-2.5 rounded-2xl shadow-md text-white font-black text-xl flex items-center justify-center w-12 h-12">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-pink-300 to-white">
+                        MATH KIDS – EDU KIDZ
+                    </h1>
+                    <p class="text-xs text-indigo-300 font-semibold uppercase tracking-wider">Tahun 6 • KSSR Semakan KPM</p>
+                </div>
+            </div>
+
+            <!-- Navigation Bar / User Status -->
+            <div id="header-nav" class="flex items-center gap-2 sm:gap-3">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center items-center">
+        <div id="app-container" class="w-full max-w-5xl bg-slate-800/90 backdrop-blur-xl border border-slate-700/80 rounded-3xl shadow-2xl p-6 sm:p-8 relative overflow-hidden transition-all duration-300">
+            <!-- Dynamic Content Renders Here -->
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900/90 border-t border-slate-800 text-center py-4 text-xs text-slate-400">
+        <p>Math Kids – Edu Kidz Tahun 6 © 2026 • Kurikulum Standard Sekolah Rendah (KSSR Semakan) Kementerian Pendidikan Malaysia</p>
+    </footer>
+
+    <!-- CUSTOM MODAL / NOTIFICATION CONTAINER -->
+    <div id="modal-container" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div id="modal-content" class="bg-slate-800 border border-slate-700 rounded-3xl max-w-md w-full p-6 shadow-2xl text-center transform scale-95 transition-all">
+            <!-- Modal Body -->
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION SCRIPT -->
+    <script>
+        const APP_STATE = {
+            currentView: 'home', // home, login, register, topicSelect, difficultySelect, timerSelect, game, summary, progress, leaderboard, settings
+            currentUser: null,   // active user object
+            users: JSON.parse(localStorage.getItem('edu_kidz_users') || '[]'),
+            gameSettings: {
+                topic: null,       // 1: Carta Pai, 2: Kebolehjadian, 3: Penyelesaian Masalah
+                difficulty: null,  // mudah, sederhana, susah
+                timeLimit: 60      // 30, 60, 0 (tiada had)
+            },
+            session: {
+                questions: [],
+                currentIndex: 0,
+                score: 0,
+                correctCount: 0,
+                wrongCount: 0,
+                startTime: null,
+                timerInterval: null,
+                timeLeft: 0,
+                userAnswers: []
+            }
+        };
+
+        // --- QUESTION BANK GENERATOR (180 QUESTIONS TOTAL) ---
+        const QUESTION_BANK = {
+            // ==================== TOPIK 1: CARTA PAI (60 Soalan) ====================
+            1: {
+                mudah: [
+                    {
+                        id: "TP1-M-01", topic: "Carta Pai", sub: "Membaca Carta Pai", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan 90° daripada keseluruhan 40 orang murid memilih bola sepak. Berapakah bilangan murid yang memilih bola sepak?",
+                        options: ["A. 5", "B. 10", "C. 15", "D. 20"],
+                        answer: "B. 10",
+                        explanation: "90° ialah 1/4 daripada 360°. Oleh itu, 40 ÷ 4 = 10 orang murid.",
+                        chartData: { labels: ["Bola Sepak", "Lain-lain"], angles: [90, 270], values: [10, 30] }
+                    },
+                    {
+                        id: "TP1-M-02", topic: "Carta Pai", sub: "Sudut 180°", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Dalam satu carta pai, sektor makanan kegemaran mencatatkan sudut 180° daripada jumlah 60 orang murid. Berapakah bilangan murid tersebut?",
+                        options: ["A. 15", "B. 20", "C. 30", "D. 45"],
+                        answer: "C. 30",
+                        explanation: "180° ialah separuh (1/2) daripada 360°. 60 ÷ 2 = 30 orang murid.",
+                        chartData: { labels: ["Nasi Lemak", "Lain-lain"], angles: [180, 180], values: [30, 30] }
+                    },
+                    {
+                        id: "TP1-M-03", topic: "Carta Pai", sub: "Sudut 45°", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Sudut 45° pada carta pai mewakili subjek kegemaran daripada 80 orang murid. Berapakah bilangan murid yang memilih subjek itu?",
+                        options: ["A. 10", "B. 15", "C. 20", "D. 25"],
+                        answer: "A. 10",
+                        explanation: "45° ialah 1/8 daripada 360°. 80 ÷ 8 = 10 orang murid.",
+                        chartData: { labels: ["Sains", "Lain-lain"], angles: [45, 315], values: [10, 70] }
+                    },
+                    {
+                        id: "TP1-M-04", topic: "Carta Pai", sub: "Jumlah Keseluruhan", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Jumlah keseluruhan sudut dalam mana-mana carta pai sentiasa sama dengan...",
+                        options: ["A. 90°", "B. 180°", "C. 270°", "D. 360°"],
+                        answer: "D. 360°",
+                        explanation: "Satu bulatan lengkap carta pai bersamaan dengan sudut keliling pusat iaitu 360°.",
+                        chartData: { labels: ["Satu Bulatan Penuh"], angles: [360], values: [100] }
+                    },
+                    {
+                        id: "TP1-M-05", topic: "Carta Pai", sub: "Membaca Carta Pai", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sebuah carta pai buah kegemaran menunjukkan sudut 90° untuk epal. Jika jumlah murid ialah 20 orang, berapakah bilangan peminat epal?",
+                        options: ["A. 3", "B. 5", "C. 8", "D. 10"],
+                        answer: "B. 5",
+                        explanation: "90° = 1/4 bulatan. 20 ÷ 4 = 5 orang murid.",
+                        chartData: { labels: ["Epal", "Lain-lain"], angles: [90, 270], values: [5, 15] }
+                    },
+                    {
+                        id: "TP1-M-06", topic: "Carta Pai", sub: "Sudut 180°", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Pecahan manakah yang setara dengan sektor bersudut 180° dalam carta pai?",
+                        options: ["A. 1/4", "B. 1/2", "C. 3/4", "D. 1/8"],
+                        answer: "B. 1/2",
+                        explanation: "180° / 360° dipermudahkan menjadi 1/2.",
+                        chartData: { labels: ["Sektor A", "Sektor B"], angles: [180, 180], values: [50, 50] }
+                    },
+                    {
+                        id: "TP1-M-07", topic: "Carta Pai", sub: "Sudut 90°", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Pecahan manakah yang setara dengan sektor bersudut 90° dalam carta pai?",
+                        options: ["A. 1/4", "B. 1/2", "C. 1/3", "D. 3/4"],
+                        answer: "A. 1/4",
+                        explanation: "90° / 360° dipermudahkan menjadi 1/4.",
+                        chartData: { labels: ["Sektor A", "Sektor Lain"], angles: [90, 270], values: [25, 75] }
+                    },
+                    {
+                        id: "TP1-M-08", topic: "Carta Pai", sub: "Sudut 45°", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Pecahan manakah yang setara dengan sektor bersudut 45° dalam carta pai?",
+                        options: ["A. 1/4", "B. 1/6", "C. 1/8", "D. 3/8"],
+                        answer: "C. 1/8",
+                        explanation: "45° / 360° dipermudahkan menjadi 1/8.",
+                        chartData: { labels: ["Sektor A", "Sektor Lain"], angles: [45, 315], values: [12.5, 87.5] }
+                    },
+                    {
+                        id: "TP1-M-09", topic: "Carta Pai", sub: "Mentafsir Data", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Jika carta pai aktiviti kokurikulum menunjukkan sudut 180° untuk kelab persatuan daripada 40 orang ahli, berapakah ahlinya?",
+                        options: ["A. 10", "B. 15", "C. 20", "D. 25"],
+                        answer: "C. 20",
+                        explanation: "180° daripada 40 = 1/2 × 40 = 20 orang.",
+                        chartData: { labels: ["Kelab Persatuan", "Sukan"], angles: [180, 180], values: [20, 20] }
+                    },
+                    {
+                        id: "TP1-M-10", topic: "Carta Pai", sub: "Membaca Carta Pai", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sebuah carta pai warna kegemaran mempunyai sudut 90° untuk warna biru. Jumlah keseluruhan murid ialah 60 orang. Cari bilangan peminat warna biru.",
+                        options: ["A. 10", "B. 15", "C. 20", "D. 30"],
+                        answer: "B. 15",
+                        explanation: "90° = 1/4. 60 ÷ 4 = 15 orang.",
+                        chartData: { labels: ["Biru", "Lain-lain"], angles: [90, 270], values: [15, 45] }
+                    },
+                    {
+                        id: "TP1-M-11", topic: "Carta Pai", sub: "Jumlah Keseluruhan", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Diberi sudut sektor A ialah 90° dan sektor B ialah 270°. Adakah jumlah sudut ini melengkapkan satu carta pai?",
+                        options: ["A. Ya", "B. Tidak", "C. Bergantung pada data", "D. Tidak pasti"],
+                        answer: "A. Ya",
+                        explanation: "90° + 270° = 360°, iaitu jumlah sudut satu bulatan penuh.",
+                        chartData: { labels: ["Sektor A", "Sektor B"], angles: [90, 270], values: [10, 30] }
+                    },
+                    {
+                        id: "TP1-M-12", topic: "Carta Pai", sub: "Membaca Carta Pai", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Dalam carta pai sukan, hoki mencatatkan sudut 45° daripada 40 orang murid. Berapakah bilangan murid yang memilih hoki?",
+                        options: ["A. 3", "B. 5", "C. 8", "D. 10"],
+                        answer: "B. 5",
+                        explanation: "45° = 1/8. 40 ÷ 8 = 5 orang.",
+                        chartData: { labels: ["Hoki", "Lain-lain"], angles: [45, 315], values: [5, 35] }
+                    },
+                    {
+                        id: "TP1-M-13", topic: "Carta Pai", sub: "Mentafsir Data", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Bahagian manakah pada carta pai yang mewakili separuh daripada bulatan?",
+                        options: ["A. 45°", "B. 90°", "C. 180°", "D. 360°"],
+                        answer: "C. 180°",
+                        explanation: "180° ialah separuh daripada sudut 360°.",
+                        chartData: { labels: ["Separuh", "Separuh Lagi"], angles: [180, 180], values: [50, 50] }
+                    },
+                    {
+                        id: "TP1-M-14", topic: "Carta Pai", sub: "Membaca Carta Pai", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Jika 120 orang murid dikaji dan sudut kategori membaca buku ialah 90°, berapakah bilangan murid yang suka membaca?",
+                        options: ["A. 20", "B. 30", "C. 40", "D. 60"],
+                        answer: "B. 30",
+                        explanation: "90° = 1/4. 120 ÷ 4 = 30 orang.",
+                        chartData: { labels: ["Membaca", "Lain-lain"], angles: [90, 270], values: [30, 90] }
+                    },
+                    {
+                        id: "TP1-M-15", topic: "Carta Pai", sub: "Sudut 45°", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sebuah carta pai mempunyai 160 orang murid. Sudut bagi kategori haiwan peliharaan kucing ialah 45°. Berapakah bilangan murid tersebut?",
+                        options: ["A. 15", "B. 20", "C. 25", "D. 30"],
+                        answer: "B. 20",
+                        explanation: "45° = 1/8. 160 ÷ 8 = 20 orang.",
+                        chartData: { labels: ["Kucing", "Lain-lain"], angles: [45, 315], values: [20, 140] }
+                    },
+                    {
+                        id: "TP1-M-16", topic: "Carta Pai", sub: "Mentafsir Data", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Apakah nama carta yang menggunakan bentuk bulatan dibahagikan kepada sektor-sektor sudut untuk mempamerkan data?",
+                        options: ["A. Carta palang", "B. Carta pai", "C. Piktograf", "D. Graf garis"],
+                        answer: "B. Carta pai",
+                        explanation: "Carta pai ialah carta berbentuk bulat yang menunjukkan pecahan data.",
+                        chartData: { labels: ["A", "B", "C"], angles: [120, 120, 120], values: [10, 10, 10] }
+                    },
+                    {
+                        id: "TP1-M-17", topic: "Carta Pai", sub: "Sudut 90°", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Berapakah nilai kuantiti jika sudut sektor ialah 90° dan jumlah keseluruhan ialah 80 orang?",
+                        options: ["A. 10", "B. 20", "C. 30", "D. 40"],
+                        answer: "B. 20",
+                        explanation: "90° / 360° × 80 = 1/4 × 80 = 20.",
+                        chartData: { labels: ["Sektor", "Lain"], angles: [90, 270], values: [20, 60] }
+                    },
+                    {
+                        id: "TP1-M-18", topic: "Carta Pai", sub: "Sudut 180°", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Jumlah murid di sebuah dewan ialah 100 orang. Sektor sudut 180° mewakili murid Tahun 6. Berapakah bilangan murid Tahun 6?",
+                        options: ["A. 25", "B. 50", "C. 75", "D. 100"],
+                        answer: "B. 50",
+                        explanation: "180° = 1/2. 100 ÷ 2 = 50 orang.",
+                        chartData: { labels: ["Tahun 6", "Lain"], angles: [180, 180], values: [50, 50] }
+                    },
+                    {
+                        id: "TP1-M-19", topic: "Carta Pai", sub: "Membaca Carta Pai", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Dalam carta pai, setiap sektor sudut mewakili...",
+                        options: ["A. Kategori data tertentu", "B. Suhu harian", "C. Masa berlari", "D. Jarak perjalanan"],
+                        answer: "A. Kategori data tertentu",
+                        explanation: "Sektor dalam carta pai mewakili kategori atau pecahan data yang dikaji.",
+                        chartData: { labels: ["Kategori 1", "Kategori 2"], angles: [180, 180], values: [50, 50] }
+                    },
+                    {
+                        id: "TP1-M-20", topic: "Carta Pai", sub: "Sudut 45°", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Jika 40 orang murid disoal selidik dan sudut sektor aktiviti seni ialah 45°, berapakah bilangan murid yang memilih seni?",
+                        options: ["A. 3", "B. 5", "C. 8", "D. 10"],
+                        answer: "B. 5",
+                        explanation: "45° / 360° × 40 = 1/8 × 40 = 5 orang.",
+                        chartData: { labels: ["Seni", "Lain"], angles: [45, 315], values: [5, 35] }
+                    }
+                ],
+                sederhana: [
+                    {
+                        id: "TP1-S-01", topic: "Carta Pai", sub: "Melengkapkan Carta Pai", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan 3 sektor: Sektor A (90°), Sektor B (180°), dan Sektor C. Berapakah sudut untuk Sektor C?",
+                        options: ["A. 45°", "B. 90°", "C. 135°", "D. 180°"],
+                        answer: "B. 90°",
+                        explanation: "Jumlah sudut = 360°. Sektor C = 360° - 90° - 180° = 90°.",
+                        chartData: { labels: ["A", "B", "C"], angles: [90, 180, 90], values: [10, 20, 10] }
+                    },
+                    {
+                        id: "TP1-S-02", topic: "Carta Pai", sub: "Mentafsir Data", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Jumlah murid ialah 80 orang. Sektor Burger ber sudut 90° dan sektor Nasi Lemak ber sudut 180°. Berapakah jumlah murid yang memilih kedua-dua makanan ini?",
+                        options: ["A. 40", "B. 50", "C. 60", "D. 70"],
+                        answer: "C. 60",
+                        explanation: "Jumlah sudut = 90° + 180° = 270°. Kuantiti = (270 / 360) × 80 = 3/4 × 80 = 60 orang.",
+                        chartData: { labels: ["Burger", "Nasi Lemak", "Lain"], angles: [90, 180, 90], values: [20, 40, 20] }
+                    },
+                    {
+                        id: "TP1-S-03", topic: "Carta Pai", sub: "Membandingkan Data", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu kajian 120 orang murid, sudut buah pisang ialah 90° manakala buah epal ialah 45°. Berapakah beza bilangan murid antara kedua-dua buah ini?",
+                        options: ["A. 10", "B. 15", "C. 20", "D. 30"],
+                        answer: "B. 15",
+                        explanation: "Beza sudut = 90° - 45° = 45°. Beza murid = (45 / 360) × 120 = 1/8 × 120 = 15 orang.",
+                        chartData: { labels: ["Pisang", "Epal", "Lain"], angles: [90, 45, 225], values: [30, 15, 75] }
+                    },
+                    {
+                        id: "TP1-S-04", topic: "Carta Pai", sub: "Menentukan Kuantiti", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Jumlah keseluruhan murid ialah 200 orang. Sektor Kelab Komputer mempunyai sudut 90°. Hitung bilangan ahli Kelab Komputer.",
+                        options: ["A. 25", "B. 50", "C. 75", "D. 100"],
+                        answer: "B. 50",
+                        explanation: "90° = 1/4. 200 ÷ 4 = 50 orang.",
+                        chartData: { labels: ["Komputer", "Lain"], angles: [90, 270], values: [50, 150] }
+                    },
+                    {
+                        id: "TP1-S-05", topic: "Carta Pai", sub: "Melengkapkan Carta Pai", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai mempunyai 4 sektor dengan sudut 45°, 90°, 135°, dan sektor X. Cari sudut sektor X.",
+                        options: ["A. 45°", "B. 60°", "C. 90°", "D. 120°"],
+                        answer: "C. 90°",
+                        explanation: "360° - (45° + 90° + 135°) = 360° - 270° = 90°.",
+                        chartData: { labels: ["45°", "90°", "135°", "X"], angles: [45, 90, 135, 90], values: [5, 10, 15, 10] }
+                    },
+                    {
+                        id: "TP1-S-06", topic: "Carta Pai", sub: "Mentafsir Data", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Jika 60 orang murid memilih subjek Matematik (180°) dan Bahasa Melayu (90°), berapakah bilangan murid yang memilih subjek lain jika jumlah keseluruhan murid ialah 120 orang?",
+                        options: ["A. 20", "B. 30", "C. 40", "D. 50"],
+                        answer: "B. 30",
+                        explanation: "Jumlah sudut lain = 360° - 180° - 90° = 90°. 90° daripada 120 orang = 120 ÷ 4 = 30 orang.",
+                        chartData: { labels: ["Matematik", "BM", "Lain"], angles: [180, 90, 90], values: [60, 30, 30] }
+                    },
+                    {
+                        id: "TP1-S-07", topic: "Carta Pai", sub: "Membandingkan Data", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan pilihan permainan dengan sudut 180° (Bola Sepak) dan 45° (Badminton). Jika jumlah murid 80 orang, berapakah jumlah murid untuk kedua-dua permainan ini?",
+                        options: ["A. 35", "B. 40", "C. 45", "D. 50"],
+                        answer: "C. 45",
+                        explanation: "Jumlah sudut = 180° + 45° = 225°. Kuantiti = (225 / 360) × 80 = 5/8 × 80 = 50? Ralat: 5/8 * 80 = 50. Pilihan C salah, mari perbetulkan: 225/360 = 5/8. 5/8 * 80 = 50. Pilihan D. 50.",
+                        options: ["A. 35", "B. 40", "C. 45", "D. 50"],
+                        answer: "D. 50",
+                        explanation: "225° / 360° × 80 = 5/8 × 80 = 50 orang.",
+                        chartData: { labels: ["Bola Sepak", "Badminton", "Lain"], angles: [180, 45, 135], values: [40, 10, 30] }
+                    },
+                    {
+                        id: "TP1-S-08", topic: "Carta Pai", sub: "Menentukan Kuantiti", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam carta pai jualan buku, sudut buku cerita ialah 90° dan buku rujukan ialah 45°. Jika jumlah buku terjual ialah 240 naskhah, cari jumlah buku cerita dan rujukan.",
+                        options: ["A. 60", "B. 90", "C. 120", "D. 150"],
+                        answer: "B. 90",
+                        explanation: "Jumlah sudut = 90° + 45° = 135°. Kuantiti = (135 / 360) × 240 = 3/8 × 240 = 90 naskhah.",
+                        chartData: { labels: ["Cerita", "Rujukan", "Lain"], angles: [90, 45, 225], values: [60, 30, 150] }
+                    },
+                    {
+                        id: "TP1-S-09", topic: "Carta Pai", sub: "Melengkapkan Carta Pai", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai dibahagikan kepada 3 bahagian sama besar. Berapakah sudut setiap bahagian?",
+                        options: ["A. 90°", "B. 120°", "C. 135°", "D. 180°"],
+                        answer: "B. 120°",
+                        explanation: "360° ÷ 3 = 120° setiap bahagian.",
+                        chartData: { labels: ["Bahagian 1", "Bahagian 2", "Bahagian 3"], angles: [120, 120, 120], values: [10, 10, 10] }
+                    },
+                    {
+                        id: "TP1-S-10", topic: "Carta Pai", sub: "Mentafsir Data", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi jumlah murid 160 orang. Sektor warna Merah ialah 90° dan warna Biru ialah 90°. Hitung baki bilangan murid untuk warna lain.",
+                        options: ["A. 40", "B. 60", "C. 80", "D. 100"],
+                        answer: "C. 80",
+                        explanation: "Sudut baki = 360° - 90° - 90° = 180°. 180° daripada 160 = 80 orang.",
+                        chartData: { labels: ["Merah", "Biru", "Lain"], angles: [90, 90, 180], values: [40, 40, 80] }
+                    },
+                    {
+                        id: "TP1-S-11", topic: "Carta Pai", sub: "Membandingkan Data", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai aktiviti waktu lapang menunjukkan 180° untuk menonton televisyen dan 90° untuk membaca. Berapa kalikah gandaan peminat TV berbanding pembaca?",
+                        options: ["A. 1 kali", "B. 2 kali", "C. 3 kali", "D. 4 kali"],
+                        answer: "B. 2 kali",
+                        explanation: "Sudut 180° adalah dua kali ganda sudut 90° (180 ÷ 90 = 2).",
+                        chartData: { labels: ["TV", "Membaca", "Lain"], angles: [180, 90, 90], values: [20, 10, 10] }
+                    },
+                    {
+                        id: "TP1-S-12", topic: "Carta Pai", sub: "Menentukan Kuantiti", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebanyak 100 orang murid menyertai perkhemahan. Sudut aktiviti merentas desa ialah 90° dan sudut orientering ialah 45°. Berapakah jumlah murid menyertai kedua-dua aktiviti ini?",
+                        options: ["A. 25", "B. 35", "C. Hakikat 37.5", "D. 37.5 orang"],
+                        // wait, let's make it integer compatible
+                        options: ["A. 25", "B. 30", "C. 35", "D. 40"],
+                        // Let's adjust total murid so it's clean: total 240 murid. 135/360 * 240 = 90.
+                        question: "Sebanyak 240 orang murid menyertai perkhemahan. Sudut aktiviti merentas desa ialah 90° dan sudut orientering ialah 45°. Berapakah jumlah murid menyertai kedua-dua aktiviti ini?",
+                        options: ["A. 70", "B. 80", "C. 90", "D. 100"],
+                        answer: "C. 90",
+                        explanation: "(135° / 360°) × 240 = 3/8 × 240 = 90 orang.",
+                        chartData: { labels: ["Merentas Desa", "Orientering", "Lain"], angles: [90, 45, 225], values: [60, 30, 150] }
+                    },
+                    {
+                        id: "TP1-S-13", topic: "Carta Pai", sub: "Melengkapkan Carta Pai", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Jika sudut sektor A ialah 45° dan sektor B ialah 45°, berapakah peratusan gabungan kedua-dua sektor ini daripada carta pai?",
+                        options: ["A. 12.5%", "B. 25%", "C. 50%", "D. 75%"],
+                        answer: "B. 25%",
+                        explanation: "Gabungan sudut = 90°. Peratusan = (90 / 360) × 100% = 25%.",
+                        chartData: { labels: ["A", "B", "Lain"], angles: [45, 45, 270], values: [10, 10, 60] }
+                    },
+                    {
+                        id: "TP1-S-14", topic: "Carta Pai", sub: "Mentafsir Data", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu carta pai, bilangan murid keseluruhan ialah 80 orang. Sektor basikal mencatatkan 90° dan sektor jalan kaki mencatatkan 180°. Berapakah bilangan murid yang tidak menaiki basikal atau berjalan kaki?",
+                        options: ["A. 10", "B. 20", "C. 30", "D. 40"],
+                        answer: "B. 20",
+                        explanation: "Sudut baki = 360° - 90° - 180° = 90°. Kuantiti = 80 ÷ 4 = 20 orang.",
+                        chartData: { labels: ["Basikal", "Jalan Kaki", "Lain"], angles: [90, 180, 90], values: [20, 40, 20] }
+                    },
+                    {
+                        id: "TP1-S-15", topic: "Carta Pai", sub: "Menentukan Kuantiti", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan 40 orang murid memilih warna. Sudut merah 90° dan biru 45°. Cari bilangan murid yang memilih selain merah dan biru.",
+                        options: ["A. 15", "B. 20", "C. 25", "D. 30"],
+                        answer: "C. 25",
+                        explanation: "Sudut baki = 360° - 90° - 45° = 225°. Kuantiti = (225 / 360) × 40 = 5/8 × 40 = 25 orang.",
+                        chartData: { labels: ["Merah", "Biru", "Lain"], angles: [90, 45, 225], values: [10, 5, 25] }
+                    },
+                    {
+                        id: "TP1-S-16", topic: "Carta Pai", sub: "Membandingkan Data", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi sudut sektor X ialah 180° dan sektor Y ialah 45° daripada 160 orang murid. Apakah perbezaan bilangan murid antara kedua-dua sektor ini?",
+                        options: ["A. 40", "B. 50", "C. 60", "D. 70"],
+                        answer: "C. 60",
+                        explanation: "Beza sudut = 180° - 45° = 135°. Kuantiti = (135 / 360) × 160 = 3/8 × 160 = 60 orang.",
+                        chartData: { labels: ["X", "Y", "Lain"], angles: [180, 45, 135], values: [80, 20, 60] }
+                    },
+                    {
+                        id: "TP1-S-17", topic: "Carta Pai", sub: "Melengkapkan Carta Pai", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai mempunyai 3 sektor: 90°, 135° dan satu sektor tidak diketahui. Cari sudut sektor tidak diketahui.",
+                        options: ["A. 95°", "B. 115°", "C. 125°", "D. 135°"],
+                        answer: "D. 135°",
+                        explanation: "360° - 90° - 135° = 135°.",
+                        chartData: { labels: ["90°", "135°", "Tidak Diketahui"], angles: [90, 135, 135], values: [10, 15, 15] }
+                    },
+                    {
+                        id: "TP1-S-18", topic: "Carta Pai", sub: "Mentafsir Data", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Jumlah jualan buah mangga dan oren ialah 120 biji. Jika mangga merangkumi sudut 180° dan oren 90°, berapakah jumlah mangga dan oren sahaja?",
+                        options: ["A. 60", "B. 80", "C. 90", "D. 100"],
+                        answer: "C. 90",
+                        explanation: "Sudut gabungan = 270°. Kuantiti = (270 / 360) × 120 = 3/4 × 120 = 90 biji.",
+                        chartData: { labels: ["Mangga", "Oren", "Lain"], angles: [180, 90, 90], values: [60, 30, 30] }
+                    },
+                    {
+                        id: "TP1-S-19", topic: "Carta Pai", sub: "Menentukan Kuantiti", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu kaji selidik 200 orang murid, sudut sektor sukan bola keranjang ialah 90°. Hitung bilangan murid yang tidak memilih bola keranjang.",
+                        options: ["A. 50", "B. 100", "C. 150", "D. 180"],
+                        answer: "C. 150",
+                        explanation: "Sudut selain bola keranjang = 360° - 90° = 270°. Kuantiti = (270 / 360) × 200 = 3/4 × 200 = 150 orang.",
+                        chartData: { labels: ["Bola Keranjang", "Lain"], angles: [90, 270], values: [50, 150] }
+                    },
+                    {
+                        id: "TP1-S-20", topic: "Carta Pai", sub: "Membandingkan Data", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan hobi membaca (90°) dan melukis (45°). Jika beza bilangan murid ialah 15 orang, berapakah jumlah keseluruhan murid dalam kajian itu?",
+                        options: ["A. 60", "B. 90", "C. 120", "D. 160"],
+                        answer: "C. 120",
+                        explanation: "Beza sudut = 90° - 45° = 45°. 45° mewakili 15 orang. 360° mewakili (360 / 45) × 15 = 8 × 15 = 120 orang.",
+                        chartData: { labels: ["Membaca", "Melukis", "Lain"], angles: [90, 45, 225], values: [30, 15, 75] }
+                    }
+                ],
+                susah: [
+                    {
+                        id: "TP1-T-01", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Jumlah murid di sebuah sekolah ialah 400 orang. Sektor Tahun 6 ialah 90°, Tahun 5 ialah 135°, dan bakinya ialah Tahun 4. Cari bilangan murid Tahun 4.",
+                        options: ["A. 100", "B. 125", "C. 135", "D. 150"],
+                        answer: "C. 135", // Wait: 360 - 90 - 135 = 135°. 135/360 * 400 = 3/8 * 400 = 150! Let's correct options.
+                        options: ["A. 100", "B. 120", "C. 150", "D. 175"],
+                        answer: "C. 150",
+                        explanation: "Sudut Tahun 4 = 360° - 90° - 135° = 135°. Bilangan = (135 / 360) × 400 = 150 orang.",
+                        chartData: { labels: ["Tahun 6", "Tahun 5", "Tahun 4"], angles: [90, 135, 135], values: [100, 150, 150] }
+                    },
+                    {
+                        id: "TP1-T-02", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu carta pai, sudut subjek Matematik ialah 180°, Sains ialah 90°, dan Bahasa Inggeris ialah 45°. Jika bilangan murid yang memilih subjek lain ialah 20 orang (sudut 45°), berapakah jumlah keseluruhan murid?",
+                        options: ["A. 120", "B. 160", "C. 200", "D. 240"],
+                        answer: "B. 160",
+                        explanation: "45° mewakili 20 orang. Jumlah keseluruhan (360°) = (360 / 45) × 20 = 8 × 20 = 160 orang.",
+                        chartData: { labels: ["Matematik", "Sains", "BI", "Lain"], angles: [180, 90, 45, 45], values: [80, 40, 20, 20] }
+                    },
+                    {
+                        id: "TP1-T-03", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah syarikat merekodkan jualan kuih: Karipap (180°), Donut (90°), dan Pau (45°). Jika jumlah jualan ialah 320 biji, hitung jualan kuih selain tiga jenis ini (baki 45°).",
+                        options: ["A. 30", "B. 40", "C. 50", "D. 60"],
+                        answer: "B. 40",
+                        explanation: "Sudut baki = 360° - 180° - 90° - 45° = 45°. Kuantiti = (45 / 360) × 320 = 1/8 × 320 = 40 biji.",
+                        chartData: { labels: ["Karipap", "Donut", "Pau", "Lain"], angles: [180, 90, 45, 45], values: [160, 80, 40, 40] }
+                    },
+                    {
+                        id: "TP1-T-04", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi jumlah murid ialah 240 orang. Sudut sektor A ialah 90° dan sektor B ialah dua kali ganda sektor A. Cari baki bilangan murid untuk sektor C.",
+                        options: ["A. 60", "B. 80", "C. 100", "D. 120"],
+                        answer: "B. 80",
+                        explanation: "Sektor A = 90°, Sektor B = 180°. Sudut C = 360° - 90° - 180° = 90°. 90° daripada 240 = 240 ÷ 4 = 60? Ralat: 240/4 = 60! Pilihan A. 60.",
+                        options: ["A. 60", "B. 80", "C. 100", "D. 120"],
+                        answer: "A. 60",
+                        explanation: "Sudut C = 360° - 90° - 180° = 90°. Kuantiti = 240 ÷ 4 = 60 orang.",
+                        chartData: { labels: ["A", "B", "C"], angles: [90, 180, 90], values: [60, 120, 60] }
+                    },
+                    {
+                        id: "TP1-T-05", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu kaji selidik sukan, 45 orang murid memilih hoki (sudut 45°). Hitung jumlah keseluruhan murid yang menyertai kaji selidik tersebut.",
+                        options: ["A. 180", "B. 240", "C. 320", "D. 360"],
+                        answer: "D. 360",
+                        explanation: "45° mewakili 45 orang. Maka 1° mewakili 1 orang. Jumlah 360° = 360 orang.",
+                        chartData: { labels: ["Hoki", "Lain"], angles: [45, 315], values: [45, 315] }
+                    },
+                    {
+                        id: "TP1-T-06", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan pilihan warna kereta: Merah (180°), Putih (90°), Hitam (45°), dan Perak (45°). Jika jumlah kereta ialah 160 buah, berapakah jumlah kereta Merah dan Hitam?",
+                        options: ["A. 100", "B. 110", "C. 120", "D. 130"],
+                        answer: "A. 100",
+                        explanation: "Gabungan sudut Merah (180°) + Hitam (45°) = 225°. Kuantiti = (225 / 360) × 160 = 5/8 × 160 = 100 buah.",
+                        chartData: { labels: ["Merah", "Putih", "Hitam", "Perak"], angles: [180, 90, 45, 45], values: [80, 40, 20, 20] }
+                    },
+                    {
+                        id: "TP1-T-07", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi bilangan murid yang memilih subjek RBT (90°) ialah 35 orang. Berapakah jumlah keseluruhan murid dalam sekolah itu jika nisbah sudut kekal?",
+                        options: ["A. 100", "B. 120", "C. 140", "D. 160"],
+                        answer: "C. 140",
+                        explanation: "90° ialah 1/4 bulatan dan bernilai 35 orang. Jumlah keseluruhan = 35 × 4 = 140 orang.",
+                        chartData: { labels: ["RBT", "Lain"], angles: [90, 270], values: [35, 105] }
+                    },
+                    {
+                        id: "TP1-T-08", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai mempunyai 3 sektor dengan nisbah sudut 1 : 2 : 5. Cari sudut bagi sektor terbesar.",
+                        options: ["A. 135°", "B. 180°", "C. 225°", "D. 250°"],
+                        answer: "C. 225°",
+                        explanation: "Jumlah bahagian nisbah = 1 + 2 + 5 = 8 bahagian. Sektor terbesar = (5 / 8) × 360° = 225°.",
+                        chartData: { labels: ["Sektor 1", "Sektor 2", "Sektor 3"], angles: [45, 90, 225], values: [10, 20, 50] }
+                    },
+                    {
+                        id: "TP1-T-09", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Jumlah murid di dewan ialah 300 orang. Sudut sektor Bahasa Melayu ialah 180° dan Bahasa Inggeris ialah 90°. Hitung beza bilangan murid antara kedua-dua subjek ini.",
+                        options: ["A. 50", "B. 75", "C. 100", "D. 125"],
+                        answer: "B. 75",
+                        explanation: "Beza sudut = 180° - 90° = 90°. Beza murid = 300 ÷ 4 = 75 orang.",
+                        chartData: { labels: ["BM", "BI", "Lain"], angles: [180, 90, 90], values: [150, 75, 75] }
+                    },
+                    {
+                        id: "TP1-T-10", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan taburan masa belajar: 180° (Sekolah), 90° (Tuisyen), 45° (Ulang kaji), dan baki untuk rehat. Cari sudut untuk masa rehat.",
+                        options: ["A. 30°", "B. 45°", "C. 60°", "D. 90°"],
+                        answer: "B. 45°",
+                        explanation: "360° - 180° - 90° - 45° = 45°.",
+                        chartData: { labels: ["Sekolah", "Tuisyen", "Ulang Kaji", "Rehat"], angles: [180, 90, 45, 45], values: [6, 3, 1.5, 1.5] }
+                    },
+                    {
+                        id: "TP1-T-11", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Jika 50 orang murid diwakili oleh sudut 90° dalam carta pai, berapakah bilangan murid yang diwakili oleh sudut 180°?",
+                        options: ["A. 50", "B. 75", "C. 100", "D. 150"],
+                        answer: "C. 100",
+                        explanation: "180° adalah dua kali ganda 90°. Maka 50 × 2 = 100 orang.",
+                        chartData: { labels: ["Kategori A", "Kategori B", "Lain"], angles: [90, 180, 90], values: [50, 100, 50] }
+                    },
+                    {
+                        id: "TP1-T-12", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu kajian 320 orang penduduk, sudut carta pai bagi kategori bekerja sendiri ialah 135° dan makan gaji ialah 180°. Cari bilangan penduduk dalam kategori lain (baki).",
+                        options: ["A. 20", "B. 30", "C. 40", "D. 50"],
+                        answer: "C. 40",
+                        explanation: "Sudut baki = 360° - 135° - 180° = 45°. Kuantiti = (45 / 360) × 320 = 1/8 × 320 = 40 orang.",
+                        chartData: { labels: ["Bekerja Sendiri", "Makan Gaji", "Lain"], angles: [135, 180, 45], values: [120, 160, 40] }
+                    },
+                    {
+                        id: "TP1-T-13", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai mempunyai 4 sektor sama besar. Jika jumlah kuantiti ialah 360 unit, berapakah nilai bagi dua sektor?",
+                        options: ["A. 90", "B. 120", "C. 180", "D. 240"],
+                        answer: "C. 180",
+                        explanation: "2 sektor daripada 4 sektor ialah separuh (1/2) daripada 360 = 180 unit.",
+                        chartData: { labels: ["S1", "S2", "S3", "S4"], angles: [90, 90, 90, 90], values: [90, 90, 90, 90] }
+                    },
+                    {
+                        id: "TP1-T-14", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi sudut sektor P ialah 90° dan Q ialah 45°. Jika jumlah kuantiti P dan Q ialah 60, berapakah jumlah keseluruhan kuantiti carta pai tersebut?",
+                        options: ["A. 120", "B. 160", "C. 180", "D. 240"],
+                        answer: "B. 160",
+                        explanation: "Gabungan sudut P+Q = 135°. 135° mewakili 60 unit. Jumlah keseluruhan (360°) = (360 / 135) × 60 = 8/3 × 60 = 160 unit.",
+                        chartData: { labels: ["P", "Q", "Lain"], angles: [90, 45, 225], values: [40, 20, 100] }
+                    },
+                    {
+                        id: "TP1-T-15", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan taburan markah ujian: Cemerlang (180°), Lulus (135°), dan Gagal (45°). Jika jumlah murid ialah 200 orang, berapakah bilangan murid yang lulus atau cemerlang?",
+                        options: ["A. 125", "B. 150", "C. 175", "D. 190"],
+                        answer: "C. 175",
+                        explanation: "Sudut gabungan = 180° + 135° = 315°. Kuantiti = (315 / 360) × 200 = 7/8 × 200 = 175 orang.",
+                        chartData: { labels: ["Cemerlang", "Lulus", "Gagal"], angles: [180, 135, 45], values: [100, 75, 25] }
+                    },
+                    {
+                        id: "TP1-T-16", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi sektor X bernilai 60 orang dan sudutnya 90°. Sektor Y bernilai 30 orang. Cari sudut untuk sektor Y.",
+                        options: ["A. 30°", "B. 45°", "C. 60°", "D. 90°"],
+                        answer: "B. 45°",
+                        explanation: "60 orang = 90°. Maka 30 orang (separuh) = 90° ÷ 2 = 45°.",
+                        chartData: { labels: ["X", "Y", "Lain"], angles: [90, 45, 225], values: [60, 30, 150] }
+                    },
+                    {
+                        id: "TP1-T-17", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah syarikat bas menjual tiket mengikut destinasi dengan sudut carta pai: Utara (180°), Selatan (90°), Timur (45°), dan Barat (45°). Jika tiket terjual 400 keping, cari bilangan tiket ke Utara dan Timur.",
+                        options: ["A. 200", "B. 225", "C. 250", "D. 275"],
+                        answer: "C. 250",
+                        explanation: "Sudut Utara (180) + Timur (45) = 225°. Kuantiti = (225 / 360) × 400 = 5/8 × 400 = 250 keping.",
+                        chartData: { labels: ["Utara", "Selatan", "Timur", "Barat"], angles: [180, 90, 45, 45], values: [200, 100, 50, 50] }
+                    },
+                    {
+                        id: "TP1-T-18", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu carta pai, jumlah sudut semua sektor ialah 360°. Jika sektor M ialah 135° daripada 240 unit, berapakah nilai sektor M?",
+                        options: ["A. 75", "B. 90", "C. 105", "D. 120"],
+                        answer: "B. 90", // Wait: 135/360 * 240 = 3/8 * 240 = 90 unit. Correct!
+                        explanation: "(135° / 360°) × 240 = 3/8 × 240 = 90 unit.",
+                        chartData: { labels: ["M", "Lain"], angles: [135, 225], values: [90, 150] }
+                    },
+                    {
+                        id: "TP1-T-19", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan pilihan alat tulis: Pen (180°), Pensel (90°), Pemadam (45°), dan Pembaris (45°). Jika jumlah alat tulis ialah 160 unit, berapakah beza bilangan pen dengan pemadam?",
+                        options: ["A. 40", "B. 50", "C. 60", "D. 70"],
+                        answer: "C. 60",
+                        explanation: "Beza sudut = 180° - 45° = 135°. Kuantiti = (135 / 360) × 160 = 3/8 × 160 = 60 unit.",
+                        chartData: { labels: ["Pen", "Pensel", "Pemadam", "Pembaris"], angles: [180, 90, 45, 45], values: [80, 40, 20, 20] }
+                    },
+                    {
+                        id: "TP1-T-20", topic: "Carta Pai", sub: "Penyelesaian Masalah Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi sektor A mewakili 25% daripada carta pai dan sektor B mewakili 90°. Berapakah sudut bagi sektor A?",
+                        options: ["A. 45°", "B. 90°", "C. 135°", "D. 180°"],
+                        answer: "B. 90°",
+                        explanation: "25% daripada 360° = 0.25 × 360° = 90°.",
+                        chartData: { labels: ["A", "B", "Lain"], angles: [90, 90, 180], values: [25, 25, 50] }
+                    }
+                ]
+            },
+
+            // ==================== TOPIK 2: KEBOLEHJADIAN (60 Soalan) ====================
+            2: {
+                mudah: [
+                    {
+                        id: "TP2-M-01", topic: "Kebolehjadian", sub: "Konsep Asas", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Apakah kebolehjadian bagi seekor kucing terbang tanpa sayap di udara?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "A. Mustahil",
+                        explanation: "Kucing tidak mempunyai sayap dan tidak boleh terbang secara semula jadi. Peristiwa ini adalah mustahil.",
+                        chartData: { type: "prob", status: "mustahil" }
+                    },
+                    {
+                        id: "TP2-M-02", topic: "Kebolehjadian", sub: "Konsep Asas", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Matahari terbit dari sebelah timur pada setiap pagi. Apakah kebolehjadian peristiwa ini?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "D. Pasti",
+                        explanation: "Ini adalah fenomena alam semulajadi yang tetap berlaku setiap hari.",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP2-M-03", topic: "Kebolehjadian", sub: "Dadu", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sebuah dadu adil dilambung. Apakah kebolehjadian mendapat nombor kurang daripada 7?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "D. Pasti",
+                        explanation: "Dadu mempunyai nombor 1, 2, 3, 4, 5, dan 6. Kesemua nombor ini kurang daripada 7.",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP2-M-04", topic: "Kebolehjadian", sub: "Syiling", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Syiling 20 sen dilambung. Apakah kebolehjadian mendapat permukaan 'angka'?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "C. Sama kemungkinan",
+                        explanation: "Syiling mempunyai dua muka (angka dan gambar). Peluang mendapat angka atau gambar adalah sama besar (sama kemungkinan).",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP2-M-05", topic: "Kebolehjadian", sub: "Bola Dalam Beg", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sebuah beg mengandungi 5 biji bola merah. Aina mengambil sebiji bola tanpa melihat. Apakah kebolehjadian mendapat bola merah?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "D. Pasti",
+                        explanation: "Kesemua bola di dalam beg berwarna merah, jadi pasti mendapat bola merah.",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP2-M-06", topic: "Kebolehjadian", sub: "Hari Dalam Seminggu", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Selepas hari Isnin ialah hari Selasa. Apakah kebolehjadiannya?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "D. Pasti",
+                        explanation: "Urutan hari dalam seminggu adalah tetap: selepas Isnin sentiasa Selasa.",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP2-M-07", topic: "Kebolehjadian", sub: "Konsep Asas", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Manusia boleh bernafas di dalam air tanpa sebarang alat bantuan pernafasan selama-lamanya. Apakah kebolehjadiannya?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "A. Mustahil",
+                        explanation: "Manusia tidak mempunyai insang dan tidak boleh bernafas di dalam air.",
+                        chartData: { type: "prob", status: "mustahil" }
+                    },
+                    {
+                        id: "TP2-M-08", topic: "Kebolehjadian", sub: "Dadu", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sebiji dadu dilambung. Apakah kebolehjadian mendapat nombor 8?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "A. Mustahil",
+                        explanation: "Dadu standard hanya mempunyai nombor 1 hingga 6 sahaja.",
+                        chartData: { type: "prob", status: "mustahil" }
+                    },
+                    {
+                        id: "TP2-M-09", topic: "Kebolehjadian", sub: "Bola Dalam Beg", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Beg A mengandungi 9 biji bola merah dan 1 biji bola biru. Apakah kebolehjadian mengambil bola merah?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "C. Besar kemungkinan",
+                        explanation: "Bilangan bola merah jauh lebih banyak daripada bola biru.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-M-10", topic: "Kebolehjadian", sub: "Bola Dalam Beg", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Berdasarkan soalan sebelumnya (9 merah, 1 biru), apakah kebolehjadian mengambil bola biru?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "Bilangan bola biru hanya 1 daripada 10, jadi kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP2-M-11", topic: "Kebolehjadian", sub: "Kehidupan Harian", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Seorang murid Tahun 6 mendapat markah 100% dalam peperiksaan Matematik selepas berusaha mengulang kaji. Apakah kebolehjadian ini?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Mungkin berlaku", "D. Pasti"],
+                        answer: "C. Mungkin berlaku",
+                        explanation: "Peristiwa ini boleh berlaku bergantung kepada usaha murid tersebut.",
+                        chartData: { type: "prob", status: "mungkin" }
+                    },
+                    {
+                        id: "TP2-M-12", topic: "Kebolehjadian", sub: "Kad Huruf", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Kotak mengandungi kad huruf 'M', 'A', 'T', 'H'. Sebuah kad ditarik secara rawak. Apakah kebolehjadian mendapat huruf vokal 'A'?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "Hanya terdapat 1 huruf vokal ('A') daripada 4 huruf kesemuanya.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP2-M-13", topic: "Kebolehjadian", sub: "Cuaca", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Hujan turun lebat berserta kilat semasa langit mendung gelap di waktu petang. Apakah kebolehjadian hujan?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "C. Besar kemungkinan", // or pasti/besar
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Besar kemungkinan"],
+                        answer: "D. Besar kemungkinan",
+                        explanation: "Tanda-tanda cuaca mendung gelap menunjukkan hujan sangat mungkin turun.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-M-14", topic: "Kebolehjadian", sub: "Dadu", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sebiji dadu adil dilambung. Apakah kebolehjadian mendapat nombor genap (2, 4, 6)?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "C. Sama kemungkinan",
+                        explanation: "Terdapat 3 nombor genap dan 3 nombor ganjil daripada 6 nombor keseluruhan.",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP2-M-15", topic: "Kebolehjadian", sub: "Konsep Asas", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Air yang dipanaskan sehingga takat didih 100°C akan mendidih. Apakah kebolehjadiannya?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "D. Pasti",
+                        explanation: "Air tulen pasti mendidih pada suhu 100°C di aras laut.",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP2-M-16", topic: "Kebolehjadian", sub: "Bola Dalam Beg", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Beg mengandungi 5 bola kuning dan 5 bola hijau. Ambil sebiji bola secara rawak. Apakah kebolehjadian mendapat bola kuning?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "C. Sama kemungkinan",
+                        explanation: "Bilangan bola kuning dan hijau adalah sama banyak (5 setiap satu).",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP2-M-17", topic: "Kebolehjadian", sub: "Roda Putar", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Roda putar mempunyai 4 sektor warna yang sama saiz: Merah, Merah, Merah, Biru. Apakah kebolehjadian jarum berhenti pada warna Merah?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "C. Besar kemungkinan", // Wait: 3 out of 4 is large probability.
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "C. Besar kemungkinan",
+                        explanation: "3 daripada 4 bahagian ialah warna merah, jadi besar kemungkinan.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-M-18", topic: "Kebolehjadian", sub: "Kehidupan Harian", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Seorang murid berumur 12 tahun akan menyambut hari lahir ke-13 pada tahun hadapan. Apakah kebolehjadiannya?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "D. Pasti",
+                        explanation: "Umur seseorang pasti bertambah 1 tahun pada tahun berikutnya.",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP2-M-19", topic: "Kebolehjadian", sub: "Kad Nombor", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Kotak mengandungi kad nombor 1 hingga 10. Ambil sekeping kad secara rawak. Apakah kebolehjadian mendapat nombor 11?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "A. Mustahil",
+                        explanation: "Nombor 11 tiada di dalam kotak yang hanya bernombor 1 hingga 10.",
+                        chartData: { type: "prob", status: "mustahil" }
+                    },
+                    {
+                        id: "TP2-M-20", topic: "Kebolehjadian", sub: "Konsep Asas", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Batu dibaling ke dalam kolam air akan tenggelam. Apakah kebolehjadiannya?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "D. Pasti",
+                        explanation: "Ketumpatan batu lebih besar daripada air, jadi batu pasti tenggelam.",
+                        chartData: { type: "prob", status: "pasti" }
+                    }
+                ],
+                sederhana: [
+                    {
+                        id: "TP2-S-01", topic: "Kebolehjadian", sub: "Perbandingan Peristiwa", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Beg X ada 8 bola hitam, 2 bola putih. Beg Y ada 5 bola hitam, 5 bola putih. Beg manakah yang mempunyai kebolehjadian lebih tinggi untuk mendapat bola hitam?",
+                        options: ["A. Beg X", "B. Beg Y", "C. Sama", "D. Tidak pasti"],
+                        answer: "A. Beg X",
+                        explanation: "Beg X mempunyai peratusan bola hitam lebih tinggi (80% berbanding 50% di Beg Y).",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-S-02", topic: "Kebolehjadian", sub: "Dadu", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebiji dadu adil dilambung. Bandingkan kebolehjadian mendapat nombor perdana (2, 3, 5) dengan mendapat nombor gandaan 4 (4 sahaja).",
+                        options: ["A. Nombor perdana lebih tinggi", "B. Nombor gandaan 4 lebih tinggi", "C. Sama", "D. Tiada kaitan"],
+                        answer: "A. Nombor perdana lebih tinggi",
+                        explanation: "Nombor perdana ada 3 (2,3,5) manakala gandaan 4 hanya ada 1 (4).",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP2-S-03", topic: "Kebolehjadian", sub: "Kad Nombor", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak mengandungi kad nombor 1 hingga 20. Apakah kebolehjadian memilih nombor gandaan 5 (5, 10, 15, 20)?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "Hanya terdapat 4 nombor gandaan 5 daripada 20 nombor (4/20 = 1/5 atau 20%), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP2-S-04", topic: "Kebolehjadian", sub: "Bola Dalam Beg", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Beg mengandungi 7 bola merah, 7 bola biru dan 1 bola kuning. Peristiwa manakah yang paling kecil kebolehjadiannya?",
+                        options: ["A. Mendapat bola merah", "B. Mendapat bola biru", "C. Mendapat bola kuning", "D. Mendapat bola merah atau biru"],
+                        answer: "C. Mendapat bola kuning",
+                        explanation: "Bola kuning hanya ada 1 biji sahaja berbanding warna lain yang lebih banyak.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP2-S-05", topic: "Kebolehjadian", sub: "Roda Putar", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Roda putar mempunyai 8 bahagian sama besar: 4 bahagian biru, 2 bahagian merah, 2 bahagian kuning. Apakah kebolehjadian jarum berhenti pada warna biru?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "B. Sama kemungkinan",
+                        explanation: "4 daripada 8 bahagian ialah biru (4/8 = 1/2), iaitu sama kemungkinan (50%).",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP2-S-06", topic: "Kebolehjadian", sub: "Kad Huruf", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Daripada perkataan 'MATEMATIK', sekeping huruf dipilih secara rawak. Bandingkan kebolehjadian mendapat huruf 'M' dengan huruf 'T'.",
+                        options: ["A. Huruf 'M' lebih tinggi", "B. Huruf 'T' lebih tinggi", "C. Sama kebolehjadian", "D. Tiada huruf M"],
+                        answer: "C. Sama kebolehjadian",
+                        explanation: "Huruf 'M' ada 2 dan huruf 'T' juga ada 2 dalam perkataan 'MATEMATIK'.",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP2-S-07", topic: "Kebolehjadian", sub: "Dadu", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebiji dadu dilambung. Apakah kebolehjadian mendapat nombor lebih besar daripada 2 (3, 4, 5, 6)?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "C. Besar kemungkinan",
+                        explanation: "Terdapat 4 nombor lebih besar daripada 2 daripada 6 nombor keseluruhan (4/6 = 2/3), iaitu besar kemungkinan.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-S-08", topic: "Kebolehjadian", sub: "Bola Dalam Beg", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Beg A (3 merah, 7 hijau) dan Beg B (5 merah, 5 hijau). Jika anda mahu pastikan peluang tertinggi mendapat bola hijau, beg manakah harus dipilih?",
+                        options: ["A. Beg A", "B. Beg B", "C. Kedua-duanya sama", "D. Tidak tentu"],
+                        answer: "A. Beg A",
+                        explanation: "Beg A mempunyai 70% bola hijau manakala Beg B hanya 50%.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-S-09", topic: "Kebolehjadian", sub: "Hari Dalam Seminggu", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah hari dipilih secara rawak dalam seminggu. Apakah kebolehjadian hari itu bermula dengan huruf 'S' (Sabtu, Ahad... ralat: Sabtu, Selasa, Rabu? Ahad tidak. Sabtu dan Selasa bermula dengan S)?",
+                        // Sabtu, Selasa -> 2 hari daripada 7 hari
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Besar kemungkinan"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "Hanya ada 2 hari bermula dengan huruf 'S' (Sabtu dan Selasa) daripada 7 hari (2/7), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP2-S-10", topic: "Kebolehjadian", sub: "Kad Nombor", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak mengandungi kad nombor 1 hingga 10. Pilih kad bernombor genap (2,4,6,8,10). Apakah kebolehjadiannya?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "B. Sama kemungkinan",
+                        explanation: "Terdapat 5 nombor genap daripada 10 nombor (5/10 = 1/2), iaitu sama kemungkinan.",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP2-S-11", topic: "Kebolehjadian", sub: "Roda Putar", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Roda putar mempunyai 10 bahagian bernombor 1 hingga 10. Apakah kebolehjadian jarum berhenti pada nombor gandaan 3 (3, 6, 9)?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Besar kemungkinan"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "Hanya ada 3 nombor gandaan 3 daripada 10 (3/10 = 30%), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP2-S-12", topic: "Kebolehjadian", sub: "Bola Dalam Beg", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Beg mengandungi 12 biji bola: 6 kuning, 4 merah, 2 hijau. Pilih sebiji bola. Peristiwa manakah yang paling besar kebolehjadiannya?",
+                        options: ["A. Bola kuning", "B. Bola merah", "C. Bola hijau", "D. Bola merah atau hijau"],
+                        answer: "A. Bola kuning",
+                        explanation: "Bola kuning mempunyai bilangan paling banyak (6 biji).",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-S-13", topic: "Kebolehjadian", sub: "Dadu", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebiji dadu dilambung. Apakah kebolehjadian mendapat nombor gandaan 2 atau gandaan 3 (2, 3, 4, 6)?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "C. Besar kemungkinan",
+                        explanation: "Terdapat 4 nombor (2,3,4,6) daripada 6 nombor (4/6 = 2/3), iaitu besar kemungkinan.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-S-14", topic: "Kebolehjadian", sub: "Kehidupan Harian", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Ali menyertai pertandingan kuiz peringkat sekolah. Adakah Ali pasti memenangi tempat pertama?",
+                        options: ["A. Pasti", "B. Mustahil", "C. Mungkin berlaku", "D. Kecil kemungkinan"],
+                        answer: "C. Mungkin berlaku",
+                        explanation: "Kemenangan bergantung kepada saingan peserta lain, jadi ia mungkin berlaku tetapi tidak pasti.",
+                        chartData: { type: "prob", status: "mungkin" }
+                    },
+                    {
+                        id: "TP2-S-15", topic: "Kebolehjadian", sub: "Kad Nombor", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak ada kad nombor 1 hingga 50. Pilih kad nombor lebih besar daripada 10. Apakah kebolehjadiannya?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "C. Besar kemungkinan",
+                        explanation: "40 daripada 50 nombor adalah lebih besar daripada 10 (40/50 = 80%), iaitu besar kemungkinan.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-S-16", topic: "Kebolehjadian", sub: "Bola Dalam Beg", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Beg X (4 merah, 6 biru) dan Beg Y (2 merah, 8 biru). Jika anda ingin mengambil bola merah, beg manakah memberi peluang lebih baik?",
+                        options: ["A. Beg X", "B. Beg Y", "C. Sama", "D. Tidak pasti"],
+                        answer: "A. Beg X",
+                        explanation: "Beg X mempunyai 40% bola merah manakala Beg Y hanya 20%.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-S-17", topic: "Kebolehjadian", sub: "Dadu", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebiji dadu dilambung. Bandingkan kebolehjadian mendapat nombor 1 dengan mendapat nombor lebih besar daripada 1.",
+                        options: ["A. Nombor 1 lebih tinggi", "B. Nombor > 1 lebih tinggi", "C. Sama", "D. Tidak berkaitan"],
+                        answer: "B. Nombor > 1 lebih tinggi",
+                        explanation: "Nombor > 1 ada 5 (2,3,4,5,6) manakala nombor 1 hanya ada 1 sahaja.",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP2-S-18", topic: "Kebolehjadian", sub: "Bulan Dalam Setahun", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Pilih satu bulan secara rawak dalam setahun. Apakah kebolehjadian bulan itu mempunyai 31 hari (Jan, Mac, Mei, Julai, Ogos, Oktober, Disember - 7 bulan)?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "C. Besar kemungkinan",
+                        explanation: "Terdapat 7 daripada 12 bulan mempunyai 31 hari (7/12 > 50%), iaitu besar kemungkinan.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-S-19", topic: "Kebolehjadian", sub: "Kad Huruf", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak ada kad perkataan 'SEKOLAH'. Ambil sekeping huruf. Bandingkan kebolehjadian huruf vokal (E, O, A - 3 huruf) dengan huruf konsonan (S, K, L, H - 4 huruf).",
+                        options: ["A. Huruf vokal lebih tinggi", "B. Huruf konsonan lebih tinggi", "C. Sama kebolehjadian", "D. Tiada vokal"],
+                        answer: "B. Huruf konsonan lebih tinggi",
+                        explanation: "Konsonan ada 4 huruf manakala vokal ada 3 huruf.",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP2-S-20", topic: "Kebolehjadian", sub: "Roda Putar", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Roda putar mempunyai 6 bahagian: 5 bahagian hijau dan 1 bahagian merah. Apakah kebolehjadian jarum berhenti pada warna merah?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Besar kemungkinan"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "Bahagian merah hanya 1 daripada 6, jadi kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    }
+                ],
+                susah: [
+                    {
+                        id: "TP2-T-01", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Beg P (3 merah, 2 putih) dan Beg Q (6 merah, 4 putih). Jika anda ingin mengambil sebiji bola putih, beg manakah yang memberikan peluang lebih tinggi?",
+                        options: ["A. Beg P", "B. Beg Q", "C. Peluang kedua-dua beg adalah sama", "D. Beg P lebih rendah"],
+                        answer: "C. Peluang kedua-dua beg adalah sama",
+                        explanation: "Peluang di Beg P = 2/5 (40%). Peluang di Beg Q = 4/10 = 2/5 (40%). Peluangnya adalah sama!",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP2-T-02", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak A ada 10 kad nombor ganjil dan 0 kad nombor genap. Kotak B ada 5 kad ganjil dan 5 kad genap. Pernyataan manakah yang BENAR?",
+                        options: ["A. Kotak A pasti mendapat nombor ganjil", "B. Kotak B mustahil mendapat nombor genap", "C. Kotak A kecil kemungkinan mendapat ganjil", "D. Kotak B pasti mendapat ganjil"],
+                        answer: "A. Kotak A pasti mendapat nombor ganjil",
+                        explanation: "Kesemua kad dalam Kotak A adalah nombor ganjil, jadi pengambilan pasti mendapat nombor ganjil.",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP2-T-03", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah beg mengandungi 4 bola merah, 5 bola biru dan beberapa bola hijau. Jika kebolehjadian mengambil bola hijau adalah yang paling tinggi sekali, berapakah bilangan minimum bola hijau yang mungkin?",
+                        options: ["A. 4", "B. 5", "C. 6", "D. 10"],
+                        answer: "C. 6",
+                        explanation: "Bola hijau mesti melebihi warna lain (merah=4, biru=5). Maka bilangan minimum bola hijau ialah 6.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-T-04", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dua biji dadu adil dilambung serentak. Apakah kebolehjadian mendapat jumlah angka 13?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "A. Mustahil",
+                        explanation: "Jumlah maksimum dua biji dadu ialah 6 + 6 = 12. Jadi mendapat jumlah 13 adalah mustahil.",
+                        chartData: { type: "prob", status: "mustahil" }
+                    },
+                    {
+                        id: "TP2-T-05", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak mengandungi kad nombor perdana antara 1 hingga 10 (2, 3, 5, 7 - ada 4 kad). Apakah kebolehjadian menarik kad nombor perdana genap (2 sahaja - 1 kad)?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Besar kemungkinan"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "Hanya ada 1 nombor perdana genap (angka 2) daripada 4 kad nombor perdana keseluruhan (1/4 = 25%), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP2-T-06", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu undian cabutan bertuah, 1 sahaja nombor bertuah daripada 100 tiket dijual. Ali membeli 50 tiket. Apakah kebolehjadian Ali menang?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "B. Sama kemungkinan",
+                        explanation: "Ali memiliki 50 daripada 100 tiket (50/100 = 1/2), iaitu sama kemungkinan (50%).",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP2-T-07", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah beg mengandungi 20 biji bola berwarna merah, biru dan kuning. Diberi kebolehjadian mendapat bola merah adalah pasti. Berapakah bilangan bola biru?",
+                        options: ["A. 0", "B. 5", "C. 10", "D. 20"],
+                        answer: "A. 0",
+                        explanation: "Jika mengambil bola merah adalah pasti, bermakna kesemua 20 bola adalah bola merah. Tiada bola biru (0).",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP2-T-08", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Roda putar mempunyai 12 sektor bernombor 1 hingga 12. Apakah kebolehjadian jarum berhenti pada nombor yang boleh dibahagi tepat dengan 4 (4, 8, 12)?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "A. Kecil kemungkinan", // Wait: 3 out of 12 = 1/4 = 25% -> kecil kemungkinan. Correct!
+                        explanation: "Hanya ada 3 nombor (4, 8, 12) daripada 12 sektor (3/12 = 1/4 = 25%), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP2-T-09", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Beg A mempunyai 5 merah, 5 hitam. Beg B mempunyai 9 merah, 1 hitam. Jika anda mahu pastikan kebolehjadian tertinggi mengambil bola merah pada cabutan pertama, pilih...",
+                        options: ["A. Beg A", "B. Beg B", "C. Kedua-duanya sama", "D. Mana-mana beg"],
+                        answer: "B. Beg B",
+                        explanation: "Beg B mempunyai 90% bola merah manakala Beg A hanya 50%.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-T-10", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah kotak ada kad nombor 1 hingga 100. Apakah kebolehjadian menarik kad nombor gandaan 10 (10, 20, ..., 100 - ada 10 kad)?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "A. Kecil kemungkinan",
+                        explanation: "Terdapat 10 kad gandaan 10 daripada 100 kad (10/100 = 10%), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP2-T-11", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi kebolehjadian berlaku hujan di sebuah gurun panas terik tanpa awan adalah...",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "B. Kecil kemungkinan", // or mustahil in extreme deserts, but "kecil kemungkinan" / "mustahil"
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "A. Mustahil", // Let's use Mustahil for extreme arid desert without cloud.
+                        explanation: "Di kawasan gurun yang sangat kering dan tiada awan, hujan langsung tidak akan turun (mustahil).",
+                        chartData: { type: "prob", status: "mustahil" }
+                    },
+                    {
+                        id: "TP2-T-12", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak mengandungi 3 pen merah, 3 pen biru, dan 3 pen hitam. Apakah kebolehjadian mengambil pen selain warna merah (biru atau hitam - 6 pen)?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "C. Besar kemungkinan",
+                        explanation: "Terdapat 6 pen bukan merah daripada 9 pen keseluruhan (6/9 = 2/3), iaitu besar kemungkinan.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-T-13", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Siti mencatat keputusan lambingan syiling 100 kali. Beliau mendapat 95 kali angka dan 5 kali gambar. Apakah yang boleh dirumuskan?",
+                        options: ["A. Syiling mungkin tidak adil", "B. Peristiwa pasti", "C. Mustahil berlaku", "D. Teori matematik salah"],
+                        answer: "A. Syiling mungkin tidak adil",
+                        explanation: "Keputusan yang jauh terpesong daripada 50-50 menunjukkan syiling atau percubaan mungkin berat sebelah.",
+                        chartData: { type: "prob", status: "mungkin" }
+                    },
+                    {
+                        id: "TP2-T-14", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak ada kad huruf perkataan 'MATEMATIK'. Sekeping kad ditarik. Bandingkan kebolehjadian mendapat huruf konsonan (M,T,M,T,K - 5 huruf) dengan huruf vokal (A,E,A,I - 4 huruf).",
+                        options: ["A. Konsonan lebih tinggi", "B. Vokal lebih tinggi", "C. Sama", "D. Tiada konsonan"],
+                        answer: "A. Konsonan lebih tinggi",
+                        explanation: "Konsonan ada 5 huruf manakala vokal ada 4 huruf.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP2-T-15", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah balang ada 50 guli: 25 merah, 15 biru, 10 hijau. Jika 5 guli merah dikeluarkan dan tidak dimasukkan semula, apakah kebolehjadian mengambil guli merah sekarang?",
+                        options: ["A. Masih sama", "B. Lebih tinggi", "C. Lebih rendah", "D. Pasti"],
+                        answer: "C. Lebih rendah",
+                        explanation: "Bilangan guli merah tinggal 20 daripada 45 guli keseluruhan. Peratusan berkurang, maka kebolehjadiannya lebih rendah.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP2-T-16", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi kebolehjadian sesuatu peristiwa A ialah 0 (mustahil) dan peristiwa B ialah 1 (pasti). Pernyataan manakah BENAR?",
+                        options: ["A. Peristiwa A pasti berlaku", "B. Peristiwa B mustahil berlaku", "C. Peristiwa B pasti berlaku", "D. Kedua-duanya sama"],
+                        answer: "C. Peristiwa B pasti berlaku",
+                        explanation: "Kebolehjadian 1 bermaksud peristiwa itu pasti berlaku.",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP2-T-17", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak mengandungi kad nombor 1 hingga 20. Ambil kad nombor perdana (2,3,5,7,11,13,17,19 - ada 8 kad). Apakah kebolehjadiannya?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "A. Kecil kemungkinan", // 8/20 = 40% -> kecil kemungkinan (di bawah 50%). Correct!
+                        explanation: "Terdapat 8 nombor perdana daripada 20 kad (8/20 = 40%), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP2-T-18", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Roda putar mempunyai 8 bahagian bernombor 1 hingga 8. Apakah kebolehjadian mendapat nombor genap atau nombor ganjil?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "D. Pasti",
+                        explanation: "Setiap nombor dari 1 hingga 8 sama ada genap atau ganjil. Gabungan kedua-duanya merangkumi semua sektor (pasti).",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP2-T-19", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah bekas mengandungi guli merah dan hijau sahaja. Jika kebolehjadian mengambil guli hijau adalah 'kecil kemungkinan', apakah nisbah guli merah kepada hijau yang paling munasabah?",
+                        options: ["A. 1 merah : 1 hijau", "B. 2 merah : 8 hijau", "C. 8 merah : 2 hijau", "D. 5 merah : 5 hijau"],
+                        answer: "C. 8 merah : 2 hijau",
+                        explanation: "Kecil kemungkinan untuk hijau bermaksud bilangan guli hijau sedikit berbanding merah (cth: 2 hijau berbanding 8 merah).",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP2-T-20", topic: "Kebolehjadian", sub: "Penaakulan Kompleks", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu undian, jika kebolehjadian menang ialah 0.5, apakah maksudnya dalam perkataan harian?",
+                        options: ["A. Pasti menang", "B. Mustahil menang", "C. Sama kemungkinan menang atau kalah", "D. Kecil kemungkinan"],
+                        answer: "C. Sama kemungkinan menang atau kalah",
+                        explanation: "0.5 atau 50% bermaksud peluang menang dan kalah adalah sama besar (sama kemungkinan).",
+                        chartData: { type: "prob", status: "sama" }
+                    }
+                ]
+            },
+
+            // ==================== TOPIK 3: PENYELESAIAN MASALAH (60 Soalan) ====================
+            3: {
+                mudah: [
+                    {
+                        id: "TP3-M-01", topic: "Penyelesaian Masalah", sub: "Carta Pai & Kuantiti", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Seramai 40 orang murid memilih aktiviti kegemaran. Carta pai menunjukkan 90° memilih bola sepak. Berapakah bilangan murid yang memilih bola sepak?",
+                        options: ["A. 5", "B. 10", "C. 15", "D. 20"],
+                        answer: "B. 10",
+                        explanation: "90° ialah 1/4 daripada 360°. 40 ÷ 4 = 10 orang murid.",
+                        chartData: { labels: ["Bola Sepak", "Lain"], angles: [90, 270], values: [10, 30] }
+                    },
+                    {
+                        id: "TP3-M-02", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Harian", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Di dalam sebuah kotak terdapat 5 batang pensel warna merah. Azim mengambil sebatang pensel tanpa melihat. Apakah kebolehjadian mendapat pensel merah?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "D. Pasti",
+                        explanation: "Kesemua pensel di dalam kotak berwarna merah, jadi pasti mendapat pensel merah.",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP3-M-03", topic: "Penyelesaian Masalah", sub: "Carta Pai", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sebuah carta pai jualan buah di kantin menunjukkan sudut 180° untuk pisang daripada 60 biji buah terjual. Berapakah bilangan pisang terjual?",
+                        options: ["A. 15", "B. 20", "C. 30", "D. 45"],
+                        answer: "C. 30",
+                        explanation: "180° ialah separuh (1/2) daripada 360°. 60 ÷ 2 = 30 biji.",
+                        chartData: { labels: ["Pisang", "Lain"], angles: [180, 180], values: [30, 30] }
+                    },
+                    {
+                        id: "TP3-M-04", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Harian", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Ibu memasak nasi menggunakan periuk nasi elektrik. Apakah kebolehjadian nasi menjadi masak jika suis dihidupkan?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "D. Pasti",
+                        explanation: "Periuk nasi yang berfungsi dengan betul pasti memasak beras apabila dihidupkan.",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP3-M-05", topic: "Penyelesaian Masalah", sub: "Mentafsir Data", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Jumlah murid Tahun 6 Bestari ialah 40 orang. Sudut 90° pada carta pai mewakili murid yang hadir awal ke sekolah. Berapakah bilangan murid yang hadir awal?",
+                        options: ["A. 5", "B. 10", "C. 15", "D. 20"],
+                        answer: "B. 10",
+                        explanation: "90° = 1/4. 40 ÷ 4 = 10 orang murid.",
+                        chartData: { labels: ["Hadir Awal", "Lain"], angles: [90, 270], values: [10, 30] }
+                    },
+                    {
+                        id: "TP3-M-06", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Harian", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Seorang murid melontar syiling 20 sen ke udara. Apakah kebolehjadian mendapat permukaan 'gambar'?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "C. Sama kemungkinan",
+                        explanation: "Syiling mempunyai 2 permukaan sahaja (angka dan gambar), jadi peluangnya sama besar.",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP3-M-07", topic: "Penyelesaian Masalah", sub: "Carta Pai", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Kajian terhadap 80 orang murid menunjukkan sudut pilihan minuman ialah 45° untuk teh ais. Berapakah bilangan peminat teh ais?",
+                        options: ["A. 5", "B. 10", "C. 15", "D. 20"],
+                        answer: "B. 10",
+                        explanation: "45° = 1/8. 80 ÷ 8 = 10 orang.",
+                        chartData: { labels: ["Teh Ais", "Lain"], angles: [45, 315], values: [10, 70] }
+                    },
+                    {
+                        id: "TP3-M-08", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Harian", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Membeli tiket cabutan bertuah dengan nombor siri 1 hingga 10. Apakah kebolehjadian mendapat nombor 15?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "A. Mustahil",
+                        explanation: "Nombor 15 tiada dalam julat siri 1 hingga 10.",
+                        chartData: { type: "prob", status: "mustahil" }
+                    },
+                    {
+                        id: "TP3-M-09", topic: "Penyelesaian Masalah", sub: "Mentafsir Data", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan hobi membaca dengan sudut 90°. Jika jumlah keseluruhan murid ialah 120 orang, hitung bilangan peminat hobi membaca.",
+                        options: ["A. 20", "B. 30", "C. 40", "D. 60"],
+                        answer: "B. 30",
+                        explanation: "90° = 1/4. 120 ÷ 4 = 30 orang.",
+                        chartData: { labels: ["Membaca", "Lain"], angles: [90, 270], values: [30, 90] }
+                    },
+                    {
+                        id: "TP3-M-10", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Harian", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Di dalam sebuah beg terdapat 8 biji bola merah dan 2 biji bola biru. Ambil sebiji bola. Apakah kebolehjadian mendapat bola merah?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "C. Besar kemungkinan",
+                        explanation: "Bilangan bola merah (8 biji) jauh lebih banyak daripada bola biru.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP3-M-11", topic: "Penyelesaian Masalah", sub: "Carta Pai", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sudut 180° dalam carta pai sukan sekolah mewakili acara lumba pegun daripada 100 orang atlet. Berapakah bilangan atlet acara tersebut?",
+                        options: ["A. 25", "B. 50", "C. 75", "D. 100"],
+                        answer: "B. 50",
+                        explanation: "180° = 1/2. 100 ÷ 2 = 50 orang atlet.",
+                        chartData: { labels: ["Lumba Pegun", "Lain"], angles: [180, 180], values: [50, 50] }
+                    },
+                    {
+                        id: "TP3-M-12", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Harian", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Sebiji dadu dilambung. Apakah kebolehjadian mendapat nombor 7?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "A. Mustahil",
+                        explanation: "Dadu standard hanya mempunyai nombor 1 hingga 6.",
+                        chartData: { type: "prob", status: "mustahil" }
+                    },
+                    {
+                        id: "TP3-M-13", topic: "Penyelesaian Masalah", sub: "Mentafsir Data", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Kantin sekolah merekodkan jualan makanan: sudut mi goreng ialah 90° daripada 60 orang pembeli. Cari bilangan pembeli mi goreng.",
+                        options: ["A. 10", "B. 15", "C. 20", "D. 30"],
+                        answer: "B. 15",
+                        explanation: "90° = 1/4. 60 ÷ 4 = 15 orang.",
+                        chartData: { labels: ["Mi Goreng", "Lain"], angles: [90, 270], values: [15, 45] }
+                    },
+                    {
+                        id: "TP3-M-14", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Harian", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Hari ini hari Rabu, esok adalah hari Khamis. Apakah kebolehjadiannya?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "D. Pasti",
+                        explanation: "Urutan hari dalam kalendar adalah tetap dan pasti berlaku.",
+                        chartData: { type: "prob", status: "pasti" }
+                    },
+                    {
+                        id: "TP3-M-15", topic: "Penyelesaian Masalah", sub: "Carta Pai", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan taburan warna baju uniform pengakap: sudut hijau ialah 45° daripada 160 orang ahli. Hitung bilangan ahli beruniform hijau.",
+                        options: ["A. 10", "B. 15", "C. 20", "D. 25"],
+                        answer: "C. 20",
+                        explanation: "45° = 1/8. 160 ÷ 8 = 20 orang.",
+                        chartData: { labels: ["Hijau", "Lain"], angles: [45, 315], values: [20, 140] }
+                    },
+                    {
+                        id: "TP3-M-16", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Harian", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Kotak mengandungi 3 kad merah dan 3 kad kuning. Ambil sekeping kad secara rawak. Apakah kebolehjadian mendapat kad merah?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "C. Sama kemungkinan",
+                        explanation: "Bilangan kad merah dan kuning adalah sama banyak (3 setiap satu).",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP3-M-17", topic: "Penyelesaian Masalah", sub: "Mentafsir Data", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Jumlah murid menyertai kuiz ialah 200 orang. Sektor sudut 90° mewakili murid Tahun 6 Arif. Berapakah bilangan murid Tahun 6 Arif?",
+                        options: ["A. 25", "B. 50", "C. 75", "D. 100"],
+                        answer: "B. 50",
+                        explanation: "90° = 1/4. 200 ÷ 4 = 50 orang.",
+                        chartData: { labels: ["6 Arif", "Lain"], angles: [90, 270], values: [50, 150] }
+                    },
+                    {
+                        id: "TP3-M-18", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Harian", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Menjatuhkan sebiji bola getah ke lantai. Apakah kebolehjadian bola itu melantun semula ke atas?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "C. Besar kemungkinan", // or pasti (sifat kenyal bola getah)
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Besar kemungkinan"],
+                        answer: "D. Besar kemungkinan",
+                        explanation: "Sifat fizikal bola getah apabila dijatuhkan ke lantai keras adalah melantun.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP3-M-19", topic: "Penyelesaian Masalah", sub: "Carta Pai", level: "mudah", cog: "Memahami", type: "objektif",
+                        question: "Sebuah carta pai sudut 90° mewakili buku rujukan daripada 40 naskhah buku di perpustakaan mini kelas. Berapakah bilangan buku rujukan?",
+                        options: ["A. 5", "B. 10", "C. 15", "D. 20"],
+                        answer: "B. 10",
+                        explanation: "90° = 1/4. 40 ÷ 4 = 10 naskhah.",
+                        chartData: { labels: ["Rujukan", "Lain"], angles: [90, 270], values: [10, 30] }
+                    },
+                    {
+                        id: "TP3-M-20", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Harian", level: "mudah", cog: "Mengingat", type: "objektif",
+                        question: "Seorang murid berjalan kaki sejauh 2 km ke sekolah dalam masa 30 minit. Apakah kebolehjadian dia sampai ke sekolah?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "D. Pasti",
+                        explanation: "Dengan jarak dan masa yang mencukupi, murid tersebut pasti sampai jika berjalan.",
+                        chartData: { type: "prob", status: "pasti" }
+                    }
+                ],
+                sederhana: [
+                    {
+                        id: "TP3-S-01", topic: "Penyelesaian Masalah", sub: "Gabungan Data & Kuantiti", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Seramai 80 orang murid menyertai sukan. Carta pai menunjukkan 180° menyertai bola sepak dan 90° menyertai badminton. Berapakah jumlah murid yang menyertai kedua-dua sukan ini?",
+                        options: ["A. 40", "B. 50", "C. 60", "D. 70"],
+                        answer: "C. 60",
+                        explanation: "Sudut gabungan = 180° + 90° = 270°. Kuantiti = (270 / 360) × 80 = 3/4 × 80 = 60 orang.",
+                        chartData: { labels: ["Bola Sepak", "Badminton", "Lain"], angles: [180, 90, 90], values: [40, 20, 20] }
+                    },
+                    {
+                        id: "TP3-S-02", topic: "Penyelesaian Masalah", sub: "Gabungan Kebolehjadian", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak A ada 3 guli merah, 7 guli biru. Kotak B ada 5 guli merah, 5 guli biru. Jika anda ingin mengambil guli merah, kotak manakah yang memberikan peluang lebih tinggi?",
+                        options: ["A. Kotak A", "B. Kotak B", "C. Kedua-duanya sama", "D. Tiada maklumat"],
+                        answer: "B. Kotak B",
+                        explanation: "Kotak B mempunyai 50% guli merah manakala Kotak A hanya 30%.",
+                        chartData: { type: "prob", status: "besar" }
+                    },
+                    {
+                        id: "TP3-S-03", topic: "Penyelesaian Masalah", sub: "Carta Pai Kompleks", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Jumlah jualan buku di koperasi ialah 120 naskhah. Sudut buku cerita ialah 90° dan buku latihan ialah 135°. Hitung jumlah jualan kedua-dua buku ini.",
+                        options: ["A. 65", "B. 75", "C. 85", "D. 95"],
+                        answer: "B. 75", // Wait: 90 + 135 = 225°. 225/360 * 120 = 5/8 * 120 = 75 naskhah. Correct!
+                        explanation: "Sudut gabungan = 90° + 135° = 225°. Kuantiti = (225 / 360) × 120 = 5/8 × 120 = 75 naskhah.",
+                        chartData: { labels: ["Cerita", "Latihan", "Lain"], angles: [90, 135, 135], values: [30, 45, 45] }
+                    },
+                    {
+                        id: "TP3-S-04", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Kad", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak mengandungi kad nombor 1 hingga 20. Ambil kad nombor gandaan 4 (4, 8, 12, 16, 20 - ada 5 kad). Apakah kebolehjadiannya?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Besar kemungkinan"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "Terdapat 5 kad gandaan 4 daripada 20 kad (5/20 = 1/4 = 25%), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP3-S-05", topic: "Penyelesaian Masalah", sub: "Carta Pai Beza Kuantiti", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu kaji selidik 160 orang murid, sudut buah mangga ialah 90° manakala oren ialah 45°. Apakah perbezaan bilangan murid yang memilih mangga berbanding oren?",
+                        options: ["A. 15", "B. 20", "C. 25", "D. 30"],
+                        answer: "B. 20", // Wait: (90 - 45)/360 * 160 = 45/360 * 160 = 1/8 * 160 = 20 orang. Correct!
+                        explanation: "Beza sudut = 90° - 45° = 45°. Beza murid = (45 / 360) × 160 = 1/8 × 160 = 20 orang.",
+                        chartData: { labels: ["Mangga", "Oren", "Lain"], angles: [90, 45, 225], values: [40, 20, 100] }
+                    },
+                    {
+                        id: "TP3-S-06", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Dadu", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebiji dadu dilambung. Bandingkan kebolehjadian mendapat nombor kurang daripada 3 (1, 2) dengan mendapat nombor lebih besar daripada 3 (4, 5, 6).",
+                        options: ["A. Kurang daripada 3 lebih tinggi", "B. Lebih besar daripada 3 lebih tinggi", "C. Sama", "D. Tiada kaitan"],
+                        answer: "B. Lebih besar daripada 3 lebih tinggi",
+                        explanation: "Nombor > 3 ada 3 (4,5,6) manakala nombor < 3 ada 2 (1,2). Jadi nombor > 3 lebih tinggi kebolehjadiannya.",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP3-S-07", topic: "Penyelesaian Masalah", sub: "Carta Pai Baki", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Jumlah murid ialah 200 orang. Sektor aktiviti seni ialah 90° dan sukan ialah 90°. Hitung bilangan murid untuk aktiviti lain (baki).",
+                        options: ["A. 50", "B. 80", "C. 100", "D. 120"],
+                        answer: "C. 100",
+                        explanation: "Sudut baki = 360° - 90° - 90° = 180°. Kuantiti = 200 ÷ 2 = 100 orang.",
+                        chartData: { labels: ["Seni", "Sukan", "Lain"], angles: [90, 90, 180], values: [50, 50, 100] }
+                    },
+                    {
+                        id: "TP3-S-08", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Hari", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Pilih satu hari secara rawak dalam seminggu. Apakah kebolehjadian hari itu bermula dengan huruf 'M' (Isnin, Selasa, Rabu, Khamis, Jumaat, Sabtu, Ahad - tiada yang bermula dengan M? Ralat: Isnin, Selasa, Rabu, Khamis, Jumaat, Sabtu, Ahad. Tiada hari bermula M. Isnin, Selasa, Rabu, Khamis, Jumaat, Sabtu, Ahad. Oh, Isnin - I, Selasa - S, Rabu - R, Khamis - K, Jumaat - J, Sabtu - S, Ahad - A. Tiada hari M! Kebolehjadiannya adalah mustahil).",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "A. Mustahil",
+                        explanation: "Tiada hari dalam seminggu yang bermula dengan huruf 'M', jadi peristiwa ini adalah mustahil.",
+                        chartData: { type: "prob", status: "mustahil" }
+                    },
+                    {
+                        id: "TP3-S-09", topic: "Penyelesaian Masalah", sub: "Carta Pai Jualan", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah kedai buku merekodkan jualan alat tulis 240 unit. Sudut pemadam ialah 45° dan pensel ialah 90°. Berapakah jumlah jualan pemadam dan pensel?",
+                        options: ["A. 60", "B. 70", "C. 80", "D. 90"],
+                        answer: "D. 90",
+                        explanation: "Sudut gabungan = 45° + 90° = 135°. Kuantiti = (135 / 360) × 240 = 3/8 × 240 = 90 unit.",
+                        chartData: { labels: ["Pemadam", "Pensel", "Lain"], angles: [45, 90, 225], values: [30, 60, 150] }
+                    },
+                    {
+                        id: "TP3-S-10", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Guli", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Beg mengandungi 12 guli: 4 hijau, 4 merah, 4 kuning. Ambil sebiji guli secara rawak. Apakah kebolehjadian mendapat guli merah?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "B. Sama kemungkinan",
+                        explanation: "Bilangan setiap warna adalah sama banyak (4 biji setiap satu), iaitu sama kemungkinan (1/3 atau setara).",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP3-S-11", topic: "Penyelesaian Masalah", sub: "Carta Pai Kuantiti", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi jumlah keseluruhan murid 120 orang. Sudut sektor kelab sains ialah 90° dan kelab bahasa ialah 90°. Cari jumlah ahli kedua-dua kelab ini.",
+                        options: ["A. 40", "B. 50", "C. 60", "D. 80"],
+                        answer: "C. 60",
+                        explanation: "Gabungan sudut = 180°. Kuantiti = 120 ÷ 2 = 60 orang.",
+                        chartData: { labels: ["Sains", "Bahasa", "Lain"], angles: [90, 90, 180], values: [30, 30, 60] }
+                    },
+                    {
+                        id: "TP3-S-12", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Kad", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak ada kad nombor 1 hingga 50. Ambil kad nombor kurang daripada 10 (1 hingga 9 - ada 9 kad). Apakah kebolehjadiannya?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "A. Kecil kemungkinan",
+                        explanation: "Hanya ada 9 kad daripada 50 kad (9/50 = 18%), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP3-S-13", topic: "Penyelesaian Masalah", sub: "Carta Pai Kompleks", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan pilihan warna kereta: Putih (180°), Hitam (90°), dan Perak (90°). Jika jumlah kereta ialah 160 buah, berapakah bilangan kereta Hitam?",
+                        options: ["A. 20", "B. 30", "C. 40", "D. 50"],
+                        answer: "C. 40",
+                        explanation: "90° = 1/4. 160 ÷ 4 = 40 buah kereta hitam.",
+                        chartData: { labels: ["Putih", "Hitam", "Perak"], angles: [180, 90, 90], values: [80, 40, 40] }
+                    },
+                    {
+                        id: "TP3-S-14", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Dadu", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebiji dadu dilambung. Apakah kebolehjadian mendapat nombor gandaan 3 (3, 6)?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Besar kemungkinan"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "Hanya ada 2 nombor (3 dan 6) daripada 6 nombor (2/6 = 1/3), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP3-S-15", topic: "Penyelesaian Masalah", sub: "Carta Pai Beza", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu kaji selidik 160 orang murid, sudut subjek Matematik ialah 180° dan Sejarah ialah 45°. Cari perbezaan bilangan murid antara kedua-dua subjek ini.",
+                        options: ["A. 40", "B. 50", "C. 60", "D. 70"],
+                        answer: "C. 60",
+                        explanation: "Beza sudut = 180° - 45° = 135°. Kuantiti = (135 / 360) × 160 = 3/8 × 160 = 60 orang.",
+                        chartData: { labels: ["Matematik", "Sejarah", "Lain"], angles: [180, 45, 135], values: [80, 20, 60] }
+                    },
+                    {
+                        id: "TP3-S-16", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Syiling", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Ali melambung 2 biji syiling serentak. Apakah kebolehjadian mendapat dua permukaan angka?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "Hasil mungkin: (Angka,Angka), (Angka,Gambar), (Gambar,Angka), (Gambar,Gambar). Peluang mendapat dua angka ialah 1 daripada 4 (25%), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP3-S-17", topic: "Penyelesaian Masalah", sub: "Carta Pai Kuantiti", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi jumlah murid 300 orang. Sektor sudut 90° menyertai unit beruniform pandu puteri. Hitung bilangan ahli pandu puteri.",
+                        options: ["A. 50", "B. 75", "C. 100", "D. 125"],
+                        answer: "B. 75",
+                        explanation: "90° = 1/4. 300 ÷ 4 = 75 orang.",
+                        chartData: { labels: ["Pandu Puteri", "Lain"], angles: [90, 270], values: [75, 225] }
+                    },
+                    {
+                        id: "TP3-S-18", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Harian", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kotak ada 10 kad bertulis nombor 1 hingga 10. Ambil kad nombor perdana (2,3,5,7 - ada 4 kad). Apakah kebolehjadiannya?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Besar kemungkinan"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "4 kad nombor perdana daripada 10 kad (4/10 = 40%), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP3-S-19", topic: "Penyelesaian Masalah", sub: "Carta Pai Jualan", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai jualan minuman menunjukkan teh o (180°) dan sirap (90°) daripada 120 cawan. Berapakah baki cawan jualan minuman lain?",
+                        options: ["A. 20", "B. 30", "C. 40", "D. 50"],
+                        answer: "B. 30",
+                        explanation: "Sudut baki = 360° - 180° - 90° = 90°. Kuantiti = 120 ÷ 4 = 30 cawan.",
+                        chartData: { labels: ["Teh O", "Sirap", "Lain"], angles: [180, 90, 90], values: [60, 30, 30] }
+                    },
+                    {
+                        id: "TP3-S-20", topic: "Penyelesaian Masalah", sub: "Kebolehjadian Bola", level: "sederhana", cog: "Mengaplikasi", type: "objektif",
+                        question: "Beg A (2 merah, 8 biru) dan Beg B (5 merah, 5 biru). Anda perlukan bola merah. Beg manakah pilihan terbaik?",
+                        options: ["A. Beg A", "B. Beg B", "C. Sama", "D. Tidak pasti"],
+                        answer: "B. Beg B",
+                        explanation: "Beg B mempunyai 50% bola merah berbanding Beg A yang hanya 20%.",
+                        chartData: { type: "prob", status: "sama" }
+                    }
+                ],
+                susah: [
+                    {
+                        id: "TP3-T-01", topic: "Penyelesaian Masalah", sub: "Gabungan Carta Pai & Kebolehjadian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah beg berisi guli mengikut taburan carta pai sudut: Merah (180°), Biru (90°), Hijau (45°), dan Kuning (45°). Jika jumlah guli 160 biji, apakah kebolehjadian mengambil guli hijau?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Pasti"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "Guli hijau mewakili 45° (1/8 daripada 160 = 20 biji daripada 160). Peluangnya di bawah 50%, iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP3-T-02", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Jumlah murid Tahun 6 ialah 400 orang. Carta pai menunjukkan 135° memilih kelas tambahan Sains dan 180° memilih Matematik. Berapakah bilangan murid yang tidak memilih kedua-dua subjek ini?",
+                        options: ["A. 30", "B. 40", "C. 50", "D. 60"],
+                        answer: "C. 50",
+                        explanation: "Sudut baki = 360° - 135° - 180° = 45°. Kuantiti = (45 / 360) × 400 = 1/8 × 400 = 50 orang.",
+                        chartData: { labels: ["Sains", "Matematik", "Lain"], angles: [135, 180, 45], values: [150, 200, 50] }
+                    },
+                    {
+                        id: "TP3-T-03", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu pertandingan kuiz, markah purata dikira. Diberi sudut pencapaian cemerlang dalam carta pai ialah 90° daripada 240 orang peserta. Berapakah bilangan peserta yang tidak mencapai tahap cemerlang?",
+                        options: ["A. 60", "B. 120", "C. 150", "D. 180"],
+                        answer: "D. 180",
+                        explanation: "Sudut selain cemerlang = 360° - 90° = 270°. Kuantiti = (270 / 360) × 240 = 3/4 × 240 = 180 orang.",
+                        chartData: { labels: ["Cemerlang", "Lain"], angles: [90, 270], values: [60, 180] }
+                    },
+                    {
+                        id: "TP3-T-04", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah syarikat bas mencatatkan destinasi penumpang: Utara (180°), Selatan (90°), Timur (45°), dan Barat (45°). Jika jumlah penumpang 320 orang, berapakah bilangan penumpang ke Utara dan Timur?",
+                        options: ["A. 160", "B. 180", "C. 200", "D. 220"],
+                        answer: "C. 200",
+                        explanation: "Sudut gabungan = 180° + 45° = 225°. Kuantiti = (225 / 360) × 320 = 5/8 × 320 = 200 orang.",
+                        chartData: { labels: ["Utara", "Selatan", "Timur", "Barat"], angles: [180, 90, 45, 45], values: [160, 80, 40, 40] }
+                    },
+                    {
+                        id: "TP3-T-05", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi sektor P bernilai 75 orang dengan sudut 90° dalam carta pai. Berapakah jumlah keseluruhan kuantiti carta pai tersebut?",
+                        options: ["A. 200", "B. 250", "C. 300", "D. 360"],
+                        answer: "C. 300",
+                        explanation: "90° = 1/4. Jumlah keseluruhan = 75 × 4 = 300 orang.",
+                        chartData: { labels: ["P", "Lain"], angles: [90, 270], values: [75, 225] }
+                    },
+                    {
+                        id: "TP3-T-06", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah beg mengandungi guli mengikut nisbah sudut carta pai: Merah (180°), Putih (90°), dan Hitam (90°). Jika jumlah guli 240 biji, apakah kebolehjadian mengambil guli putih?",
+                        options: ["A. Kecil kemungkinan", "B. Sama kemungkinan", "C. Besar kemungkinan", "D. Pasti"],
+                        answer: "A. Kecil kemungkinan",
+                        explanation: "Guli putih mewakili 90° (60 biji daripada 240, iaitu 25%). Peluang di bawah 50%, iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP3-T-07", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu kajian taburan masa harian, sudut tidur ialah 180°, sekolah 90°, ulangkaji 45°, dan baki untuk riadah. Cari bilangan jam sehari untuk riadah (berdasarkan sudut 45° daripada 24 jam).",
+                        options: ["A. 1 jam", "B. 2 jam", "C. 3 jam", "D. 4 jam"],
+                        answer: "C. 3 jam",
+                        explanation: "(45° / 360°) × 24 jam = 1/8 × 24 = 3 jam.",
+                        chartData: { labels: ["Tidur", "Sekolah", "Ulangkaji", "Riadah"], angles: [180, 90, 45, 45], values: [12, 6, 3, 3] }
+                    },
+                    {
+                        id: "TP3-T-08", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi sektor A mewakili 40 orang murid dan sudutnya 90°. Sektor B mewakili 80 orang murid. Cari sudut untuk sektor B.",
+                        options: ["A. 90°", "B. 120°", "C. 135°", "D. 180°"],
+                        answer: "D. 180°",
+                        explanation: "40 orang = 90°. 80 orang (dua kali ganda) = 90° × 2 = 180°.",
+                        chartData: { labels: ["A", "B", "Lain"], angles: [90, 180, 90], values: [40, 80, 40] }
+                    },
+                    {
+                        id: "TP3-T-09", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah syarikat penyelenggaraan merekodkan kerosakan kenderaan: Enjin (180°), Tayar (90°), Bateri (45°), dan lain-lain (45°). Jika jumlah kenderaan rosak ialah 160 buah, hitung beza kerosakan Enjin dan Bateri.",
+                        options: ["A. 40", "B. 50", "C. 60", "D. 70"],
+                        answer: "C. 60",
+                        explanation: "Beza sudut = 180° - 45° = 135°. Kuantiti = (135 / 360) × 160 = 3/8 × 160 = 60 buah.",
+                        chartData: { labels: ["Enjin", "Tayar", "Bateri", "Lain"], angles: [180, 90, 45, 45], values: [80, 40, 20, 20] }
+                    },
+                    {
+                        id: "TP3-T-10", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu undian kotak misteri berhadiah, terdapat 100 kad bertuah. 45 kad hadiah utama (sudut 162°), 45 kad hadiah saguhati (sudut 162°), dan 10 kad kosong (sudut 36°). Apakah kebolehjadian mendapat kad kosong?",
+                        options: ["A. Mustahil", "B. Kecil kemungkinan", "C. Sama kemungkinan", "D. Besar kemungkinan"],
+                        answer: "B. Kecil kemungkinan",
+                        explanation: "Kad kosong hanya ada 10 daripada 100 kad (10%), iaitu kecil kemungkinan.",
+                        chartData: { type: "prob", status: "kecil" }
+                    },
+                    {
+                        id: "TP3-T-11", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Jumlah jualan buku rujukan di pameran ialah 360 naskhah. Sudut bagi buku Matematik ialah 135°. Berapakah naskhah buku Matematik terjual?",
+                        options: ["A. 105", "B. 120", "C. 135", "D. 150"],
+                        answer: "C. 135",
+                        explanation: "(135° / 360°) × 360 = 135 naskhah.",
+                        chartData: { labels: ["Matematik", "Lain"], angles: [135, 225], values: [135, 225] }
+                    },
+                    {
+                        id: "TP3-T-12", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan pilihan jenis sukan: Bola Sepak (180°), Badminton (90°), Hoki (45°), dan Tenis (45°). Jika 40 orang murid memilih Tenis, berapakah jumlah keseluruhan murid?",
+                        options: ["A. 160", "B. 240", "C. 320", "D. 360"],
+                        answer: "C. 320",
+                        explanation: "Tenis bernilai 45° dan 40 orang. Jumlah keseluruhan (360°) = (360 / 45) × 40 = 8 × 40 = 320 orang.",
+                        chartData: { labels: ["Bola Sepak", "Badminton", "Hoki", "Tenis"], angles: [180, 90, 45, 45], values: [160, 80, 40, 40] }
+                    },
+                    {
+                        id: "TP3-T-13", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi nisbah sudut sektor X, Y dan Z ialah 1 : 2 : 5. Jika jumlah keseluruhan unit ialah 400, cari nilai bagi sektor Z (sudut 225°).",
+                        options: ["A. 150", "B. 200", "C. 225", "D. 250"],
+                        answer: "D. 250",
+                        explanation: "Sektor Z = (5 / 8) × 400 = 250 unit.",
+                        chartData: { labels: ["X", "Y", "Z"], angles: [45, 90, 225], values: [50, 100, 250] }
+                    },
+                    {
+                        id: "TP3-T-14", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah balang mengandungi guli merah, biru dan kuning. Diberi kebolehjadian mengambil guli merah ialah 0.5, biru ialah 0.25, dan kuning ialah 0.25. Jika terdapat 40 guli biru, berapakah jumlah keseluruhan guli?",
+                        options: ["A. 80", "B. 120", "C. 160", "D. 200"],
+                        answer: "C. 160",
+                        explanation: "Guli biru mewakili 0.25 (1/4) daripada keseluruhan. Jumlah = 40 × 4 = 160 biji guli.",
+                        chartData: { type: "prob", status: "sama" }
+                    },
+                    {
+                        id: "TP3-T-15", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Kajian perbelanjaan harian murid menunjukkan sudut makanan ialah 180°, alat tulis 90°, simpanan 45°, dan baki untuk derma. Jika perbelanjaan makanan ialah RM9.00 (sudut 180°), berapakah jumlah perbelanjaan keseluruhan sehari?",
+                        options: ["A. RM12.00", "B. RM15.00", "C. RM18.00", "D. RM20.00"],
+                        answer: "C. RM18.00",
+                        explanation: "180° mewakili RM9.00 (separuh bulatan). Jumlah keseluruhan (360°) = RM9.00 × 2 = RM18.00.",
+                        chartData: { labels: ["Makanan", "Alat Tulis", "Simpanan", "Derma"], angles: [180, 90, 45, 45], values: [9, 4.5, 2.25, 2.25] }
+                    },
+                    {
+                        id: "TP3-T-16", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah kotak ada 200 kad undian. Sudut carta pai bagi hadiah utama ialah 90° dan hadiah kedua ialah 135°. Hitung jumlah kad hadiah utama dan kedua.",
+                        options: ["A. 100", "B. 125", "C. 150", "D. 175"],
+                        answer: "B. 125",
+                        explanation: "Sudut gabungan = 90° + 135° = 225°. Kuantiti = (225 / 360) × 200 = 5/8 × 200 = 125 kad.",
+                        chartData: { labels: ["Utama", "Kedua", "Lain"], angles: [90, 135, 135], values: [50, 75, 75] }
+                    },
+                    {
+                        id: "TP3-T-17", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi sektor A dalam carta pai ialah 60 orang (sudut 90°) dan sektor B ialah 120 orang. Apakah kebolehjadian memilih secara rawak individu dari sektor A berbanding sektor B?",
+                        options: ["A. Peluang sektor A dua kali ganda B", "B. Peluang sektor A separuh daripada B", "C. Sama", "D. Tiada kaitan"],
+                        answer: "B. Peluang sektor A separuh daripada B",
+                        explanation: "Sektor A (60 orang) adalah separuh daripada sektor B (120 orang), jadi peluangnya adalah separuh.",
+                        chartData: { labels: ["A", "B", "Lain"], angles: [90, 180, 90], values: [60, 120, 60] }
+                    },
+                    {
+                        id: "TP3-T-18", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Sebuah carta pai menunjukkan hobi membaca (180°) dan bersukan (90°) daripada 240 orang murid. Cari jumlah murid yang hobi membaca atau bersukan.",
+                        options: ["A. 120", "B. 150", "C. 180", "D. 200"],
+                        answer: "C. 180",
+                        explanation: "Sudut gabungan = 270°. Kuantiti = (270 / 360) × 240 = 3/4 × 240 = 180 orang.",
+                        chartData: { labels: ["Membaca", "Bersukan", "Lain"], angles: [180, 90, 90], values: [120, 60, 60] }
+                    },
+                    {
+                        id: "TP3-T-19", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Diberi sudut sektor M ialah 45° dan bernilai 25 unit. Berapakah nilai untuk sudut 180° dalam carta pai yang sama?",
+                        options: ["A. 50", "B. 75", "C. 100", "D. 125"],
+                        answer: "C. 100",
+                        explanation: "180° adalah 4 kali ganda 45° (180 / 45 = 4). Maka 25 × 4 = 100 unit.",
+                        chartData: { labels: ["M", "Sektor 180°", "Lain"], angles: [45, 180, 135], values: [25, 100, 75] }
+                    },
+                    {
+                        id: "TP3-T-20", topic: "Penyelesaian Masalah", sub: "Masalah Kompleks Harian", level: "susah", cog: "Mengaplikasi", type: "objektif",
+                        question: "Dalam satu undian kotak misteri, kebolehjadian mendapat hadiah lumayan ialah 0.2. Jika terdapat 500 orang peserta, berapakah jangkaan bilangan peserta yang mendapat hadiah lumayan?",
+                        options: ["A. 50", "B. 100", "C. 150", "D. 200"],
+                        answer: "B. 100",
+                        explanation: "0.2 × 500 = 2/10 × 500 = 100 orang peserta.",
+                        chartData: { type: "prob", status: "besar" }
+                    }
+                ]
+            }
+        };
+
+        // --- HELPER FUNCTIONS & UI ROUTING ---
+        function renderHeaderNav() {
+            const nav = document.getElementById('header-nav');
+            if (!nav) return;
+            
+            if (!APP_STATE.currentUser) {
+                nav.innerHTML = `
+                    <button onclick="app.showLogin()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-sm font-semibold transition shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-right-to-bracket"></i> Log Masuk
+                    </button>
+                    <button onclick="app.showRegister()" class="px-4 py-2 bg-pink-600 hover:bg-pink-500 rounded-xl text-sm font-semibold transition shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i> Daftar
+                    </button>
+                `;
+            } else {
+                nav.innerHTML = `
+                    <div class="flex items-center gap-3 bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-2xl shadow-md">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-pink-500 flex items-center justify-center font-bold text-white text-sm">
+                            ${APP_STATE.currentUser.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="hidden sm:block text-left">
+                            <p class="text-xs font-bold text-white">${APP_STATE.currentUser.name}</p>
+                            <p class="text-[10px] text-indigo-300">Skor: ${APP_STATE.currentUser.totalScore || 0}</p>
+                        </div>
+                        <button onclick="app.logout()" title="Log Keluar" class="text-slate-400 hover:text-pink-400 p-1.5 transition ml-2">
+                            <i class="fa-solid fa-right-from-bracket text-base"></i>
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // --- APP CONTROLLER OBJECT ---
+        const app = {
+            init() {
+                // Load users from storage
+                const savedUsers = localStorage.getItem('edu_kidz_users');
+                if (savedUsers) {
+                    APP_STATE.users = JSON.parse(savedUsers);
+                }
+                const active = localStorage.getItem('edu_kidz_current_user');
+                if (active) {
+                    APP_STATE.currentUser = JSON.parse(active);
+                }
+                this.goHome();
+            },
+
+            saveUsers() {
+                localStorage.setItem('edu_kidz_users', JSON.stringify(APP_STATE.users));
+                if (APP_STATE.currentUser) {
+                    localStorage.setItem('edu_kidz_current_user', JSON.stringify(APP_STATE.currentUser));
+                }
+            },
+
+            goHome() {
+                APP_STATE.currentView = 'home';
+                renderHeaderNav();
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="text-center py-8 sm:py-12">
+                        <div class="inline-block p-4 bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-3xl mb-6 border border-indigo-500/30 glow-effect">
+                            <i class="fa-solid fa-brain text-5xl sm:text-6xl text-indigo-400"></i>
+                        </div>
+                        <h2 class="text-3xl sm:text-5xl font-black tracking-tight text-white mb-3">
+                            MATH KIDS – EDU KIDZ <span class="text-pink-400">TAHUN 6</span>
+                        </h2>
+                        <p class="text-base sm:text-lg text-indigo-200 max-w-2xl mx-auto mb-8">
+                            Modul Interaktif KSSR Semakan KPM • Topik 8.0 Pengurusan Data dan Kebolehjadian
+                        </p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
+                            <button onclick="app.startPlay()" class="p-5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 rounded-2xl font-bold shadow-lg transition transform hover:-translate-y-1 flex flex-col items-center gap-3 border border-indigo-500/40">
+                                <i class="fa-solid fa-gamepad text-3xl text-pink-300"></i>
+                                <span>MULA BERMAIN</span>
+                            </button>
+                            <button onclick="app.showTopicSelect()" class="p-5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 rounded-2xl font-bold shadow-lg transition transform hover:-translate-y-1 flex flex-col items-center gap-3 border border-purple-500/40">
+                                <i class="fa-solid fa-book-open text-3xl text-indigo-300"></i>
+                                <span>PILIH TOPIK</span>
+                            </button>
+                            <button onclick="app.showProgress()" class="p-5 bg-gradient-to-r from-pink-600 to-rose-700 hover:from-pink-500 hover:to-rose-600 rounded-2xl font-bold shadow-lg transition transform hover:-translate-y-1 flex flex-col items-center gap-3 border border-pink-500/40">
+                                <i class="fa-solid fa-chart-line text-3xl text-yellow-300"></i>
+                                <span>PROGRESS & PROFIL</span>
+                            </button>
+                            <button onclick="app.showLeaderboard()" class="p-5 bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 rounded-2xl font-bold shadow-lg transition transform hover:-translate-y-1 flex flex-col items-center gap-3 border border-amber-500/40">
+                                <i class="fa-solid fa-trophy text-3xl text-white"></i>
+                                <span>LEADERBOARD</span>
+                            </button>
+                        </div>
+
+                        <div class="flex flex-wrap justify-center gap-4">
+                            <button onclick="app.showSettings()" class="px-6 py-2.5 bg-slate-700 hover:bg-slate-600 rounded-xl font-semibold text-sm transition flex items-center gap-2">
+                                <i class="fa-solid fa-gear"></i> Tetapan
+                            </button>
+                            ${!APP_STATE.currentUser ? `
+                                <button onclick="app.showLogin()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-semibold text-sm transition flex items-center gap-2">
+                                    <i class="fa-solid fa-right-to-bracket"></i> Log Masuk Akaun
+                                </button>
+                            ` : `
+                                <button onclick="app.showProfile()" class="px-6 py-2.5 bg-indigo-700 hover:bg-indigo-600 rounded-xl font-semibold text-sm transition flex items-center gap-2">
+                                    <i class="fa-solid fa-user"></i> Profil Saya (${APP_STATE.currentUser.name})
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                `;
+            },
+
+            showLogin() {
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="max-w-md mx-auto py-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-black text-white flex items-center gap-2">
+                                <i class="fa-solid fa-right-to-bracket text-indigo-400"></i> Log Masuk Akaun
+                            </h3>
+                            <button onclick="app.goHome()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+                        </div>
+                        <form onsubmit="app.handleLogin(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-indigo-300 mb-1">Nama Pengguna (Username)</label>
+                                <input type="text" id="login-username" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 font-medium" placeholder="Masukkan username...">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-indigo-300 mb-1">Kata Laluan (Password)</label>
+                                <input type="password" id="login-password" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 font-medium" placeholder="Masukkan kata laluan...">
+                            </div>
+                            <div class="pt-4 flex gap-3">
+                                <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 py-3 rounded-xl font-bold transition shadow-lg">Log Masuk</button>
+                                <button type="button" onclick="app.showRegister()" class="px-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-semibold transition text-sm">Daftar Baharu</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+            },
+
+            handleLogin(e) {
+                e.preventDefault();
+                const u = document.getElementById('login-username').value.trim();
+                const p = document.getElementById('login-password').value.trim();
+                const found = APP_STATE.users.find(x => x.username === u && x.password === p);
+                if (found) {
+                    APP_STATE.currentUser = found;
+                    this.saveUsers();
+                    this.showModal("Berjaya!", `Selamat kembali, ${found.name}! 🎉`, () => {
+                        this.closeModal();
+                        this.goHome();
+                    });
+                } else {
+                    this.showModal("Ralat", "Nama pengguna atau kata laluan tidak sah. Sila cuba lagi.", () => this.closeModal());
+                }
+            },
+
+            showRegister() {
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="max-w-md mx-auto py-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-black text-white flex items-center gap-2">
+                                <i class="fa-solid fa-user-plus text-pink-400"></i> Daftar Akaun Baharu
+                            </h3>
+                            <button onclick="app.goHome()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+                        </div>
+                        <form onsubmit="app.handleRegister(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-indigo-300 mb-1">Nama Penuh Murid</label>
+                                <input type="text" id="reg-name" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500 font-medium" placeholder="Cth: Aina Sofea">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-indigo-300 mb-1">Nama Pengguna (Username)</label>
+                                <input type="text" id="reg-username" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500 font-medium" placeholder="Cth: aina6beta">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-indigo-300 mb-1">Kata Laluan (Password)</label>
+                                <input type="password" id="reg-password" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500 font-medium" placeholder="Cth: rahsia123">
+                            </div>
+                            <div class="pt-4 flex gap-3">
+                                <button type="submit" class="flex-1 bg-pink-600 hover:bg-pink-500 py-3 rounded-xl font-bold transition shadow-lg">Daftar Sekarang</button>
+                                <button type="button" onclick="app.showLogin()" class="px-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-semibold transition text-sm">Sudah Ada Akaun</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+            },
+
+            handleRegister(e) {
+                e.preventDefault();
+                const name = document.getElementById('reg-name').value.trim();
+                const username = document.getElementById('reg-username').value.trim();
+                const password = document.getElementById('reg-password').value.trim();
+
+                if (APP_STATE.users.some(x => x.username === username)) {
+                    this.showModal("Ralat", "Nama pengguna telah wujud. Sila pilih nama lain.", () => this.closeModal());
+                    return;
+                }
+
+                const newUser = {
+                    id: 'usr_' + Date.now(),
+                    name,
+                    username,
+                    password,
+                    totalScore: 0,
+                    totalAnswered: 0,
+                    totalCorrect: 0,
+                    totalWrong: 0,
+                    history: []
+                };
+
+                APP_STATE.users.push(newUser);
+                APP_STATE.currentUser = newUser;
+                this.saveUsers();
+                this.showModal("Tahniah!", "Akaun anda berjaya didaftarkan! Selamat menduduki kuiz.", () => {
+                    this.closeModal();
+                    this.goHome();
+                });
+            },
+
+            logout() {
+                APP_STATE.currentUser = null;
+                localStorage.removeItem('edu_kidz_current_user');
+                renderHeaderNav();
+                this.goHome();
+            },
+
+            startPlay() {
+                if (!APP_STATE.currentUser) {
+                    this.showModal("Log Masuk Diperlukan", "Sila log masuk atau daftar akaun terlebih dahulu untuk menyimpan progress dan skor anda.", () => {
+                        this.closeModal();
+                        this.showLogin();
+                    });
+                    return;
+                }
+                this.showTopicSelect();
+            },
+
+            showTopicSelect() {
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="max-w-4xl mx-auto py-4">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-black text-white flex items-center gap-2">
+                                <i class="fa-solid fa-book-open text-purple-400"></i> Pilih Topik Pembelajaran
+                            </h3>
+                            <button onclick="app.goHome()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-house text-xl"></i></button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div onclick="app.selectTopic(1)" class="bg-slate-900/80 border border-indigo-500/30 hover:border-indigo-500 rounded-2xl p-6 cursor-pointer transition transform hover:-translate-y-1 shadow-xl flex flex-col justify-between">
+                                <div>
+                                    <span class="text-xs font-bold px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full">Topik 8.1</span>
+                                    <h4 class="text-xl font-bold text-white mt-3 mb-2">Carta Pai & Mentafsir Data</h4>
+                                    <p class="text-xs text-slate-300">Melengkapkan carta pai sudut 45°, 90°, 180° dan mentafsir kuantiti.</p>
+                                </div>
+                                <div class="mt-6 flex items-center justify-between text-indigo-400 font-semibold text-sm">
+                                    <span>Pilih Topik</span> <i class="fa-solid fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div onclick="app.selectTopic(2)" class="bg-slate-900/80 border border-purple-500/30 hover:border-purple-500 rounded-2xl p-6 cursor-pointer transition transform hover:-translate-y-1 shadow-xl flex flex-col justify-between">
+                                <div>
+                                    <span class="text-xs font-bold px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full">Topik 8.2</span>
+                                    <h4 class="text-xl font-bold text-white mt-3 mb-2">Kebolehjadian</h4>
+                                    <p class="text-xs text-slate-300">Mustahil, kecil kemungkinan, sama kemungkinan, besar kemungkinan & pasti.</p>
+                                </div>
+                                <div class="mt-6 flex items-center justify-between text-purple-400 font-semibold text-sm">
+                                    <span>Pilih Topik</span> <i class="fa-solid fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <div onclick="app.selectTopic(3)" class="bg-slate-900/80 border border-pink-500/30 hover:border-pink-500 rounded-2xl p-6 cursor-pointer transition transform hover:-translate-y-1 shadow-xl flex flex-col justify-between">
+                                <div>
+                                    <span class="text-xs font-bold px-3 py-1 bg-pink-500/20 text-pink-300 rounded-full">Topik 8.3</span>
+                                    <h4 class="text-xl font-bold text-white mt-3 mb-2">Penyelesaian Masalah</h4>
+                                    <p class="text-xs text-slate-300">Situasi harian melibatkan pengurusan data dan kebolehjadian.</p>
+                                </div>
+                                <div class="mt-6 flex items-center justify-between text-pink-400 font-semibold text-sm">
+                                    <span>Pilih Topik</span> <i class="fa-solid fa-arrow-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            selectTopic(topicId) {
+                APP_STATE.gameSettings.topic = topicId;
+                this.showDifficultySelect();
+            },
+
+            showDifficultySelect() {
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="max-w-md mx-auto py-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-black text-white flex items-center gap-2">
+                                <i class="fa-solid fa-layer-group text-yellow-400"></i> Pilih Tahap Kesukaran
+                            </h3>
+                            <button onclick="app.showTopicSelect()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+                        </div>
+                        <div class="space-y-4 mb-6">
+                            <button onclick="app.selectDifficulty('mudah')" class="w-full p-4 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/50 rounded-2xl text-left transition flex items-center justify-between group">
+                                <div>
+                                    <h4 class="text-lg font-bold text-emerald-300">MUDAH</h4>
+                                    <p class="text-xs text-slate-300">Mengingat & memahami, pengiraan asas 1 langkah.</p>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-emerald-400 group-hover:translate-x-1 transition"></i>
+                            </button>
+                            <button onclick="app.selectDifficulty('sederhana')" class="w-full p-4 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/50 rounded-2xl text-left transition flex items-center justify-between group">
+                                <div>
+                                    <h4 class="text-lg font-bold text-amber-300">SEDERHANA</h4>
+                                    <p class="text-xs text-slate-300">Memahami & mengaplikasi tafsiran data 2 langkah.</p>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-amber-400 group-hover:translate-x-1 transition"></i>
+                            </button>
+                            <button onclick="app.selectDifficulty('susah')" class="w-full p-4 bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/50 rounded-2xl text-left transition flex items-center justify-between group">
+                                <div>
+                                    <h4 class="text-lg font-bold text-rose-300">SUSAH</h4>
+                                    <p class="text-xs text-slate-300">Penaakulan tinggi, masalah harian & gabungan topik.</p>
+                                </div>
+                                <i class="fa-solid fa-chevron-right text-rose-400 group-hover:translate-x-1 transition"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            },
+
+            selectDifficulty(diff) {
+                APP_STATE.gameSettings.difficulty = diff;
+                this.showTimerSelect();
+            },
+
+            showTimerSelect() {
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="max-w-md mx-auto py-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-black text-white flex items-center gap-2">
+                                <i class="fa-solid fa-stopwatch text-indigo-400"></i> Pilih Masa Menjawab
+                            </h3>
+                            <button onclick="app.showDifficultySelect()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+                        </div>
+                        <div class="space-y-4 mb-6">
+                            <button onclick="app.startGameSession(30)" class="w-full p-4 bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/50 rounded-2xl text-left transition flex items-center justify-between group">
+                                <div>
+                                    <h4 class="text-lg font-bold text-indigo-300">30 SAAT</h4>
+                                    <p class="text-xs text-slate-300">Cabaran pantas sesaat demi saat.</p>
+                                </div>
+                                <i class="fa-solid fa-bolt text-indigo-400"></i>
+                            </button>
+                            <button onclick="app.startGameSession(60)" class="w-full p-4 bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/50 rounded-2xl text-left transition flex items-center justify-between group">
+                                <div>
+                                    <h4 class="text-lg font-bold text-indigo-300">1 MINIT</h4>
+                                    <p class="text-xs text-slate-300">Masa selesa untuk berfikir dan mengira.</p>
+                                </div>
+                                <i class="fa-solid fa-clock text-indigo-400"></i>
+                            </button>
+                            <button onclick="app.startGameSession(0)" class="w-full p-4 bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/50 rounded-2xl text-left transition flex items-center justify-between group">
+                                <div>
+                                    <h4 class="text-lg font-bold text-indigo-300">TIADA HAD MASA</h4>
+                                    <p class="text-xs text-slate-300">Fokus penuh tanpa tekanan masa.</p>
+                                </div>
+                                <i class="fa-solid fa-infinity text-indigo-400"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            },
+
+            startGameSession(timeLimit) {
+                APP_STATE.gameSettings.timeLimit = timeLimit;
+                const { topic, difficulty } = APP_STATE.gameSettings;
+                
+                // Get questions from bank and pick random 20
+                const bank = QUESTION_BANK[topic][difficulty];
+                // Shuffle array
+                const shuffled = [...bank].sort(() => 0.5 - Math.random());
+                APP_STATE.session = {
+                    questions: shuffled.slice(0, 20),
+                    currentIndex: 0,
+                    score: 0,
+                    correctCount: 0,
+                    wrongCount: 0,
+                    startTime: Date.now(),
+                    timerInterval: null,
+                    timeLeft: timeLimit,
+                    userAnswers: []
+                };
+
+                this.renderGameScreen();
+            },
+
+            renderGameScreen() {
+                const session = APP_STATE.session;
+                if (session.currentIndex >= session.questions.length) {
+                    this.endGameSession();
+                    return;
+                }
+
+                const q = session.questions[session.currentIndex];
+                const container = document.getElementById('app-container');
+                
+                // Progress percentage
+                const progressPercent = ((session.currentIndex) / session.questions.length) * 100;
+
+                container.innerHTML = `
+                    <div class="max-w-3xl mx-auto py-2">
+                        <!-- Top status bar -->
+                        <div class="flex justify-between items-center mb-4 text-xs font-bold text-slate-300 uppercase">
+                            <span class="bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30">
+                                Soalan ${session.currentIndex + 1} / ${session.questions.length}
+                            </span>
+                            <div class="flex items-center gap-4">
+                                <span class="bg-pink-500/20 text-pink-300 px-3 py-1 rounded-full border border-pink-500/30">
+                                    Markah: ${session.score} / 100
+                                </span>
+                                ${APP_STATE.gameSettings.timeLimit > 0 ? `
+                                    <span id="timer-badge" class="bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full border border-amber-500/30 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-clock"></i> <span id="time-left-val">${session.timeLeft}</span>s
+                                    </span>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-slate-900 h-2 rounded-full mb-6 overflow-hidden border border-slate-700">
+                            <div class="bg-gradient-to-r from-indigo-500 to-pink-500 h-full transition-all duration-300" style="width: ${progressPercent}%"></div>
+                        </div>
+
+                        <!-- Question Card -->
+                        <div class="bg-slate-900/90 border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-xl mb-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-[11px] font-extrabold uppercase text-indigo-400 bg-indigo-950 px-3 py-1 rounded-lg border border-indigo-800">
+                                    ${q.topic} • ${q.sub}
+                                </span>
+                                <span class="text-[11px] font-bold text-emerald-400 uppercase">5 Markah</span>
+                            </div>
+                            
+                            <h3 class="text-lg sm:text-xl font-bold text-white mb-6 leading-relaxed">
+                                ${q.question}
+                            </h3>
+
+                            <!-- Chart / Probability Graphic Visual (Canvas or SVG) -->
+                            ${this.renderVisualAsset(q)}
+
+                            <!-- Options -->
+                            <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+                                ${q.options.map((opt, idx) => `
+                                    <button onclick="app.submitAnswer('${opt.replace(/'/g, "\\'")}')" class="option-btn p-4 bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 hover:border-indigo-500 rounded-2xl text-left font-semibold text-white transition flex items-center justify-between group shadow-md">
+                                        <span class="text-sm">${opt}</span>
+                                        <span class="w-6 h-6 rounded-full bg-slate-700 group-hover:bg-indigo-600 flex items-center justify-center text-xs text-slate-300 group-hover:text-white font-bold transition">
+                                            ${String.fromCharCode(65 + idx)}
+                                        </span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Navigation Bar inside game -->
+                        <div class="flex justify-between items-center">
+                            <button onclick="app.showTopicSelect()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs font-semibold transition text-slate-300 flex items-center gap-2">
+                                <i class="fa-solid fa-arrow-left"></i> Keluar Ke Menu
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // Start timer if enabled
+                if (APP_STATE.gameSettings.timeLimit > 0) {
+                    this.startTimer();
+                }
+            },
+
+            renderVisualAsset(q) {
+                if (q.chartData && q.chartData.type === 'prob') {
+                    // Probability visual icon
+                    let iconHtml = '<i class="fa-solid fa-dice text-4xl text-indigo-400 mb-2"></i>';
+                    if (q.sub.includes('Syiling')) iconHtml = '<i class="fa-solid fa-coins text-4xl text-yellow-400 mb-2"></i>';
+                    if (q.sub.includes('Bola')) iconHtml = '<i class="fa-solid fa-bowling-ball text-4xl text-pink-400 mb-2"></i>';
+                    if (q.sub.includes('Dadu')) iconHtml = '<i class="fa-solid fa-dice-six text-4xl text-emerald-400 mb-2"></i>';
+
+                    return `
+                        <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-4 mb-6 flex flex-col items-center justify-center text-center">
+                            ${iconHtml}
+                            <p class="text-xs text-indigo-200 font-semibold uppercase tracking-wider">Situasi Kebolehjadian Kehidupan Harian</p>
+                        </div>
+                    `;
+                } else if (q.chartData && q.chartData.angles) {
+                    // Render SVG Pie Chart
+                    const angles = q.chartData.angles;
+                    const labels = q.chartData.labels;
+                    const colors = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'];
+                    
+                    let cumulativeAngle = 0;
+                    let svgSectors = '';
+
+                    angles.forEach((ang, idx) => {
+                        const startAngle = cumulativeAngle;
+                        const endAngle = cumulativeAngle + ang;
+                        cumulativeAngle = endAngle;
+
+                        // SVG arc calculation for 150x150 circle (radius 60, center 75,75)
+                        const x1 = 75 + 60 * Math.cos((startAngle - 90) * Math.PI / 180);
+                        const y1 = 75 + 60 * Math.sin((startAngle - 90) * Math.PI / 180);
+                        const x2 = 75 + 60 * Math.cos((endAngle - 90) * Math.PI / 180);
+                        const y2 = 75 + 60 * Math.sin((endAngle - 90) * Math.PI / 180);
+                        const largeArc = ang > 180 ? 1 : 0;
+
+                        if (ang === 360) {
+                            svgSectors += `<circle cx="75" cy="75" r="60" fill="${colors[idx % colors.length]}" />`;
+                        } else {
+                            const pathData = `M 75 75 L ${x1} ${y1} A 60 60 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                            svgSectors += `<path d="${pathData}" fill="${colors[idx % colors.length]}" stroke="#1e293b" stroke-width="2" />`;
+                        }
+                    });
+
+                    return `
+                        <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-center justify-center gap-6">
+                            <div class="w-36 h-36 relative">
+                                <svg viewBox="0 0 150 150" class="w-full h-full drop-shadow-lg">
+                                    ${svgSectors}
+                                    <circle cx="75" cy="75" r="15" fill="#0f172a" />
+                                </svg>
+                            </div>
+                            <div class="flex flex-col gap-1.5 text-left">
+                                <p class="text-xs font-bold text-slate-300 uppercase mb-1"><i class="fa-solid fa-chart-pie text-indigo-400"></i> Legenda Carta Pai:</p>
+                                ${labels.map((lbl, idx) => `
+                                    <div class="flex items-center gap-2 text-xs text-slate-300">
+                                        <span class="w-3 h-3 rounded-full inline-block" style="background-color: ${colors[idx % colors.length]}"></span>
+                                        <span class="font-medium">${lbl}: <strong class="text-white">${angles[idx]}°</strong></span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                return '';
+            },
+
+            startTimer() {
+                if (APP_STATE.session.timerInterval) clearInterval(APP_STATE.session.timerInterval);
+                APP_STATE.session.timerInterval = setInterval(() => {
+                    APP_STATE.session.timeLeft--;
+                    const valEl = document.getElementById('time-left-val');
+                    if (valEl) valEl.innerText = APP_STATE.session.timeLeft;
+
+                    if (APP_STATE.session.timeLeft <= 0) {
+                        clearInterval(APP_STATE.session.timerInterval);
+                        this.handleTimeOut();
+                    }
+                }, 1000);
+            },
+
+            handleTimeOut() {
+                const session = APP_STATE.session;
+                const q = session.questions[session.currentIndex];
+                session.wrongCount++;
+                session.userAnswers.push({ question: q.question, selected: "Masa Tamat", correct: q.answer, isCorrect: false });
+
+                this.showFeedbackModal(false, "Masa Tamat!", q.answer, q.explanation, () => {
+                    this.closeModal();
+                    session.currentIndex++;
+                    session.timeLeft = APP_STATE.gameSettings.timeLimit;
+                    this.renderGameScreen();
+                });
+            },
+
+            submitAnswer(selectedOpt) {
+                if (APP_STATE.session.timerInterval) clearInterval(APP_STATE.session.timerInterval);
+
+                const session = APP_STATE.session;
+                const q = session.questions[session.currentIndex];
+                const isCorrect = (selectedOpt === q.answer);
+
+                if (isCorrect) {
+                    session.score += 5;
+                    session.correctCount++;
+                    try { confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } }); } catch(e){}
+                } else {
+                    session.wrongCount++;
+                }
+
+                session.userAnswers.push({ question: q.question, selected: selectedOpt, correct: q.answer, isCorrect });
+
+                this.showFeedbackModal(isCorrect, isCorrect ? "BETUL!" : "CUBA LAGI!", q.answer, q.explanation, () => {
+                    this.closeModal();
+                    session.currentIndex++;
+                    session.timeLeft = APP_STATE.gameSettings.timeLimit;
+                    this.renderGameScreen();
+                });
+            },
+
+            showFeedbackModal(isCorrect, title, correctAns, explanation, callback) {
+                const modal = document.getElementById('modal-container');
+                const content = document.getElementById('modal-content');
+
+                content.innerHTML = `
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${isCorrect ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-400 border border-rose-500/40'}">
+                            <i class="fa-solid ${isCorrect ? 'fa-check text-3xl' : 'fa-xmark text-3xl'}"></i>
+                        </div>
+                        <h4 class="text-2xl font-black ${isCorrect ? 'text-emerald-400' : 'text-rose-400'} mb-2">${title}</h4>
+                        ${!isCorrect ? `
+                            <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 text-left my-4 text-xs space-y-2">
+                                <p class="text-slate-400">Jawapan Betul: <strong class="text-emerald-400">${correctAns}</strong></p>
+                            </div>
+                        ` : ''}
+                        <p class="text-xs text-slate-300 leading-relaxed mb-6 bg-slate-900/60 p-3 rounded-xl border border-slate-800 text-left">
+                            <strong>Penerangan:</strong> ${explanation}
+                        </p>
+                        <button id="feedback-next-btn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold transition shadow-lg text-white">
+                            Seterusnya <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                `;
+
+                modal.classList.remove('hidden');
+                document.getElementById('feedback-next-btn').onclick = callback;
+            },
+
+            endGameSession() {
+                const session = APP_STATE.session;
+                const timeTakenSec = Math.floor((Date.now() - session.startTime) / 1000);
+                const accuracy = Math.round((session.correctCount / session.questions.length) * 100);
+
+                // Update user stats
+                if (APP_STATE.currentUser) {
+                    APP_STATE.currentUser.totalScore = (APP_STATE.currentUser.totalScore || 0) + session.score;
+                    APP_STATE.currentUser.totalAnswered = (APP_STATE.currentUser.totalAnswered || 0) + session.questions.length;
+                    APP_STATE.currentUser.totalCorrect = (APP_STATE.currentUser.totalCorrect || 0) + session.correctCount;
+                    APP_STATE.currentUser.totalWrong = (APP_STATE.currentUser.totalWrong || 0) + session.wrongCount;
+
+                    if (!APP_STATE.currentUser.history) APP_STATE.currentUser.history = [];
+                    APP_STATE.currentUser.history.push({
+                        date: new Date().toLocaleDateString('ms-MY'),
+                        topic: APP_STATE.gameSettings.topic,
+                        difficulty: APP_STATE.gameSettings.difficulty,
+                        score: session.score,
+                        correct: session.correctCount,
+                        accuracy,
+                        timeTaken: timeTakenSec
+                    });
+
+                    // Update in global users list
+                    const idx = APP_STATE.users.findIndex(u => u.id === APP_STATE.currentUser.id);
+                    if (idx !== -1) {
+                        APP_STATE.users[idx] = APP_STATE.currentUser;
+                    }
+                    this.saveUsers();
+                }
+
+                try { confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } }); } catch(e){}
+
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="max-w-2xl mx-auto py-6 text-center">
+                        <div class="inline-block p-4 bg-gradient-to-tr from-yellow-500/20 to-pink-500/20 rounded-3xl mb-4 border border-yellow-500/30">
+                            <i class="fa-solid fa-trophy text-5xl text-yellow-400"></i>
+                        </div>
+                        <h3 class="text-3xl font-black text-white mb-2">SESI SELESAI, ${APP_STATE.currentUser ? APP_STATE.currentUser.name.toUpperCase() : 'MURID'}! 🎉</h3>
+                        <p class="text-sm text-indigo-300 mb-6">Tahniah kerana berjaya menyelesaikan cabaran Matematik Tahun 6 KSSR.</p>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                            <div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
+                                <p class="text-xs text-slate-400 uppercase font-semibold">Markah Akhir</p>
+                                <p class="text-2xl font-black text-pink-400 mt-1">${session.score} / 100</p>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
+                                <p class="text-xs text-slate-400 uppercase font-semibold">Betul</p>
+                                <p class="text-2xl font-black text-emerald-400 mt-1">${session.correctCount} / 20</p>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
+                                <p class="text-xs text-slate-400 uppercase font-semibold">Ketepatan</p>
+                                <p class="text-2xl font-black text-indigo-400 mt-1">${accuracy}%</p>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-700 p-4 rounded-2xl">
+                                <p class="text-xs text-slate-400 uppercase font-semibold">Masa</p>
+                                <p class="text-2xl font-black text-amber-400 mt-1">${timeTakenSec}s</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap justify-center gap-4">
+                            <button onclick="app.startPlay()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold transition shadow-lg text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-rotate-right"></i> Main Lagi
+                            </button>
+                            <button onclick="app.showTopicSelect()" class="px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl font-bold transition shadow-lg text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-book"></i> Pilih Topik Lain
+                            </button>
+                            <button onclick="app.showProgress()" class="px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold transition shadow-lg text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line"></i> Lihat Progress
+                            </button>
+                            <button onclick="app.showLeaderboard()" class="px-6 py-3 bg-amber-600 hover:bg-amber-500 rounded-xl font-bold transition shadow-lg text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-trophy"></i> Leaderboard
+                            </button>
+                        </div>
+                    </div>
+                `;
+            },
+
+            showProgress() {
+                if (!APP_STATE.currentUser) {
+                    this.showModal("Log Masuk Diperlukan", "Sila log masuk untuk melihat rekod progress peribadi anda.", () => {
+                        this.closeModal();
+                        this.showLogin();
+                    });
+                    return;
+                }
+
+                const user = APP_STATE.currentUser;
+                const totalAns = user.totalAnswered || 0;
+                const totalCorr = user.totalCorrect || 0;
+                const accuracy = totalAns > 0 ? Math.round((totalCorr / totalAns) * 100) : 0;
+
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="max-w-3xl mx-auto py-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-black text-white flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line text-yellow-400"></i> Rekod Progress & Profil
+                            </h3>
+                            <button onclick="app.goHome()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-house text-xl"></i></button>
+                        </div>
+
+                        <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 mb-6 shadow-xl">
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-pink-600 flex items-center justify-center font-black text-2xl text-white shadow-lg">
+                                    ${user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-bold text-white">${user.name}</h4>
+                                    <p class="text-xs text-indigo-300">Username: @${user.username}</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                                    <p class="text-xs text-slate-400 uppercase font-semibold">Markah Terkumpul</p>
+                                    <p class="text-2xl font-black text-pink-400 mt-1">${user.totalScore || 0}</p>
+                                </div>
+                                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                                    <p class="text-xs text-slate-400 uppercase font-semibold">Soalan Dijawab</p>
+                                    <p class="text-2xl font-black text-indigo-400 mt-1">${totalAns}</p>
+                                </div>
+                                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                                    <p class="text-xs text-slate-400 uppercase font-semibold">Jawapan Betul</p>
+                                    <p class="text-2xl font-black text-emerald-400 mt-1">${totalCorr}</p>
+                                </div>
+                                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                                    <p class="text-xs text-slate-400 uppercase font-semibold">Peratus Ketepatan</p>
+                                    <p class="text-2xl font-black text-yellow-400 mt-1">${accuracy}%</p>
+                                </div>
+                            </div>
+
+                            <h5 class="text-sm font-bold text-white uppercase tracking-wider mb-3">Sejarah Sesi Permainan</h5>
+                            ${user.history && user.history.length > 0 ? `
+                                <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                                    ${user.history.slice().reverse().map(h => `
+                                        <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
+                                            <div>
+                                                <span class="text-indigo-400 font-bold">Topik ${h.topic} (${h.difficulty})</span>
+                                                <p class="text-slate-400 text-[10px]">${h.date} • Masa: ${h.timeTaken}s</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <span class="font-bold text-pink-400">${h.score} Markah</span>
+                                                <p class="text-emerald-400 text-[10px]">Betul: ${h.correct}/20 (${h.accuracy}%)</p>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : `
+                                <p class="text-xs text-slate-400 italic bg-slate-950 p-4 rounded-xl text-center">Tiada sejarah permainan lagi. Jom mula bermain sekarang!</p>
+                            `}
+                        </div>
+                    </div>
+                `;
+            },
+
+            showLeaderboard() {
+                // Sort users by totalScore descending
+                const sorted = [...APP_STATE.users].sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0)).slice(0, 10);
+
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="max-w-3xl mx-auto py-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-black text-white flex items-center gap-2">
+                                <i class="fa-solid fa-trophy text-yellow-400"></i> Leaderboard 10 Pemain Teratas
+                            </h3>
+                            <button onclick="app.goHome()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-house text-xl"></i></button>
+                        </div>
+
+                        <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-xl overflow-hidden">
+                            ${sorted.length > 0 ? `
+                                <div class="space-y-3">
+                                    ${sorted.map((u, idx) => `
+                                        <div class="bg-slate-950 border ${idx === 0 ? 'border-yellow-500/50 bg-yellow-500/5' : 'border-slate-800'} p-4 rounded-2xl flex items-center justify-between">
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm ${idx === 0 ? 'bg-yellow-500 text-slate-950' : idx === 1 ? 'bg-slate-300 text-slate-950' : idx === 2 ? 'bg-amber-700 text-white' : 'bg-slate-800 text-indigo-300'}">
+                                                    #${idx + 1}
+                                                </div>
+                                                <div>
+                                                    <h4 class="text-sm font-bold text-white">${u.name}</h4>
+                                                    <p class="text-[10px] text-slate-400">Soalan dijawab: ${u.totalAnswered || 0}</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="text-base font-black text-pink-400">${u.totalScore || 0} <span class="text-xs text-slate-400 font-normal">markah</span></p>
+                                                <p class="text-xs text-emerald-400 font-semibold">${u.totalAnswered ? Math.round(((u.totalCorrect || 0) / u.totalAnswered) * 100) : 0}% ketepatan</p>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : `
+                                <p class="text-xs text-slate-400 italic text-center py-8">Tiada rekod pemain lagi dalam leaderboard.</p>
+                            `}
+                        </div>
+                    </div>
+                `;
+            },
+
+            showSettings() {
+                const container = document.getElementById('app-container');
+                container.innerHTML = `
+                    <div class="max-w-md mx-auto py-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-black text-white flex items-center gap-2">
+                                <i class="fa-solid fa-gear text-slate-400"></i> Tetapan Game
+                            </h3>
+                            <button onclick="app.goHome()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-house text-xl"></i></button>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 space-y-4 shadow-xl">
+                            <div>
+                                <h4 class="text-sm font-bold text-white mb-1">Mod Paparan Responsif</h4>
+                                <p class="text-xs text-slate-400">Game ini dioptimumkan sepenuhnya untuk mod Portrait dan Landscape merentasi Komputer, Tablet, serta Telefon Pintar.</p>
+                            </div>
+                            <hr class="border-slate-800">
+                            <div>
+                                <h4 class="text-sm font-bold text-white mb-1">Kurikulum KPM</h4>
+                                <p class="text-xs text-slate-400">Selaras dengan KSSR Semakan Matematik Tahun 6 KPM (Topik 8.0 Pengurusan Data & Kebolehjadian).</p>
+                            </div>
+                            <hr class="border-slate-800">
+                            <div class="pt-2">
+                                <button onclick="app.goHome()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold transition shadow-lg text-sm">Kembali ke Menu Utama</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            showModal(title, message, callback) {
+                const modal = document.getElementById('modal-container');
+                const content = document.getElementById('modal-content');
+                content.innerHTML = `
+                    <h4 class="text-xl font-black text-white mb-2">${title}</h4>
+                    <p class="text-xs text-slate-300 mb-6 leading-relaxed">${message}</p>
+                    <button id="modal-ok-btn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold transition shadow-lg text-white text-sm">OK</button>
+                `;
+                modal.classList.remove('hidden');
+                document.getElementById('modal-ok-btn').onclick = callback;
+            },
+
+            closeModal() {
+                document.getElementById('modal-container').classList.add('hidden');
+            }
+        };
+
+        // Initialize App on Window Load
+        window.onload = function() {
+            app.init();
+        };
+    </script>
+</body>
+</html>

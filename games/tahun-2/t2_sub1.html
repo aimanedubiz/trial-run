@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Kids – Edu Kidz | Belajar Matematik Tahun 2</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins & Fredoka for Kid-friendly UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Confetti Library for Celebrations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%);
+            min-height: 100vh;
+            color: #1e293b;
+            user-select: none;
+        }
+        .kid-font {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+        .bounce-hover:hover {
+            transform: translateY(-3px);
+            transition: transform 0.2s ease;
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <div id="app" class="flex-1 flex flex-col max-w-4xl mx-auto w-full p-4 md:p-6">
+        
+        <!-- Dynamic Header / Mascot Bar -->
+        <header id="header-bar" class="hidden justify-between items-center bg-white/80 backdrop-blur-md p-4 rounded-2xl mb-6 card-shadow border border-sky-100">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-sky-500 rounded-full flex items-center justify-center text-white text-2xl shadow-md floating">
+                    🤖
+                </div>
+                <div>
+                    <h2 class="kid-font text-lg font-bold text-sky-600" id="header-username">Kawan Cilik</h2>
+                    <p class="text-xs text-slate-500 font-medium">XP: <span id="header-xp" class="text-amber-500 font-bold">0</span> | Lencana: <span id="header-badges" class="text-purple-600 font-bold">0</span></p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="router.navigateTo('profile')" class="bg-sky-100 hover:bg-sky-200 text-sky-700 px-3 py-2 rounded-xl text-sm font-semibold transition flex items-center space-x-1">
+                    <i class="fa-solid fa-user"></i>
+                    <span class="hidden sm:inline">Profil</span>
+                </button>
+                <button onclick="authSystem.logout()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 px-3 py-2 rounded-xl text-sm font-semibold transition flex items-center space-x-1">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span class="hidden sm:inline">Keluar</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Views Container -->
+        <main class="flex-1 flex flex-col justify-center">
+            
+            <!-- 1. AUTH VIEW (LOGIN / REGISTER) -->
+            <div id="view-auth" class="view-section max-w-md mx-auto w-full bg-white rounded-3xl p-6 md:p-8 card-shadow border-4 border-sky-200">
+                <div class="text-center mb-6">
+                    <div class="text-6xl mb-2 floating">🌟</div>
+                    <h1 class="kid-font text-3xl font-bold text-sky-600 tracking-wide">MATH KIDS</h1>
+                    <p class="kid-font text-xl text-amber-500 font-semibold">EDU KIDZ</p>
+                    <p class="text-sm text-slate-500 mt-1">Jom Jadi Juara Matematik Tahun 2! 🚀</p>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex bg-slate-100 p-1.5 rounded-2xl mb-6">
+                    <button id="tab-login-btn" onclick="authSystem.switchTab('login')" class="flex-1 py-2.5 rounded-xl text-sm font-bold transition bg-white text-sky-600 shadow-sm">Log Masuk</button>
+                    <button id="tab-register-btn" onclick="authSystem.switchTab('register')" class="flex-1 py-2.5 rounded-xl text-sm font-bold transition text-slate-500">Daftar Akaun</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="form-login" onsubmit="authSystem.handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Pengguna</label>
+                        <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none transition font-medium text-slate-700" placeholder="cth: ahmad202">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Kata Laluan</label>
+                        <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none transition font-medium text-slate-700" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-bold py-3.5 rounded-xl shadow-lg hover:from-sky-600 hover:to-indigo-600 transition kid-font text-lg">
+                        Log Masuk 🎮
+                    </button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="form-register" onsubmit="authSystem.handleRegister(event)" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Penuh Murid</label>
+                        <input type="text" id="reg-name" required class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none transition font-medium text-slate-700" placeholder="cth: Siti Aisyah">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Pengguna</label>
+                        <input type="text" id="reg-username" required class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none transition font-medium text-slate-700" placeholder="cth: aisyah2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Kata Laluan</label>
+                        <input type="password" id="reg-password" required class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none transition font-medium text-slate-700" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold py-3.5 rounded-xl shadow-lg hover:from-emerald-600 hover:to-teal-600 transition kid-font text-lg">
+                        Daftar Akaun Baru ✨
+                    </button>
+                </form>
+            </div>
+
+            <!-- 2. HOME VIEW -->
+            <div id="view-home" class="view-section hidden max-w-2xl mx-auto w-full text-center">
+                <div class="mb-6">
+                    <span class="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Tahun 2 KPM</span>
+                    <h1 class="kid-font text-4xl md:text-5xl font-extrabold text-sky-600 mt-2">🌟 MATH KIDS 🌟</h1>
+                    <h2 class="kid-font text-2xl md:text-3xl font-bold text-amber-500">EDU KIDZ</h2>
+                    <p class="text-slate-600 font-medium mt-1">Jom Jadi Juara Matematik!</p>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-xl mx-auto">
+                    <button onclick="router.navigateTo('topics')" class="bg-white p-6 rounded-3xl card-shadow border-2 border-sky-100 hover:border-sky-400 transition bounce-hover flex flex-col items-center justify-center space-y-2 group">
+                        <div class="text-4xl group-hover:scale-110 transition">▶️</div>
+                        <span class="kid-font font-bold text-sky-700 text-base">MULA BERMAIN</span>
+                    </button>
+                    <button onclick="router.navigateTo('topics')" class="bg-white p-6 rounded-3xl card-shadow border-2 border-indigo-100 hover:border-indigo-400 transition bounce-hover flex flex-col items-center justify-center space-y-2 group">
+                        <div class="text-4xl group-hover:scale-110 transition">📚</div>
+                        <span class="kid-font font-bold text-indigo-700 text-base">TOPIK</span>
+                    </button>
+                    <button onclick="router.navigateTo('progress')" class="bg-white p-6 rounded-3xl card-shadow border-2 border-emerald-100 hover:border-emerald-400 transition bounce-hover flex flex-col items-center justify-center space-y-2 group">
+                        <div class="text-4xl group-hover:scale-110 transition">📈</div>
+                        <span class="kid-font font-bold text-emerald-700 text-base">PROGRESS SAYA</span>
+                    </button>
+                    <button onclick="router.navigateTo('leaderboard')" class="bg-white p-6 rounded-3xl card-shadow border-2 border-amber-100 hover:border-amber-400 transition bounce-hover flex flex-col items-center justify-center space-y-2 group">
+                        <div class="text-4xl group-hover:scale-110 transition">🏆</div>
+                        <span class="kid-font font-bold text-amber-700 text-base">LEADERBOARD</span>
+                    </button>
+                    <button onclick="router.navigateTo('profile')" class="bg-white p-6 rounded-3xl card-shadow border-2 border-purple-100 hover:border-purple-400 transition bounce-hover flex flex-col items-center justify-center space-y-2 group">
+                        <div class="text-4xl group-hover:scale-110 transition">👤</div>
+                        <span class="kid-font font-bold text-purple-700 text-base">PROFIL</span>
+                    </button>
+                    <button onclick="authSystem.logout()" class="bg-rose-50 p-6 rounded-3xl card-shadow border-2 border-rose-100 hover:border-rose-400 transition bounce-hover flex flex-col items-center justify-center space-y-2 group">
+                        <div class="text-4xl group-hover:scale-110 transition">🚪</div>
+                        <span class="kid-font font-bold text-rose-700 text-base">LOG KELUAR</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. TOPIC SELECTION VIEW -->
+            <div id="view-topics" class="view-section hidden max-w-3xl mx-auto w-full">
+                <div class="flex items-center justify-between mb-6">
+                    <button onclick="router.navigateTo('home')" class="bg-white px-4 py-2 rounded-2xl card-shadow font-bold text-slate-600 hover:bg-slate-50 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Kembali</span>
+                    </button>
+                    <h2 class="kid-font text-2xl font-bold text-sky-600">Pilih Topik Matematik</h2>
+                    <div class="w-20"></div>
+                </div>
+
+                <div id="topics-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto pr-2">
+                    <!-- Dynamic topic cards injected via JS -->
+                </div>
+            </div>
+
+            <!-- 4. GAME CONFIG VIEW (Mode, Level, Timer) -->
+            <div id="view-config" class="view-section hidden max-w-lg mx-auto w-full bg-white rounded-3xl p-6 card-shadow border-2 border-sky-100">
+                <button onclick="router.navigateTo('topics')" class="mb-4 text-slate-500 font-semibold hover:text-sky-600 flex items-center space-x-2">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Pilih Topik Lain</span>
+                </button>
+
+                <h2 id="config-topic-title" class="kid-font text-2xl font-bold text-sky-600 text-center mb-6">Nilai Nombor</h2>
+
+                <div class="space-y-6">
+                    <!-- Mode Selection -->
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-2 text-sm">Pilih Jenis Game:</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="gameSystem.selectMode('objective')" id="btn-mode-objective" class="mode-btn p-3 rounded-2xl border-2 border-sky-500 bg-sky-50 font-bold text-sky-700 text-sm transition">🎯 Objektif</button>
+                            <button onclick="gameSystem.selectMode('fill')" id="btn-mode-fill" class="mode-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 text-sm transition">✏️ Isi Tempat Kosong</button>
+                            <button onclick="gameSystem.selectMode('matching')" id="btn-mode-matching" class="mode-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 text-sm transition">🎴 Padanan</button>
+                            <button onclick="gameSystem.selectMode('dragdrop')" id="btn-mode-dragdrop" class="mode-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 text-sm transition">🖱️ Drag & Drop</button>
+                        </div>
+                    </div>
+
+                    <!-- Level Selection -->
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-2 text-sm">Pilih Tahap Kesukaran:</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button onclick="gameSystem.selectLevel('mudah')" id="btn-lvl-mudah" class="lvl-btn p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50 font-bold text-emerald-700 text-sm transition">🟢 Mudah</button>
+                            <button onclick="gameSystem.selectLevel('sederhana')" id="btn-lvl-sederhana" class="lvl-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 text-sm transition">🟡 Sederhana</button>
+                            <button onclick="gameSystem.selectLevel('sukar')" id="btn-lvl-sukar" class="lvl-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 text-sm transition">🔴 Sukar</button>
+                        </div>
+                    </div>
+
+                    <!-- Timer Selection -->
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-2 text-sm">Pilih Masa Permainan:</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button onclick="gameSystem.selectTimer(30)" id="btn-time-30" class="time-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 text-sm transition">⏱️ 30 Saat</button>
+                            <button onclick="gameSystem.selectTimer(60)" id="btn-time-60" class="time-btn p-3 rounded-2xl border-2 border-sky-500 bg-sky-50 font-bold text-sky-700 text-sm transition">⏱️ 1 Minit</button>
+                            <button onclick="gameSystem.selectTimer(0)" id="btn-time-0" class="time-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 text-sm transition">♾️ Tiada Had</button>
+                        </div>
+                    </div>
+
+                    <button onclick="gameSystem.startGameSession()" class="w-full bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-bold py-4 rounded-2xl shadow-xl hover:from-sky-600 hover:to-indigo-600 transition kid-font text-xl mt-4">
+                        🚀 MULA BERMAIN SEKARANG!
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5. GAMEPLAY VIEW -->
+            <div id="view-gameplay" class="view-section hidden max-w-xl mx-auto w-full">
+                <!-- Status Top Bar -->
+                <div class="flex justify-between items-center bg-white p-4 rounded-2xl card-shadow mb-4 border border-sky-100">
+                    <div>
+                        <span class="text-xs text-slate-400 font-bold block">SOALAN</span>
+                        <span id="game-q-counter" class="kid-font text-lg font-bold text-sky-600">1 / 20</span>
+                    </div>
+                    <div id="game-timer-box" class="bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 flex items-center space-x-2">
+                        <i class="fa-solid fa-clock text-amber-500"></i>
+                        <span id="game-timer-display" class="kid-font font-bold text-amber-700 text-base">01:00</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-bold block">MARKAH</span>
+                        <span id="game-score-display" class="kid-font text-lg font-bold text-emerald-600">0 / 100</span>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="bg-white rounded-3xl p-6 md:p-8 card-shadow border-2 border-sky-100 mb-4 relative overflow-hidden">
+                    <div id="question-badge" class="inline-block bg-sky-100 text-sky-700 text-xs font-bold px-3 py-1 rounded-full mb-3">Topik 7 • Mudah</div>
+                    
+                    <!-- Comparison Diagram Container -->
+                    <div id="question-diagram" class="mb-4 hidden bg-sky-50/70 p-4 rounded-2xl border border-sky-200 text-center">
+                        <!-- Dynamic visual comparison blocks rendered here -->
+                    </div>
+
+                    <h3 id="question-text" class="kid-font text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-relaxed">
+                        Soalan matematik akan dipaparkan di sini...
+                    </h3>
+
+                    <!-- Answer Options Container (Dynamic based on game mode) -->
+                    <div id="answer-container" class="space-y-3">
+                        <!-- Dynamic options injected here -->
+                    </div>
+                </div>
+
+                <!-- Feedback Modal Overlay / Notification -->
+                <div id="game-feedback" class="hidden absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center card-shadow animate-bounce">
+                        <div id="feedback-icon" class="text-5xl mb-2">🎉</div>
+                        <h4 id="feedback-title" class="kid-font text-2xl font-bold text-emerald-600 mb-1">BETUL!</h4>
+                        <p id="feedback-msg" class="text-slate-600 font-medium mb-4">+5 Markah! Hebat!</p>
+                        <button onclick="gameSystem.nextQuestion()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 rounded-xl kid-font text-lg shadow-lg">
+                            Soalan Seterusnya ➡️
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. RESULT VIEW -->
+            <div id="view-result" class="view-section hidden max-w-md mx-auto w-full bg-white rounded-3xl p-6 md:p-8 card-shadow border-4 border-sky-200 text-center">
+                <div class="text-6xl mb-2">🏆</div>
+                <h2 class="kid-font text-3xl font-bold text-sky-600 mb-1">PERMAINAN TAMAT!</h2>
+                <p id="result-congrats" class="text-amber-500 font-bold mb-6">Tahniah, Kawan Cilik!</p>
+
+                <div class="bg-slate-50 p-6 rounded-2xl mb-6 space-y-3 border border-slate-100">
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="text-slate-500">Jumlah Markah:</span>
+                        <span id="res-score" class="kid-font text-xl font-bold text-emerald-600">85 / 100</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="text-slate-500">Jawapan Betul:</span>
+                        <span id="res-correct" class="text-slate-700 font-bold">17 / 20</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="text-slate-500">Jawapan Salah:</span>
+                        <span id="res-wrong" class="text-slate-700 font-bold">3 / 20</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="text-slate-500">Peratus Ketepatan:</span>
+                        <span id="res-accuracy" class="text-sky-600 font-bold">85%</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm font-semibold">
+                        <span class="text-slate-500">Masa Diambil:</span>
+                        <span id="res-time" class="text-slate-700 font-bold">00:47</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <button onclick="gameSystem.restartGame()" class="w-full bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-bold py-3.5 rounded-xl shadow-lg hover:from-sky-600 hover:to-indigo-600 transition kid-font text-lg flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Main Lagi</span>
+                    </button>
+                    <button onclick="router.navigateTo('topics')" class="w-full bg-white border-2 border-sky-200 text-sky-700 font-bold py-3 rounded-xl hover:bg-sky-50 transition kid-font">
+                        📚 Pilih Topik Lain
+                    </button>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="router.navigateTo('progress')" class="bg-emerald-50 text-emerald-700 font-bold py-2.5 rounded-xl hover:bg-emerald-100 transition text-sm">📈 Progress</button>
+                        <button onclick="router.navigateTo('leaderboard')" class="bg-amber-50 text-amber-700 font-bold py-2.5 rounded-xl hover:bg-amber-100 transition text-sm">🏆 Leaderboard</button>
+                    </div>
+                    <button onclick="router.navigateTo('home')" class="w-full text-slate-400 hover:text-slate-600 text-sm font-semibold pt-2">
+                        🏠 Kembali ke Menu Utama
+                    </button>
+                </div>
+            </div>
+
+            <!-- 7. PROGRESS VIEW -->
+            <div id="view-progress" class="view-section hidden max-w-2xl mx-auto w-full bg-white rounded-3xl p-6 md:p-8 card-shadow border-2 border-sky-100">
+                <div class="flex items-center justify-between mb-6">
+                    <button onclick="router.navigateTo('home')" class="bg-slate-100 px-4 py-2 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition text-sm flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Menu</span>
+                    </button>
+                    <h2 class="kid-font text-2xl font-bold text-emerald-600">📈 Progress Saya</h2>
+                    <div class="w-16"></div>
+                </div>
+
+                <!-- Stats Summary Card -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-sky-50 p-4 rounded-2xl text-center border border-sky-100">
+                        <span class="text-xs text-sky-600 font-bold block mb-1">JUMLAH XP</span>
+                        <span id="prog-xp" class="kid-font text-2xl font-bold text-sky-700">0</span>
+                    </div>
+                    <div class="bg-emerald-50 p-4 rounded-2xl text-center border border-emerald-100">
+                        <span class="text-xs text-emerald-600 font-bold block mb-1">PERMAINAN</span>
+                        <span id="prog-games" class="kid-font text-2xl font-bold text-emerald-700">0</span>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-2xl text-center border border-amber-100">
+                        <span class="text-xs text-amber-600 font-bold block mb-1">KETEPATAN</span>
+                        <span id="prog-accuracy" class="kid-font text-2xl font-bold text-amber-700">0%</span>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-2xl text-center border border-purple-100">
+                        <span class="text-xs text-purple-600 font-bold block mb-1">LENCANA</span>
+                        <span id="prog-badges-count" class="kid-font text-2xl font-bold text-purple-700">0</span>
+                    </div>
+                </div>
+
+                <!-- Topic Progress Bars -->
+                <h3 class="kid-font text-lg font-bold text-slate-700 mb-3">Penguasaan Mengikut Topik</h3>
+                <div id="topic-progress-list" class="space-y-3 max-h-[35vh] overflow-y-auto pr-2 mb-6">
+                    <!-- Dynamic topic progress bars -->
+                </div>
+
+                <!-- Badges Earned Section -->
+                <h3 class="kid-font text-lg font-bold text-slate-700 mb-3">Lencana Pencapaian 🏅</h3>
+                <div id="badges-list" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <!-- Dynamic badges -->
+                </div>
+            </div>
+
+            <!-- 8. LEADERBOARD VIEW -->
+            <div id="view-leaderboard" class="view-section hidden max-w-xl mx-auto w-full bg-white rounded-3xl p-6 md:p-8 card-shadow border-2 border-amber-100">
+                <div class="flex items-center justify-between mb-6">
+                    <button onclick="router.navigateTo('home')" class="bg-slate-100 px-4 py-2 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition text-sm flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Menu</span>
+                    </button>
+                    <h2 class="kid-font text-2xl font-bold text-amber-600">🏆 Papan Pendahulu</h2>
+                    <div class="w-16"></div>
+                </div>
+
+                <p class="text-sm text-slate-500 text-center mb-6">Juara-juara cilik Matematik Tahun 2 paling cemerlang!</p>
+
+                <div id="leaderboard-list" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2">
+                    <!-- Dynamic leaderboard rows -->
+                </div>
+            </div>
+
+            <!-- 9. PROFILE VIEW -->
+            <div id="view-profile" class="view-section hidden max-w-md mx-auto w-full bg-white rounded-3xl p-6 md:p-8 card-shadow border-2 border-purple-100 text-center">
+                <div class="flex justify-between items-center mb-4">
+                    <button onclick="router.navigateTo('home')" class="bg-slate-100 px-3 py-1.5 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition text-xs flex items-center space-x-1">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Menu</span>
+                    </button>
+                    <h2 class="kid-font text-xl font-bold text-purple-600">Profil Saya</h2>
+                    <div class="w-16"></div>
+                </div>
+
+                <div class="w-24 h-24 bg-gradient-to-tr from-purple-400 to-sky-400 rounded-full mx-auto flex items-center justify-center text-4xl text-white shadow-lg mb-4 floating">
+                    🧑‍🎓
+                </div>
+
+                <h3 id="profile-fullname" class="kid-font text-2xl font-bold text-slate-800">Siti Aisyah</h3>
+                <p id="profile-username" class="text-sm text-slate-400 font-medium mb-6">@aisyah2</p>
+
+                <div class="bg-purple-50 p-4 rounded-2xl space-y-2 mb-6 border border-purple-100 text-left">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-600 font-semibold">Markah Tertinggi:</span>
+                        <span id="profile-high-score" class="kid-font font-bold text-purple-700">0</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-600 font-semibold">Jumlah Soalan Dijawab:</span>
+                        <span id="profile-total-q" class="font-bold text-slate-700">0</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-600 font-semibold">Jawapan Betul:</span>
+                        <span id="profile-total-correct" class="font-bold text-emerald-600">0</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-600 font-semibold">Jawapan Salah:</span>
+                        <span id="profile-total-wrong" class="font-bold text-rose-600">0</span>
+                    </div>
+                </div>
+
+                <button onclick="authSystem.logout()" class="w-full bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold py-3 rounded-xl transition kid-font flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Log Keluar Akaun</span>
+                </button>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Data Topik Rasmi KPM Tahun 2
+        const TOPICS_DATA = [
+            { id: 1, title: "Kenali Nombor 0 hingga 1000", icon: "🔢", desc: "Kenali, baca, tulis angka & perkataan" },
+            { id: 2, title: "Nilai Nombor", icon: "💯", desc: "Menentukan nilai, perbandingan kuantiti & blok" },
+            { id: 3, title: "Nilai Tempat & Nilai Digit", icon: "🏠", desc: "Sa, Puluh, Ratus & Blok Base-Ten" },
+            { id: 4, title: "Cerakinan Nombor", icon: "🧩", desc: "Cerakin nilai digit & nilai tempat" },
+            { id: 5, title: "Bandingkan Nombor", icon: "⚖️", desc: "Lebih besar, lebih kecil, >, <, =" },
+            { id: 6, title: "Susunan Nombor", icon: "📊", desc: "Tertib menaik & tertib menurun" },
+            { id: 7, title: "Anggaran Nombor", icon: "🔍", desc: "Anggaran kuantiti dengan perbandingan visual" },
+            { id: 8, title: "Bundar Nombor", icon: "🎯", desc: "Bundar kepada puluh & ratus terdekat" },
+            { id: 9, title: "Pola Nombor", icon: "🔢", desc: "Pola menaik & menurun nilai tetap" },
+            { id: 10, title: "Penyelesaian Masalah", icon: "🧠", desc: "Situasi harian & cerita matematik" }
+        ];
+
+        // Lencana Rasmi
+        const BADGES_DATA = [
+            { id: 'b1', name: 'Pakar Nombor', icon: '🏅', desc: 'Selesaikan Topik 1', topicId: 1 },
+            { id: 'b2', name: 'Raja Nilai Nombor', icon: '🏅', desc: 'Selesaikan Topik 2', topicId: 2 },
+            { id: 'b3', name: 'Juara Cerakinan', icon: '🏅', desc: 'Selesaikan Topik 4', topicId: 4 },
+            { id: 'b4', name: 'Master Pembundaran', icon: '🏅', desc: 'Selesaikan Topik 8', topicId: 8 },
+            { id: 'b5', name: 'Pakar Pola', icon: '🏅', desc: 'Selesaikan Topik 9', topicId: 9 },
+            { id: 'b6', name: 'Juara Matematik', icon: '🏆', desc: 'Capai 500 Jumlah XP', xpNeeded: 500 }
+        ];
+
+        // Router Sistem Navigasi Antaramuka
+        class Router {
+            constructor() {
+                this.currentView = 'auth';
+            }
+            navigateTo(viewId) {
+                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+                const target = document.getElementById(`view-${viewId}`);
+                if (target) {
+                    target.classList.remove('hidden');
+                    this.currentView = viewId;
+                    
+                    // Header Bar visibility
+                    const header = document.getElementById('header-bar');
+                    if (viewId === 'auth') {
+                        header.classList.add('hidden');
+                    } else {
+                        header.classList.remove('hidden');
+                        authSystem.updateHeaderInfo();
+                    }
+
+                    // Render specific views on navigate
+                    if (viewId === 'topics') renderTopicsGrid();
+                    if (viewId === 'progress') renderProgressView();
+                    if (viewId === 'leaderboard') renderLeaderboardView();
+                    if (viewId === 'profile') renderProfileView();
+                }
+            }
+        }
+        const router = new Router();
+
+        // Authentication & Local Storage State
+        class AuthSystem {
+            constructor() {
+                this.currentUser = JSON.parse(localStorage.getItem('mathkids_current_user')) || null;
+            }
+            switchTab(tab) {
+                const loginBtn = document.getElementById('tab-login-btn');
+                const regBtn = document.getElementById('tab-register-btn');
+                const loginForm = document.getElementById('form-login');
+                const regForm = document.getElementById('form-register');
+
+                if (tab === 'login') {
+                    loginBtn.className = "flex-1 py-2.5 rounded-xl text-sm font-bold transition bg-white text-sky-600 shadow-sm";
+                    regBtn.className = "flex-1 py-2.5 rounded-xl text-sm font-bold transition text-slate-500";
+                    loginForm.classList.remove('hidden');
+                    regForm.classList.add('hidden');
+                } else {
+                    regBtn.className = "flex-1 py-2.5 rounded-xl text-sm font-bold transition bg-white text-emerald-600 shadow-sm";
+                    loginBtn.className = "flex-1 py-2.5 rounded-xl text-sm font-bold transition text-slate-500";
+                    regForm.classList.remove('hidden');
+                    loginForm.classList.add('hidden');
+                }
+            }
+            handleRegister(e) {
+                e.preventDefault();
+                const name = document.getElementById('reg-name').value.trim();
+                const username = document.getElementById('reg-username').value.trim().toLowerCase();
+                const password = document.getElementById('reg-password').value;
+
+                let users = JSON.parse(localStorage.getItem('mathkids_users')) || [];
+                if (users.find(u => u.username === username)) {
+                    alert('Nama pengguna telah wujud! Sila guna nama lain.');
+                    return;
+                }
+
+                const newUser = {
+                    name,
+                    username,
+                    password,
+                    xp: 0,
+                    highScore: 0,
+                    totalGames: 0,
+                    totalQuestions: 0,
+                    correctAnswers: 0,
+                    wrongAnswers: 0,
+                    topicProgress: {},
+                    badges: []
+                };
+
+                users.push(newUser);
+                localStorage.setItem('mathkids_users', JSON.stringify(users));
+                localStorage.setItem('mathkids_current_user', JSON.stringify(newUser));
+                this.currentUser = newUser;
+
+                alert('Pendaftaran berjaya! Selamat datang ke Math Kids.');
+                router.navigateTo('home');
+            }
+            handleLogin(e) {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value.trim().toLowerCase();
+                const password = document.getElementById('login-password').value;
+
+                let users = JSON.parse(localStorage.getItem('mathkids_users')) || [];
+                const user = users.find(u => u.username === username && u.password === password);
+
+                if (!user) {
+                    alert('Nama pengguna atau kata laluan salah!');
+                    return;
+                }
+
+                localStorage.setItem('mathkids_current_user', JSON.stringify(user));
+                this.currentUser = user;
+                router.navigateTo('home');
+            }
+            logout() {
+                localStorage.removeItem('mathkids_current_user');
+                this.currentUser = null;
+                router.navigateTo('auth');
+            }
+            updateHeaderInfo() {
+                if (!this.currentUser) return;
+                document.getElementById('header-username').textContent = this.currentUser.name;
+                document.getElementById('header-xp').textContent = this.currentUser.xp || 0;
+                document.getElementById('header-badges').textContent = (this.currentUser.badges || []).length;
+            }
+            saveCurrentUserData() {
+                if (!this.currentUser) return;
+                let users = JSON.parse(localStorage.getItem('mathkids_users')) || [];
+                users = users.map(u => u.username === this.currentUser.username ? this.currentUser : u);
+                localStorage.setItem('mathkids_users', JSON.stringify(users));
+                localStorage.setItem('mathkids_current_user', JSON.stringify(this.currentUser));
+            }
+        }
+        const authSystem = new AuthSystem();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (authSystem.currentUser) {
+                router.navigateTo('home');
+            } else {
+                router.navigateTo('auth');
+            }
+        });
+
+        // Dynamic Question Generator Engine (Refined Topik 10: Penyelesaian Masalah with diverse unique word problems and NO diagrams)
+        class QuestionGenerator {
+            static generateQuestions(topicId, level) {
+                let questions = [];
+                let usedSignatures = new Set();
+                let attempts = 0;
+                
+                while (questions.length < 20 && attempts < 200) {
+                    attempts++;
+                    let q = this.createSingleQuestion(topicId, level, questions.length + 1);
+                    if (q && !usedSignatures.has(q.question)) {
+                        usedSignatures.add(q.question);
+                        questions.push(q);
+                    }
+                }
+                
+                while (questions.length < 20) {
+                    let q = this.createSingleQuestion(topicId, level, questions.length + 1);
+                    q.question += ` (${questions.length + 1})`;
+                    questions.push(q);
+                }
+                return questions;
+            }
+
+            static createSingleQuestion(topicId, level, qIndex) {
+                switch(topicId) {
+                    case 1: return this.topic1(level, qIndex);
+                    case 2: return this.topic2(level, qIndex);
+                    case 3: return this.topic3(level, qIndex);
+                    case 4: return this.topic4(level, qIndex);
+                    case 5: return this.topic5(level, qIndex);
+                    case 6: return this.topic6(level, qIndex);
+                    case 7: return this.topic7(level, qIndex);
+                    case 8: return this.topic8(level, qIndex);
+                    case 9: return this.topic9(level, qIndex);
+                    case 10: return this.topic10(level, qIndex); // Refined Topik 10
+                    default: return this.topic1(level, qIndex);
+                }
+            }
+
+            // TOPIK 1: Kenali Nombor
+            static topic1(level, idx) {
+                let num = level === 'mudah' ? Math.floor(Math.random() * 90) + 10 + idx : (level === 'sederhana' ? Math.floor(Math.random() * 800) + 100 + idx : Math.floor(Math.random() * 900) + 100 + idx);
+                if (num > 1000) num = 999;
+                let wrong1 = num + 12;
+                let wrong2 = num - 15;
+                let wrong3 = num + 100;
+
+                let opts = [num.toString(), wrong1.toString(), wrong2.toString(), wrong3.toString()];
+                opts.sort(() => Math.random() - 0.5);
+                let correctIdx = opts.indexOf(num.toString());
+                let correctLetter = ['A', 'B', 'C', 'D'][correctIdx];
+
+                return {
+                    type: 'objective',
+                    question: `Apakah angka bagi bilangan bernilai ${num}?`,
+                    diagram: null,
+                    options: opts.map((o, i) => `${['A', 'B', 'C', 'D'][i]}. ${o}`),
+                    answer: correctLetter,
+                    explanation: `Nilai yang betul ialah ${num}.`
+                };
+            }
+
+            // TOPIK 2: Nilai Nombor
+            static topic2(level, idx) {
+                let target = 150 + (idx * 20);
+                if (target > 900) target = 300 + idx;
+                let opts = [target.toString(), (target + 20).toString(), (target - 30).toString(), (target + 100).toString()].sort(() => Math.random() - 0.5);
+                let correctLetter = ['A', 'B', 'C', 'D'][opts.indexOf(target.toString())];
+
+                return {
+                    type: 'objective',
+                    question: `Nombor manakah yang mempunyai nilai ${target}?`,
+                    diagram: null,
+                    options: opts.map((o, i) => `${['A', 'B', 'C', 'D'][i]}. ${o}`),
+                    answer: correctLetter,
+                    explanation: `Pilihan yang tepat ialah ${target}.`
+                };
+            }
+
+            // TOPIK 3: Nilai Tempat & Nilai Digit
+            static topic3(level, idx) {
+                let r = Math.floor(Math.random() * 8) + 1;
+                let p = Math.floor(Math.random() * 9);
+                let s = Math.floor(Math.random() * 9);
+                let num = r * 100 + p * 10 + s;
+                let placeVal = (p * 10).toString();
+
+                return {
+                    type: 'fill',
+                    question: `Dalam nombor ${num}, apakah nilai digit bagi tempat PULUH?`,
+                    diagram: null,
+                    answer: placeVal,
+                    explanation: `Digit puluh ialah ${p}, maka nilai digitnya ialah ${placeVal}.`
+                };
+            }
+
+            // TOPIK 4: Cerakinan Nombor
+            static topic4(level, idx) {
+                let r = 3 + (idx % 5);
+                let p = 2 + (idx % 6);
+                let s = 1 + (idx % 7);
+                let num = r * 100 + p * 10 + s;
+                let ans = `${r * 100} + ${p * 10} + ${s}`;
+
+                return {
+                    type: 'fill',
+                    question: `Cerakinkan nombor ${num} mengikut nilai digit (cth: 400 + 30 + 2):`,
+                    diagram: null,
+                    answer: ans,
+                    explanation: `Cerakinan yang tepat ialah ${ans}.`
+                };
+            }
+
+            // TOPIK 5: Bandingkan Nombor
+            static topic5(level, idx) {
+                let n1 = 200 + (idx * 12);
+                let n2 = 250 + (idx * 8);
+                if (n1 === n2) n2 += 5;
+                let symbol = n1 > n2 ? '>' : '<';
+
+                return {
+                    type: 'objective',
+                    question: `Pilih simbol perbandingan yang betul bagi: ${n1} ___ ${n2}`,
+                    diagram: null,
+                    options: ['A. >', 'B. <', 'C. =', 'D. +'],
+                    answer: n1 > n2 ? 'A' : 'B',
+                    explanation: `Oleh kerana ${n1} ${n1 > n2 ? 'lebih besar daripada' : 'kurang daripada'} ${n2}, jawapannya ialah ${symbol}.`
+                };
+            }
+
+            // TOPIK 6: Susunan Nombor
+            static topic6(level, idx) {
+                let base = 300 + (idx * 10);
+                let arr = [base + 40, base + 10, base + 30, base + 20].sort((a, b) => a - b);
+                let correctStr = arr.join(', ');
+
+                return {
+                    type: 'fill',
+                    question: `Susun nombor berikut mengikut tertib menaik: ${arr[2]}, ${arr[0]}, ${arr[3]}, ${arr[1]} (asingkan dengan koma)`,
+                    diagram: null,
+                    answer: correctStr,
+                    explanation: `Tertib menaik disusun dari kecil ke besar: ${correctStr}.`
+                };
+            }
+
+            // TOPIK 7: Anggaran Nombor
+            static topic7(level, idx) {
+                let baseVal = 100 + (idx * 15);
+                let targetVal = baseVal * 2;
+                let wrong1 = targetVal + 30;
+                let wrong2 = targetVal - 40;
+                let wrong3 = targetVal + 100;
+                let opts = [targetVal.toString(), wrong1.toString(), wrong2.toString(), wrong3.toString()].sort(() => Math.random() - 0.5);
+                let correctLetter = ['A', 'B', 'C', 'D'][opts.indexOf(targetVal.toString())];
+
+                return {
+                    type: 'objective',
+                    question: `Jika Kotak A memuatkan ${baseVal} biji guli dan saiz Kotak B adalah dua kali ganda lebih besar,anggarkan bilangan guli di dalam Kotak B:`,
+                    diagram: null,
+                    options: opts.map((o, i) => `${['A', 'B', 'C', 'D'][i]}. ${o}`),
+                    answer: correctLetter,
+                    explanation: `Dua kali ganda daripada ${baseVal} biji ialah ${targetVal}. Pilihan yang tepat ialah ${targetVal}.`
+                };
+            }
+
+            // TOPIK 8: Bundar Nombor
+            static topic8(level, idx) {
+                let num = 300 + (idx * 14);
+                let rounded = Math.round(num / 10) * 10;
+                return {
+                    type: 'fill',
+                    question: `Bundarkan nombor ${num} kepada puluh terdekat:`,
+                    diagram: null,
+                    answer: rounded.toString(),
+                    explanation: `Hasil pembundaran kepada puluh terdekat ialah ${rounded}.`
+                };
+            }
+
+            // TOPIK 9: Pola Nombor
+            static topic9(level, idx) {
+                let start = 120 + (idx * 15);
+                let step = 10;
+                let ans = (start + (step * 3)).toString();
+                return {
+                    type: 'fill',
+                    question: `Lengkapkan pola nombor berikut:\n${start}, ${start+step}, ${start+(step*2)}, ___, ${start+(step*4)}`,
+                    diagram: null,
+                    answer: ans,
+                    explanation: `Pola menambah ${step} setiap langkah. Nombor yang hilang ialah ${ans}.`
+                };
+            }
+
+            // TOPIK 10: PENYELESAIAN MASALAH (REFINED - 20 Completely Different Word Problems, No Duplicates, No Diagrams)
+            static topic10(level, idx) {
+                let subType = idx % 5;
+                let names = ["Ahmad", "Siti", "Mei Mei", "Raju", "Ali", "Zack", "Aisyah", "Devi"];
+                let name1 = names[idx % names.length];
+                let name2 = names[(idx + 3) % names.length];
+
+                if (subType === 0) {
+                    // Addition word problem (Menambah)
+                    let p1 = 120 + (idx * 15);
+                    let p2 = 85 + (idx * 10);
+                    let ans = p1 + p2;
+                    let opts = [ans, ans + 20, ans - 15, ans + 50].sort(() => Math.random() - 0.5);
+                    let correctLetter = ['A', 'B', 'C', 'D'][opts.indexOf(ans)];
+
+                    return {
+                        type: 'objective',
+                        question: `${name1} mempunyai ${p1} biji manik merah. Bapa memberi lagi ${p2} biji manik kepada ${name1}. Berapakah jumlah kesemua manik ${name1} sekarang?`,
+                        diagram: null,
+                        options: opts.map((o, i) => `${['A', 'B', 'C', 'D'][i]}. ${o}`),
+                        answer: correctLetter,
+                        explanation: `Jumlah manik dikira dengan menambah ${p1} + ${p2} = ${ans}.`
+                    };
+                } else if (subType === 1) {
+                    // Subtraction word problem (Menolak)
+                    let total = 450 + (idx * 20);
+                    let given = 130 + (idx * 5);
+                    let ans = total - given;
+                    let opts = [ans, ans + 30, ans - 20, ans + 40].sort(() => Math.random() - 0.5);
+                    let correctLetter = ['A', 'B', 'C', 'D'][opts.indexOf(ans)];
+
+                    return {
+                        type: 'objective',
+                        question: `Sebuah perpustakaan mempunyai ${total} buah buku cerita. Murid-murid telah meminjam ${given} buah buku. Berapakah baki buku cerita yang tinggal di perpustakaan itu?`,
+                        diagram: null,
+                        options: opts.map((o, i) => `${['A', 'B', 'C', 'D'][i]}. ${o}`),
+                        answer: correctLetter,
+                        explanation: `Baki buku dikira dengan menolak ${total} - ${given} = ${ans}.`
+                    };
+                } else if (subType === 2) {
+                    // Combined total comparison (Gabungan & Perbezaan)
+                    let n1 = 230 + (idx * 12);
+                    let n2 = 180 + (idx * 8);
+                    let ans = n1 + n2;
+                    let opts = [ans, ans + 40, ans - 30, ans + 100].sort(() => Math.random() - 0.5);
+                    let correctLetter = ['A', 'B', 'C', 'D'][opts.indexOf(ans)];
+
+                    return {
+                        type: 'objective',
+                        question: `Kilang A menghasilkan ${n1} pasang kasut sekolah dalam masa seminggu. Kilang B pula menghasilkan ${n2} pasang kasut. Berapakah jumlah kasut yang dihasilkan oleh kedua-dua kilang itu?`,
+                        diagram: null,
+                        options: opts.map((o, i) => `${['A', 'B', 'C', 'D'][i]}. ${o}`),
+                        answer: correctLetter,
+                        explanation: `Jumlah keseluruhan ialah ${n1} + ${n2} = ${ans}.`
+                    };
+                } else if (subType === 3) {
+                    // Difference word problem (Mencari Beza)
+                    let high = 600 + (idx * 15);
+                    let low = 250 + (idx * 10);
+                    let ans = high - low;
+                    let opts = [ans, ans + 50, ans - 25, ans + 70].sort(() => Math.random() - 0.5);
+                    let correctLetter = ['A', 'B', 'C', 'D'][opts.indexOf(ans)];
+
+                    return {
+                        type: 'objective',
+                        question: `${name1} mempunyai ${high} mata dalam permainan kuiz. ${name2} pula mendapat ${low} mata. Berapakah beza mata antara ${name1} dan ${name2}?`,
+                        diagram: null,
+                        options: opts.map((o, i) => `${['A', 'B', 'C', 'D'][i]}. ${o}`),
+                        answer: correctLetter,
+                        explanation: `Beza mata dikira dengan ${high} - ${low} = ${ans}.`
+                    };
+                } else {
+                    // Missing part / Fill in blank word problem (Mencari nilai asal / belum diketahui)
+                    let awal = 300 + (idx * 10);
+                    let tambah = 150 + (idx * 5);
+                    let ans = awal + tambah;
+
+                    return {
+                        type: 'fill',
+                        question: `${name1} menyimpan wang sebanyak RM${awal} di dalam tabung. Selepas beberapa bulan, bapa memberikannya wang tambahan sebanyak RM${tambah}. Berapakah jumlah wang ${name1} sekarang? (Taip nombor sahaja)`,
+                        diagram: null,
+                        answer: ans.toString(),
+                        explanation: `Jumlah wang keseluruhan ialah RM${awal} + RM${tambah} = RM${ans}.`
+                    };
+                }
+            }
+        }
+
+        // Game Engine System
+        class GameSystem {
+            constructor() {
+                this.selectedTopicId = 10; // Default to Topic 10
+                this.selectedMode = 'objective';
+                this.selectedLevel = 'mudah';
+                this.selectedTimerSec = 60;
+                this.questions = [];
+                this.currentIndex = 0;
+                this.score = 0;
+                this.correctCount = 0;
+                this.wrongCount = 0;
+                this.timerInterval = null;
+                this.timeLeft = 60;
+                this.startTime = 0;
+            }
+
+            selectTopic(topicId) {
+                this.selectedTopicId = topicId;
+                const topic = TOPICS_DATA.find(t => t.id === topicId);
+                document.getElementById('config-topic-title').textContent = topic.title;
+                router.navigateTo('config');
+            }
+
+            selectMode(mode) {
+                this.selectedMode = mode;
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    btn.className = "mode-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 text-sm transition";
+                });
+                document.getElementById(`btn-mode-${mode}`).className = "mode-btn p-3 rounded-2xl border-2 border-sky-500 bg-sky-50 font-bold text-sky-700 text-sm transition";
+            }
+
+            selectLevel(lvl) {
+                this.selectedLevel = lvl;
+                document.querySelectorAll('.lvl-btn').forEach(btn => {
+                    btn.className = "lvl-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 text-sm transition";
+                });
+                const colorMap = { mudah: 'emerald', sederhana: 'amber', sukar: 'rose' };
+                document.getElementById(`btn-lvl-${lvl}`).className = `lvl-btn p-3 rounded-2xl border-2 border-${colorMap[lvl]}-500 bg-${colorMap[lvl]}-50 font-bold text-${colorMap[lvl]}-700 text-sm transition`;
+            }
+
+            selectTimer(sec) {
+                this.selectedTimerSec = sec;
+                document.querySelectorAll('.time-btn').forEach(btn => {
+                    btn.className = "time-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 text-sm transition";
+                });
+                event.target.className = "time-btn p-3 rounded-2xl border-2 border-sky-500 bg-sky-50 font-bold text-sky-700 text-sm transition";
+            }
+
+            startGameSession() {
+                this.questions = QuestionGenerator.generateQuestions(this.selectedTopicId, this.selectedLevel);
+                this.questions.forEach(q => {
+                    if (q.type === 'objective' && q.options && !q.answer) {
+                        let matchOpt = q.options.find(o => o.includes(q.explanation.split('= ')[1] || ''));
+                        q.answer = matchOpt ? matchOpt[0] : 'A';
+                    }
+                });
+
+                this.currentIndex = 0;
+                this.score = 0;
+                this.correctCount = 0;
+                this.wrongCount = 0;
+                this.startTime = Date.now();
+
+                router.navigateTo('gameplay');
+                this.loadQuestion();
+                this.startTimer();
+            }
+
+            startTimer() {
+                clearInterval(this.timerInterval);
+                if (this.selectedTimerSec === 0) {
+                    document.getElementById('game-timer-display').textContent = "♾️ Tiada Had";
+                    return;
+                }
+
+                this.timeLeft = this.selectedTimerSec;
+                this.updateTimerDisplay();
+
+                this.timerInterval = setInterval(() => {
+                    this.timeLeft--;
+                    this.updateTimerDisplay();
+                    if (this.timeLeft <= 0) {
+                        clearInterval(this.timerInterval);
+                        this.endGame();
+                    }
+                }, 1000);
+            }
+
+            updateTimerDisplay() {
+                let m = Math.floor(this.timeLeft / 60).toString().padStart(2, '0');
+                let s = (this.timeLeft % 60).toString().padStart(2, '0');
+                document.getElementById('game-timer-display').textContent = `${m}:${s}`;
+            }
+
+            loadQuestion() {
+                if (this.currentIndex >= this.questions.length) {
+                    this.endGame();
+                    return;
+                }
+
+                let q = this.questions[this.currentIndex];
+                document.getElementById('game-q-counter').textContent = `${this.currentIndex + 1} / ${this.questions.length}`;
+                document.getElementById('game-score-display').textContent = `${this.score} / 100`;
+                
+                let topicObj = TOPICS_DATA.find(t => t.id === this.selectedTopicId);
+                document.getElementById('question-badge').textContent = `${topicObj.title} • ${this.selectedLevel.toUpperCase()}`;
+                document.getElementById('question-text').textContent = q.question;
+
+                let diagramBox = document.getElementById('question-diagram');
+                if (q.diagram) {
+                    diagramBox.innerHTML = q.diagram;
+                    diagramBox.classList.remove('hidden');
+                } else {
+                    diagramBox.innerHTML = '';
+                    diagramBox.classList.add('hidden');
+                }
+
+                let container = document.getElementById('answer-container');
+                container.innerHTML = '';
+
+                if (q.type === 'objective' || this.selectedMode === 'objective') {
+                    if (!q.options) {
+                        q.options = [`A. ${q.answer}`, `B. ${parseInt(q.answer)+5}`, `C. ${parseInt(q.answer)-3}`, `D. ${parseInt(q.answer)+10}`].sort(() => Math.random()-0.5);
+                        q.answer = q.options.find(o => o.includes(q.answer))[0];
+                    }
+                    q.options.forEach(opt => {
+                        let btn = document.createElement('button');
+                        btn.className = "w-full text-left p-4 rounded-2xl border-2 border-slate-200 hover:border-sky-500 hover:bg-sky-50 font-bold text-slate-700 transition flex items-center justify-between";
+                        btn.innerHTML = `<span>${opt}</span> <i class="fa-solid fa-chevron-right text-slate-300"></i>`;
+                        let chosenLetter = opt[0];
+                        btn.onclick = () => this.checkAnswer(chosenLetter === q.answer, q.answer, q.explanation);
+                        container.appendChild(btn);
+                    });
+                } else {
+                    let wrapper = document.createElement('div');
+                    wrapper.className = "space-y-3";
+                    wrapper.innerHTML = `
+                        <input type="text" id="user-ans-input" placeholder="Taip jawapan anda di sini..." class="w-full px-4 py-4 rounded-2xl border-2 border-sky-300 focus:border-sky-500 focus:outline-none text-center kid-font text-2xl font-bold text-slate-700">
+                        <button onclick="gameSystem.submitFillAnswer()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3.5 rounded-2xl kid-font text-lg shadow-lg">Semak Jawapan ✨</button>
+                    `;
+                    container.appendChild(wrapper);
+                }
+            }
+
+            submitFillAnswer() {
+                let val = document.getElementById('user-ans-input').value.trim();
+                let q = this.questions[this.currentIndex];
+                let isCorrect = val.toLowerCase() === q.answer.toLowerCase();
+                this.checkAnswer(isCorrect, q.answer, q.explanation);
+            }
+
+            checkAnswer(isCorrect, correctAnswer, explanation) {
+                clearInterval(this.timerInterval);
+                let feedbackModal = document.getElementById('game-feedback');
+                let icon = document.getElementById('feedback-icon');
+                let title = document.getElementById('feedback-title');
+                let msg = document.getElementById('feedback-msg');
+
+                if (isCorrect) {
+                    this.score += 5;
+                    this.correctCount++;
+                    icon.textContent = "🎉";
+                    title.textContent = "BETUL!";
+                    title.className = "kid-font text-2xl font-bold text-emerald-600 mb-1";
+                    let motivasi = ["Hebat!", "Syabas!", "Pandainya!", "Terbaik!", "Teruskan!"];
+                    let randM = motivasi[Math.floor(Math.random() * motivasi.length)];
+                    msg.textContent = `+5 Markah! ${randM}`;
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                } else {
+                    this.wrongCount++;
+                    icon.textContent = "❌";
+                    title.textContent = "CUBA LAGI!";
+                    title.className = "kid-font text-2xl font-bold text-rose-600 mb-1";
+                    msg.textContent = `Jawapan yang betul ialah: ${correctAnswer}. ${explanation}`;
+                }
+
+                feedbackModal.classList.remove('hidden');
+            }
+
+            nextQuestion() {
+                document.getElementById('game-feedback').classList.add('hidden');
+                this.currentIndex++;
+                if (this.currentIndex < this.questions.length) {
+                    this.loadQuestion();
+                    if (this.selectedTimerSec > 0) this.startTimer();
+                } else {
+                    this.endGame();
+                }
+            }
+
+            endGame() {
+                clearInterval(this.timerInterval);
+                let timeTakenSec = Math.floor((Date.now() - this.startTime) / 1000);
+                let m = Math.floor(timeTakenSec / 60).toString().padStart(2, '0');
+                let s = (timeTakenSec % 60).toString().padStart(2, '0');
+
+                if (authSystem.currentUser) {
+                    let user = authSystem.currentUser;
+                    user.xp = (user.xp || 0) + this.score;
+                    user.totalGames = (user.totalGames || 0) + 1;
+                    user.totalQuestions = (user.totalQuestions || 0) + this.questions.length;
+                    user.correctAnswers = (user.correctAnswers || 0) + this.correctCount;
+                    user.wrongAnswers = (user.wrongAnswers || 0) + this.wrongCount;
+                    if (this.score > (user.highScore || 0)) {
+                        user.highScore = this.score;
+                    }
+
+                    if (!user.topicProgress) user.topicProgress = {};
+                    let currentProg = user.topicProgress[this.selectedTopicId] || 0;
+                    let sessionAcc = Math.round((this.correctCount / this.questions.length) * 100);
+                    if (sessionAcc > currentProg) {
+                        user.topicProgress[this.selectedTopicId] = sessionAcc;
+                    }
+
+                    if (!user.badges) user.badges = [];
+                    if (this.selectedTopicId === 10 && !user.badges.includes('b10')) user.badges.push('b10');
+                    if (user.xp >= 500 && !user.badges.includes('b6')) user.badges.push('b6');
+
+                    authSystem.saveCurrentUserData();
+                }
+
+                document.getElementById('res-score').textContent = `${this.score} / 100`;
+                document.getElementById('res-correct').textContent = `${this.correctCount} / ${this.questions.length}`;
+                document.getElementById('res-wrong').textContent = `${this.wrongCount} / ${this.questions.length}`;
+                let acc = Math.round((this.correctCount / this.questions.length) * 100);
+                document.getElementById('res-accuracy').textContent = `${acc}%`;
+                document.getElementById('res-time').textContent = `${m}:${s}`;
+                document.getElementById('result-congrats').textContent = `Tahniah, ${authSystem.currentUser ? authSystem.currentUser.name : 'Kawan Cilik'}!`;
+
+                router.navigateTo('result');
+            }
+
+            restartGame() {
+                this.startGameSession();
+            }
+        }
+        const gameSystem = new GameSystem();
+
+        // UI Render Functions
+        function renderTopicsGrid() {
+            const grid = document.getElementById('topics-grid');
+            grid.innerHTML = '';
+            TOPICS_DATA.forEach(t => {
+                let userProg = (authSystem.currentUser && authSystem.currentUser.topicProgress && authSystem.currentUser.topicProgress[t.id]) || 0;
+                let card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-3xl card-shadow border-2 border-sky-100 hover:border-sky-400 transition cursor-pointer flex flex-col justify-between group";
+                card.onclick = () => gameSystem.selectTopic(t.id);
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-3xl group-hover:scale-110 transition">${t.icon}</span>
+                            <span class="bg-sky-50 text-sky-700 text-xs font-bold px-2.5 py-1 rounded-full">Topik ${t.id}</span>
+                        </div>
+                        <h4 class="kid-font font-bold text-slate-800 text-base mb-1">${t.title}</h4>
+                        <p class="text-xs text-slate-500 font-medium">${t.desc}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-600">
+                        <span>Penguasaan:</span>
+                        <span class="text-emerald-600">${userProg}%</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderProgressView() {
+            if (!authSystem.currentUser) return;
+            let u = authSystem.currentUser;
+            document.getElementById('prog-xp').textContent = u.xp || 0;
+            document.getElementById('prog-games').textContent = u.totalGames || 0;
+            let totalQ = u.totalQuestions || 0;
+            let acc = totalQ > 0 ? Math.round(((u.correctAnswers || 0) / totalQ) * 100) : 0;
+            document.getElementById('prog-accuracy').textContent = `${acc}%`;
+            document.getElementById('prog-badges-count').textContent = (u.badges || []).length;
+
+            let tList = document.getElementById('topic-progress-list');
+            tList.innerHTML = '';
+            TOPICS_DATA.forEach(t => {
+                let p = (u.topicProgress && u.topicProgress[t.id]) || 0;
+                let row = document.createElement('div');
+                row.className = "bg-slate-50 p-3 rounded-2xl border border-slate-100";
+                row.innerHTML = `
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-700 mb-1.5">
+                        <span>${t.icon} Topik ${t.id}: ${t.title}</span>
+                        <span class="text-sky-600">${p}%</span>
+                    </div>
+                    <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                        <div class="bg-gradient-to-r from-sky-400 to-emerald-400 h-full rounded-full transition-all duration-500" style="width: ${p}%"></div>
+                    </div>
+                `;
+                tList.appendChild(row);
+            });
+
+            let bList = document.getElementById('badges-list');
+            bList.innerHTML = '';
+            BADGES_DATA.forEach(b => {
+                let unlocked = (u.badges || []).includes(b.id);
+                let div = document.createElement('div');
+                div.className = `p-3 rounded-2xl border-2 flex items-center space-x-3 ${unlocked ? 'bg-amber-50 border-amber-300' : 'bg-slate-50 border-slate-200 opacity-60'}`;
+                div.innerHTML = `
+                    <div class="text-3xl">${b.icon}</div>
+                    <div>
+                        <h5 class="kid-font font-bold text-xs ${unlocked ? 'text-amber-800' : 'text-slate-500'}">${b.name}</h5>
+                        <p class="text-[10px] text-slate-500 font-medium">${b.desc}</p>
+                    </div>
+                `;
+                bList.appendChild(div);
+            });
+        }
+
+        function renderLeaderboardView() {
+            let users = JSON.parse(localStorage.getItem('mathkids_users')) || [];
+            users.sort((a, b) => (b.xp || 0) - (a.xp || 0));
+
+            let list = document.getElementById('leaderboard-list');
+            list.innerHTML = '';
+
+            if (users.length === 0) {
+                list.innerHTML = `<p class="text-center text-slate-400 font-medium py-8">Belum ada pemain berdaftar.</p>`;
+                return;
+            }
+
+            users.forEach((usr, idx) => {
+                let medals = ['🥇', '🥈', '🥉'];
+                let rankDisplay = idx < 3 ? medals[idx] : `#${idx + 1}`;
+                let row = document.createElement('div');
+                row.className = `p-4 rounded-2xl flex items-center justify-between border ${authSystem.currentUser && authSystem.currentUser.username === usr.username ? 'bg-sky-50 border-sky-300' : 'bg-slate-50 border-slate-100'}`;
+                row.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="kid-font text-lg font-bold w-8 text-center">${rankDisplay}</span>
+                        <div>
+                            <h4 class="kid-font font-bold text-slate-800 text-sm">${usr.name}</h4>
+                            <span class="text-xs text-slate-400 font-medium">@${usr.username}</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="kid-font font-bold text-emerald-600 text-base">${usr.xp || 0} XP</span>
+                        <span class="block text-[10px] text-slate-400 font-semibold">Markah Tinggi: ${usr.highScore || 0}</span>
+                    </div>
+                `;
+                list.appendChild(row);
+            });
+        }
+
+        function renderProfileView() {
+            if (!authSystem.currentUser) return;
+            let u = authSystem.currentUser;
+            document.getElementById('profile-fullname').textContent = u.name;
+            document.getElementById('profile-username').textContent = `@${u.username}`;
+            document.getElementById('profile-high-score').textContent = u.highScore || 0;
+            document.getElementById('profile-total-q').textContent = u.totalQuestions || 0;
+            document.getElementById('profile-total-correct').textContent = u.correctAnswers || 0;
+            document.getElementById('profile-total-wrong').textContent = u.wrongAnswers || 0;
+        }
+    </script>
+</body>
+</html>

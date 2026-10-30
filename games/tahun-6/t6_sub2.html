@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="ms" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Kids – Edu Kidz Tahun 6</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Fredoka for playful kids education look -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'],
+                    },
+                    colors: {
+                        eduBlue: '#3b82f6',
+                        eduPurple: '#8b5cf6',
+                        eduPink: '#ec4899',
+                        eduYellow: '#f59e0b',
+                        eduGreen: '#10b981',
+                        eduOrange: '#f97316'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 50%, #fdf2f8 100%);
+            min-height: 100vh;
+        }
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Fredoka', sans-serif;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes bounce-short {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .animate-bounce-short {
+            animation: bounce-short 1.5s infinite;
+        }
+        .hide { display: none !important; }
+    </style>
+</head>
+<body class="h-full flex flex-col text-slate-800">
+
+    <div id="app" class="flex-1 flex flex-col max-w-5xl mx-auto w-full p-3 sm:p-6 justify-between">
+        
+        <header id="main-header" class="bg-white/80 backdrop-blur-md rounded-2xl shadow-md p-4 mb-4 flex items-center justify-between border border-white/40 hide">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="showScreen('menu-screen')">
+                <div class="w-12 h-12 bg-gradient-to-tr from-eduBlue to-eduPurple rounded-xl flex items-center justify-center text-white text-2xl shadow-lg font-display">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-display text-lg sm:text-xl font-bold bg-gradient-to-r from-eduBlue to-eduPurple bg-clip-text text-transparent">Edu Kidz Tahun 6</h1>
+                    <p class="text-xs text-slate-500 font-medium">KPM Matematik KSSM</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <div class="flex items-center bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl shadow-sm">
+                    <i class="fa-solid fa-star text-amber-500 mr-1.5 animate-pulse"></i>
+                    <span id="header-score" class="font-display font-bold text-amber-700 text-sm sm:text-base">0 pts</span>
+                </div>
+                
+                <div class="flex items-center bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-xl shadow-sm cursor-pointer hover:bg-blue-100 transition" onclick="showScreen('profile-screen')">
+                    <span id="header-avatar" class="text-xl mr-1.5">👦</span>
+                    <span id="header-username" class="font-display font-semibold text-blue-900 text-xs sm:text-sm hidden sm:inline">Pemain</span>
+                </div>
+
+                <button onclick="logoutPlayer()" title="Log Keluar" class="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-xl border border-red-200 transition text-sm">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN VIEW CONTAINER -->
+        <main class="flex-1 flex flex-col relative justify-center">
+
+            <div id="auth-screen" class="max-w-md mx-auto w-full bg-white/90 backdrop-blur-md rounded-3xl shadow-xl p-6 sm:p-8 border border-white">
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 bg-gradient-to-tr from-eduBlue via-eduPurple to-eduPink rounded-3xl mx-auto flex items-center justify-center text-white text-4xl shadow-lg mb-3 animate-float font-display">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-800">MATH KIDS</h2>
+                    <p class="text-eduPurple font-semibold text-sm sm:text-base">EDU KIDZ TAHUN 6 KPM</p>
+                    <p class="text-xs text-slate-500 mt-1">Pecahan, Perpuluhan & Peratus</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Nama Penuh Murid</label>
+                        <input type="text" id="input-username" placeholder="Cth: Aiman Hakim" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-eduBlue font-medium text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wider">Pilih Avatar Anda</label>
+                        <div id="avatar-selector" class="grid grid-cols-5 gap-2">
+                            <button type="button" onclick="selectAvatar('👦')" class="avatar-btn p-3 rounded-xl border-2 border-eduBlue bg-blue-50 text-2xl flex items-center justify-center transition">👦</button>
+                            <button type="button" onclick="selectAvatar('👧')" class="avatar-btn p-3 rounded-xl border-2 border-slate-200 hover:border-slate-300 text-2xl flex items-center justify-center transition">👧</button>
+                            <button type="button" onclick="selectAvatar('🦸‍♂️')" class="avatar-btn p-3 rounded-xl border-2 border-slate-200 hover:border-slate-300 text-2xl flex items-center justify-center transition">🦸‍♂️</button>
+                            <button type="button" onclick="selectAvatar('🦸‍♀️')" class="avatar-btn p-3 rounded-xl border-2 border-slate-200 hover:border-slate-300 text-2xl flex items-center justify-center transition">🦸‍♀️</button>
+                            <button type="button" onclick="selectAvatar('🦊')" class="avatar-btn p-3 rounded-xl border-2 border-slate-200 hover:border-slate-300 text-2xl flex items-center justify-center transition">🦊</button>
+                        </div>
+                    </div>
+
+                    <button onclick="handleLogin()" class="w-full mt-4 bg-gradient-to-r from-eduBlue to-eduPurple text-white font-display font-bold py-3.5 rounded-xl shadow-lg hover:opacity-95 transition transform active:scale-95 text-base">
+                        <i class="fa-solid fa-rocket mr-2"></i> Mula Pengembaraan!
+                    </button>
+                </div>
+            </div>
+
+            <div id="menu-screen" class="max-w-2xl mx-auto w-full hide space-y-6">
+                <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-3xl p-6 sm:p-8 shadow-xl text-center relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl font-display"><i class="fa-solid fa-calculator"></i></div>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold mb-2">Selamat Datang, <span id="welcome-name">Murid</span>! 👋</h2>
+                    <p class="text-blue-100 text-sm max-w-md mx-auto">Sedia untuk menguasai Pecahan, Perpuluhan & Peratus Tahun 6 dengan Topik 6 (Operasi Bergabung) dikemaskini dengan set soalan baharu & unik!</p>
+                    
+                    <div class="mt-6 flex flex-wrap justify-center gap-3">
+                        <button onclick="showScreen('topic-screen')" class="bg-white text-blue-600 hover:bg-blue-50 font-display font-bold px-6 py-3 rounded-xl shadow-md transition transform hover:scale-105">
+                            <i class="fa-solid fa-play mr-2 text-eduGreen"></i> Mula Bermain
+                        </button>
+                        <button onclick="showScreen('topic-screen')" class="bg-blue-700/60 hover:bg-blue-700 text-white font-display font-semibold px-5 py-3 rounded-xl backdrop-blur-sm transition">
+                            <i class="fa-solid fa-book-open mr-2"></i> Pilih Topik
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                    <button onclick="showScreen('progress-screen'); loadProgressData();" class="bg-white p-4 rounded-2xl shadow-md border border-slate-100 hover:border-eduBlue hover:shadow-lg transition text-center group">
+                        <div class="w-12 h-12 bg-purple-50 text-eduPurple rounded-xl mx-auto flex items-center justify-center text-xl mb-2 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-sm text-slate-800">Progress Saya</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Statistik & Lencana</p>
+                    </button>
+
+                    <button onclick="showScreen('leaderboard-screen'); loadLeaderboard();" class="bg-white p-4 rounded-2xl shadow-md border border-slate-100 hover:border-eduYellow hover:shadow-lg transition text-center group">
+                        <div class="w-12 h-12 bg-amber-50 text-eduYellow rounded-xl mx-auto flex items-center justify-center text-xl mb-2 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-sm text-slate-800">Leaderboard</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Kedudukan Juara</p>
+                    </button>
+
+                    <button onclick="showScreen('profile-screen')" class="bg-white p-4 rounded-2xl shadow-md border border-slate-100 hover:border-eduPink hover:shadow-lg transition text-center group">
+                        <div class="w-12 h-12 bg-pink-50 text-eduPink rounded-xl mx-auto flex items-center justify-center text-xl mb-2 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-sm text-slate-800">Profil</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Akaun & Avatar</p>
+                    </button>
+
+                    <button onclick="showScreen('guide-screen')" class="bg-white p-4 rounded-2xl shadow-md border border-slate-100 hover:border-eduGreen hover:shadow-lg transition text-center group">
+                        <div class="w-12 h-12 bg-emerald-50 text-eduGreen rounded-xl mx-auto flex items-center justify-center text-xl mb-2 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-circle-question"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-sm text-slate-800">Cara Bermain</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Panduan & Peraturan</p>
+                    </button>
+                </div>
+            </div>
+
+            <div id="topic-screen" class="max-w-3xl mx-auto w-full hide space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="font-display text-xl sm:text-2xl font-bold text-slate-800">Pilih Topik Matematik KPM</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Pilih salah satu daripada 7 tajuk Tahun 6 (Topik 6 dikemaskini dengan soalan baharu & berbeza!)</p>
+                    </div>
+                    <button onclick="showScreen('menu-screen')" class="bg-white hover:bg-slate-100 text-slate-600 px-4 py-2 rounded-xl text-sm font-semibold shadow-sm border border-slate-200">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Menu Utama
+                    </button>
+                </div>
+
+                <div id="topics-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div id="setup-screen" class="max-w-md mx-auto w-full bg-white rounded-3xl shadow-xl p-6 sm:p-8 hide space-y-5 border border-slate-100">
+                <div class="text-center">
+                    <span id="setup-topic-icon" class="text-3xl mb-1 inline-block">🍕</span>
+                    <h2 id="setup-topic-title" class="font-display text-xl font-bold text-slate-800">Bahagi Pecahan</h2>
+                    <p class="text-xs text-slate-500">Sila tetapkan tahap kesukaran dan masa</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wider">Tahap Kesukaran</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" onclick="setDifficulty('Mudah')" id="diff-mudah" class="diff-btn py-2.5 px-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-700 font-display font-semibold text-xs transition flex items-center justify-center">
+                                🟢 Mudah
+                            </button>
+                            <button type="button" onclick="setDifficulty('Sederhana')" id="diff-sederhana" class="diff-btn py-2.5 px-3 rounded-xl border-2 border-slate-200 text-slate-600 font-display font-semibold text-xs transition flex items-center justify-center">
+                                🟡 Sederhana
+                            </button>
+                            <button type="button" onclick="setDifficulty('Susah')" id="diff-susah" class="diff-btn py-2.5 px-3 rounded-xl border-2 border-slate-200 text-slate-600 font-display font-semibold text-xs transition flex items-center justify-center">
+                                🔴 Susah
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wider">Pilihan Masa</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" onclick="setTimeMode(30)" id="time-30" class="time-btn py-2.5 px-3 rounded-xl border-2 border-slate-200 text-slate-600 font-display font-semibold text-xs transition flex items-center justify-center">
+                                ⏱ 30 Saat
+                            </button>
+                            <button type="button" onclick="setTimeMode(60)" id="time-60" class="time-btn py-2.5 px-3 rounded-xl border-2 border-blue-500 bg-blue-50 text-blue-700 font-display font-semibold text-xs transition flex items-center justify-center">
+                                ⏱ 1 Minit
+                            </button>
+                            <button type="button" onclick="setTimeMode(0)" id="time-inf" class="time-btn py-2.5 px-3 rounded-xl border-2 border-slate-200 text-slate-600 font-display font-semibold text-xs transition flex items-center justify-center">
+                                ♾ Tiada Had
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button onclick="startQuizSession()" class="w-full bg-gradient-to-r from-eduBlue to-eduPurple text-white font-display font-bold py-3.5 rounded-xl shadow-lg hover:opacity-95 transition transform active:scale-95 text-sm">
+                            <i class="fa-solid fa-play mr-2"></i> Mula Kuiz (20 Soalan 100% Tanpa Berulang)
+                        </button>
+                        <button onclick="showScreen('topic-screen')" class="w-full mt-2 text-slate-500 text-xs font-semibold py-2 hover:text-slate-700 transition">
+                            Kembali ke Pilih Topik
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="quiz-screen" class="max-w-2xl mx-auto w-full hide space-y-4">
+                <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <span id="quiz-topic-badge" class="bg-blue-100 text-blue-800 text-xs font-display font-bold px-2.5 py-1 rounded-lg">Topik 1</span>
+                        <span id="quiz-diff-badge" class="bg-emerald-100 text-emerald-800 text-xs font-display font-bold px-2.5 py-1 rounded-lg">Mudah</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="text-xs font-semibold text-slate-500">
+                            Soalan <span id="current-q-num" class="font-bold text-slate-800">1</span>/20
+                        </div>
+                        <div class="flex items-center bg-amber-50 px-3 py-1 rounded-lg border border-amber-200">
+                            <i class="fa-solid fa-star text-amber-500 mr-1.5"></i>
+                            <span id="quiz-score" class="font-display font-bold text-amber-700 text-sm">0</span>
+                        </div>
+                        <div id="timer-box" class="flex items-center bg-rose-50 px-3 py-1 rounded-lg border border-rose-200">
+                            <i class="fa-solid fa-stopwatch text-rose-500 mr-1.5 animate-pulse"></i>
+                            <span id="quiz-timer" class="font-display font-bold text-rose-700 text-sm">60s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div id="quiz-progress-bar" class="bg-gradient-to-r from-blue-500 to-purple-500 h-full w-[5%] transition-all duration-300"></div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-slate-100 space-y-6 relative overflow-hidden">
+                    <div id="question-visual" class="bg-slate-50 rounded-2xl p-4 border border-slate-100 text-center flex items-center justify-center min-h-[120px]">
+                        <!-- Dynamic visual representation -->
+                    </div>
+
+                    <div class="text-center sm:text-left">
+                        <span id="question-cognitive" class="inline-block text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-700 px-2 py-0.5 rounded-md mb-2">Mengaplikasi</span>
+                        <h3 id="question-text" class="font-display text-lg sm:text-xl font-bold text-slate-800 leading-snug">
+                            Soalan matematik akan dipaparkan di sini...
+                        </h3>
+                    </div>
+
+                    <div id="answer-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Options injected by JS -->
+                    </div>
+
+                    <div id="explanation-box" class="bg-blue-50/80 border border-blue-200 rounded-2xl p-4 hide">
+                        <div class="flex items-start space-x-3">
+                            <div class="text-blue-600 text-xl mt-0.5"><i class="fa-solid fa-circle-info"></i></div>
+                            <div>
+                                <h4 class="font-display font-bold text-blue-900 text-sm">Penerangan Jawapan:</h4>
+                                <p id="explanation-text" class="text-xs sm:text-sm text-blue-800 mt-1">Penerangan ringkas...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button id="btn-next-question" onclick="nextQuestion()" class="bg-slate-800 hover:bg-slate-900 text-white font-display font-bold px-6 py-3 rounded-xl shadow-md transition hide">
+                            Seterusnya <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="result-screen" class="max-w-md mx-auto w-full bg-white rounded-3xl shadow-2xl p-6 sm:p-8 hide text-center space-y-6 border border-slate-100">
+                <div class="w-20 h-20 bg-amber-100 text-amber-500 rounded-3xl mx-auto flex items-center justify-center text-4xl shadow-md animate-bounce-short">
+                    🏆
+                </div>
+
+                <div>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-800">🎉 TAMAT!</h2>
+                    <p class="text-xs text-slate-500 mt-1">Tahniah kerana berjaya menyelesaikan sesi kuiz tanpa sebarang soalan berulang!</p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 grid grid-cols-2 gap-4 text-left">
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Markah Diperolehi</p>
+                        <p id="res-score" class="font-display font-bold text-xl text-amber-600">100 / 100</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Ketepatan</p>
+                        <p id="res-accuracy" class="font-display font-bold text-xl text-emerald-600">100%</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Jawapan Betul</p>
+                        <p id="res-correct" class="font-display font-bold text-lg text-slate-700">20</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Jawapan Salah</p>
+                        <p id="res-wrong" class="font-display font-bold text-lg text-slate-700">0</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2.5">
+                    <button onclick="restartSameQuiz()" class="w-full bg-gradient-to-r from-eduBlue to-eduPurple text-white font-display font-bold py-3 rounded-xl shadow-md hover:opacity-95 transition text-sm">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Main Lagi Soalan Baharu (Tanpa Berulang)
+                    </button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="showScreen('topic-screen')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-display font-semibold py-2.5 rounded-xl text-xs transition">
+                            Pilih Topik Lain
+                        </button>
+                        <button onclick="showScreen('leaderboard-screen'); loadLeaderboard();" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-display font-semibold py-2.5 rounded-xl text-xs transition">
+                            Leaderboard
+                        </button>
+                    </div>
+                    <button onclick="showScreen('menu-screen')" class="text-slate-500 hover:text-slate-700 text-xs font-semibold py-1">
+                        Kembali ke Menu Utama
+                    </button>
+                </div>
+            </div>
+
+            <div id="progress-screen" class="max-w-2xl mx-auto w-full hide space-y-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="font-display text-xl sm:text-2xl font-bold text-slate-800">Progress & Pencapaian</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Rekod pencapaian pembelajaran anda</p>
+                    </div>
+                    <button onclick="showScreen('menu-screen')" class="bg-white hover:bg-slate-100 text-slate-600 px-4 py-2 rounded-xl text-sm font-semibold shadow-sm border border-slate-200">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Menu Utama
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center text-2xl font-display">⭐</div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-medium">Jumlah Markah</p>
+                            <h3 id="prog-total-score" class="font-display font-bold text-xl text-slate-800">0</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center text-2xl font-display">🎯</div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-medium">Soalan Dijawab</p>
+                            <h3 id="prog-total-answered" class="font-display font-bold text-xl text-slate-800">0</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-2xl font-display">🏆</div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-medium">Topik Selesai</p>
+                            <h3 id="prog-topics-done" class="font-display font-bold text-xl text-slate-800">0 / 7</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-4">
+                    <h3 class="font-display font-bold text-base text-slate-800">Lencana & Badge Diperolehi</h3>
+                    <div id="badges-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <!-- Badges injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="leaderboard-screen" class="max-w-2xl mx-auto w-full hide space-y-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="font-display text-xl sm:text-2xl font-bold text-slate-800">Leaderboard Edu Kidz</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Kedudukan murid cemerlang Tahun 6</p>
+                    </div>
+                    <button onclick="showScreen('menu-screen')" class="bg-white hover:bg-slate-100 text-slate-600 px-4 py-2 rounded-xl text-sm font-semibold shadow-sm border border-slate-200">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Menu Utama
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                    <div id="leaderboard-list" class="space-y-3">
+                        <!-- Leaderboard items injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="profile-screen" class="max-w-md mx-auto w-full bg-white rounded-3xl shadow-xl p-6 sm:p-8 hide space-y-6 border border-slate-100">
+                <div class="text-center">
+                    <div id="profile-avatar-display" class="w-20 h-20 bg-blue-50 rounded-3xl mx-auto flex items-center justify-center text-4xl shadow-md mb-2">👦</div>
+                    <h2 id="profile-name-display" class="font-display text-xl font-bold text-slate-800">Nama Murid</h2>
+                    <p class="text-xs text-slate-400">Murid Tahun 6 • KPM</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wider">Tukar Nama Profil</label>
+                        <input type="text" id="edit-username" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-eduBlue text-sm font-medium">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wider">Pilih Avatar Baru</label>
+                        <div id="edit-avatar-selector" class="grid grid-cols-5 gap-2">
+                            <button type="button" onclick="selectEditAvatar('👦')" class="edit-avatar-btn p-2 rounded-xl border-2 border-eduBlue bg-blue-50 text-xl flex items-center justify-center">👦</button>
+                            <button type="button" onclick="selectEditAvatar('👧')" class="edit-avatar-btn p-2 rounded-xl border-2 border-slate-200 text-xl flex items-center justify-center">👧</button>
+                            <button type="button" onclick="selectEditAvatar('🦸‍♂️')" class="edit-avatar-btn p-2 rounded-xl border-2 border-slate-200 text-xl flex items-center justify-center">🦸‍♂️</button>
+                            <button type="button" onclick="selectEditAvatar('🦸‍♀️')" class="edit-avatar-btn p-2 rounded-xl border-2 border-slate-200 text-xl flex items-center justify-center">🦸‍♀️</button>
+                            <button type="button" onclick="selectEditAvatar('🦊')" class="edit-avatar-btn p-2 rounded-xl border-2 border-slate-200 text-xl flex items-center justify-center">🦊</button>
+                        </div>
+                    </div>
+
+                    <button onclick="saveProfileChanges()" class="w-full bg-gradient-to-r from-eduBlue to-eduPurple text-white font-display font-bold py-3 rounded-xl shadow-md hover:opacity-95 transition text-sm">
+                        Simpan Perubahan
+                    </button>
+                    <button onclick="showScreen('menu-screen')" class="w-full text-slate-500 hover:text-slate-700 text-xs font-semibold py-1">
+                        Kembali ke Menu Utama
+                    </button>
+                </div>
+            </div>
+
+            <div id="guide-screen" class="max-w-2xl mx-auto w-full bg-white rounded-3xl shadow-xl p-6 sm:p-8 hide space-y-5 border border-slate-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="font-display text-xl font-bold text-slate-800">Cara Bermain Edu Kidz</h2>
+                        <p class="text-xs text-slate-500">Panduan untuk murid Tahun 6</p>
+                    </div>
+                    <button onclick="showScreen('menu-screen')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold">
+                        Tutup
+                    </button>
+                </div>
+
+                <div class="space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    <div class="flex items-start space-x-3 bg-blue-50/60 p-3.5 rounded-2xl border border-blue-100">
+                        <div class="text-blue-600 text-lg mt-0.5"><i class="fa-solid fa-1"></i></div>
+                        <div>
+                            <strong class="text-blue-900 block font-display">Pilih Topik & Tahap</strong>
+                            Terdapat 7 topik utama Matematik Tahun 6 KPM (Topik 6 menampilkan set soalan baharu dan unik!). Pilih tahap Mudah, Sederhana, atau Susah.
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3 bg-purple-50/60 p-3.5 rounded-2xl border border-purple-100">
+                        <div class="text-purple-600 text-lg mt-0.5"><i class="fa-solid fa-2"></i></div>
+                        <div>
+                            <strong class="text-purple-900 block font-display">Sistem Anti-Berulang (420 Soalan)</strong>
+                            Bank soalan mengandungi 420 soalan unik. Setiap sesi mengandungi 20 soalan berbeza yang diacak sepenuhnya tanpa pengulangan langsung!
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3 bg-amber-50/60 p-3.5 rounded-2xl border border-amber-100">
+                        <div class="text-amber-600 text-lg mt-0.5"><i class="fa-solid fa-3"></i></div>
+                        <div>
+                            <strong class="text-amber-900 block font-display">Kumpul Bintang & Lencana</strong>
+                            Kumpul markah tertinggi, buka lencana istimewa, serta catatkan nama anda di papan juara (Leaderboard)!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="text-center py-3 text-xs text-slate-400 font-medium">
+            Math Kids – Edu Kidz Tahun 6 KPM &copy; 2026
+        </footer>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let selectedAvatarSymbol = '👦';
+        let editAvatarSymbol = '👦';
+        
+        let currentTopicId = 1;
+        let currentDifficulty = 'Mudah';
+        let currentTimeLimit = 60;
+        
+        let activeQuestions = [];
+        let currentQuestionIndex = 0;
+        let sessionScore = 0;
+        let sessionCorrectCount = 0;
+        let sessionWrongCount = 0;
+        let timerInterval = null;
+        let timeLeft = 60;
+        let answeredCurrent = false;
+
+        const STORAGE_KEY = 'edu_kidz_tahun6_data_v1';
+
+        function getStorageData() {
+            try {
+                let data = localStorage.getItem(STORAGE_KEY);
+                if (data) {
+                    return JSON.parse(data);
+                }
+            } catch (e) {
+                console.error("Storage read error:", e);
+            }
+            return { activeUserId: null, users: [] };
+        }
+
+        function saveStorageData(store) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+            } catch (e) {
+                console.error("Storage write error:", e);
+            }
+        }
+
+        function updateActiveUser(updatedUser) {
+            let store = getStorageData();
+            let idx = store.users.findIndex(u => u.id === updatedUser.id);
+            if (idx >= 0) {
+                store.users[idx] = updatedUser;
+            } else {
+                store.users.push(updatedUser);
+            }
+            store.activeUserId = updatedUser.id;
+            saveStorageData(store);
+            currentUser = updatedUser;
+            updateHeaderInfo();
+        }
+
+        function updateHeaderInfo() {
+            if (currentUser) {
+                let headerScore = document.getElementById('header-score');
+                let headerAvatar = document.getElementById('header-avatar');
+                let headerUsername = document.getElementById('header-username');
+                if (headerScore) headerScore.innerText = `${currentUser.totalScore || 0} pts`;
+                if (headerAvatar) headerAvatar.innerText = currentUser.avatar || '👦';
+                if (headerUsername) headerUsername.innerText = currentUser.name || 'Pemain';
+                
+                let mainHeader = document.getElementById('main-header');
+                if (mainHeader) mainHeader.classList.remove('hide');
+            }
+        }
+
+        function selectAvatar(symbol) {
+            selectedAvatarSymbol = symbol;
+            let btns = document.querySelectorAll('#avatar-selector button');
+            btns.forEach(b => {
+                b.className = "avatar-btn p-3 rounded-xl border-2 border-slate-200 hover:border-slate-300 text-2xl flex items-center justify-center transition";
+                if (b.getAttribute('onclick').includes(symbol)) {
+                    b.className = "avatar-btn p-3 rounded-xl border-2 border-eduBlue bg-blue-50 text-2xl flex items-center justify-center transition";
+                }
+            });
+        }
+
+        function selectEditAvatar(symbol) {
+            editAvatarSymbol = symbol;
+            let btns = document.querySelectorAll('#edit-avatar-selector button');
+            btns.forEach(b => {
+                b.className = "edit-avatar-btn p-2 rounded-xl border-2 border-slate-200 text-xl flex items-center justify-center";
+                if (b.getAttribute('onclick').includes(symbol)) {
+                    b.className = "edit-avatar-btn p-2 rounded-xl border-2 border-eduBlue bg-blue-50 text-xl flex items-center justify-center";
+                }
+            });
+        }
+
+        function showScreen(screenId) {
+            const screens = ['auth-screen', 'menu-screen', 'topic-screen', 'setup-screen', 'quiz-screen', 'result-screen', 'progress-screen', 'leaderboard-screen', 'profile-screen', 'guide-screen'];
+            screens.forEach(id => {
+                let el = document.getElementById(id);
+                if (el) el.classList.add('hide');
+            });
+
+            let target = document.getElementById(screenId);
+            if (target) {
+                target.classList.remove('hide');
+            }
+
+            if (screenId === 'topic-screen') {
+                renderTopicsList();
+            }
+
+            let mainHeader = document.getElementById('main-header');
+            if (mainHeader) {
+                if (screenId === 'auth-screen') {
+                    mainHeader.classList.add('hide');
+                } else if (currentUser) {
+                    mainHeader.classList.remove('hide');
+                    updateHeaderInfo();
+                }
+            }
+        }
+
+        const TOPICS = [
+            { id: 1, name: "Bahagi Pecahan", icon: "🍕", desc: "Pecahan wajar, tak wajar & nombor bercampur" },
+            { id: 2, name: "Operasi Asas", icon: "🔢", desc: "Tambah, tolak, darab & bahagi nombor bulat & perpuluhan" },
+            { id: 3, name: "Tukar Perpuluhan ke Peratus", icon: "💯", desc: "Grid 100 petak & penukaran nilai" },
+            { id: 4, name: "Tambah dan Tolak Peratus", icon: "📊", desc: "Situasi harian, diskaun & markah" },
+            { id: 5, name: "Nilai Kuantiti dan Peratus", icon: "🧮", desc: "Menentukan nilai kuantiti daripada peratus dan sebaliknya" },
+            { id: 6, name: "Operasi Bergabung", icon: "⚡", desc: "Turutan operasi pecahan, perpuluhan & peratus (Dikemaskini Baharu!)" },
+            { id: 7, name: "Penyelesaian Masalah", icon: "🛒", desc: "Situasi harian wang, nisbah, purata & gabungan (Diperkaya Dipertingkat!)" }
+        ];
+
+        let QUESTION_BANK = [];
+
+        function generateQuestionBank() {
+            QUESTION_BANK = [];
+            let qIdCounter = 1;
+
+            TOPICS.forEach(topic => {
+                ['Mudah', 'Sederhana', 'Susah'].forEach(diff => {
+                    for (let i = 1; i <= 20; i++) {
+                        let qObj = createUniqueQuestion(topic.id, diff, i, qIdCounter++);
+                        QUESTION_BANK.push(qObj);
+                    }
+                });
+            });
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function createUniqueQuestion(topicId, diff, index, id) {
+            let qText = "";
+            let options = [];
+            let correctAns = "";
+            let explanation = "";
+            let cognitive = "MENGINGAT";
+            let visualType = "pizza";
+
+            if (diff === 'Mudah') cognitive = (index % 2 === 0) ? "MENGINGAT" : "MEMAHAMI";
+            else if (diff === 'Sederhana') cognitive = "MEMAHAMI";
+            else cognitive = "MENGAPLIKASI";
+
+            if (topicId === 1) {
+                visualType = "fraction-bar";
+                if (diff === 'Mudah') {
+                    let numerators = [1, 3, 1, 3, 1, 2, 3, 1, 3, 5, 1, 3, 7, 1, 3, 1, 5, 3, 1, 3];
+                    let denominators = [2, 4, 4, 4, 8, 3, 4, 6, 8, 8, 5, 5, 10, 3, 5, 10, 6, 10, 4, 6];
+                    let divisors = [2, 3, 2, 4, 2, 3, 3, 2, 4, 5, 2, 3, 2, 4, 2, 5, 3, 2, 6, 3];
+                    
+                    let num = numerators[(index - 1) % numerators.length];
+                    let denom = denominators[(index - 1) % denominators.length];
+                    let div = divisors[(index - 1) % divisors.length];
+
+                    qText = `Berapakah hasil bahagi ${num}/${denom} ÷ ${div} ?`;
+                    let correctNum = num;
+                    let correctDenom = denom * div;
+                    correctAns = `${correctNum}/${correctDenom}`;
+                    
+                    let wrong1 = `${num + 1}/${correctDenom}`;
+                    let wrong2 = `${num}/${denom}`;
+                    let wrong3 = `${correctNum}/${denom}`;
+                    options = [correctAns, wrong1, wrong2, wrong3];
+                    explanation = `Darabkan penyebut dengan nombor bulat: (${num}/${denom}) ÷ ${div} = ${num} / (${denom} × ${div}) = ${correctNum}/${correctDenom}.`;
+                } else if (diff === 'Sederhana') {
+                    let whole = (index % 4) + 1;
+                    let num = (index % 2 === 0) ? 1 : 3;
+                    let denom = 2;
+                    let div = (index % 3) + 2;
+
+                    qText = `Selesaikan: ${whole} ${num}/${denom} ÷ ${div} = ?`;
+                    let improperNum = (whole * denom) + num;
+                    let ansNum = improperNum;
+                    let ansDenom = denom * div;
+                    
+                    if (ansNum % 2 === 0 && ansDenom % 2 === 0) {
+                        ansNum /= 2;
+                        ansDenom /= 2;
+                    }
+                    correctAns = `${ansNum}/${ansDenom}`;
+                    options = [correctAns, `${ansNum + 1}/${ansDenom}`, `${ansNum}/${ansDenom + 2}`, `${whole}/${div}`];
+                    explanation = `Tukarkan nombor bercampur kepada pecahan tak wajar (${improperNum}/${denom}), kemudian darab salingan ${div}: ${ansNum}/${ansDenom}.`;
+                } else {
+                    let kids = (index % 4) + 2;
+                    let baseVal = (index % 3 + 2) * 2;
+                    qText = `Ibu membahagikan ${baseVal} 1/2 kg tepung sama rata ke dalam ${kids} bekas kecil. Berapakah jisim tepung dalam setiap bekas?`;
+                    let totalVal = (baseVal * 2 + 1) / 2;
+                    let ansVal = (totalVal / kids).toFixed(2);
+                    correctAns = `${ansVal} kg`;
+                    options = [`${ansVal} kg`, `${(parseFloat(ansVal) + 0.5).toFixed(2)} kg`, `${(parseFloat(ansVal) - 0.2).toFixed(2)} kg`, `${(baseVal / kids).toFixed(2)} kg`];
+                    explanation = `Tukarkan ${baseVal} 1/2 kepada pecahan tak wajar dan bahagikan dengan ${kids} untuk mendapat ${ansVal} kg.`;
+                }
+            } 
+            else if (topicId === 2) {
+                visualType = "numbers";
+                if (diff === 'Mudah') {
+                    let a = (index * 12.5).toFixed(1);
+                    let b = (index * 3.2).toFixed(1);
+                    let ans = (parseFloat(a) + parseFloat(b)).toFixed(1);
+                    qText = `Hitung nilai: ${a} + ${b} = ?`;
+                    correctAns = `${ans}`;
+                    options = [`${ans}`, `${(parseFloat(ans) + 2.1).toFixed(1)}`, `${(parseFloat(ans) - 1.5).toFixed(1)}`, `${(parseFloat(ans) + 5.0).toFixed(1)}`];
+                    explanation = `Lakukan penambahan perpuluhan mengikut nilai tempat titik perpuluhan: ${a} + ${b} = ${ans}.`;
+                } else if (diff === 'Sederhana') {
+                    let a = 1000 + (index * 145);
+                    let b = (index * 12.4).toFixed(1);
+                    let ans = (a - parseFloat(b)).toFixed(1);
+                    qText = `Cari baki berikut: ${a} − ${b} = ?`;
+                    correctAns = `${ans}`;
+                    options = [`${ans}`, `${(parseFloat(ans) + 10.5).toFixed(1)}`, `${(parseFloat(ans) - 12.0).toFixed(1)}`, `${(parseFloat(ans) + 25.4).toFixed(1)}`];
+                    explanation = `Pastikan nilai tempat nombor bulat diselaraskan dengan titik perpuluhan: ${a}.0 − ${b} = ${ans}.`;
+                } else {
+                    let multVal = 24 + index;
+                    let decVal = (index * 0.25).toFixed(2);
+                    let ans = (multVal * parseFloat(decVal)).toFixed(2);
+                    qText = `Selesaikan operasi darab ini: ${multVal} × ${decVal} = ?`;
+                    correctAns = `${ans}`;
+                    options = [`${ans}`, `${(parseFloat(ans) + 4.50).toFixed(2)}`, `${(parseFloat(ans) - 2.25).toFixed(2)}`, `${(parseFloat(ans) + 12.00).toFixed(2)}`];
+                    explanation = `Darabkan seperti biasa dan tetapkan dua tempat perpuluhan: ${multVal} × ${decVal} = ${ans}.`;
+                }
+            } 
+            else if (topicId === 3) {
+                visualType = "grid-100";
+                if (diff === 'Mudah') {
+                    let vals = [0.1, 0.2, 0.25, 0.4, 0.5, 0.75, 0.8, 0.15, 0.35, 0.65];
+                    let val = vals[(index - 1) % vals.length];
+                    let pct = val * 100;
+                    qText = `Tukarkan nilai perpuluhan ${val} kepada peratus.`;
+                    correctAns = `${pct}%`;
+                    options = [`${pct}%`, `${pct+10}%`, `${Math.max(0, pct-5)}%`, `${pct*2}%`];
+                    explanation = `Darabkan nilai perpuluhan dengan 100%: ${val} × 100% = ${pct}%.`;
+                } else if (diff === 'Sederhana') {
+                    let vals = [0.03, 0.08, 0.12, 0.35, 0.65, 0.95, 0.01, 0.45, 0.55, 0.85];
+                    let val = vals[(index - 1) % vals.length];
+                    let pct = val * 100;
+                    qText = `Tukarkan ${val} kepada peratus.`;
+                    correctAns = `${pct}%`;
+                    options = [`${pct}%`, `${pct*10}%`, `${(val*10)}%`, `${pct+5}%`];
+                    explanation = `${val} × 100% = ${pct}%.`;
+                } else {
+                    let pcts = [115, 125, 150, 175, 200, 250, 105, 300, 120, 140];
+                    let pct = pcts[(index - 1) % pcts.length];
+                    let dec = pct / 100;
+                    qText = `Antara berikut, yang manakah setara dengan ${pct}% dalam bentuk perpuluhan?`;
+                    correctAns = `${dec}`;
+                    options = [`${dec}`, `${dec * 10}`, `${dec / 10}`, `${dec + 0.5}`];
+                    explanation = `Bahagikan peratus dengan 100: ${pct} ÷ 100 = ${dec}.`;
+                }
+            } 
+            else if (topicId === 4) {
+                visualType = "bar-chart";
+                if (diff === 'Mudah') {
+                    let p1 = ((index % 4) + 1) * 10;
+                    let p2 = ((index % 3) + 1) * 10;
+                    let sum = p1 + p2;
+                    qText = `Hitung: ${p1}% + ${p2}% = ?`;
+                    correctAns = `${sum}%`;
+                    options = [`${sum}%`, `${sum + 10}%`, `${Math.abs(sum - 10)}%`, `${sum + 20}%`];
+                    explanation = `Tambah peratus secara terus: ${p1}% + ${p2}% = ${sum}%.`;
+                } else if (diff === 'Sederhana') {
+                    let base = 90 - (index * 2);
+                    let sub = 25 + (index % 5);
+                    let ans = base - sub;
+                    qText = `Selesaikan: ${base}% − ${sub}% = ?`;
+                    correctAns = `${ans}%`;
+                    options = [`${ans}%`, `${ans + 5}%`, `${ans - 5}%`, `${ans + 10}%`];
+                    explanation = `Tolak nilai peratus: ${base}% - ${sub}% = ${ans}%.`;
+                } else {
+                    let total = 500 + (index * 50);
+                    let pBoys = 40 + (index % 15);
+                    let pGirls = 100 - pBoys;
+                    qText = `Dalam sebuah dewan, ${pBoys}% daripada ${total} orang murid ialah murid lelaki. Berapakah peratus murid perempuan?`;
+                    correctAns = `${pGirls}%`;
+                    options = [`${pGirls}%`, `${pBoys}%`, `${pGirls + 5}%`, `${Math.abs(pGirls - 10)}%`];
+                    explanation = `Jumlah keseluruhan peratus ialah 100%. Peratus murid perempuan = 100% - ${pBoys}% = ${pGirls}%.`;
+                }
+            } 
+            else if (topicId === 5) {
+                visualType = "calculator";
+                if (diff === 'Mudah') {
+                    let totals = [200, 300, 400, 500, 600, 800, 1000, 1200, 1500, 2000];
+                    let pcts = [5, 10, 15, 20, 25, 30, 40, 50, 75, 80];
+                    let total = totals[(index - 1) % totals.length];
+                    let pct = pcts[(index - 1) % pcts.length];
+                    let ans = (pct / 100) * total;
+
+                    qText = `Berapakah nilai bagi ${pct}% daripada ${total} biji guli?`;
+                    correctAns = `${ans}`;
+                    options = [`${ans}`, `${ans + 20}`, `${Math.max(0, ans - 15)}`, `${ans * 2}`];
+                    explanation = `Cari nilai kuantiti dengan mendarab peratus dengan jumlah: (${pct}/100) × ${total} = ${ans}.`;
+                } else if (diff === 'Sederhana') {
+                    let parts = [12, 18, 24, 35, 42, 50, 64, 75, 88, 95];
+                    let pcts = [20, 25, 40, 50, 60, 75, 80, 10, 30, 45];
+                    let part = parts[(index - 1) % parts.length];
+                    let pct = pcts[(index - 1) % pcts.length];
+                    let totalVal = Math.round((part * 100) / pct);
+
+                    qText = `Jika ${pct}% daripada suatu wang simpanan ialah RM${part}, berapakah jumlah keseluruhan wang simpanan itu?`;
+                    correctAns = `RM${totalVal}`;
+                    options = [`RM${totalVal}`, `RM${totalVal + 20}`, `RM${Math.max(10, totalVal - 30)}`, `RM${part * 2}`];
+                    explanation = `Jika ${pct}% = RM${part}, maka 100% = (RM${part} ÷ ${pct}) × 100 = RM${totalVal}.`;
+                } else {
+                    let originalPrice = 250 + (index * 35);
+                    let discPct = (index % 2 === 0) ? 30 : 40;
+                    let discountAmount = (discPct / 100) * originalPrice;
+                    let finalPrice = originalPrice - discountAmount;
+
+                    qText = `Sebuah basikal berharga RM${originalPrice} diberi diskaun sebanyak ${discPct}%. Hitung harga jualan basikal selepas diskaun.`;
+                    correctAns = `RM${finalPrice.toFixed(0)}`;
+                    options = [`RM${finalPrice.toFixed(0)}`, `RM${finalPrice.toFixed(0) * 1 + 30}`, `RM${Math.max(50, finalPrice.toFixed(0) * 1 - 40)}`, `RM${originalPrice}`];
+                    explanation = `Diskaun = ${discPct}% dari RM${originalPrice} = RM${discountAmount}. Harga jualan = RM${originalPrice} - RM${discountAmount} = RM${finalPrice.toFixed(0)}.`;
+                }
+            } 
+            else if (topicId === 6) {
+                visualType = "lightning";
+                if (diff === 'Mudah') {
+                    let addDecs = [2.5, 4.2, 3.8, 6.4, 5.1, 7.3, 8.5, 1.9, 9.2, 3.4];
+                    let val = addDecs[(index - 1) % addDecs.length];
+                    let ans = (val + 1.5).toFixed(1);
+                    qText = `Selesaikan operasi bergabung mudah berikut: ${val} + (0.5 × 3) = ?`;
+                    correctAns = `${ans}`;
+                    options = [`${ans}`, `${(parseFloat(ans) + 1.0).toFixed(1)}`, `${(Math.max(0, parseFloat(ans) - 0.8)).toFixed(1)}`, `${(parseFloat(ans) * 1.2).toFixed(1)}`];
+                    explanation = `Ikut tertib operasi (kurungan didahulukan): 0.5 × 3 = 1.5. Kemudian ${val} + 1.5 = ${ans}.`;
+                } else if (diff === 'Sederhana') {
+                    let fracParts = ['3/4', '1/2', '4/5', '1/4', '7/10'];
+                    let fStr = fracParts[(index - 1) % fracParts.length];
+                    let ansMap = { '3/4': '0.60', '1/2': '0.35', '4/5': '0.65', '1/4': '0.20', '7/10': '0.55' };
+                    let targetAns = ansMap[fStr] || '0.50';
+                    
+                    qText = `Hitung nilai bagi operasi berikut: (${fStr} − 0.15) × 1.0 = ?`;
+                    correctAns = `${targetAns}`;
+                    options = [`${targetAns}`, `${(parseFloat(targetAns) + 0.20).toFixed(2)}`, `${(Math.max(0, parseFloat(targetAns) - 0.15)).toFixed(2)}`, `${(parseFloat(targetAns) * 2).toFixed(2)}`];
+                    explanation = `Tukarkan pecahan ${fStr} kepada perpuluhan terlebih dahulu, kemudian tolak 0.15 untuk mendapat ${targetAns}.`;
+                } else {
+                    let baseVals = [200, 400, 500, 250, 300];
+                    let v = baseVals[(index - 1) % baseVals.length];
+                    let pctVal = (index % 2 === 0) ? 20 : 10;
+                    let ansNum = (v * (1 + pctVal / 100)) - 50;
+                    
+                    qText = `Selesaikan operasi kompleks: ${v} + (${pctVal}% daripada ${v}) − 50 = ?`;
+                    correctAns = `${ansNum.toFixed(1)}`;
+                    options = [`${ansNum.toFixed(1)}`, `${(ansNum + 40).toFixed(1)}`, `${(ansNum - 30).toFixed(1)}`, `${(ansNum * 1.1).toFixed(1)}`];
+                    explanation = `Kira peratus dahulu: ${pctVal}% daripada ${v} = ${(pctVal/100)*v}. Tambah kepada ${v} dan tolak 50 menghasilkan ${ansNum.toFixed(1)}.`;
+                }
+            } 
+            else {
+                visualType = "shop";
+                if (diff === 'Mudah') {
+                    let subType = index % 4;
+                    if (subType === 0) {
+                        let money = 40 + (index * 10);
+                        let half = money / 2;
+                        qText = `Siti mempunyai RM${money}. Dia membelanjakan 50% daripada wangnya untuk membeli buku rujukan. Berapakah baki wang Siti?`;
+                        correctAns = `RM${half}`;
+                        options = [`RM${half}`, `RM${half + 5}`, `RM${half - 5}`, `RM${money}`];
+                        explanation = `Wang dibelanjakan = 50% dari RM${money} = RM${half}. Baki = RM${money} - RM${half} = RM${half}.`;
+                    } else if (subType === 1) {
+                        let price = 80 + (index * 5);
+                        let disc = 10;
+                        let ans = price - disc;
+                        qText = `Sebuah beg sekolah berharga RM${price}. Kedai memberikan rebat tunai sebanyak RM${disc}. Berapakah harga selepas rebat?`;
+                        correctAns = `RM${ans}`;
+                        options = [`RM${ans}`, `RM${ans + 10}`, `RM${ans - 5}`, `RM${price}`];
+                        explanation = `Harga selepas rebat = RM${price} − RM${disc} = RM${ans}.`;
+                    } else if (subType === 2) {
+                        let pack = 4 + (index % 3);
+                        let pricePerPack = 12;
+                        let total = pack * pricePerPack;
+                        qText = `Amir membeli ${pack} kotak pensel warna dengan harga RM${pricePerPack} setiap kotak. Hitung jumlah bayaran yang perlu dijelaskan oleh Amir.`;
+                        correctAns = `RM${total}`;
+                        options = [`RM${total}`, `RM${total + 10}`, `RM${Math.max(10, total - 12)}`, `RM${pricePerPack}`];
+                        explanation = `Jumlah = ${pack} × RM${pricePerPack} = RM${total}.`;
+                    } else {
+                        let initial = 150;
+                        let add = 50 + (index * 10);
+                        let ans = initial + add;
+                        qText = `Tabung Aminah mengandungi RM${initial}. Selepas ibu memasukkan RM${add} lagi ke dalam tabung itu, berapakah jumlah wang Aminah sekarang?`;
+                        correctAns = `RM${ans}`;
+                        options = [`RM${ans}`, `RM${ans + 20}`, `RM${Math.max(50, ans - 30)}`, `RM${initial}`];
+                        explanation = `Jumlah keseluruhan wang = RM${initial} + RM${add} = RM${ans}.`;
+                    }
+                } else if (diff === 'Sederhana') {
+                    let subType = index % 4;
+                    if (subType === 0) {
+                        let correctCount = 15 + (index % 5);
+                        let totalQ = 20;
+                        let pct = (correctCount / totalQ) * 100;
+                        qText = `Dalam satu ujian Matematik, Ali menjawab betul ${correctCount} daripada ${totalQ} soalan. Berapakah peratus markah yang diperoleh Ali?`;
+                        correctAns = `${pct}%`;
+                        options = [`${pct}%`, `${pct - 5}%`, `${pct + 5}%`, `80%`];
+                        explanation = `Peratus markah = (${correctCount} / ${totalQ}) × 100% = ${pct}%.`;
+                    } else if (subType === 1) {
+                        let totalPpl = 40 + (index * 5);
+                        let pctAdults = 60;
+                        let adults = (pctAdults / 100) * totalPpl;
+                        let kids = totalPpl - adults;
+                        qText = `Seramai ${totalPpl} orang pelawat melawat Pameran Sains. 60% daripada mereka ialah dewasa dan selebihnya kanak-kanak. Hitung bilangan pelawat kanak-kanak.`;
+                        correctAns = `${kids}`;
+                        options = [`${kids}`, `${adults}`, `${kids + 4}`, `${Math.max(2, kids - 5)}`];
+                        explanation = `Peratus kanak-kanak = 100% - 60% = 40%. 40% daripada ${totalPpl} = ${kids} orang.`;
+                    } else if (subType === 2) {
+                        let itemA = 45.50;
+                        let itemB = 22.80;
+                        let voucher = 10.00;
+                        let net = (itemA + itemB) - voucher;
+                        qText = `Zarith membeli sehelai baju bernilai RM${itemA} dan sepasang kasut bernilai RM${itemB}. Dia menggunakan baucar diskaun bernilai RM${voucher}. Hitung jumlah wang yang perlu dibayar.`;
+                        correctAns = `RM${net.toFixed(2)}`;
+                        options = [`RM${net.toFixed(2)}`, `RM${(net + 5).toFixed(2)}`, `RM${(net - 5).toFixed(2)}`, `RM${(itemA + itemB).toFixed(2)}`];
+                        explanation = `Jumlah asal = RM${itemA} + RM${itemB} = RM${(itemA+itemB).toFixed(2)}. Tolak baucar RM${voucher} = RM${net.toFixed(2)}.`;
+                    } else {
+                        let totalMeters = 120;
+                        let usedPct = 35;
+                        let used = (usedPct / 100) * totalMeters;
+                        let remaining = totalMeters - used;
+                        qText = `Puan Salma mempunyai ${totalMeters} m kain. Dia menggunakan ${usedPct}% daripada kain itu untuk menjahit langsir. Berapakah baki kain (dalam meter) yang masih ada?`;
+                        correctAns = `${remaining} m`;
+                        options = [`${remaining} m`, `${used} m`, `${remaining + 10} m`, `${totalMeters} m`];
+                        explanation = `Kain digunakan = ${usedPct}% dari ${totalMeters} m = ${used} m. Baki = ${totalMeters} - ${used} = ${remaining} m.`;
+                    }
+                } else {
+                    let subType = index % 4;
+                    if (subType === 0) {
+                        let totalCakes = 2000 + (index * 100);
+                        let choc = (3/8) * totalCakes;
+                        let pandanPct = 25;
+                        let pandan = (pandanPct / 100) * totalCakes;
+                        let strawberi = totalCakes - choc - pandan;
+                        qText = `Sebuah kilang menghasilkan ${totalCakes} biji kek. 3/8 perisa coklat, 25% perisa pandan, dan selebihnya perisa strawberi. Berapakah bilangan kek perisa strawberi?`;
+                        correctAns = `${strawberi}`;
+                        options = [`${strawberi}`, `${strawberi + 100}`, `${Math.max(0, strawberi - 100)}`, `${choc}`];
+                        explanation = `Coklat = ${choc}, Pandan = ${pandan}. Strawberi = ${totalCakes} - ${choc} - ${pandan} = ${strawberi}.`;
+                    } else if (subType === 1) {
+                        let capital = 5000 + (index * 200);
+                        let profitPct = 18;
+                        let profit = (profitPct / 100) * capital;
+                        let totalRevenue = capital + profit;
+                        qText = `Encik Farhan melaburkan modal sebanyak RM${capital} dalam perniagaan. Beliau mendapat pulangan keuntungan sebanyak ${profitPct}% daripada modal itu. Hitung jumlah keseluruhan wang Encik Farhan sekarang.`;
+                        correctAns = `RM${totalRevenue.toFixed(0)}`;
+                        options = [`RM${totalRevenue.toFixed(0)}`, `RM${capital}`, `RM${(totalRevenue + 200).toFixed(0)}`, `RM${(totalRevenue - 150).toFixed(0)}`];
+                        explanation = `Keuntungan = ${profitPct}% daripada RM${capital} = RM${profit}. Jumlah keseluruhan = RM${capital} + RM${profit} = RM${totalRevenue.toFixed(0)}.`;
+                    } else if (subType === 2) {
+                        let totalBoxes = 1200;
+                        let damagedPct = 5;
+                        let soldPct = 75;
+                        let damaged = (damagedPct / 100) * totalBoxes;
+                        let goodBoxes = totalBoxes - damaged;
+                        let sold = (soldPct / 100) * goodBoxes;
+                        let unsold = goodBoxes - sold;
+                        qText = `Sebuah gudang menyimpan ${totalBoxes} kotak buah mangga. 5% rosak dan dibuang. Daripada baki kotak yang baik, 75% telah dijual. Berapakah bilangan kotak buah mangga yang belum dijual?`;
+                        correctAns = `${unsold}`;
+                        options = [`${unsold}`, `${sold}`, `${unsold + 30}`, `${damaged}`];
+                        explanation = `Kotak rosak = ${damaged}. Baki baik = ${goodBoxes}. Dijual = ${sold}. Baki belum dijual = ${goodBoxes} - ${sold} = ${unsold} kotak.`;
+                    } else {
+                        let workers = 8;
+                        let days = 15;
+                        let totalManDays = workers * days;
+                        let newWorkers = 12;
+                        let newDays = totalManDays / newWorkers;
+                        qText = `Seramai ${workers} orang pekerja boleh menyiapkan sebuah projek landskap dalam masa ${days} hari. Jika bilangan pekerja dikurangkan atau ditambah kepada ${newWorkers} orang dengan kadar kerja yang sama, berapakah hari yang diperlukan?`;
+                        correctAns = `${newDays} hari`;
+                        options = [`${newDays} hari`, `${newDays + 3} hari`, `${days} hari`, `${newDays - 2} hari`];
+                        explanation = `Jumlah hari orang (man-days) = ${workers} × ${days} = ${totalManDays}. Untuk ${newWorkers} pekerja, masa diperlukan = ${totalManDays} ÷ ${newWorkers} = ${newDays} hari.`;
+                    }
+                }
+            }
+
+            if (!options.includes(correctAns)) {
+                options.push(correctAns);
+            }
+            options = shuffleArray(options);
+
+            return {
+                id: topicId + '-' + diff + '-' + index,
+                topicId: topicId,
+                difficulty: diff,
+                cognitive: cognitive,
+                visual: visualType,
+                question: qText,
+                options: options,
+                answer: correctAns,
+                explanation: explanation
+            };
+        }
+
+        function handleLogin() {
+            let nameInput = document.getElementById('input-username').value.trim();
+            if (!nameInput) {
+                showCustomMessage("Sila masukkan nama penuh murid terlebih dahulu.");
+                return;
+            }
+
+            let store = getStorageData();
+            let user = store.users.find(u => u.name.toLowerCase() === nameInput.toLowerCase());
+
+            if (!user) {
+                user = {
+                    id: 'USER-' + Date.now(),
+                    name: nameInput,
+                    avatar: selectedAvatarSymbol,
+                    totalScore: 0,
+                    totalAnswered: 0,
+                    correctAnswers: 0,
+                    wrongAnswers: 0,
+                    completedTopics: [],
+                    badges: [],
+                    history: []
+                };
+                store.users.push(user);
+            } else {
+                user.avatar = selectedAvatarSymbol;
+            }
+
+            store.activeUserId = user.id;
+            saveStorageData(store);
+
+            currentUser = user;
+            document.getElementById('welcome-name').innerText = currentUser.name;
+            showScreen('menu-screen');
+        }
+
+        function logoutPlayer() {
+            let store = getStorageData();
+            store.activeUserId = null;
+            saveStorageData(store);
+            currentUser = null;
+            document.getElementById('input-username').value = '';
+            showScreen('auth-screen');
+        }
+
+        window.onload = function() {
+            generateQuestionBank();
+            let store = getStorageData();
+            if (store.activeUserId) {
+                let user = store.users.find(u => u.id === store.activeUserId);
+                if (user) {
+                    currentUser = user;
+                    document.getElementById('welcome-name').innerText = currentUser.name;
+                    showScreen('menu-screen');
+                    return;
+                }
+            }
+            showScreen('auth-screen');
+        };
+
+        function renderTopicsList() {
+            let container = document.getElementById('topics-grid');
+            container.innerHTML = '';
+
+            TOPICS.forEach(topic => {
+                let card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-eduBlue hover:shadow-md transition cursor-pointer flex items-center justify-between group";
+                card.onclick = () => selectTopic(topic.id);
+                card.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                            ${topic.icon}
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Topik ${topic.id}</span>
+                            <h3 class="font-display font-bold text-base text-slate-800">${topic.name}</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">${topic.desc}</p>
+                        </div>
+                    </div>
+                    <div class="text-slate-300 group-hover:text-eduBlue group-hover:translate-x-1 transition">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function selectTopic(topicId) {
+            currentTopicId = topicId;
+            let topic = TOPICS.find(t => t.id === topicId);
+            document.getElementById('setup-topic-icon').innerText = topic.icon;
+            document.getElementById('setup-topic-title').innerText = topic.name;
+            showScreen('setup-screen');
+        }
+
+        function setDifficulty(diff) {
+            currentDifficulty = diff;
+            document.querySelectorAll('.diff-btn').forEach(btn => {
+                btn.className = "diff-btn py-2.5 px-3 rounded-xl border-2 border-slate-200 text-slate-600 font-display font-semibold text-xs transition flex items-center justify-center";
+            });
+            let targetId = 'diff-' + diff.toLowerCase();
+            let targetBtn = document.getElementById(targetId);
+            if (diff === 'Mudah') targetBtn.className = "diff-btn py-2.5 px-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-700 font-display font-semibold text-xs transition flex items-center justify-center";
+            else if (diff === 'Sederhana') targetBtn.className = "diff-btn py-2.5 px-3 rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-700 font-display font-semibold text-xs transition flex items-center justify-center";
+            else targetBtn.className = "diff-btn py-2.5 px-3 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-700 font-display font-semibold text-xs transition flex items-center justify-center";
+        }
+
+        function setTimeMode(seconds) {
+            currentTimeLimit = seconds;
+            document.querySelectorAll('.time-btn').forEach(btn => {
+                btn.className = "time-btn py-2.5 px-3 rounded-xl border-2 border-slate-200 text-slate-600 font-display font-semibold text-xs transition flex items-center justify-center";
+            });
+            let btnId = seconds === 30 ? 'time-30' : (seconds === 60 ? 'time-60' : 'time-inf');
+            document.getElementById(btnId).className = "time-btn py-2.5 px-3 rounded-xl border-2 border-blue-500 bg-blue-50 text-blue-700 font-display font-semibold text-xs transition flex items-center justify-center";
+        }
+
+        function startQuizSession() {
+            let pool = QUESTION_BANK.filter(q => q.topicId === currentTopicId && q.difficulty === currentDifficulty);
+            let shuffled = shuffleArray([...pool]);
+            activeQuestions = shuffled.slice(0, 20);
+            
+            currentQuestionIndex = 0;
+            sessionScore = 0;
+            sessionCorrectCount = 0;
+            sessionWrongCount = 0;
+
+            showScreen('quiz-screen');
+            loadCurrentQuestion();
+        }
+
+        function loadCurrentQuestion() {
+            if (currentQuestionIndex >= activeQuestions.length) {
+                endQuizSession();
+                return;
+            }
+
+            answeredCurrent = false;
+            let q = activeQuestions[currentQuestionIndex];
+
+            document.getElementById('current-q-num').innerText = currentQuestionIndex + 1;
+            document.getElementById('quiz-score').innerText = sessionScore;
+            document.getElementById('quiz-topic-badge').innerText = `Topik ${q.topicId}`;
+            document.getElementById('quiz-diff-badge').innerText = q.difficulty;
+            
+            let progPercent = ((currentQuestionIndex) / activeQuestions.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${Math.max(progPercent, 5)}%`;
+
+            document.getElementById('question-cognitive').innerText = q.cognitive;
+            document.getElementById('question-text').innerText = q.question;
+            document.getElementById('explanation-box').classList.add('hide');
+            document.getElementById('btn-next-question').classList.add('hide');
+
+            renderVisualDiagram(q.visual);
+            renderAnswerOptions(q);
+
+            if (currentTimeLimit > 0) {
+                timeLeft = currentTimeLimit;
+                document.getElementById('timer-box').classList.remove('hide');
+                document.getElementById('quiz-timer').innerText = `${timeLeft}s`;
+                clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('quiz-timer').innerText = `${timeLeft}s`;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        handleTimeOut();
+                    }
+                }, 1000);
+            } else {
+                document.getElementById('timer-box').classList.add('hide');
+            }
+        }
+
+        function renderVisualDiagram(type) {
+            let container = document.getElementById('question-visual');
+            container.innerHTML = '';
+
+            if (type === 'pizza' || type === 'fraction-bar') {
+                container.innerHTML = `
+                    <div class="flex items-center justify-center space-x-3 py-2">
+                        <div class="w-16 h-16 bg-amber-400 rounded-full flex items-center justify-center text-white font-bold shadow-md text-xl">🍕</div>
+                        <div class="flex space-x-1">
+                            <div class="w-8 h-8 bg-blue-500 rounded-md"></div>
+                            <div class="w-8 h-8 bg-blue-500 rounded-md"></div>
+                            <div class="w-8 h-8 bg-slate-200 rounded-md"></div>
+                            <div class="w-8 h-8 bg-slate-200 rounded-md"></div>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'grid-100') {
+                container.innerHTML = `
+                    <div class="grid grid-cols-10 gap-0.5 w-32 h-32 mx-auto bg-slate-200 p-1 rounded-xl shadow-inner">
+                        ${Array.from({length: 40}).map((_, i) => `<div class="bg-blue-500 rounded-[1px]"></div>`).join('')}
+                        ${Array.from({length: 60}).map((_, i) => `<div class="bg-white rounded-[1px]"></div>`).join('')}
+                    </div>
+                `;
+            } else if (type === 'bar-chart') {
+                container.innerHTML = `
+                    <div class="flex items-end justify-center space-x-4 h-20 pt-2">
+                        <div class="w-8 bg-eduBlue rounded-t-lg h-[60%] flex items-center justify-center text-white text-[10px] font-bold">35%</div>
+                        <div class="w-8 bg-eduPurple rounded-t-lg h-[85%] flex items-center justify-center text-white text-[10px] font-bold">45%</div>
+                        <div class="w-8 bg-eduPink rounded-t-lg h-[40%] flex items-center justify-center text-white text-[10px] font-bold">20%</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="text-4xl text-eduBlue">
+                        <i class="fa-solid fa-calculator animate-bounce"></i>
+                    </div>
+                `;
+            }
+        }
+
+        function renderAnswerOptions(q) {
+            let container = document.getElementById('answer-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                let btn = document.createElement('button');
+                btn.className = "option-btn bg-slate-50 hover:bg-blue-50 border-2 border-slate-200 hover:border-blue-400 p-4 rounded-2xl font-display font-semibold text-slate-700 transition text-center text-base shadow-sm";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt, q.answer, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, correct, btnElement) {
+            if (answeredCurrent) return;
+            answeredCurrent = true;
+            clearInterval(timerInterval);
+
+            let allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (selected === correct) {
+                btnElement.className = "option-btn bg-emerald-500 text-white border-2 border-emerald-600 p-4 rounded-2xl font-display font-semibold text-base shadow-md";
+                sessionScore += 5;
+                sessionCorrectCount++;
+                document.getElementById('quiz-score').innerText = sessionScore;
+                showCustomFeedback(true);
+            } else {
+                btnElement.className = "option-btn bg-rose-500 text-white border-2 border-rose-600 p-4 rounded-2xl font-display font-semibold text-base shadow-md";
+                allBtns.forEach(b => {
+                    if (b.innerText === correct) {
+                        b.className = "option-btn bg-emerald-500 text-white border-2 border-emerald-600 p-4 rounded-2xl font-display font-semibold text-base shadow-md";
+                    }
+                });
+                sessionWrongCount++;
+                showCustomFeedback(false);
+            }
+
+            let q = activeQuestions[currentQuestionIndex];
+            document.getElementById('explanation-text').innerText = q.explanation;
+            document.getElementById('explanation-box').classList.remove('hide');
+            document.getElementById('btn-next-question').classList.remove('hide');
+        }
+
+        function handleTimeOut() {
+            if (answeredCurrent) return;
+            answeredCurrent = true;
+            sessionWrongCount++;
+            let q = activeQuestions[currentQuestionIndex];
+
+            let allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => {
+                b.disabled = true;
+                if (b.innerText === q.answer) {
+                    b.className = "option-btn bg-emerald-500 text-white border-2 border-emerald-600 p-4 rounded-2xl font-display font-semibold text-base shadow-md";
+                }
+            });
+
+            document.getElementById('explanation-text').innerText = `Masa tamat! ${q.explanation}`;
+            document.getElementById('explanation-box').classList.remove('hide');
+            document.getElementById('btn-next-question').classList.remove('hide');
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadCurrentQuestion();
+        }
+
+        function endQuizSession() {
+            clearInterval(timerInterval);
+            let totalQ = activeQuestions.length;
+            let accuracy = Math.round((sessionCorrectCount / totalQ) * 100);
+
+            currentUser.totalScore = (currentUser.totalScore || 0) + sessionScore;
+            currentUser.totalAnswered = (currentUser.totalAnswered || 0) + totalQ;
+            currentUser.correctAnswers = (currentUser.correctAnswers || 0) + sessionCorrectCount;
+            currentUser.wrongAnswers = (currentUser.wrongAnswers || 0) + sessionWrongCount;
+
+            if (!currentUser.completedTopics.includes(currentTopicId)) {
+                currentUser.completedTopics.push(currentTopicId);
+            }
+
+            checkAndAwardBadges();
+            updateActiveUser(currentUser);
+
+            document.getElementById('res-score').innerText = `${sessionScore} / ${totalQ * 5}`;
+            document.getElementById('res-accuracy').innerText = `${accuracy}%`;
+            document.getElementById('res-correct').innerText = sessionCorrectCount;
+            document.getElementById('res-wrong').innerText = sessionWrongCount;
+
+            showScreen('result-screen');
+        }
+
+        function restartSameQuiz() {
+            startQuizSession();
+        }
+
+        const AVAILABLE_BADGES = [
+            { id: 'b1', name: 'Pecahan Hebat', icon: '🍕', desc: 'Menyiapkan Topik Bahagi Pecahan' },
+            { id: 'b2', name: 'Raja Perpuluhan', icon: '💯', desc: 'Menyiapkan Topik Tukar Perpuluhan' },
+            { id: 'b3', name: 'Pakar Peratus', icon: '📊', desc: 'Menyiapkan Topik Tambah Tolak Peratus' },
+            { id: 'b4', name: 'Juara Kuantiti', icon: '🧮', desc: 'Menyiapkan Topik Kuantiti dan Peratus' },
+            { id: 'b5', name: 'Edu Kidz Champion', icon: '👑', desc: 'Mencapai lebih 100 markah keseluruhan' }
+        ];
+
+        function checkAndAwardBadges() {
+            if (!currentUser.badges) currentUser.badges = [];
+
+            if (currentUser.completedTopics.includes(1) && !currentUser.badges.includes('b1')) currentUser.badges.push('b1');
+            if (currentUser.completedTopics.includes(3) && !currentUser.badges.includes('b2')) currentUser.badges.push('b2');
+            if (currentUser.completedTopics.includes(4) && !currentUser.badges.includes('b3')) currentUser.badges.push('b3');
+            if (currentUser.completedTopics.includes(5) && !currentUser.badges.includes('b4')) currentUser.badges.push('b4');
+            if (currentUser.totalScore >= 100 && !currentUser.badges.includes('b5')) currentUser.badges.push('b5');
+        }
+
+        function loadProgressData() {
+            document.getElementById('prog-total-score').innerText = currentUser.totalScore || 0;
+            document.getElementById('prog-total-answered').innerText = currentUser.totalAnswered || 0;
+            document.getElementById('prog-topics-done').innerText = `${currentUser.completedTopics ? currentUser.completedTopics.length : 0} / 7`;
+
+            let badgesContainer = document.getElementById('badges-grid');
+            badgesContainer.innerHTML = '';
+
+            AVAILABLE_BADGES.forEach(badge => {
+                let unlocked = currentUser.badges && currentUser.badges.includes(badge.id);
+                let div = document.createElement('div');
+                div.className = `p-4 rounded-2xl border text-center transition ${unlocked ? 'bg-amber-50/60 border-amber-200' : 'bg-slate-50 border-slate-200 opacity-50'}`;
+                div.innerHTML = `
+                    <div class="text-3xl mb-2">${badge.icon}</div>
+                    <h4 class="font-display font-bold text-xs text-slate-800">${badge.name}</h4>
+                    <p class="text-[10px] text-slate-500 mt-1">${badge.desc}</p>
+                    <span class="inline-block mt-2 text-[9px] font-bold px-2 py-0.5 rounded-full ${unlocked ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-600'}">
+                        ${unlocked ? 'Dibuka' : 'Berkunci'}
+                    </span>
+                `;
+                badgesContainer.appendChild(div);
+            });
+        }
+
+        function loadLeaderboard() {
+            let store = getStorageData();
+            let users = store.users.sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0));
+
+            let listContainer = document.getElementById('leaderboard-list');
+            listContainer.innerHTML = '';
+
+            if (users.length === 0) {
+                listContainer.innerHTML = `<p class="text-center text-slate-400 text-sm py-6">Belum ada rekod pemain lagi.</p>`;
+                return;
+            }
+
+            users.forEach((u, index) => {
+                let item = document.createElement('div');
+                let rankBg = index === 0 ? 'bg-amber-50 border-amber-200 text-amber-800' : (index === 1 ? 'bg-slate-100 border-slate-200 text-slate-700' : (index === 2 ? 'bg-orange-50 border-orange-200 text-orange-800' : 'bg-white border-slate-100 text-slate-600'));
+                item.className = `flex items-center justify-between p-4 rounded-2xl border ${rankBg} shadow-sm`;
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="font-display font-bold text-base w-6 text-center">${index + 1}</span>
+                        <span class="text-2xl">${u.avatar}</span>
+                        <div>
+                            <h4 class="font-display font-bold text-sm text-slate-800">${u.name}</h4>
+                            <p class="text-[10px] text-slate-500">${u.completedTopics ? u.completedTopics.length : 0} Topik Selesai</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm">
+                        <i class="fa-solid fa-star text-amber-500 mr-1.5"></i>
+                        <span class="font-display font-bold text-slate-800 text-sm">${u.totalScore || 0} pts</span>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        document.getElementById('profile-screen').addEventListener('mouseenter', () => {
+            if (currentUser) {
+                document.getElementById('profile-name-display').innerText = currentUser.name;
+                document.getElementById('profile-avatar-display').innerText = currentUser.avatar;
+                document.getElementById('edit-username').value = currentUser.name;
+                editAvatarSymbol = currentUser.avatar;
+            }
+        });
+
+        function saveProfileChanges() {
+            let newName = document.getElementById('edit-username').value.trim();
+            if (!newName) {
+                showCustomMessage("Nama profil tidak boleh kosong.");
+                return;
+            }
+
+            currentUser.name = newName;
+            currentUser.avatar = editAvatarSymbol;
+            updateActiveUser(currentUser);
+            document.getElementById('welcome-name').innerText = currentUser.name;
+            updateHeaderInfo();
+            showCustomMessage("Profil berjaya dikemas kini!");
+            showScreen('menu-screen');
+        }
+
+        function showCustomMessage(msg) {
+            let existingModal = document.getElementById('custom-modal');
+            if (existingModal) existingModal.remove();
+
+            let modal = document.createElement('div');
+            modal.id = 'custom-modal';
+            modal.className = 'fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center space-y-4 border border-slate-100">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl mx-auto flex items-center justify-center text-xl font-display">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <p class="font-display font-semibold text-slate-800 text-sm">${msg}</p>
+                    <button onclick="document.getElementById('custom-modal').remove()" class="w-full bg-eduBlue text-white font-display font-bold py-2.5 rounded-xl shadow-md hover:bg-blue-600 transition text-sm">
+                        OK
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showCustomFeedback(isCorrect) {
+            let feedback = document.createElement('div');
+            feedback.className = `fixed top-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-2xl shadow-xl font-display font-bold text-white transition-all transform animate-bounce ${isCorrect ? 'bg-emerald-500' : 'bg-rose-500'}`;
+            feedback.innerHTML = isCorrect ? '<i class="fa-solid fa-circle-check mr-2"></i> TAHNIAH! JAWAPAN BETUL!' : '<i class="fa-solid fa-circle-xmark mr-2"></i> CUBA LAGI!';
+            document.body.appendChild(feedback);
+            setTimeout(() => feedback.remove(), 2000);
+        }
+    </script>
+
+</body>
+</html>

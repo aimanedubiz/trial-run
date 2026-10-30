@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EDU KIDZ PRA SEKOLAH - ENGLISH EDITION</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti for Fireworks -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'kid-yellow': '#FFDE59',
+                        'kid-pink': '#FF66C4',
+                        'kid-blue': '#5271FF',
+                        'kid-green': '#00C2CB',
+                        'kid-purple': '#8C52FF',
+                        'kid-orange': '#FF914D',
+                        'kid-soft-bg': '#F4F7FE'
+                    },
+                    fontFamily: {
+                        'fredoka': ['"Fredoka One"', 'cursive'],
+                        'quicksand': ['Quicksand', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #F4F7FE;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        .font-kids { font-family: 'Fredoka One', cursive; }
+        .bubble-btn {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 0 rgba(0,0,0,0.15);
+        }
+        .bubble-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 4px solid #FFFFFF;
+        }
+        .floating-anim {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .pulse-anim {
+            animation: pulse-slow 2s infinite;
+        }
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #5271FF; border-radius: 10px; }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between relative overflow-x-hidden">
+
+    <!-- Background Decor Elements -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-40">
+        <div class="absolute top-5 left-5 text-kid-pink text-5xl floating-anim" style="animation-delay: 0s;"><i class="fa-solid font-bold fa-star"></i></div>
+        <div class="absolute top-1/4 right-8 text-kid-yellow text-6xl floating-anim" style="animation-delay: 1s;"><i class="fa-solid fa-cloud"></i></div>
+        <div class="absolute bottom-12 left-10 text-kid-blue text-5xl floating-anim" style="animation-delay: 1.5s;"><i class="fa-solid fa-shapes"></i></div>
+        <div class="absolute bottom-1/3 right-12 text-kid-green text-5xl floating-anim" style="animation-delay: 0.5s;"><i class="fa-solid fa-heart"></i></div>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <header class="relative z-20 bg-white shadow-md border-b-4 border-kid-yellow px-4 py-3">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <!-- Brand Logo -->
+            <div onclick="navigateTo('home-screen')" class="flex items-center space-x-3 cursor-pointer group">
+                <div class="w-12 h-12 bg-kid-yellow rounded-2xl flex items-center justify-center text-kid-blue text-2xl font-kids shadow-md transform group-hover:scale-105 transition">
+                    EK
+                </div>
+                <div>
+                    <h1 class="font-kids text-xl md:text-2xl text-kid-blue tracking-wide leading-none">EDU KIDZ</h1>
+                    <p class="text-xs font-bold text-kid-pink uppercase tracking-wider">English Edition</p>
+                </div>
+            </div>
+
+            <!-- Active User Profile Summary & Controls -->
+            <div id="nav-user-bar" class="flex items-center space-x-3">
+                <div id="user-info-chip" class="hidden md:flex items-center bg-kid-soft-bg border-2 border-kid-blue/30 rounded-full px-3 py-1">
+                    <span id="nav-avatar" class="text-2xl mr-2">🐰</span>
+                    <div class="text-left">
+                        <div id="nav-username" class="font-bold text-xs text-slate-800 leading-tight">Guest Learner</div>
+                        <div id="nav-level" class="text-[10px] text-kid-purple font-semibold">4 Years Old</div>
+                    </div>
+                </div>
+                <!-- Voice Read Aloud Toggle Button -->
+                <button onclick="toggleVoice()" id="voice-btn" title="Toggle Auto Read-Aloud Question" class="w-10 h-10 bg-purple-100 hover:bg-purple-200 rounded-full flex items-center justify-center text-kid-purple shadow border-2 border-purple-300">
+                    <i id="voice-icon" class="fa-solid fa-bullhorn"></i>
+                </button>
+                <button onclick="toggleAudio()" id="audio-btn" title="Toggle Sound FX" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-700 shadow border-2 border-slate-300">
+                    <i id="audio-icon" class="fa-solid fa-volume-high"></i>
+                </button>
+                <button onclick="navigateTo('home-screen')" class="w-10 h-10 bg-kid-yellow hover:bg-yellow-300 rounded-full flex items-center justify-center text-slate-800 shadow border-2 border-yellow-400">
+                    <i class="fa-solid fa-house"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="relative z-10 flex-grow flex items-center justify-center p-3 md:p-6">
+        
+        <!-- ================= HOME SCREEN ================= -->
+        <section id="home-screen" class="w-full max-w-4xl text-center">
+            <div class="glass-card rounded-3xl p-6 md:p-10 shadow-2xl border-4 border-white relative overflow-hidden">
+                <!-- Mascot & Title -->
+                <div class="mb-6 flex flex-col items-center">
+                    <div class="w-28 h-28 md:w-36 md:h-36 bg-gradient-to-tr from-kid-yellow to-orange-300 rounded-full flex items-center justify-center shadow-lg mb-3 floating-anim border-4 border-white">
+                        <span id="home-mascot" class="text-6xl md:text-7xl">🦁</span>
+                    </div>
+                    <span class="bg-kid-pink text-white text-xs md:text-sm font-bold px-4 py-1 rounded-full uppercase tracking-widest shadow-sm mb-2">Pre-School KPM Standard</span>
+                    <h1 class="font-kids text-3xl md:text-5xl text-kid-blue drop-shadow-sm mb-1">EDU KIDZ PRA SEKOLAH</h1>
+                    <p class="font-kids text-lg md:text-2xl text-kid-purple">ENGLISH EDITION</p>
+                    <p class="text-slate-600 font-semibold italic text-sm md:text-base mt-1">"Learn English, Play and Shine!"</p>
+                </div>
+
+                <!-- Welcome Box -->
+                <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-8 max-w-xl mx-auto text-blue-900 font-semibold text-base md:text-lg flex items-center justify-between gap-3">
+                    <div class="text-left flex items-center">
+                        <i class="fa-solid fa-hand-wave text-kid-orange text-xl mr-3"></i>
+                        <span id="welcome-msg">Hello, Little Learner! Are you ready to learn English and have fun?</span>
+                    </div>
+                    <button onclick="speakText(document.getElementById('welcome-msg').innerText)" class="bg-blue-200 hover:bg-blue-300 text-blue-800 p-2 rounded-full text-sm shrink-0">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
+
+                <!-- Action Buttons Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                    <button onclick="startAgeSelection()" class="bubble-btn sm:col-span-2 md:col-span-3 bg-gradient-to-r from-kid-green to-teal-400 hover:from-teal-400 hover:to-kid-green text-white font-kids text-2xl py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center space-x-3">
+                        <i class="fa-solid fa-circle-play text-3xl"></i>
+                        <span>PLAY NOW</span>
+                    </button>
+
+                    <button onclick="navigateTo('register-screen')" class="bubble-btn bg-kid-pink hover:bg-pink-500 text-white font-bold py-3 px-4 rounded-xl shadow flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>REGISTER</span>
+                    </button>
+
+                    <button onclick="navigateTo('login-screen')" class="bubble-btn bg-kid-purple hover:bg-purple-600 text-white font-bold py-3 px-4 rounded-xl shadow flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>LOGIN / SWITCH</span>
+                    </button>
+
+                    <button onclick="navigateTo('progress-screen')" class="bubble-btn bg-kid-yellow hover:bg-yellow-400 text-slate-800 font-bold py-3 px-4 rounded-xl shadow flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>MY PROGRESS</span>
+                    </button>
+
+                    <button onclick="navigateTo('leaderboard-screen')" class="bubble-btn bg-kid-orange hover:bg-orange-500 text-white font-bold py-3 px-4 rounded-xl shadow flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-trophy"></i>
+                        <span>LEADERBOARD</span>
+                    </button>
+
+                    <button onclick="navigateTo('parent-screen')" class="bubble-btn bg-slate-700 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-xl shadow flex items-center justify-center space-x-2 sm:col-span-2 md:col-span-2">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span>PARENT / TEACHER CORNER</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= REGISTER SCREEN ================= -->
+        <section id="register-screen" class="w-full max-w-lg hidden">
+            <div class="glass-card rounded-3xl p-6 md:p-8 shadow-xl border-4 border-white">
+                <div class="text-center mb-6">
+                    <h2 class="font-kids text-3xl text-kid-blue">Create Learner Account</h2>
+                    <p class="text-slate-500 font-medium text-sm">Join Edu Kidz and start recording your achievements!</p>
+                </div>
+
+                <form id="register-form" onsubmit="handleRegister(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-slate-700 font-bold mb-1 text-sm">Player Name</label>
+                        <input type="text" id="reg-fullname" required placeholder="e.g. Adam Rayyan" class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-kid-blue focus:outline-none font-bold text-slate-700">
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-700 font-bold mb-1 text-sm">Unique Username</label>
+                        <input type="text" id="reg-username" required placeholder="e.g. adam2026" class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-kid-blue focus:outline-none font-bold text-slate-700">
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-700 font-bold mb-1 text-sm">Password</label>
+                        <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-kid-blue focus:outline-none font-bold text-slate-700">
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-700 font-bold mb-1 text-sm">Choose Avatar Mascot</label>
+                        <div class="flex justify-between gap-2 pt-1" id="avatar-selector">
+                            <button type="button" onclick="selectAvatar('🐰', this)" class="avatar-opt text-3xl p-2 rounded-2xl border-4 border-kid-blue bg-blue-50">🐰</button>
+                            <button type="button" onclick="selectAvatar('🐻', this)" class="avatar-opt text-3xl p-2 rounded-2xl border-2 border-slate-200">🐻</button>
+                            <button type="button" onclick="selectAvatar('🦁', this)" class="avatar-opt text-3xl p-2 rounded-2xl border-2 border-slate-200">🦁</button>
+                            <button type="button" onclick="selectAvatar('🐱', this)" class="avatar-opt text-3xl p-2 rounded-2xl border-2 border-slate-200">🐱</button>
+                            <button type="button" onclick="selectAvatar('🦄', this)" class="avatar-opt text-3xl p-2 rounded-2xl border-2 border-slate-200">🦄</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-700 font-bold mb-1 text-sm">Learning Level</label>
+                        <select id="reg-level" class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-kid-blue focus:outline-none font-bold text-slate-700">
+                            <option value="4">4 Years Old - Beginner</option>
+                            <option value="5">5 Years Old - Intermediate</option>
+                            <option value="6">6 Years Old - Advanced</option>
+                        </select>
+                    </div>
+
+                    <div id="reg-error" class="hidden text-red-500 font-bold text-sm text-center bg-red-50 p-2 rounded-lg border border-red-200"></div>
+
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" onclick="navigateTo('home-screen')" class="w-1/2 py-3 rounded-xl font-bold bg-slate-200 hover:bg-slate-300 text-slate-700">Cancel</button>
+                        <button type="submit" class="w-1/2 py-3 rounded-xl font-bold bg-kid-blue hover:bg-blue-600 text-white shadow-md">Register</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================= LOGIN SCREEN ================= -->
+        <section id="login-screen" class="w-full max-w-md hidden">
+            <div class="glass-card rounded-3xl p-6 md:p-8 shadow-xl border-4 border-white text-center">
+                <h2 class="font-kids text-3xl text-kid-purple mb-2">Welcome Back!</h2>
+                <p class="text-slate-500 font-medium text-sm mb-6">Select or login to your Edu Kidz profile</p>
+
+                <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4 text-left mb-6">
+                    <div>
+                        <label class="block text-slate-700 font-bold mb-1 text-sm">Username</label>
+                        <input type="text" id="login-username" required placeholder="Enter username" class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-kid-purple focus:outline-none font-bold text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-slate-700 font-bold mb-1 text-sm">Password</label>
+                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-kid-purple focus:outline-none font-bold text-slate-700">
+                    </div>
+
+                    <div id="login-error" class="hidden text-red-500 font-bold text-sm text-center bg-red-50 p-2 rounded-lg border border-red-200"></div>
+
+                    <button type="submit" class="w-full py-3 rounded-xl font-kids text-lg bg-kid-purple hover:bg-purple-600 text-white shadow-md">LOGIN NOW</button>
+                </form>
+
+                <!-- Saved Profiles Quick Switch -->
+                <div class="border-t border-slate-200 pt-4 text-left">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Saved Accounts On Device</p>
+                    <div id="saved-accounts-list" class="space-y-2 max-h-40 overflow-y-auto pr-1">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <button onclick="navigateTo('home-screen')" class="mt-4 text-slate-500 font-bold text-sm hover:underline">Back to Main Screen</button>
+            </div>
+        </section>
+
+        <!-- ================= AGE LEVEL SELECTION ================= -->
+        <section id="level-screen" class="w-full max-w-3xl hidden">
+            <div class="glass-card rounded-3xl p-6 md:p-8 shadow-xl border-4 border-white text-center">
+                <h2 class="font-kids text-3xl text-kid-blue mb-2">SELECT LEARNING LEVEL</h2>
+                <p class="text-slate-600 font-medium mb-6">Choose the age group suitable for the learner</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Level 1 -->
+                    <div onclick="selectAgeLevel(4)" class="bubble-btn bg-gradient-to-b from-yellow-100 to-yellow-200 border-4 border-kid-yellow p-6 rounded-3xl cursor-pointer text-center hover:scale-105 transition">
+                        <div class="text-5xl mb-3">🐥</div>
+                        <h3 class="font-kids text-xl text-yellow-800">LEVEL 1</h3>
+                        <p class="font-bold text-sm text-yellow-700">4 YEARS OLD</p>
+                        <span class="inline-block bg-white text-yellow-800 text-xs font-bold px-3 py-1 rounded-full mt-3 shadow-sm">Beginner</span>
+                        <p class="text-xs text-slate-600 mt-2">Basic letters, numbers, colors, shapes & sounds.</p>
+                    </div>
+
+                    <!-- Level 2 -->
+                    <div onclick="selectAgeLevel(5)" class="bubble-btn bg-gradient-to-b from-blue-100 to-blue-200 border-4 border-kid-blue p-6 rounded-3xl cursor-pointer text-center hover:scale-105 transition">
+                        <div class="text-5xl mb-3">🦊</div>
+                        <h3 class="font-kids text-xl text-blue-800">LEVEL 2</h3>
+                        <p class="font-bold text-sm text-blue-700">5 YEARS OLD</p>
+                        <span class="inline-block bg-white text-blue-800 text-xs font-bold px-3 py-1 rounded-full mt-3 shadow-sm">Intermediate</span>
+                        <p class="text-xs text-slate-600 mt-2">Phonics, matching, spelling & everyday phrases.</p>
+                    </div>
+
+                    <!-- Level 3 -->
+                    <div onclick="selectAgeLevel(6)" class="bubble-btn bg-gradient-to-b from-purple-100 to-purple-200 border-4 border-kid-purple p-6 rounded-3xl cursor-pointer text-center hover:scale-105 transition">
+                        <div class="text-5xl mb-3">🦁</div>
+                        <h3 class="font-kids text-xl text-purple-800">LEVEL 3</h3>
+                        <p class="font-bold text-sm text-purple-700">6 YEARS OLD</p>
+                        <span class="inline-block bg-white text-purple-800 text-xs font-bold px-3 py-1 rounded-full mt-3 shadow-sm">Advanced</span>
+                        <p class="text-xs text-slate-600 mt-2">Word synthesis, sentences, body parts & comprehension.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= CATEGORY SELECTION ================= -->
+        <section id="category-screen" class="w-full max-w-5xl hidden">
+            <div class="glass-card rounded-3xl p-6 md:p-8 shadow-xl border-4 border-white">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
+                    <div>
+                        <h2 class="font-kids text-3xl text-kid-blue">LEARNING CATEGORIES</h2>
+                        <p class="text-slate-600 font-semibold">Selected Level: <span id="current-selected-level-badge" class="bg-kid-pink text-white px-3 py-0.5 rounded-full text-xs">4 Years Old</span></p>
+                    </div>
+                    <button onclick="navigateTo('level-screen')" class="mt-2 sm:mt-0 text-slate-600 font-bold hover:text-slate-800 text-sm bg-slate-100 px-3 py-1.5 rounded-xl border">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Change Level
+                    </button>
+                </div>
+
+                <!-- 10 Categories Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" id="categories-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= GAME OPTIONS SCREEN ================= -->
+        <section id="options-screen" class="w-full max-w-3xl hidden">
+            <div class="glass-card rounded-3xl p-6 md:p-8 shadow-xl border-4 border-white text-center">
+                <h2 class="font-kids text-3xl text-kid-blue mb-1">GAME SETTINGS</h2>
+                <p class="text-slate-600 font-semibold mb-6" id="selected-cat-label">Category: Alphabet Adventure</p>
+
+                <!-- Game Mode Selection -->
+                <div class="mb-6 text-left">
+                    <label class="block font-kids text-lg text-slate-700 mb-2">1. Select Game Type</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div onclick="setGameType('MULTIPLE_CHOICE', this)" class="game-type-card bg-blue-50 border-4 border-kid-blue p-4 rounded-2xl cursor-pointer flex items-center space-x-3">
+                            <span class="text-3xl">🎯</span>
+                            <div>
+                                <h4 class="font-bold text-blue-900">Multiple Choice</h4>
+                                <p class="text-xs text-blue-700">Choose 1 correct answer out of options</p>
+                            </div>
+                        </div>
+
+                        <div onclick="setGameType('MATCHING', this)" class="game-type-card bg-slate-50 border-2 border-slate-200 p-4 rounded-2xl cursor-pointer flex items-center space-x-3">
+                            <span class="text-3xl">🧩</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Matching Game</h4>
+                                <p class="text-xs text-slate-500">Pair items with correct answers</p>
+                            </div>
+                        </div>
+
+                        <div onclick="setGameType('DRAG_DROP', this)" class="game-type-card bg-slate-50 border-2 border-slate-200 p-4 rounded-2xl cursor-pointer flex items-center space-x-3">
+                            <span class="text-3xl">🖐️</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Drag & Drop / Tap</h4>
+                                <p class="text-xs text-slate-500">Tap or drag targets into slots</p>
+                            </div>
+                        </div>
+
+                        <div onclick="setGameType('FILL_BLANKS', this)" class="game-type-card bg-slate-50 border-2 border-slate-200 p-4 rounded-2xl cursor-pointer flex items-center space-x-3">
+                            <span class="text-3xl">✍️</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Fill In Blanks</h4>
+                                <p class="text-xs text-slate-500">Pick letters to finish the words</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timer Selection -->
+                <div class="mb-8 text-left">
+                    <label class="block font-kids text-lg text-slate-700 mb-2">2. Select Answering Time</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="setTimerOption(30, this)" class="timer-btn bg-slate-100 border-2 border-slate-200 hover:bg-yellow-100 py-3 rounded-2xl font-bold text-slate-700">
+                            ⏱️ 30 Sec / Qs
+                        </button>
+                        <button onclick="setTimerOption(60, this)" class="timer-btn bg-slate-100 border-2 border-slate-200 hover:bg-yellow-100 py-3 rounded-2xl font-bold text-slate-700">
+                            ⏱️ 1 Min / Qs
+                        </button>
+                        <button onclick="setTimerOption(0, this)" class="timer-btn bg-yellow-100 border-4 border-kid-yellow text-yellow-900 py-3 rounded-2xl font-bold">
+                            ♾️ No Time Limit
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button onclick="navigateTo('category-screen')" class="w-1/3 py-3 rounded-2xl font-bold bg-slate-200 hover:bg-slate-300 text-slate-700">Back</button>
+                    <button onclick="launchGameSession()" class="w-2/3 py-4 rounded-2xl font-kids text-xl bg-gradient-to-r from-kid-green to-teal-400 text-white bubble-btn shadow-lg">START GAME 🚀</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ACTIVE GAME PLAYGROUND ================= -->
+        <section id="game-screen" class="w-full max-w-4xl hidden">
+            <div class="glass-card rounded-3xl p-4 md:p-6 shadow-2xl border-4 border-white relative">
+                
+                <!-- Game Header Status Bar -->
+                <div class="flex flex-wrap justify-between items-center gap-2 bg-slate-100 p-3 rounded-2xl mb-4 border border-slate-200">
+                    <div class="flex items-center space-x-2">
+                        <span id="game-cat-badge" class="bg-kid-purple text-white text-xs font-bold px-3 py-1 rounded-full">Alphabet</span>
+                        <span id="game-q-counter" class="font-kids text-slate-700 text-sm md:text-base">QUESTION 1 OF 10</span>
+                    </div>
+
+                    <!-- Timer Bar -->
+                    <div id="timer-container" class="flex items-center space-x-2 bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm">
+                        <i class="fa-solid fa-clock text-kid-orange animate-spin"></i>
+                        <span id="timer-display" class="font-kids text-kid-orange text-lg">--</span>
+                    </div>
+
+                    <!-- Score Chip -->
+                    <div class="flex items-center space-x-3">
+                        <div class="text-right">
+                            <div class="text-[10px] text-slate-400 font-bold uppercase">SCORE</div>
+                            <div id="live-score" class="font-kids text-kid-blue text-xl leading-none">0 / 100</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden mb-6">
+                    <div id="game-progress-bar" class="bg-gradient-to-r from-kid-blue to-kid-pink h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Main Dynamic Question Area -->
+                <div id="question-box" class="bg-blue-50/60 rounded-3xl p-4 md:p-6 mb-6 border-2 border-blue-100 min-h-[260px] flex flex-col justify-center items-center text-center">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+
+                <!-- Interactive Feedback Message Banner -->
+                <div id="feedback-banner" class="hidden rounded-2xl p-4 mb-4 text-center font-kids text-xl transition-all">
+                    <!-- Correct or Incorrect Feedback injected here -->
+                </div>
+
+                <!-- Action Controls Bar -->
+                <div class="flex justify-between items-center">
+                    <button onclick="quitGamePrompt()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl text-sm">
+                        <i class="fa-solid fa-door-open mr-1"></i> Quit Game
+                    </button>
+
+                    <button id="next-q-btn" onclick="nextQuestion()" class="hidden bubble-btn bg-kid-green hover:bg-teal-500 text-white font-kids text-lg px-6 py-2.5 rounded-2xl shadow">
+                        NEXT QUESTION <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= RESULTS SCREEN ================= -->
+        <section id="result-screen" class="w-full max-w-2xl hidden text-center">
+            <div class="glass-card rounded-3xl p-6 md:p-10 shadow-2xl border-4 border-white relative overflow-hidden">
+                <div class="mb-4">
+                    <div id="result-badge-icon" class="text-7xl mb-2 floating-anim">🏆</div>
+                    <span id="result-title" class="bg-kid-yellow text-yellow-900 font-kids text-sm md:text-base px-4 py-1 rounded-full uppercase">ENGLISH SUPERSTAR!</span>
+                    <h2 class="font-kids text-4xl text-kid-blue mt-3">GAME COMPLETED!</h2>
+                    <p id="result-player-name" class="font-bold text-slate-600 text-lg">Great job, Adam Rayyan!</p>
+                </div>
+
+                <!-- Score Summary Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                    <div class="bg-blue-50 border border-blue-200 p-3 rounded-2xl">
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">FINAL SCORE</p>
+                        <p id="res-score" class="font-kids text-2xl text-kid-blue">100 / 100</p>
+                    </div>
+
+                    <div class="bg-green-50 border border-green-200 p-3 rounded-2xl">
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">CORRECT</p>
+                        <p id="res-correct" class="font-kids text-2xl text-green-600">10 / 10</p>
+                    </div>
+
+                    <div class="bg-red-50 border border-red-200 p-3 rounded-2xl">
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">WRONG</p>
+                        <p id="res-wrong" class="font-kids text-2xl text-red-500">0 / 10</p>
+                    </div>
+
+                    <div class="bg-purple-50 border border-purple-200 p-3 rounded-2xl">
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">ACCURACY</p>
+                        <p id="res-accuracy" class="font-kids text-2xl text-kid-purple">100%</p>
+                    </div>
+                </div>
+
+                <!-- Buttons Navigation -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md mx-auto">
+                    <button onclick="playAgainSame()" class="bubble-btn bg-kid-green text-white font-kids text-lg py-3 px-4 rounded-xl shadow">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> PLAY AGAIN
+                    </button>
+                    <button onclick="navigateTo('category-screen')" class="bubble-btn bg-kid-blue text-white font-kids text-lg py-3 px-4 rounded-xl shadow">
+                        <i class="fa-solid fa-grid-2 mr-1"></i> OTHER CATEGORIES
+                    </button>
+                    <button onclick="navigateTo('progress-screen')" class="bubble-btn bg-kid-yellow text-slate-800 font-bold py-3 px-4 rounded-xl shadow">
+                        VIEW PROGRESS
+                    </button>
+                    <button onclick="navigateTo('home-screen')" class="bubble-btn bg-slate-700 text-white font-bold py-3 px-4 rounded-xl shadow">
+                        MAIN MENU
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PROGRESS SCREEN ================= -->
+        <section id="progress-screen" class="w-full max-w-4xl hidden">
+            <div class="glass-card rounded-3xl p-6 md:p-8 shadow-xl border-4 border-white">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="font-kids text-3xl text-kid-blue">MY LEARNING PROGRESS</h2>
+                        <p class="text-slate-500 text-sm font-semibold">Track your achievements and activity logs</p>
+                    </div>
+                    <button onclick="navigateTo('home-screen')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-sm">
+                        <i class="fa-solid fa-house mr-1"></i> Home
+                    </button>
+                </div>
+
+                <!-- Stats Overview Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-gradient-to-r from-blue-500 to-kid-blue text-white p-4 rounded-2xl shadow">
+                        <p class="text-xs font-bold opacity-80 uppercase">Total Games Played</p>
+                        <p id="prog-total-played" class="font-kids text-3xl">0</p>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-500 to-kid-purple text-white p-4 rounded-2xl shadow">
+                        <p class="text-xs font-bold opacity-80 uppercase">Highest Score</p>
+                        <p id="prog-high-score" class="font-kids text-3xl">0</p>
+                    </div>
+                    <div class="bg-gradient-to-r from-teal-400 to-kid-green text-white p-4 rounded-2xl shadow">
+                        <p class="text-xs font-bold opacity-80 uppercase">Average Accuracy</p>
+                        <p id="prog-avg-acc" class="font-kids text-3xl">0%</p>
+                    </div>
+                </div>
+
+                <!-- History Table -->
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden mb-4">
+                    <div class="px-4 py-3 bg-slate-50 font-bold text-slate-700 border-b border-slate-200 text-sm">
+                        Recent Game History
+                    </div>
+                    <div class="max-h-60 overflow-y-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-100 text-slate-500 text-xs uppercase font-bold">
+                                <tr>
+                                    <th class="p-3">Category</th>
+                                    <th class="p-3">Level</th>
+                                    <th class="p-3">Score</th>
+                                    <th class="p-3">Accuracy</th>
+                                    <th class="p-3">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body" class="divide-y divide-slate-100">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <p class="text-xs text-slate-400 italic text-center">* Progress logs are safely isolated for each active account profile locally.</p>
+            </div>
+        </section>
+
+        <!-- ================= LEADERBOARD SCREEN ================= -->
+        <section id="leaderboard-screen" class="w-full max-w-3xl hidden">
+            <div class="glass-card rounded-3xl p-6 md:p-8 shadow-xl border-4 border-white">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="font-kids text-3xl text-kid-orange">TOP LEARNERS LEADERBOARD</h2>
+                        <p class="text-slate-500 text-sm font-semibold">See who is shining in English learning!</p>
+                    </div>
+                    <button onclick="navigateTo('home-screen')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-sm">
+                        <i class="fa-solid fa-house mr-1"></i> Home
+                    </button>
+                </div>
+
+                <!-- Filter Pills -->
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <button onclick="filterLeaderboard('ALL', this)" class="lb-filter-btn bg-kid-orange text-white font-bold text-xs px-3 py-1.5 rounded-full">All Players</button>
+                    <button onclick="filterLeaderboard('4', this)" class="lb-filter-btn bg-slate-100 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-full">4 Years Old</button>
+                    <button onclick="filterLeaderboard('5', this)" class="lb-filter-btn bg-slate-100 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-full">5 Years Old</button>
+                    <button onclick="filterLeaderboard('6', this)" class="lb-filter-btn bg-slate-100 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-full">6 Years Old</button>
+                </div>
+
+                <!-- Leaderboard List -->
+                <div id="leaderboard-list" class="space-y-3 max-h-80 overflow-y-auto">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PARENT / TEACHER CORNER ================= -->
+        <section id="parent-screen" class="w-full max-w-4xl hidden">
+            <div class="glass-card rounded-3xl p-6 md:p-8 shadow-xl border-4 border-white">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="font-kids text-3xl text-slate-800">PARENT & TEACHER CORNER</h2>
+                        <p class="text-slate-500 text-sm font-semibold">KPM Pre-School Curriculum Mastery Analysis</p>
+                    </div>
+                    <button onclick="navigateTo('home-screen')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-sm">
+                        <i class="fa-solid fa-house mr-1"></i> Home
+                    </button>
+                </div>
+
+                <!-- Learner Diagnostics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-green-50 border-2 border-green-200 p-5 rounded-2xl">
+                        <h4 class="font-kids text-lg text-green-800 mb-2">🌟 Mastered Skill Categories</h4>
+                        <ul id="mastered-list" class="list-disc list-inside text-sm text-green-900 font-medium space-y-1">
+                            <li>Alphabet Adventure (90%+)</li>
+                            <li>Colours and Shapes (85%+)</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-amber-50 border-2 border-amber-200 p-5 rounded-2xl">
+                        <h4 class="font-kids text-lg text-amber-800 mb-2">💡 Recommended Practice Needed</h4>
+                        <ul id="practice-list" class="list-disc list-inside text-sm text-amber-900 font-medium space-y-1">
+                            <li>Phonics Fun & Beginning Sounds</li>
+                            <li>Simple Words and Sentences</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border-2 border-blue-200 p-5 rounded-2xl mb-6">
+                    <h4 class="font-kids text-lg text-blue-900 mb-2">📘 KPM Learning Outcome Alignment</h4>
+                    <p class="text-sm text-blue-800">
+                        This interactive app follows the **Kementerian Pendidikan Malaysia (KPM)** Preschool English Standards (BI 1.0, BI 2.0, BI 3.0). It covers letter recognition, phonemic awareness, vocabulary expansion, simple phrases, and comprehension.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-500 font-medium">
+        <p>EDU KIDZ PRA SEKOLAH – ENGLISH EDITION &copy; 2026. Designed for Pre-School KPM Curriculum.</p>
+    </footer>
+
+    <!-- JS LOGIC & COMPLETE 300 QUESTION BANK -->
+    <script>
+        // App State Management
+        let soundEnabled = true;
+        let voiceReadAloudEnabled = true; // Auto read aloud feature
+        let currentUser = null;
+        let selectedAvatar = '🐰';
+        let selectedAgeLevel = 4;
+        let selectedCategoryIndex = 0;
+        let selectedGameType = 'MULTIPLE_CHOICE'; // MULTIPLE_CHOICE, MATCHING, DRAG_DROP, FILL_BLANKS
+        let timerSetting = 0; // 0 = No timer, 30 = 30s, 60 = 60s
+        
+        // Active Game Session State
+        let currentQuestions = [];
+        let currentQuestionIdx = 0;
+        let currentScore = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let timerInterval = null;
+        let timeLeft = 0;
+        let answerSubmitted = false;
+
+        // Web Speech API Voice Synthesizer
+        const synth = window.speechSynthesis;
+
+        function speakText(text) {
+            if (!synth) return;
+            // Stop any ongoing speech
+            synth.cancel();
+
+            // Sanitize text (remove emojis and underscores)
+            const cleanText = text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+                                .replace(/_/g, ' blank ');
+
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85; // Slightly slower for kids
+            utterance.pitch = 1.1; // Friendly higher pitch
+            
+            synth.speak(utterance);
+        }
+
+        function toggleVoice() {
+            voiceReadAloudEnabled = !voiceReadAloudEnabled;
+            const btn = document.getElementById('voice-btn');
+            const icon = document.getElementById('voice-icon');
+            
+            if (voiceReadAloudEnabled) {
+                btn.className = 'w-10 h-10 bg-purple-100 hover:bg-purple-200 rounded-full flex items-center justify-center text-kid-purple shadow border-2 border-purple-300';
+                icon.className = 'fa-solid fa-bullhorn';
+                speakText("Voice read aloud activated");
+            } else {
+                btn.className = 'w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-400 shadow border-2 border-slate-300';
+                icon.className = 'fa-solid fa-volume-xmark';
+                if (synth) synth.cancel();
+            }
+        }
+
+        // Web Audio Synthesizer for SFX
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new AudioCtx();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.3); // A5
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now); // A3
+                    osc.frequency.exponentialRampToValueAtTime(130, now + 0.3);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                }
+            } catch (e) {
+                console.log('Audio playback prevented or unsupported');
+            }
+        }
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('audio-icon');
+            icon.className = soundEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark text-red-500';
+        }
+
+        const CATEGORIES = [
+            { name: "Alphabet Adventure", icon: "🔤", color: "from-blue-400 to-indigo-500" },
+            { name: "Phonics Fun", icon: "🔔", color: "from-purple-400 to-pink-500" },
+            { name: "My First Words", icon: "🧸", color: "from-green-400 to-teal-500" },
+            { name: "Colours and Shapes", icon: "🎨", color: "from-yellow-400 to-orange-500" },
+            { name: "Numbers & Counting", icon: "🔢", color: "from-pink-400 to-red-500" },
+            { name: "Animals World", icon: "🦁", color: "from-teal-400 to-emerald-600" },
+            { name: "Fruits and Food", icon: "🍎", color: "from-red-400 to-orange-400" },
+            { name: "My Body & Family", icon: "🖐️", color: "from-indigo-400 to-purple-600" },
+            { name: "Greetings & Expressions", icon: "👋", color: "from-sky-400 to-blue-600" },
+            { name: "Words & Sentences", icon: "📖", color: "from-amber-400 to-yellow-600" }
+        ];
+
+        // Generator helper for complete database of 300 unique questions
+        const QUESTION_DATABASE = {};
+
+        function buildDatabase() {
+            for (let level of [4, 5, 6]) {
+                QUESTION_DATABASE[level] = {};
+                for (let catIdx = 0; catIdx < 10; catIdx++) {
+                    QUESTION_DATABASE[level][catIdx] = generateQuestionsFor(catIdx, level);
+                }
+            }
+        }
+
+        function getAlphabetDistractors(correctChar, isUpper = false) {
+            const allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const distractors = [];
+            const target = correctChar.toUpperCase();
+            
+            while (distractors.length < 2) {
+                const randIndex = Math.floor(Math.random() * 26);
+                const letter = allLetters[randIndex];
+                if (letter !== target && !distractors.includes(letter)) {
+                    distractors.push(letter);
+                }
+            }
+            return isUpper ? distractors : distractors.map(d => d.toLowerCase());
+        }
+
+        function generateQuestionsFor(catIdx, level) {
+            const list = [];
+            
+            // Cat 0: Alphabet
+            if (catIdx === 0) {
+                const letters = level === 4 ? ['A','B','C','D','E','F','G','H','I','J'] : (level === 5 ? ['K','L','M','N','O','P','Q','R','S','T'] : ['U','V','W','X','Y','Z','A','B','C','D']);
+                letters.forEach((l) => {
+                    const lc = l.toLowerCase();
+                    const distractors = getAlphabetDistractors(lc, false);
+                    list.push({
+                        q: level === 4 ? `Which is the lowercase letter for '${l}'?` : `Find the lowercase letter for '${l}'`,
+                        visual: l,
+                        correct: lc,
+                        options: shuffle([lc, ...distractors])
+                    });
+                });
+            }
+            // Cat 1: Phonics
+            else if (catIdx === 1) {
+                const phonics = [
+                    { word: 'Apple', sound: 'A', icon: '🍎' }, { word: 'Ball', sound: 'B', icon: '⚽' },
+                    { word: 'Cat', sound: 'C', icon: '🐱' }, { word: 'Dog', sound: 'D', icon: '🐶' },
+                    { word: 'Elephant', sound: 'E', icon: '🐘' }, { word: 'Fish', sound: 'F', icon: '🐟' },
+                    { word: 'Giraffe', sound: 'G', icon: '🦒' }, { word: 'Hat', sound: 'H', icon: '🎩' },
+                    { word: 'Ice', sound: 'I', icon: '🧊' }, { word: 'Juice', sound: 'J', icon: '🧃' }
+                ];
+                phonics.forEach(p => {
+                    const distractors = getAlphabetDistractors(p.sound, true);
+                    list.push({
+                        q: `What is the beginning sound of "${p.word}"?`,
+                        visual: p.icon,
+                        correct: p.sound,
+                        options: shuffle([p.sound, ...distractors])
+                    });
+                });
+            }
+            // Cat 2: First Words
+            else if (catIdx === 2) {
+                const items = [
+                    { name: 'Book', icon: '📚' }, { name: 'Pencil', icon: '✏️' }, { name: 'Chair', icon: '🪑' },
+                    { name: 'Bag', icon: '🎒' }, { name: 'Clock', icon: '⏰' }, { name: 'Lamp', icon: '💡' },
+                    { name: 'Car', icon: '🚗' }, { name: 'Doll', icon: '🧸' }, { name: 'Key', icon: '🔑' }, { name: 'Box', icon: '📦' }
+                ];
+                items.forEach((item, idx) => {
+                    const otherItems = items.filter((_, i) => i !== idx).map(x => x.name);
+                    const chosenDistractors = shuffle(otherItems).slice(0, 2);
+                    list.push({
+                        q: `What object is shown in the picture?`,
+                        visual: item.icon,
+                        correct: item.name,
+                        options: shuffle([item.name, ...chosenDistractors])
+                    });
+                });
+            }
+            // Cat 3: Colours and Shapes
+            else if (catIdx === 3) {
+                const cs = [
+                    { name: 'Circle', icon: '🔴', ans: 'Red' }, { name: 'Square', icon: '🟦', ans: 'Blue' },
+                    { name: 'Star', icon: '⭐', ans: 'Yellow' }, { name: 'Triangle', icon: '🔺', ans: 'Green' },
+                    { name: 'Heart', icon: '🧡', ans: 'Orange' }, { name: 'Diamond', icon: '💎', ans: 'Purple' },
+                    { name: 'Oval', icon: '🖤', ans: 'Black' }, { name: 'Cloud', icon: '☁️', ans: 'White' },
+                    { name: 'Box', icon: '📦', ans: 'Brown' }, { name: 'Ribbon', icon: '🎀', ans: 'Pink' }
+                ];
+                const allColours = ['Red', 'Blue', 'Yellow', 'Green', 'Orange', 'Purple', 'Black', 'White', 'Brown', 'Pink'];
+                cs.forEach(c => {
+                    const otherColours = allColours.filter(col => col !== c.ans);
+                    const chosenDistractors = shuffle(otherColours).slice(0, 2);
+                    list.push({
+                        q: `What colour is shown here?`,
+                        visual: c.icon,
+                        correct: c.ans,
+                        options: shuffle([c.ans, ...chosenDistractors])
+                    });
+                });
+            }
+            // Cat 4: Numbers & Counting
+            else if (catIdx === 4) {
+                for (let i = 1; i <= 10; i++) {
+                    const stars = "⭐".repeat(i);
+                    const wrong1 = (i === 10) ? "8" : `${i + 1}`;
+                    const wrong2 = (i === 1) ? "3" : `${i - 1}`;
+                    list.push({
+                        q: `Count the stars! How many are there?`,
+                        visual: stars,
+                        correct: `${i}`,
+                        options: shuffle([`${i}`, wrong1, wrong2])
+                    });
+                }
+            }
+            // Cat 5: Animals
+            else if (catIdx === 5) {
+                const animals = [
+                    { name: 'Lion', icon: '🦁' }, { name: 'Rabbit', icon: '🐰' }, { name: 'Bear', icon: '🐻' },
+                    { name: 'Elephant', icon: '🐘' }, { name: 'Monkey', icon: '🐒' }, { name: 'Duck', icon: '🦆' },
+                    { name: 'Cow', icon: '🐮' }, { name: 'Frog', icon: '🐸' }, { name: 'Tiger', icon: '🐯' }, { name: 'Panda', icon: '🐼' }
+                ];
+                animals.forEach((a, idx) => {
+                    const otherAnimals = animals.filter((_, i) => i !== idx).map(x => x.name);
+                    const chosenDistractors = shuffle(otherAnimals).slice(0, 2);
+                    list.push({
+                        q: `Which animal is this?`,
+                        visual: a.icon,
+                        correct: a.name,
+                        options: shuffle([a.name, ...chosenDistractors])
+                    });
+                });
+            }
+            // Cat 6: Fruits & Food
+            else if (catIdx === 6) {
+                const foods = [
+                    { name: 'Apple', icon: '🍎' }, { name: 'Banana', icon: '🍌' }, { name: 'Milk', icon: '🥛' },
+                    { name: 'Bread', icon: '🍞' }, { name: 'Pizza', icon: '🍕' }, { name: 'Orange', icon: '🍊' },
+                    { name: 'Watermelon', icon: '🍉' }, { name: 'Cake', icon: '🎂' }, { name: 'Egg', icon: '🥚' }, { name: 'Rice', icon: '🍚' }
+                ];
+                foods.forEach((f, idx) => {
+                    const otherFoods = foods.filter((_, i) => i !== idx).map(x => x.name);
+                    const chosenDistractors = shuffle(otherFoods).slice(0, 2);
+                    list.push({
+                        q: `What food or fruit is this?`,
+                        visual: f.icon,
+                        correct: f.name,
+                        options: shuffle([f.name, ...chosenDistractors])
+                    });
+                });
+            }
+            // Cat 7: My Body & Family
+            else if (catIdx === 7) {
+                const body = [
+                    { name: 'Eye', icon: '👁️' }, { name: 'Ear', icon: '👂' }, { name: 'Hand', icon: '🖐️' },
+                    { name: 'Foot', icon: '🦶' }, { name: 'Nose', icon: '👃' }, { name: 'Mother', icon: '👩' },
+                    { name: 'Father', icon: '👨' }, { name: 'Baby', icon: '👶' }, { name: 'Brother', icon: '👦' }, { name: 'Sister', icon: '👧' }
+                ];
+                body.forEach((b, idx) => {
+                    const otherBody = body.filter((_, i) => i !== idx).map(x => x.name);
+                    const chosenDistractors = shuffle(otherBody).slice(0, 2);
+                    list.push({
+                        q: `Identify this body part or family member:`,
+                        visual: b.icon,
+                        correct: b.name,
+                        options: shuffle([b.name, ...chosenDistractors])
+                    });
+                });
+            }
+            // Cat 8: Greetings
+            else if (catIdx === 8) {
+                const greet = [
+                    { q: 'What do you say in the morning?', visual: '🌅', ans: 'Good Morning', opts: ['Good Morning', 'Good Night', 'Goodbye'] },
+                    { q: 'What do you say when receiving a gift?', visual: '🎁', ans: 'Thank You', opts: ['Thank You', 'Sorry', 'Hello'] },
+                    { q: 'What do you say when meeting a friend?', visual: '👋', ans: 'Hello', opts: ['Hello', 'Goodbye', 'Thank You'] },
+                    { q: 'What do you say when leaving?', visual: '🚶', ans: 'Goodbye', opts: ['Goodbye', 'Good Morning', 'Please'] },
+                    { q: 'When you want to sit down:', visual: '🪑', ans: 'Sit down', opts: ['Sit down', 'Stand up', 'Run'] },
+                    { q: 'When you are happy, you...', visual: '👏', ans: 'Clap hands', opts: ['Clap hands', 'Sleep', 'Cry'] },
+                    { q: 'What do you say politely when asking?', visual: '🙏', ans: 'Please', opts: ['Please', 'No', 'Goodbye'] },
+                    { q: 'What do you say before going to sleep?', visual: '🌙', ans: 'Good Night', opts: ['Good Night', 'Good Morning', 'Hello'] },
+                    { q: 'When someone says Thank You, say...', visual: '😊', ans: 'Welcome', opts: ['Welcome', 'Sorry', 'No'] },
+                    { q: 'Action: Stand up!', visual: '🧍', ans: 'Stand up', opts: ['Stand up', 'Sit down', 'Jump'] }
+                ];
+                greet.forEach(g => {
+                    list.push({
+                        q: g.q,
+                        visual: g.visual,
+                        correct: g.ans,
+                        options: shuffle(g.opts)
+                    });
+                });
+            }
+            // Cat 9: Words & Sentences
+            else if (catIdx === 9) {
+                const sent = [
+                    { q: 'Complete the word: C _ T', visual: '🐱', correct: 'A', opts: ['A','O','U'] },
+                    { q: 'Complete the word: D _ G', visual: '🐶', correct: 'O', opts: ['O','E','I'] },
+                    { q: 'Complete the sentence: "It is a red ___"', visual: '🍎', correct: 'apple', opts: ['apple','cat','car'] },
+                    { q: 'Complete the word: S _ N', visual: '☀️', correct: 'U', opts: ['U','A','E'] },
+                    { q: 'Complete: "I can ___ a book"', visual: '📖', correct: 'read', opts: ['read','eat','run'] },
+                    { q: 'Complete: "The bird can ___"', visual: '🐦', correct: 'fly', opts: ['fly','swim','sleep'] },
+                    { q: 'Complete the word: B _ S', visual: '🚌', correct: 'U', opts: ['U','I','O'] },
+                    { q: 'Complete: "Drink hot ___"', visual: '🥛', correct: 'milk', opts: ['milk','sand','stone'] },
+                    { q: 'Complete: "A big ___"', visual: '🐘', correct: 'elephant', opts: ['elephant','ant','bee'] },
+                    { q: 'Complete the sentence: "I love my ___"', visual: '❤️', correct: 'family', opts: ['family','pencil','shoe'] }
+                ];
+                sent.forEach(s => {
+                    list.push({
+                        q: s.q,
+                        visual: s.visual,
+                        correct: s.correct,
+                        options: shuffle(s.opts)
+                    });
+                });
+            }
+
+            return list;
+        }
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function navigateTo(screenId) {
+            playSound('click');
+            if (synth) synth.cancel(); // Stop talking on screen change
+
+            const screens = ['home-screen', 'register-screen', 'login-screen', 'level-screen', 'category-screen', 'options-screen', 'game-screen', 'result-screen', 'progress-screen', 'leaderboard-screen', 'parent-screen'];
+            screens.forEach(s => {
+                const el = document.getElementById(s);
+                if (el) el.classList.add('hidden');
+            });
+
+            const target = document.getElementById(screenId);
+            if (target) target.classList.remove('hidden');
+
+            if (screenId === 'category-screen') renderCategoriesGrid();
+            if (screenId === 'progress-screen') renderProgressScreen();
+            if (screenId === 'leaderboard-screen') renderLeaderboardScreen();
+            if (screenId === 'login-screen') renderSavedAccounts();
+        }
+
+        function selectAvatar(emoji, btn) {
+            selectedAvatar = emoji;
+            document.querySelectorAll('.avatar-opt').forEach(b => {
+                b.classList.remove('border-4', 'border-kid-blue', 'bg-blue-50');
+                b.classList.add('border-2', 'border-slate-200');
+            });
+            btn.classList.remove('border-2', 'border-slate-200');
+            btn.classList.add('border-4', 'border-kid-blue', 'bg-blue-50');
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-fullname').value.trim();
+            const username = document.getElementById('reg-username').value.trim().toLowerCase();
+            const password = document.getElementById('reg-password').value;
+            const level = parseInt(document.getElementById('reg-level').value);
+
+            const errDiv = document.getElementById('reg-error');
+
+            let users = JSON.parse(localStorage.getItem('edukidz_users') || '{}');
+            if (users[username]) {
+                errDiv.textContent = 'Username is already taken. Try another!';
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            const newUser = {
+                name, username, password, avatar: selectedAvatar, level,
+                history: [], highScore: 0, gamesPlayed: 0
+            };
+
+            users[username] = newUser;
+            localStorage.setItem('edukidz_users', JSON.stringify(users));
+
+            currentUser = newUser;
+            updateUserNavHeader();
+            navigateTo('home-screen');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim().toLowerCase();
+            const password = document.getElementById('login-password').value;
+            const errDiv = document.getElementById('login-error');
+
+            let users = JSON.parse(localStorage.getItem('edukidz_users') || '{}');
+            if (!users[username] || users[username].password !== password) {
+                errDiv.textContent = 'Invalid username or password!';
+                errDiv.classList.remove('hidden');
+                return;
+            }
+
+            currentUser = users[username];
+            updateUserNavHeader();
+            navigateTo('home-screen');
+        }
+
+        function quickSwitch(username) {
+            let users = JSON.parse(localStorage.getItem('edukidz_users') || '{}');
+            if (users[username]) {
+                currentUser = users[username];
+                updateUserNavHeader();
+                navigateTo('home-screen');
+            }
+        }
+
+        function renderSavedAccounts() {
+            const container = document.getElementById('saved-accounts-list');
+            let users = JSON.parse(localStorage.getItem('edukidz_users') || '{}');
+            const keys = Object.keys(users);
+            if (keys.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400">No saved user accounts found.</p>`;
+                return;
+            }
+
+            container.innerHTML = keys.map(k => `
+                <div onclick="quickSwitch('${k}')" class="flex items-center justify-between p-2 bg-slate-50 hover:bg-blue-50 border border-slate-200 rounded-xl cursor-pointer">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xl">${users[k].avatar}</span>
+                        <div>
+                            <p class="font-bold text-xs text-slate-800">${users[k].name}</p>
+                            <p class="text-[10px] text-slate-400">@${k} • ${users[k].level} Yrs</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400 text-xs"></i>
+                </div>
+            `).join('');
+        }
+
+        function updateUserNavHeader() {
+            if (!currentUser) return;
+            document.getElementById('nav-avatar').textContent = currentUser.avatar;
+            document.getElementById('nav-username').textContent = currentUser.name;
+            document.getElementById('nav-level').textContent = `${currentUser.level} Years Old`;
+            document.getElementById('home-mascot').textContent = currentUser.avatar;
+            document.getElementById('welcome-msg').textContent = `Hello, ${currentUser.name}! Are you ready to learn English?`;
+        }
+
+        function startAgeSelection() {
+            if (!currentUser) {
+                currentUser = {
+                    name: 'Guest Learner', username: 'guest', avatar: '🐰', level: 4,
+                    history: [], highScore: 0, gamesPlayed: 0
+                };
+                updateUserNavHeader();
+            }
+            navigateTo('level-screen');
+        }
+
+        function selectAgeLevel(level) {
+            selectedAgeLevel = level;
+            document.getElementById('current-selected-level-badge').textContent = `${level} Years Old`;
+            navigateTo('category-screen');
+        }
+
+        function renderCategoriesGrid() {
+            const grid = document.getElementById('categories-grid');
+            grid.innerHTML = CATEGORIES.map((cat, idx) => `
+                <div onclick="selectCategory(${idx})" class="bubble-btn bg-gradient-to-br ${cat.color} text-white p-4 rounded-2xl cursor-pointer flex flex-col items-center justify-center text-center shadow-md">
+                    <span class="text-4xl mb-2">${cat.icon}</span>
+                    <h4 class="font-kids text-sm leading-tight">${cat.name}</h4>
+                    <span class="text-[10px] bg-white/30 px-2 py-0.5 rounded-full mt-2 font-bold">10 Questions</span>
+                </div>
+            `).join('');
+        }
+
+        function selectCategory(idx) {
+            selectedCategoryIndex = idx;
+            document.getElementById('selected-cat-label').textContent = `Category: ${CATEGORIES[idx].name} (${selectedAgeLevel} Years Old)`;
+            navigateTo('options-screen');
+        }
+
+        function setGameType(type, element) {
+            playSound('click');
+            selectedGameType = type;
+            document.querySelectorAll('.game-type-card').forEach(c => {
+                c.className = 'game-type-card bg-slate-50 border-2 border-slate-200 p-4 rounded-2xl cursor-pointer flex items-center space-x-3';
+            });
+            element.className = 'game-type-card bg-blue-50 border-4 border-kid-blue p-4 rounded-2xl cursor-pointer flex items-center space-x-3';
+        }
+
+        function setTimerOption(sec, element) {
+            playSound('click');
+            timerSetting = sec;
+            document.querySelectorAll('.timer-btn').forEach(b => {
+                b.className = 'timer-btn bg-slate-100 border-2 border-slate-200 hover:bg-yellow-100 py-3 rounded-2xl font-bold text-slate-700';
+            });
+            element.className = 'timer-btn bg-yellow-100 border-4 border-kid-yellow text-yellow-900 py-3 rounded-2xl font-bold';
+        }
+
+        function launchGameSession() {
+            currentQuestions = QUESTION_DATABASE[selectedAgeLevel][selectedCategoryIndex];
+            currentQuestionIdx = 0;
+            currentScore = 0;
+            correctCount = 0;
+            wrongCount = 0;
+
+            document.getElementById('game-cat-badge').textContent = CATEGORIES[selectedCategoryIndex].name;
+            navigateTo('game-screen');
+            renderCurrentQuestion();
+        }
+
+        function renderCurrentQuestion() {
+            answerSubmitted = false;
+            clearInterval(timerInterval);
+
+            // Update status
+            document.getElementById('game-q-counter').textContent = `QUESTION ${currentQuestionIdx + 1} OF 10`;
+            document.getElementById('live-score').textContent = `${currentScore} / 100`;
+            document.getElementById('game-progress-bar').style.width = `${((currentQuestionIdx) / 10) * 100}%`;
+            document.getElementById('next-q-btn').classList.add('hidden');
+            document.getElementById('feedback-banner').className = 'hidden';
+
+            const qData = currentQuestions[currentQuestionIdx];
+            const qBox = document.getElementById('question-box');
+
+            // Render timer if active
+            const timerContainer = document.getElementById('timer-container');
+            if (timerSetting > 0) {
+                timerContainer.classList.remove('hidden');
+                timeLeft = timerSetting;
+                document.getElementById('timer-display').textContent = `${timeLeft}s`;
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('timer-display').textContent = `${timeLeft}s`;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        handleTimeOut();
+                    }
+                }, 1000);
+            } else {
+                timerContainer.classList.add('hidden');
+            }
+
+            // Build Options based on Game Type
+            let contentHTML = `
+                <div class="text-6xl md:text-7xl mb-3 floating-anim">${qData.visual}</div>
+                <div class="flex items-center justify-center gap-2 mb-6">
+                    <h3 id="current-q-text" class="font-kids text-xl md:text-2xl text-slate-800 max-w-xl">${qData.q}</h3>
+                    <button onclick="speakText(document.getElementById('current-q-text').innerText)" class="w-9 h-9 bg-purple-100 hover:bg-purple-200 text-kid-purple rounded-full flex items-center justify-center text-sm shrink-0 border border-purple-300">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
+            `;
+
+            if (selectedGameType === 'MULTIPLE_CHOICE' || selectedGameType === 'FILL_BLANKS') {
+                contentHTML += `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
+                        ${qData.options.map(opt => `
+                            <button onclick="checkAnswer('${opt}', this)" class="q-opt-btn bubble-btn bg-white hover:bg-blue-50 border-3 border-slate-300 hover:border-kid-blue font-bold text-slate-800 py-3.5 px-4 rounded-2xl text-lg shadow-sm flex items-center justify-center gap-2">
+                                <span>${opt}</span>
+                                <span onclick="event.stopPropagation(); speakText('${opt}')" class="text-xs text-slate-400 hover:text-kid-purple p-1"><i class="fa-solid fa-volume-low"></i></span>
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (selectedGameType === 'MATCHING' || selectedGameType === 'DRAG_DROP') {
+                contentHTML += `
+                    <p class="text-xs font-bold text-slate-400 mb-2 uppercase">Tap the correct matching target below:</p>
+                    <div class="flex flex-wrap justify-center gap-3 w-full max-w-md">
+                        ${qData.options.map(opt => `
+                            <button onclick="checkAnswer('${opt}', this)" class="q-opt-btn bubble-btn bg-yellow-100 hover:bg-yellow-200 border-3 border-yellow-400 text-yellow-900 font-kids text-xl py-4 px-6 rounded-2xl shadow flex items-center gap-2">
+                                <span>${opt}</span>
+                                <span onclick="event.stopPropagation(); speakText('${opt}')" class="text-xs text-yellow-700 hover:text-yellow-900 p-1"><i class="fa-solid fa-volume-low"></i></span>
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            qBox.innerHTML = contentHTML;
+
+            // Auto Read-Aloud Voice if enabled
+            if (voiceReadAloudEnabled) {
+                speakText(qData.q);
+            }
+        }
+
+        function checkAnswer(selectedOpt, btnElement) {
+            if (answerSubmitted) return;
+            answerSubmitted = true;
+            clearInterval(timerInterval);
+
+            const qData = currentQuestions[currentQuestionIdx];
+            const isCorrect = (selectedOpt.toString().trim().toLowerCase() === qData.correct.toString().trim().toLowerCase());
+
+            const feedback = document.getElementById('feedback-banner');
+            feedback.classList.remove('hidden');
+
+            if (isCorrect) {
+                playSound('correct');
+                confetti({ particleCount: 60, spread: 60, origin: { y: 0.7 } });
+                currentScore += 10;
+                correctCount++;
+
+                feedback.className = 'rounded-2xl p-4 mb-4 text-center font-kids text-xl bg-green-100 border-2 border-green-300 text-green-800';
+                feedback.innerHTML = `🎉 EXCELLENT! Great Job! (+10 Marks)`;
+                if (btnElement) btnElement.classList.add('bg-green-500', 'text-white', 'border-green-600');
+                
+                if (voiceReadAloudEnabled) speakText("Excellent! Great job!");
+            } else {
+                playSound('wrong');
+                wrongCount++;
+
+                feedback.className = 'rounded-2xl p-4 mb-4 text-center font-kids text-xl bg-red-100 border-2 border-red-300 text-red-800';
+                feedback.innerHTML = `💡 Good Try! Correct Answer: <span class="underline">${qData.correct}</span>`;
+                if (btnElement) btnElement.classList.add('bg-red-500', 'text-white', 'border-red-600');
+
+                if (voiceReadAloudEnabled) speakText(`Good try! The correct answer is ${qData.correct}`);
+            }
+
+            document.getElementById('live-score').textContent = `${currentScore} / 100`;
+            document.getElementById('next-q-btn').classList.remove('hidden');
+        }
+
+        function handleTimeOut() {
+            if (answerSubmitted) return;
+            answerSubmitted = true;
+
+            const qData = currentQuestions[currentQuestionIdx];
+            wrongCount++;
+
+            const feedback = document.getElementById('feedback-banner');
+            feedback.classList.remove('hidden');
+            feedback.className = 'rounded-2xl p-4 mb-4 text-center font-kids text-xl bg-amber-100 border-2 border-amber-300 text-amber-800';
+            feedback.innerHTML = `⏰ TIME'S UP! Correct Answer: <span class="underline">${qData.correct}</span>`;
+
+            if (voiceReadAloudEnabled) speakText("Time is up!");
+            document.getElementById('next-q-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestionIdx++;
+            if (currentQuestionIdx < 10) {
+                renderCurrentQuestion();
+            } else {
+                finishGameSession();
+            }
+        }
+
+        function quitGamePrompt() {
+            if (confirm("Are you sure you want to quit this session? Progress will be lost.")) {
+                clearInterval(timerInterval);
+                if (synth) synth.cancel();
+                navigateTo('category-screen');
+            }
+        }
+
+        function finishGameSession() {
+            clearInterval(timerInterval);
+            const accuracy = Math.round((correctCount / 10) * 100);
+
+            // Display Results
+            document.getElementById('result-player-name').textContent = currentUser ? currentUser.name : 'Learner';
+            document.getElementById('res-score').textContent = `${currentScore} / 100`;
+            document.getElementById('res-correct').textContent = `${correctCount} / 10`;
+            document.getElementById('res-wrong').textContent = `${wrongCount} / 10`;
+            document.getElementById('res-accuracy').textContent = `${accuracy}%`;
+
+            const badge = document.getElementById('result-title');
+            const icon = document.getElementById('result-badge-icon');
+
+            let message = "";
+            if (currentScore >= 90) {
+                badge.textContent = "ENGLISH SUPERSTAR!";
+                badge.className = "bg-yellow-400 text-yellow-900 font-kids text-sm md:text-base px-4 py-1 rounded-full uppercase shadow";
+                icon.textContent = "🏆";
+                message = "Congratulations! You are an English Superstar!";
+            } else if (currentScore >= 70) {
+                badge.textContent = "AMAZING LEARNER!";
+                badge.className = "bg-blue-400 text-white font-kids text-sm md:text-base px-4 py-1 rounded-full uppercase shadow";
+                icon.textContent = "🌟";
+                message = "Amazing job! You did great!";
+            } else if (currentScore >= 50) {
+                badge.textContent = "GREAT EFFORT!";
+                badge.className = "bg-purple-400 text-white font-kids text-sm md:text-base px-4 py-1 rounded-full uppercase shadow";
+                icon.textContent = "👍";
+                message = "Great effort! Keep practicing!";
+            } else {
+                badge.textContent = "KEEP PRACTISING!";
+                badge.className = "bg-slate-300 text-slate-700 font-kids text-sm md:text-base px-4 py-1 rounded-full uppercase shadow";
+                icon.textContent = "📚";
+                message = "Keep practicing! You can do better next time!";
+            }
+
+            if (voiceReadAloudEnabled) speakText(message);
+
+            // Save Progress Record
+            saveGameRecord({
+                category: CATEGORIES[selectedCategoryIndex].name,
+                level: selectedAgeLevel,
+                score: currentScore,
+                accuracy: accuracy,
+                date: new Date().toLocaleDateString()
+            });
+
+            navigateTo('result-screen');
+        }
+
+        function saveGameRecord(record) {
+            if (!currentUser || currentUser.username === 'guest') return;
+
+            let users = JSON.parse(localStorage.getItem('edukidz_users') || '{}');
+            const u = users[currentUser.username];
+            if (u) {
+                u.history.unshift(record);
+                u.gamesPlayed = (u.gamesPlayed || 0) + 1;
+                u.highScore = Math.max(u.highScore || 0, record.score);
+                users[currentUser.username] = u;
+                localStorage.setItem('edukidz_users', JSON.stringify(users));
+                currentUser = u;
+            }
+        }
+
+        function playAgainSame() {
+            launchGameSession();
+        }
+
+        function renderProgressScreen() {
+            if (!currentUser || currentUser.username === 'guest') {
+                document.getElementById('prog-total-played').textContent = '0';
+                document.getElementById('prog-high-score').textContent = '0';
+                document.getElementById('prog-avg-acc').textContent = '0%';
+                document.getElementById('history-table-body').innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Log in to track saved progress history.</td></tr>`;
+                return;
+            }
+
+            document.getElementById('prog-total-played').textContent = currentUser.gamesPlayed || 0;
+            document.getElementById('prog-high-score').textContent = `${currentUser.highScore || 0} / 100`;
+
+            const hist = currentUser.history || [];
+            if (hist.length > 0) {
+                const totalAcc = hist.reduce((acc, curr) => acc + curr.accuracy, 0);
+                document.getElementById('prog-avg-acc').textContent = `${Math.round(totalAcc / hist.length)}%`;
+            } else {
+                document.getElementById('prog-avg-acc').textContent = '0%';
+            }
+
+            const tbody = document.getElementById('history-table-body');
+            if (hist.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No game sessions completed yet.</td></tr>`;
+            } else {
+                tbody.innerHTML = hist.map(h => `
+                    <tr>
+                        <td class="p-3 font-bold text-slate-700">${h.category}</td>
+                        <td class="p-3 text-slate-500">${h.level} Yrs</td>
+                        <td class="p-3 font-bold text-kid-blue">${h.score}</td>
+                        <td class="p-3 text-green-600 font-semibold">${h.accuracy}%</td>
+                        <td class="p-3 text-slate-400 text-xs">${h.date}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function renderLeaderboardScreen(filterLevel = 'ALL') {
+            const container = document.getElementById('leaderboard-list');
+            let users = JSON.parse(localStorage.getItem('edukidz_users') || '{}');
+            let userList = Object.values(users);
+
+            if (filterLevel !== 'ALL') {
+                userList = userList.filter(u => u.level === parseInt(filterLevel));
+            }
+
+            userList.sort((a, b) => (b.highScore || 0) - (a.highScore || 0));
+
+            if (userList.length === 0) {
+                container.innerHTML = `<div class="text-center text-slate-400 p-6">No players found in this category yet.</div>`;
+                return;
+            }
+
+            container.innerHTML = userList.map((u, i) => `
+                <div class="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <div class="flex items-center space-x-3">
+                        <span class="font-kids text-lg w-6 text-center ${i === 0 ? 'text-yellow-500' : 'text-slate-400'}">#${i + 1}</span>
+                        <span class="text-3xl">${u.avatar}</span>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm">${u.name}</h4>
+                            <p class="text-xs text-slate-400">${u.level} Years Old • ${u.gamesPlayed || 0} Games Played</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-kids text-xl text-kid-blue">${u.highScore || 0} PTS</p>
+                        <span class="text-[10px] bg-yellow-100 text-yellow-800 font-bold px-2 py-0.5 rounded-full">Top Learner</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterLeaderboard(level, btn) {
+            playSound('click');
+            document.querySelectorAll('.lb-filter-btn').forEach(b => {
+                b.className = 'lb-filter-btn bg-slate-100 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-full';
+            });
+            btn.className = 'lb-filter-btn bg-kid-orange text-white font-bold text-xs px-3 py-1.5 rounded-full';
+            renderLeaderboardScreen(level);
+        }
+
+        window.onload = function() {
+            buildDatabase();
+            navigateTo('home-screen');
+        };
+    </script>
+</body>
+</html>

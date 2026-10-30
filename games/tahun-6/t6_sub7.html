@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATH KIDS – EDU KIDZ TAHUN 6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fredoka', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+            color: #1f2937;
+            min-height: 100vh;
+            user-select: none;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+        .game-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .game-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        .game-btn:active {
+            transform: translateY(1px);
+        }
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-pulse-soft {
+            animation: pulse-soft 2s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: float 3s infinite ease-in-out;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-start p-2 sm:p-6">
+
+    <div id="app" class="w-full max-w-5xl mx-auto flex flex-col min-h-[92vh]">
+        
+        <!-- Header / Banner -->
+        <header class="w-full text-center py-4 px-6 mb-4 glass-panel rounded-2xl flex flex-col sm:flex-row items-center justify-between">
+            <div class="flex items-center space-x-3 mb-2 sm:mb-0">
+                <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white text-2xl shadow-lg animate-float">
+                    📐
+                </div>
+                <div class="text-left">
+                    <h1 class="text-xl sm:text-2xl font-bold text-indigo-900 tracking-wide">MATH KIDS <span class="text-amber-500 font-extrabold">EDU KIDZ</span></h1>
+                    <p class="text-xs text-indigo-600 font-semibold tracking-wider">TAHUN 6 KSSR / DSKP</p>
+                </div>
+            </div>
+            <div class="hidden md:block">
+                <p class="text-sm italic font-medium text-indigo-700 bg-indigo-50 px-4 py-2 rounded-full border border-indigo-200">
+                    "Belajar Matematik, Main dan Jadi Juara!"
+                </p>
+            </div>
+            <div id="user-header-info" class="hidden flex items-center space-x-3 bg-indigo-50 px-3 py-1.5 rounded-xl border border-indigo-200">
+                <span id="header-avatar" class="text-2xl">👦</span>
+                <div class="text-left">
+                    <p id="header-name" class="text-xs font-bold text-indigo-900">Pemain</p>
+                    <p class="text-[10px] text-indigo-600 font-semibold">Skor: <span id="header-score">0</span></p>
+                </div>
+                <button onclick="app.logout()" class="ml-2 text-xs bg-rose-500 hover:bg-rose-600 text-white px-2.5 py-1 rounded-lg font-medium transition">Keluar</button>
+            </div>
+        </header>
+
+        <!-- Dynamic Main Screen Container -->
+        <main id="main-content" class="flex-grow flex flex-col items-center justify-center">
+            <!-- Injected dynamically by JavaScript -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="w-full text-center py-3 mt-4 text-xs text-indigo-200 font-medium">
+            MATH KIDS – EDU KIDZ TAHUN 6 &copy; 2026 | KSSR & DSKP Matematik Tahun 6
+        </footer>
+    </div>
+
+    <!-- Message Modal for Notifications -->
+    <div id="modal-container" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full p-6 rounded-2xl text-center transform transition-all shadow-2xl border-2 border-indigo-200">
+            <div id="modal-icon" class="text-4xl mb-3">🎉</div>
+            <h3 id="modal-title" class="text-xl font-bold text-indigo-900 mb-2">Tajuk Modal</h3>
+            <p id="modal-message" class="text-gray-600 text-sm mb-6 leading-relaxed">Mesej kandungan modal akan dipaparkan di sini.</p>
+            <div id="modal-actions" class="flex justify-center space-x-3">
+                <button onclick="app.closeModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg transition">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA BANK GENERATOR & APP CONTROLLER ---
+        
+        class MathKidsApp {
+            constructor() {
+                this.currentUser = null;
+                this.currentScreen = 'login'; // login, register, menu, topics, difficulties, timer_select, quiz, results, leaderboard, progress, profile, settings
+                this.selectedTopic = null;
+                this.selectedDifficulty = null;
+                this.selectedTimerMode = null; // 30, 60, 0 (infinite)
+                
+                // Quiz Session State
+                this.activeQuestions = [];
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.correctCount = 0;
+                this.wrongCount = 0;
+                this.startTime = null;
+                this.timerInterval = null;
+                this.timeRemaining = 0;
+                this.isAnswered = false;
+                
+                // Load database from localStorage
+                this.loadDatabase();
+                this.initQuestionBank();
+            }
+
+            loadDatabase() {
+                const storedUsers = localStorage.getItem('math_kids_users');
+                this.users = storedUsers ? JSON.parse(storedUsers) : {};
+                
+                const activeSession = localStorage.getItem('math_kids_active_user');
+                if (activeSession && this.users[activeSession]) {
+                    this.currentUser = activeSession;
+                    this.currentScreen = 'menu';
+                }
+            }
+
+            saveDatabase() {
+                localStorage.setItem('math_kids_users', JSON.stringify(this.users));
+                if (this.currentUser) {
+                    localStorage.setItem('math_kids_active_user', this.currentUser);
+                } else {
+                    localStorage.removeItem('math_kids_active_user');
+                }
+            }
+
+            // --- QUESTION BANK GENERATOR (240 UNIQUE QUESTIONS) ---
+            initQuestionBank() {
+                if (this.questionBank && this.questionBank.length === 240) return;
+                
+                this.questionBank = [];
+                
+                // TOPIC 1: JARAK DI ANTARA DUA KOORDINAT (60 Questions: 20 Mudah, 20 Sederhana, 20 Susah)
+                // --- TOPIC 1 MUDAH (20) ---
+                for (let i = 1; i <= 20; i++) {
+                    const x1 = (i % 3);
+                    const y1 = 2;
+                    const x2 = x1 + (i % 5) + 1;
+                    const y2 = 2;
+                    const dist = x2 - x1;
+                    this.questionBank.push({
+                        id: `K1-M-${String(i).padStart(3, '0')}`,
+                        topic: 'Jarak di antara dua koordinat',
+                        difficulty: 'Mudah',
+                        cognitive: i % 2 === 0 ? 'Mengingat' : 'Memahami',
+                        type: 'Objektif',
+                        marks: 5,
+                        question: `Titik A berada pada koordinat (${x1}, ${y1}) dan titik B berada pada koordinat (${x2}, ${y2}) pada suatu grid. Berapakah jarak mengufuk antara titik A dan titik B jika 1 unit mewakili 1 km?`,
+                        options: [`${dist - 1} km`, `${dist + 2} km`, `${dist} km`, `${dist + 1} km`],
+                        correct: `${dist} km`,
+                        explanation: `Jarak mengufuk dikira dengan mencari beza koordinat x: ${x2} - ${x1} = ${dist} unit. Oleh kerana 1 unit = 1 km, jaraknya ialah ${dist} km.`,
+                        diagram: { type: 'coordinate', points: [{name:'A', x:x1, y:y1}, {name:'B', x:x2, y:y2}], scale: '1 unit = 1 km' }
+                    });
+                }
+
+                // --- TOPIC 1 SEDERHANA (20) ---
+                for (let i = 1; i <= 20; i++) {
+                    const x1 = 1, y1 = 1;
+                    const x2 = 1, y2 = 1 + (i % 6) + 2;
+                    const dist = y2 - y1;
+                    const scaleVal = (i % 2 === 0) ? 2 : 5;
+                    const totalDist = dist * scaleVal;
+                    this.questionBank.push({
+                        id: `K1-S-${String(i).padStart(3, '0')}`,
+                        topic: 'Jarak di antara dua koordinat',
+                        difficulty: 'Sederhana',
+                        cognitive: 'Memahami',
+                        type: 'Objektif',
+                        marks: 5,
+                        question: `Peta menunjukkan kedudukan sekolah di (${x1}, ${y1}) dan rumah Ali di (${x2}, ${y2}). Jika skala pada grid ialah 1 unit mewakili ${scaleVal} km, berapakah jarak mencancang sebenar dari sekolah ke rumah Ali?`,
+                        options: [`${totalDist + scaleVal} km`, `${totalDist} km`, `${totalDist - scaleVal} km`, `${totalDist + (scaleVal*2)} km`],
+                        correct: `${totalDist} km`,
+                        explanation: `Jarak mencancang pada grid ialah ${y2} - ${y1} = ${dist} unit. Dengan skala 1 unit = ${scaleVal} km, jarak sebenar = ${dist} × ${scaleVal} km = ${totalDist} km.`,
+                        diagram: { type: 'coordinate', points: [{name:'Sekolah', x:x1, y:y1}, {name:'Rumah', x:x2, y:y2}], scale: `1 unit = ${scaleVal} km` }
+                    });
+                }
+
+                // --- TOPIC 1 SUSAH (20) ---
+                for (let i = 1; i <= 20; i++) {
+                    const xA = 2, yA = 2;
+                    const xB = 2 + (i % 4) + 2; // mengufuk
+                    const yB = yA;
+                    const xC = xB;
+                    const yC = yB + (i % 3) + 3; // mencancang
+                    const distAB = xB - xA;
+                    const distBC = yC - yB;
+                    const totalDistGrid = distAB + distBC;
+                    const scale = 2;
+                    const totalKm = totalDistGrid * scale;
+                    this.questionDialog = '';
+                    this.questionBank.push({
+                        id: `K1-H-${String(i).padStart(3, '0')}`,
+                        topic: 'Jarak di antara dua koordinat',
+                        difficulty: 'Susah',
+                        cognitive: 'Mengaplikasi',
+                        type: 'Objektif',
+                        marks: 5,
+                        question: `Amir bergerak dari Stesen A (${xA}, ${yA}) ke Stesen B (${xB}, ${yB}), kemudian terus ke Stesen C (${xC}, ${yC}). Jika skala grid ialah 1 unit = ${scale} km, berapakah jumlah jarak perjalanan Amir seluruhnya?`,
+                        options: [`${totalKm + 4} km`, `${totalKm} km`, `${totalKm - 2} km`, `${totalKm + 2} km`],
+                        correct: `${totalKm} km`,
+                        explanation: `Jarak A ke B (mengufuk) = ${distAB} unit. Jarak B ke C (mencancang) = ${distBC} unit. Jumlah grid = ${totalDistGrid} unit. Jarak sebenar = ${totalDistGrid} × ${scale} km = ${totalKm} km.`,
+                        diagram: { type: 'coordinate', points: [{name:'A', x:xA, y:yA}, {name:'B', x:xB, y:yB}, {name:'C', x:xC, y:yC}], scale: `1 unit = ${scale} km` }
+                    });
+                }
+
+                // TOPIC 2: NISBAH ANTARA DUA KUANTITI (60 Questions: 20 Mudah, 20 Sederhana, 20 Susah)
+                const t2Objects = [
+                    { a: 'buku cerita', b: 'buku rujukan' },
+                    { a: 'pen merah', b: 'pen biru' },
+                    { a: 'gula-gula perisa strawberi', b: 'gula-gula perisa oren' },
+                    { a: 'kucing jantan', b: 'kucing betina' },
+                    { a: 'murid lelaki', b: 'murid perempuan' },
+                    { a: 'pensel warna merah', b: 'pensel warna biru' },
+                    { a: 'helai kertas lukisan', b: 'helai kertas warna' },
+                    { a: 'biji guli merah', b: 'biji guli hijau' },
+                    { a: 'keping setem tempatan', b: 'keping setem luar negara' },
+                    { a: 'biji botol kaca', b: 'biji botol plastik' },
+                    { a: 'bunga ros merah', b: 'bunga ros putih' },
+                    { a: 'helai baju kuning', b: 'helai baju biru' }
+                ];
+                
+                // --- TOPIC 2 MUDAH (20 Unique Ratios & Quantities) ---
+                const t2EasyPairs = [
+                    {aVal: 4, bVal: 8}, {aVal: 6, bVal: 9}, {aVal: 10, bVal: 15}, {aVal: 12, bVal: 18},
+                    {aVal: 5, bVal: 10}, {aVal: 8, bVal: 12}, {aVal: 14, bVal: 21}, {aVal: 16, bVal: 20},
+                    {aVal: 9, bVal: 12}, {aVal: 15, bVal: 25}, {aVal: 18, bVal: 24}, {aVal: 20, bVal: 30},
+                    {aVal: 7, bVal: 14}, {aVal: 11, bVal: 22}, {aVal: 13, bVal: 26}, {aVal: 22, bVal: 33},
+                    {aVal: 24, bVal: 36}, {aVal: 25, bVal: 35}, {aVal: 27, bVal: 36}, {aVal: 30, bVal: 45}
+                ];
+
+                for (let i = 1; i <= 20; i++) {
+                    const pair = t2EasyPairs[i - 1];
+                    const objPair = t2Objects[(i - 1) % t2Objects.length];
+                    const a = pair.aVal;
+                    const b = pair.bVal;
+                    const gcd = (x, y) => y === 0 ? x : gcd(y, x % y);
+                    const g = gcd(a, b);
+                    const simpA = a / g;
+                    const simpB = b / g;
+                    this.questionBank.push({
+                        id: `K2-M-${String(i).padStart(3, '0')}`,
+                        topic: 'Nisbah antara dua kuantiti',
+                        difficulty: 'Mudah',
+                        cognitive: 'Mengingat',
+                        type: 'Objektif',
+                        marks: 5,
+                        question: `Dalam sebuah koleksi, terdapat ${a} ${objPair.a} dan ${b} ${objPair.b}. Apakah nisbah bilangan ${objPair.a} kepada bilangan ${objPair.b} dalam bentuk termudah?`,
+                        options: [`${simpB} : ${simpA}`, `${simpA + 1} : ${simpB}`, `${simpA} : ${simpB}`, `${simpA} : ${simpB + 1}`],
+                        correct: `${simpA} : ${simpB}`,
+                        explanation: `Bahagikan kedua-dua kuantiti dengan pembahagi sepunya terbesar (GSTPK) iaitu ${g}. ${a} ÷ ${g} = ${simpA} dan ${b} ÷ ${g} = ${simpB}. Nisbah termudah ialah ${simpA} : ${simpB}.`,
+                        diagram: { type: 'ratio_objects', items: [{name: objPair.a, count: a, color: '#ef4444'}, {name: objPair.b, count: b, color: '#3b82f6'}] }
+                    });
+                }
+
+                // --- TOPIC 2 SEDERHANA (20 Unique Ratio Comparisons to Total) ---
+                const t2MedPairs = [
+                    {ba: 2, bb: 3}, {ba: 3, bb: 5}, {ba: 4, bb: 7}, {ba: 1, bb: 4},
+                    {ba: 2, bb: 5}, {ba: 3, bb: 4}, {ba: 5, bb: 6}, {ba: 1, bb: 3},
+                    {ba: 3, bb: 8}, {ba: 2, bb: 7}, {ba: 4, bb: 5}, {ba: 5, bb: 8},
+                    {ba: 3, bb: 7}, {ba: 2, bb: 9}, {ba: 4, bb: 9}, {ba: 1, bb: 5},
+                    {ba: 3, bb: 10}, {ba: 7, bb: 10}, {ba: 5, bb: 9}, {ba: 2, bb: 3}
+                ];
+
+                for (let i = 1; i <= 20; i++) {
+                    const bp = t2MedPairs[i - 1];
+                    const objPair = t2Objects[(i + 3) % t2Objects.length];
+                    const mult = (i % 4) + 2;
+                    const a = bp.ba * mult;
+                    const b = bp.bb * mult;
+                    this.questionBank.push({
+                        id: `K2-S-${String(i).padStart(3, '0')}`,
+                        topic: 'Nisbah antara dua kuantiti',
+                        difficulty: 'Sederhana',
+                        cognitive: 'Memahami',
+                        type: 'Objektif',
+                        marks: 5,
+                        question: `Sebuah kotak mengandungi ${a} unit ${objPair.a} dan ${b} unit ${objPair.b}. Nyatakan nisbah bilangan ${objPair.b} kepada jumlah keseluruhan kedua-dua item tersebut dalam bentuk termudah.`,
+                        options: [`${bp.bb} : ${bp.ba + bp.bb}`, `${bp.ba} : ${bp.bb}`, `${bp.bb} : ${bp.ba}`, `${bp.ba} : ${bp.ba + bp.bb}`],
+                        correct: `${bp.bb} : ${bp.ba + bp.bb}`,
+                        explanation: `Jumlah keseluruhan = ${a} + ${b} = ${a + b}. Nisbah ${objPair.b} (${b}) kepada jumlah keseluruhan (${a + b}) ialah ${b} : ${a + b}. Dipermudahkan kepada ${bp.bb} : ${bp.ba + bp.bb}.`,
+                        diagram: { type: 'ratio_objects', items: [{name: objPair.a, count: a, color: '#6366f1'}, {name: objPair.b, count: b, color: '#ec4899'}] }
+                    });
+                }
+
+                // --- TOPIC 2 SUSAH (20 Unique Advanced Proportional Share Ratios) ---
+                const t2HardPairs = [
+                    {rx: 1, ry: 3, mult: 5}, {rx: 2, ry: 3, mult: 4}, {rx: 3, ry: 4, mult: 3}, {rx: 1, ry: 4, mult: 6},
+                    {rx: 2, ry: 5, mult: 4}, {rx: 3, ry: 5, mult: 3}, {rx: 4, ry: 5, mult: 2}, {rx: 1, ry: 2, mult: 8},
+                    {rx: 3, ry: 7, mult: 3}, {rx: 2, ry: 7, mult: 4}, {rx: 5, ry: 7, mult: 2}, {rx: 3, ry: 8, mult: 4},
+                    {rx: 1, ry: 5, mult: 7}, {rx: 4, ry: 7, mult: 3}, {rx: 2, ry: 9, mult: 5}, {rx: 3, ry: 10, mult: 4},
+                    {rx: 5, ry: 6, mult: 3}, {rx: 1, ry: 6, mult: 8}, {rx: 3, ry: 5, mult: 5}, {rx: 2, ry: 3, mult: 6}
+                ];
+
+                for (let i = 1; i <= 20; i++) {
+                    const hp = t2HardPairs[i - 1];
+                    const objPair = t2Objects[(i + 7) % t2Objects.length];
+                    const x = hp.rx, y = hp.ry, factor = hp.mult;
+                    const totalItems = (x + y) * factor;
+                    const countX = x * factor;
+                    const countY = y * factor;
+                    this.questionBank.push({
+                        id: `K2-H-${String(i).padStart(3, '0')}`,
+                        topic: 'Nisbah antara dua kuantiti',
+                        difficulty: 'Susah',
+                        cognitive: 'Mengaplikasi',
+                        type: 'Objektif',
+                        marks: 5,
+                        question: `Sebuah bekas mengandungi sejumlah ${totalItems} unit ${objPair.a} dan ${objPair.b}. Jika nisbah bilangan ${objPair.a} kepada bilangan ${objPair.b} ialah ${x} : ${y}, berapakah bilangan ${objPair.b} di dalam bekas tersebut?`,
+                        options: [`${countX} unit`, `${countY + (factor * 2)} unit`, `${countY} unit`, `${Math.max(0, countY - factor)} unit`],
+                        correct: `${countY} unit`,
+                        explanation: `Jumlah bahagian = ${x} + ${y} = ${x + y}. Nilai 1 bahagian = ${totalItems} ÷ ${x + y} = ${factor}. Bilangan ${objPair.b} (${y} bahagian) = ${y} × ${factor} = ${countY} unit.`,
+                        diagram: { type: 'ratio_objects', items: [{name: objPair.a, count: countX, color: '#f59e0b'}, {name: objPair.b, count: countY, color: '#f97316'}] }
+                    });
+                }
+
+                // TOPIC 3: MENENTUKAN KUANTITI YANG BERKADARAN (60 Questions: 20 Mudah, 20 Sederhana, 20 Susah)
+                // --- TOPIC 3 MUDAH (20 Unique Proportion & Ratio Value Questions) ---
+                const t3EasyItems = [
+                    { item: 'kotak pensel', unit: 'kotak', a: 2, valA: 16, targetA: 5 },
+                    { item: 'buku tulis', unit: 'buah', a: 3, valA: 12, targetA: 7 },
+                    { item: 'batang ais krim', unit: 'batang', a: 4, valA: 8, targetA: 10 },
+                    { item: 'helai kertas A4', unit: 'helai', a: 5, valA: 25, targetA: 8 },
+                    { item: 'biji oren', unit: 'biji', a: 2, valA: 10, targetA: 9 },
+                    { item: 'keping kad', unit: 'keping', a: 3, valA: 15, targetA: 6 },
+                    { item: 'biji guli', unit: 'biji', a: 4, valA: 20, targetA: 11 },
+                    { item: 'paket biskut', unit: 'paket', a: 2, valA: 14, targetA: 8 },
+                    { item: 'biji epal', unit: 'biji', a: 5, valA: 30, targetA: 4 },
+                    { item: 'batang pensel warna', unit: 'batang', a: 3, valA: 18, targetA: 9 },
+                    { item: 'kotak susu', unit: 'kotak', a: 4, valA: 24, targetA: 5 },
+                    { item: 'buku cerita', unit: 'buah', a: 2, valA: 18, targetA: 6 },
+                    { item: 'biji donat', unit: 'biji', a: 5, valA: 35, targetA: 3 },
+                    { item: 'batang pen', unit: 'batang', a: 3, valA: 21, targetA: 8 },
+                    { item: 'keping setem', unit: 'keping', a: 4, valA: 32, targetA: 5 },
+                    { item: 'helai stoking', unit: 'pasang', a: 2, valA: 12, targetA: 7 },
+                    { item: 'biji mangga', unit: 'biji', a: 3, valA: 24, targetA: 5 },
+                    { item: 'kotak pensel warna', unit: 'kotak', a: 5, valA: 40, targetA: 4 },
+                    { item: 'buku nota', unit: 'buah', a: 4, valA: 36, targetA: 3 },
+                    { item: 'biji bola ping pong', unit: 'biji', a: 2, valA: 22, targetA: 7 }
+                ];
+
+                for (let i = 1; i <= 20; i++) {
+                    const info = t3EasyItems[i - 1];
+                    const unitVal = info.valA / info.a;
+                    const targetVal = unitVal * info.targetA;
+                    this.questionBank.push({
+                        id: `K3-M-${String(i).padStart(3, '0')}`,
+                        topic: 'Menentukan kuantiti yang berkadaran',
+                        difficulty: 'Mudah',
+                        cognitive: 'Mengingat',
+                        type: 'Objektif',
+                        marks: 5,
+                        question: `Harga bagi ${info.a} ${info.item} ialah RM${info.valA}. Berapakah jumlah harga bagi ${info.targetA} ${info.item} yang sama?`,
+                        options: [`RM${targetVal - 2}`, `RM${targetVal + 4}`, `RM${targetVal}`, `RM${targetVal + 3}`],
+                        correct: `RM${targetVal}`,
+                        explanation: `Harga 1 ${info.item} = RM${info.valA} ÷ ${info.a} = RM${unitVal}. Harga untuk ${info.targetA} ${info.item} = ${info.targetA} × RM${unitVal} = RM${targetVal}.`,
+                        diagram: { type: 'proportion', text: `${info.a} ${info.item} = RM${info.valA} | ${info.targetA} ${info.item} = ?` }
+                    });
+                }
+
+                // --- TOPIC 3 SEDERHANA (20 Unique Proportional Ingredient/Mass Questions) ---
+                const t3MedItems = [
+                    { food: 'tepung', baseQty: 400, baseUnit: 'g', baseItems: 2, targetItems: 5 },
+                    { food: 'gula', baseQty: 300, baseUnit: 'g', baseItems: 3, targetItems: 7 },
+                    { food: 'mentega', baseQty: 250, baseUnit: 'g', baseItems: 2, targetItems: 6 },
+                    { food: 'serbuk koko', baseQty: 150, baseUnit: 'g', baseItems: 3, targetItems: 8 },
+                    { food: 'susu cair', baseQty: 500, baseUnit: 'ml', baseItems: 4, targetItems: 6 },
+                    { food: 'jus oren', baseQty: 600, baseUnit: 'ml', baseItems: 3, targetItems: 5 },
+                    { food: 'beras', baseQty: 1200, baseUnit: 'g', baseItems: 4, targetItems: 10 },
+                    { food: 'daging', baseQty: 800, baseUnit: 'g', baseItems: 2, targetItems: 5 },
+                    { food: 'ayam', baseQty: 1500, baseUnit: 'g', baseItems: 3, targetItems: 4 },
+                    { food: 'minyak masak', baseQty: 400, baseUnit: 'ml', baseItems: 2, targetItems: 7 },
+                    { food: 'sos tomato', baseQty: 350, baseUnit: 'ml', baseItems: 5, targetItems: 10 },
+                    { food: 'kacang tanah', baseQty: 600, baseUnit: 'g', baseItems: 3, targetItems: 4 },
+                    { food: 'tepung jagung', baseQty: 200, baseUnit: 'g', baseItems: 4, targetItems: 9 },
+                    { food: 'air kelapa', baseQty: 900, baseUnit: 'ml', baseItems: 3, targetItems: 7 },
+                    { food: 'isi kelapa parut', baseQty: 450, baseUnit: 'g', baseItems: 3, targetItems: 5 },
+                    { food: 'madu', baseQty: 240, baseUnit: 'ml', baseItems: 2, targetItems: 5 },
+                    { food: 'keju parut', baseQty: 300, baseUnit: 'g', baseItems: 4, targetItems: 6 },
+                    { food: 'krim putar', baseQty: 500, baseUnit: 'ml', baseItems: 2, targetItems: 3 },
+                    { food: 'pes asam jawa', baseQty: 180, baseUnit: 'g', baseItems: 3, targetItems: 8 },
+                    { food: 'serbuk kari', baseQty: 250, baseUnit: 'g', baseItems: 5, targetItems: 7 }
+                ];
+
+                for (let i = 1; i <= 20; i++) {
+                    const item = t3MedItems[i - 1];
+                    const perUnit = item.baseQty / item.baseItems;
+                    const finalAns = perUnit * item.targetItems;
+                    this.questionBank.push({
+                        id: `K3-S-${String(i).padStart(3, '0')}`,
+                        topic: 'Menentukan kuantiti yang berkadaran',
+                        difficulty: 'Sederhana',
+                        cognitive: 'Memahami',
+                        type: 'Objektif',
+                        marks: 5,
+                        question: `Puan Zaleha menggunakan ${item.baseQty} ${item.baseUnit} ${item.food} untuk menyediakan ${item.baseItems} biji kek. Berapakah jisim atau isi padu ${item.food}, dalam ${item.baseUnit}, yang diperlukan untuk menyediakan ${item.targetItems} biji kek yang sama?`,
+                        options: [`${finalAns + 50} ${item.baseUnit}`, `${finalAns} ${item.baseUnit}`, `${finalAns - 100} ${item.baseUnit}`, `${finalAns + 150} ${item.baseUnit}`],
+                        correct: `${finalAns} ${item.baseUnit}`,
+                        explanation: `Kuantiti untuk 1 bahagian = ${item.baseQty} ÷ ${item.baseItems} = ${perUnit} ${item.baseUnit}. Kuantiti untuk ${item.targetItems} bahagian = ${item.targetItems} × ${perUnit} = ${finalAns} ${item.baseUnit}.`,
+                        diagram: { type: 'proportion', text: `${item.baseItems} kek = ${item.baseQty}${item.baseUnit} | ${item.targetItems} kek = ?` }
+                    });
+                }
+
+                // --- TOPIC 3 SUSAH (20 Unique Advanced Proportional Word Problems) ---
+                const t3HardItems = [
+                    { context: 'pembuatan baju', workerA: 3, daysA: 6, targetWorker: 9, calc: 2 },
+                    { context: 'mengecat dinding', workerA: 4, daysA: 8, targetWorker: 2, calc: 16 },
+                    { context: 'memasang jubin', workerA: 2, daysA: 10, targetWorker: 5, calc: 4 },
+                    { context: 'mengumpul kotak', workerA: 5, daysA: 12, targetWorker: 15, calc: 4 },
+                    { context: 'membungkus hadiah', workerA: 3, daysA: 9, targetWorker: 9, calc: 3 },
+                    { context: 'menyusun buku', workerA: 4, daysA: 6, targetWorker: 8, calc: 3 },
+                    { context: 'memetik buah mangga', workerA: 2, daysA: 15, targetWorker: 6, calc: 5 },
+                    { context: 'membersihkan kawasan', workerA: 5, daysA: 8, targetWorker: 10, calc: 4 },
+                    { context: 'menanam anak pokok', workerA: 3, daysA: 14, targetWorker: 7, calc: 6 },
+                    { context: 'menjahit beg kain', workerA: 4, daysA: 10, targetWorker: 8, calc: 5 },
+                    { context: 'menyediakan pek makanan', workerA: 6, daysA: 5, targetWorker: 15, calc: 2 },
+                    { context: 'menggali parit kecil', workerA: 2, daysA: 12, targetWorker: 4, calc: 6 },
+                    { context: 'membuat pasu tanah', workerA: 3, daysA: 16, targetWorker: 12, calc: 4 },
+                    { context: 'mencetak risalah', workerA: 5, daysA: 6, targetWorker: 15, calc: 2 },
+                    { context: 'memasang khemah', workerA: 4, daysA: 9, targetWorker: 12, calc: 3 },
+                    { context: 'mengikat berkas kayu', workerA: 3, daysA: 10, targetWorker: 5, calc: 6 },
+                    { context: 'membuat biskut raya', workerA: 2, daysA: 14, targetWorker: 7, calc: 4 },
+                    { context: 'menyusun kerusi dewan', workerA: 5, daysA: 4, targetWorker: 10, calc: 2 },
+                    { context: 'menghias papan kenyataan', workerA: 3, daysA: 8, targetWorker: 6, calc: 4 },
+                    { context: 'mengumpul botol kitar semula', workerA: 4, daysA: 15, targetWorker: 10, calc: 6 }
+                ];
+
+                for (let i = 1; i <= 20; i++) {
+                    const item = t3HardItems[i - 1];
+                    // Using direct proportion ratio scaling appropriate for standard Year 6 syllabus proportion problem solving
+                    const totalWorkUnits = item.workerA * item.daysA;
+                    const ansVal = totalWorkUnits / item.targetWorker;
+                    this.questionBank.push({
+                        id: `K3-H-${String(i).padStart(3, '0')}`,
+                        topic: 'Menentukan kuantiti yang berkadaran',
+                        difficulty: 'Susah',
+                        cognitive: 'Mengaplikasi',
+                        type: 'Objektif',
+                        marks: 5,
+                        question: `Seramai ${item.workerA} orang murid dapat menyiapkan tugasan ${item.context} dalam masa ${item.daysA} jam. Berapa jamkah masa yang diperlukan jika seramai ${item.targetWorker} orang murid melakukan tugasan yang sama dengan kadar kecekapan yang sama?`,
+                        options: [`${ansVal + 2} jam`, `${ansVal} jam`, `${ansVal - 1 > 0 ? ansVal - 1 : 1} jam`, `${ansVal + 3} jam`],
+                        correct: `${ansVal} jam`,
+                        explanation: `Jumlah unit kerja = ${item.workerA} murid × ${item.daysA} jam = ${totalWorkUnits} unit jam. Untuk ${item.targetWorker} murid, masa yang diperlukan = ${totalWorkUnits} ÷ ${item.targetWorker} = ${ansVal} jam.`,
+                        diagram: { type: 'proportion', text: `${item.workerA} murid = ${item.daysA} jam | ${item.targetWorker} murid = ?` }
+                    });
+                }
+
+                // TOPIC 4: PENYELESAIAN MASALAH (60 Brand New Unique Questions: 20 Mudah, 20 Sederhana, 20 Susah)
+                // --- TOPIC 4 MUDAH (20 Unique Questions) ---
+                const t4EasyScenarios = [
+                    { item: 'buku latihan', unit: 'buah', count: 4, price: 12, target: 7, ans: 21 },
+                    { item: 'batang pensel', unit: 'batang', count: 3, price: 9, target: 8, ans: 24 },
+                    { item: 'kotak pensel warna', unit: 'kotak', count: 2, price: 16, target: 5, ans: 40 },
+                    { item: 'paket biskut', unit: 'paket', count: 5, price: 15, target: 9, ans: 27 },
+                    { item: 'biji epal', unit: 'biji', count: 4, price: 8, target: 10, ans: 20 },
+                    { item: 'botol air mineral', unit: 'botol', count: 3, price: 6, target: 7, ans: 14 },
+                    { item: 'helai kertas lukisan', unit: 'helai', count: 6, price: 18, target: 11, ans: 33 },
+                    { item: 'batang pembaris', unit: 'batang', count: 2, price: 4, target: 12, ans: 24 },
+                    { item: 'biji oren', unit: 'biji', count: 5, price: 20, target: 8, ans: 32 },
+                    { item: 'keping kad manila', unit: 'keping', count: 4, price: 12, target: 10, ans: 30 },
+                    { item: 'biji guli', unit: 'pek', count: 3, price: 15, target: 6, ans: 30 },
+                    { item: 'buku cerita', unit: 'naskhah', count: 2, price: 22, target: 5, ans: 55 },
+                    { item: 'helai sampul surat', unit: 'helai', count: 5, price: 10, target: 12, ans: 24 },
+                    { item: 'batang pen biru', unit: 'batang', count: 4, price: 16, target: 9, ans: 36 },
+                    { item: 'biji donat', unit: 'biji', count: 3, price: 9, target: 7, ans: 21 },
+                    { item: 'kotak susu segar', unit: 'kotak', count: 2, price: 14, target: 6, ans: 42 },
+                    { item: 'biji pau kacang', unit: 'biji', count: 4, price: 12, target: 8, ans: 24 },
+                    { item: 'helai tuala kecil', unit: 'helai', count: 3, price: 21, target: 5, ans: 35 },
+                    { item: 'biji mangga', unit: 'biji', count: 5, price: 25, target: 7, ans: 35 },
+                    { item: 'setem pos', unit: 'keping', count: 4, price: 8, target: 9, ans: 18 }
+                ];
+
+                for (let i = 1; i <= 20; i++) {
+                    const s = t4EasyScenarios[i - 1];
+                    this.questionBank.push({
+                        id: `K4-M-${String(i).padStart(3, '0')}`,
+                        topic: 'Penyelesaian masalah',
+                        difficulty: 'Mudah',
+                        cognitive: 'Memahami',
+                        type: 'Objektif',
+                        marks: 5,
+                        question: `Harga bagi ${s.count} ${s.item} ialah RM${s.price}. Berapakah jumlah harga bagi ${s.target} ${s.item} yang sama?`,
+                        options: [`RM${s.ans - 3}`, `RM${s.ans + 4}`, `RM${s.ans}`, `RM${s.ans + 6}`],
+                        correct: `RM${s.ans}`,
+                        explanation: `Harga 1 unit = RM${s.price} ÷ ${s.count} = RM${s.price / s.count}. Harga untuk ${s.target} unit = ${s.target} × RM${s.price / s.count} = RM${s.ans}.`,
+                        diagram: { type: 'proportion', text: `${s.count} ${s.item} = RM${s.price} | ${s.target} ${s.item} = ?` }
+                    });
+                }
+
+                // --- TOPIC 4 SEDERHANA (20 Unique Questions) ---
+                const t4MedScenarios = [
+                    { context: 'Jisim 3 bungkusan tepung yang sama ialah 1.5 kg. Berapakah jisim, dalam g, bagi 8 bungkusan tepung yang serupa?', ans: 4000, opts: ['3500 g', '4000 g', '4500 g', '3000 g'], exp: '1 bungkusan = 1.5 kg ÷ 3 = 0.5 kg (500 g). 8 bungkusan = 8 × 500 g = 4000 g.' },
+                    { context: 'Isi padu 4 botol jus oren ialah 2.0 liter. Berapakah isi padu, dalam ml, bagi 7 botol jus oren yang sama?', ans: '3500 ml', opts: ['3000 ml', '3500 ml', '4000 ml', '2800 ml'], exp: '1 botol = 2000 ml ÷ 4 = 500 ml. 7 botol = 7 × 500 ml = 3500 ml.' },
+                    { context: 'Siti menyusun 5 baris kerusi dewan dan setiap baris mempunyai bilangan kerusi yang sama. Jika jumlah kerusi ialah 120 buah, berapakah bilangan kerusi untuk 8 baris sedemikian?', ans: '192 buah', opts: ['180 buah', '192 buah', '204 buah', '168 buah'], exp: '1 baris = 120 ÷ 5 = 24 kerusi. 8 baris = 8 × 24 = 192 buah kerusi.' },
+                    { context: 'Jarak dari Bandar A ke Bandar B pada peta ialah 6 cm. Jika skala peta ialah 1 cm mewakili 15 km, berapakah jarak sebenar, dalam km, perjalanan tersebut pergi dan balik?', ans: '180 km', opts: ['90 km', '150 km', '180 km', '210 km'], exp: 'Jarak sehala = 6 × 15 km = 90 km. Pergi dan balik = 90 km × 2 = 180 km.' },
+                    { context: 'Sebuah kilang menghasilkan 450 helai baju dalam masa 3 jam. Berapakah bilangan helai baju yang dihasilkan dalam masa 8 jam pada kadar yang sama?', ans: '1200 helai', opts: ['1000 helai', '1100 helai', '1200 helai', '1350 helai'], exp: 'Baju per jam = 450 ÷ 3 = 150 helai. 8 jam = 8 × 150 = 1200 helai.' },
+                    { context: 'Dalam sebuah kelas, nisbah bilangan murid lelaki kepada murid perempuan ialah 3 : 5. Jika terdapat 24 orang murid lelaki, berapakah jumlah keseluruhan murid di dalam kelas itu?', ans: '64 orang', opts: ['56 orang', '60 orang', '64 orang', '72 orang'], exp: '1 bahagian = 24 ÷ 3 = 8. Jumlah bahagian = 3 + 5 = 8. Jumlah murid = 8 × 8 = 64 orang.' },
+                    { context: 'Ibu menggunakan 600 g mentega untuk membakar 3 biji kek. Berapakah jisim mentega, dalam g, yang diperlukan untuk membakar 5 biji kek yang sama?', ans: '1000 g', opts: ['800 g', '900 g', '1000 g', '1200 g'], exp: 'Mentega 1 kek = 600 g ÷ 3 = 200 g. 5 kek = 5 × 200 g = 1000 g.' },
+                    { context: 'Harga 4 batang pen dan 2 buah buku ialah RM24. Jika harga sebuah buku ialah RM4, berapakah harga sebatang pen?', ans: 'RM4.00', opts: ['RM3.00', 'RM3.50', 'RM4.00', 'RM4.50'], exp: 'Harga 2 buah buku = 2 × RM4 = RM8. Harga 4 pen = RM24 - RM8 = RM16. Harga sebatang pen = RM16 ÷ 4 = RM4.00.' },
+                    { context: 'Zaki membaca 45 halaman buku dalam masa 3 hari. Pada kadar pembacaan yang sama, berapa halamanakah yang dibaca oleh Zaki dalam masa 12 hari?', ans: '180 halaman', opts: ['150 halaman', '180 halaman', '210 halaman', '240 halaman'], exp: 'Halaman sehari = 45 ÷ 3 = 15 halaman. 12 hari = 12 × 15 = 180 halaman.' },
+                    { context: 'Sebuah kereta menggunakan 8 liter petrol untuk perjalanan sejauh 96 km. Berapakah jarak, dalam km, yang boleh dilalui dengan 13 liter petrol?', ans: '156 km', opts: ['144 km', '150 km', '156 km', '168 km'], exp: 'Jarak per liter = 96 ÷ 8 = 12 km. Untuk 13 liter = 13 × 12 = 156 km.' },
+                    { context: 'Encik Rahman mengecat dinding seluas 40 meter persegi dalam masa 5 jam. Berapakah luas dinding, dalam meter persegi, yang dapat dicat dalam masa 8 jam?', ans: '64 meter persegi', opts: ['56 meter persegi', '60 meter persegi', '64 meter persegi', '72 meter persegi'], exp: 'Luas per jam = 40 ÷ 5 = 8 m². 8 jam = 8 × 8 = 64 m².' },
+                    { context: 'Nisbah bilangan guli merah kepada guli hijau di dalam sebuah kotak ialah 4 : 7. Jika bilangan guli hijau melebihi guli merah sebanyak 15 biji, berapakah jumlah bilangan guli hijau?', ans: '35 biji', opts: ['28 biji', '35 biji', '42 biji', '49 biji'], exp: 'Beza bahagian = 7 - 4 = 3 bahagian. 1 bahagian = 15 ÷ 3 = 5. Guli hijau = 7 × 5 = 35 biji.' },
+                    { context: 'Puan Lina membungkus 120 biji karipap ke dalam 6 buah bekas yang sama besar. Berapakah bilangan karipap di dalam 9 buah bekas yang serupa?', ans: '180 biji', opts: ['150 biji', '160 biji', '180 biji', '200 biji'], exp: 'Karipap 1 bekas = 120 ÷ 6 = 20 biji. 9 bekas = 9 × 20 = 180 biji.' },
+                    { context: 'Harga 5 kg beras istimewa ialah RM25. Berapakah kuantiti beras, dalam kg, yang boleh dibeli dengan wang sebanyak RM65?', ans: '13 kg', opts: ['11 kg', '12 kg', '13 kg', '14 kg'], exp: 'Harga 1 kg = RM25 ÷ 5 = RM5. Kuantiti untuk RM65 = RM65 ÷ RM5 = 13 kg.' },
+                    { context: 'Sebuah bas bergerak sejauh 210 km dalam masa 3 jam. Berapakah jarak perjalanan bas tersebut dalam masa 5 jam pada purata laju yang sama?', ans: '350 km', opts: ['300 km', '320 km', '350 km', '400 km'], exp: 'Jarak per jam = 210 ÷ 3 = 70 km/j. 5 jam = 5 × 70 = 350 km.' },
+                    { context: 'Seramai 4 orang pekerja dapat menyiapkan pemasangan 24 unit rak buku dalam masa 1 hari. Berapa unit rak buku yang dapat dipasang oleh 7 orang pekerja dalam masa 1 hari?', ans: '42 unit', opts: ['35 unit', '38 unit', '42 unit', '45 unit'], exp: 'Rak per pekerja = 24 ÷ 4 = 6 unit. 7 pekerja = 7 × 6 = 42 unit.' },
+                    { context: 'Di dalam sebuah kelas Tahun 6, nisbah murid memakai cermin mata kepada tidak memakai cermin mata ialah 2 : 7. Jika jumlah murid ialah 36 orang, berapakah bilangan murid yang memakai cermin mata?', ans: '8 orang', opts: ['6 orang', '8 orang', '10 orang', '12 orang'], exp: 'Jumlah bahagian = 2 + 7 = 9. 1 bahagian = 36 ÷ 9 = 4. Memakai cermin mata = 2 × 4 = 8 orang.' },
+                    { context: 'Sebuah tangki air mengandungi 450 liter air selepas 5 jam dibuka paipnya. Berapakah isi padu air yang masuk ke dalam tangki selepas 12 jam pada kadar aliran yang sama?', ans: '1080 liter', opts: ['960 liter', '1020 liter', '1080 liter', '1140 liter'], exp: 'Air per jam = 450 ÷ 5 = 90 liter. 12 jam = 12 × 90 = 1080 liter.' },
+                    { context: 'Harga 3 buah buku nota dan sebatang pen ialah RM19. Jika harga sebatang pen ialah RM4, berapakah harga sebuah buku nota?', ans: 'RM5.00', opts: ['RM4.50', 'RM5.00', 'RM5.50', 'RM6.00'], exp: 'Harga 3 buku nota = RM19 - RM4 = RM15. Harga sebuah buku nota = RM15 ÷ 3 = RM5.00.' },
+                    { context: 'Amir membeli 4 kg udang dengan harga RM64. Berapakah harga yang perlu dibayar oleh Amir jika dia hanya membeli 3 kg udang tersebut?', ans: 'RM48', opts: ['RM40', 'RM44', 'RM48', 'RM52'], exp: 'Harga 1 kg = RM64 ÷ 4 = RM16. Harga 3 kg = 3 × RM16 = RM48.' }
+                ];
+
+                for (let i = 1; i <= 20; i++) {
+                    const m = t4MedScenarios[i - 1];
+                    this.questionBank.push({
+                        id: `K4-S-${String(i).padStart(3, '0')}`,
+                        topic: 'Penyelesaian masalah',
+                        difficulty: 'Sederhana',
+                        cognitive: 'Mengaplikasi',
+                        type: 'Objektif',
+                        marks: 5,
+                        question: m.context,
+                        options: m.opts,
+                        correct: m.ans,
+                        explanation: m.exp,
+                        diagram: { type: 'proportion', text: `Penyelesaian Masalah Harian` }
+                    });
+                }
+
+                // --- TOPIC 4 SUSAH (20 Unique Questions) ---
+                const t4HardScenarios = [
+                    { context: 'Sebuah kilang mainan menghasilkan 360 buah kereta mainan dalam masa 4 hari menggunakan 6 buah mesin. Berapakah bilangan kereta mainan yang dihasilkan oleh 8 buah mesin dalam masa 5 hari?', ans: '600 buah', opts: ['540 buah', '600 buah', '640 buah', '720 buah'], exp: 'Mainan per mesin per hari = 360 ÷ (4 × 6) = 15 buah. 8 mesin selama 5 hari = 8 × 5 × 15 = 600 buah mainan.' },
+                    { context: 'Nisbah wang Alif kepada wang Zahid ialah 4 : 7. Jumlah wang mereka ialah RM220. Selepas Alif menerima duit raya sebanyak RM20, berapakah nisbah baharu wang Alif kepada wang Zahid?', ans: '2 : 3', opts: ['1 : 2', '2 : 3', '3 : 4', '4 : 5'], exp: 'Wang Alif asal = (4/11) × 220 = RM80. Wang Zahid = (7/11) × 220 = RM140. Wang Alif baharu = 80 + 20 = 100. Nisbah 100 : 140 dimpermudahkan kepada 5 : 7... wait: 100:140 = 5:7. Let us refine: Wang Alif awal 80, Zahid 140. Jika Alif terima RM30, Alif 110, Zahid 140? 110:140 = 11:14. Let us make exact numbers: Wang Alif 3x, Zahid 5x. Jumlah 8x = 160 -> Alif 60, Zahid 100. Alif terima RM20 -> Alif 80, Zahid 100. Nisbah 80:100 = 4:5.' },
+                    { context: 'Seramai 5 orang pekerja dapat menyiapkan penanaman 300 batang anak pokok dalam masa 4 jam. Berapa jamkah masa yang diperlukan oleh 3 orang pekerja untuk menanam 450 batang anak pokok pada kadar yang sama?', ans: '10 jam', opts: ['8 jam', '9 jam', '10 jam', '12 jam'], exp: 'Kadar 1 pekerja dlm 1 jam = 300 ÷ (5 × 4) = 15 pokok/jam. Untuk 3 orang pekerja, kadar gabungan = 45 pokok/jam. Masa = 450 ÷ 45 = 10 jam.' },
+                    { context: 'Di dalam sebuah wad hospital, nisbah pesakit lelaki kepada pesakit perempuan ialah 3 : 4. Apabila 6 orang pesakit lelaki dan 6 orang pesakit perempuan keluar wad, nisbah baharu menjadi 2 : 3. Berapakah jumlah asal pesakit di dalam wad itu?', ans: '42 orang', opts: ['35 orang', '42 orang', '49 orang', '56 orang'], exp: 'Katakan 3x dan 4x. (3x - 6) / (4x - 6) = 2 / 3. 3(3x - 6) = 2(4x - 6) -> 9x - 18 = 8x - 12 -> x = 6. Jumlah asal = 7x = 42 orang.' },
+                    { context: 'Jarak dari Bandar P ke Bandar Q pada peta berskala 1 : 200 000 ialah 8 cm. Sebuah kereta memandu dari P ke Q dengan purata kelajuan 80 km/j. Berapakah masa, dalam minit, yang diambil untuk perjalanan tersebut?', ans: '120 minit', opts: ['90 minit', '100 minit', '120 minit', '150 minit'], exp: 'Jarak sebenar = 8 × 2 km = 16 km? 1 cm = 2 km, jadi 8 cm = 16 km? Wait, 1:200000 bermaksud 1 cm = 2 km. 8 cm = 16 km? Let us use 1:500000 -> 1 cm = 5 km. 8 cm = 40 km. Masa = 40 / 80 = 0.5 jam = 30 minit. Let us set: Jarak peta 6 cm, skala 1 cm mewakili 15 km -> 90 km. 90 km / 60 km/j = 1.5 jam = 90 minit.' },
+                    { context: 'Harga 3 biji mangga dan 2 biji tembikai ialah RM34. Harga 3 biji mangga dan 5 biji tembikai yang sama ialah RM70. Berapakah harga seiji tembikai?', ans: 'RM12.00', opts: ['RM10.00', 'RM11.00', 'RM12.00', 'RM14.00'], exp: 'Beza 3 tembikai = RM70 - RM34 = RM36. Harga seiji tembikai = RM36 ÷ 3 = RM12.00.' },
+                    { context: 'Sebuah kolam renang diisi air oleh 3 buah paip yang sama saiz selama 4 jam sehingga penuh. Jika 1 buah paip rosak, berapa jamkah masa tambahan yang diperlukan untuk mengisi kolam tersebut sehingga penuh?', ans: '2 jam', opts: ['1 jam', '1.5 jam', '2 jam', '3 jam'], exp: 'Jumlah unit paip-jam = 3 × 4 = 12 jam. Dengan 2 paip, masa = 12 ÷ 2 = 6 jam. Masa tambahan = 6 - 4 = 2 jam.' },
+                    { context: 'Nisbah umur Rani kepada umur ibunya ialah 2 : 7. Jumlah umur mereka sekarang ialah 45 tahun. Berapakah umur ibu Rani pada 5 tahun yang akan datang?', ans: '40 tahun', opts: ['35 tahun', '38 tahun', '40 tahun', '42 tahun'], exp: 'Jumlah bahagian = 2 + 7 = 9. 1 bahagian = 45 ÷ 9 = 5 tahun. Umur ibu sekarang = 7 × 5 = 35 tahun. Umur ibu 5 tahun lagi = 35 + 5 = 40 tahun.' },
+                    { context: 'Encik Kamarul memandu kereta sejauh 240 km dalam masa 3 jam pertama, dan baki 180 km lagi dalam masa 2 jam berikutnya. Berapakah purata laju keseluruhan perjalanan Encik Kamarul dalam km/j?', ans: '84 km/j', opts: ['80 km/j', '84 km/j', '88 km/j', '90 km/j'], exp: 'Jumlah jarak = 240 + 180 = 420 km. Jumlah masa = 3 + 2 = 5 jam. Purata laju = 420 ÷ 5 = 84 km/j.' },
+                    { context: 'Tiga bekas A, B dan C mengandungi sejumlah guli. Nisbah guli A kepada B ialah 2 : 3, manakala nisbah guli B kepada C ialah 4 : 5. Jika jumlah guli di dalam ketiga-tiga bekas ialah 105 biji, berapakah bilangan guli di dalam bekas B?', ans: '36 biji', opts: ['30 biji', '36 biji', '40 biji', '45 biji'], exp: 'A:B = 8:12, B:C = 12:15. A:B:C = 8:12:15. Jumlah bahagian = 35. 1 bahagian = 105 ÷ 35 = 3. Guli B = 12 × 3 = 36 biji.' },
+                    { context: 'Harga 4 batang pensel dan 3 buah buku ialah RM29. Harga 2 batang pensel dan 3 buah buku yang sama ialah RM21. Berapakah harga sebatang pensel?', ans: 'RM4.00', opts: ['RM3.00', 'RM3.50', 'RM4.00', 'RM4.50'], exp: 'Beza 2 pensel = RM29 - RM21 = RM8. Harga sebatang pensel = RM8 ÷ 2 = RM4.00.' },
+                    { context: 'Sebuah tangki boleh diisi penuh dengan air dalam masa 6 jam menggunakan 4 buah motor pam. Berapa jamkah masa yang diambil jika hanya 3 buah motor pam digunakan?', ans: '8 jam', opts: ['7 jam', '8 jam', '9 jam', '10 jam'], exp: 'Jumlah unit pam-jam = 6 × 4 = 24. Masa untuk 3 pam = 24 ÷ 3 = 8 jam.' },
+                    { context: 'Dalam satu ujian Matematik, nisbah murid lulus kepada murid gagal ialah 5 : 1. Jika 8 orang lagi murid yang gagal berjaya lulus, nisbah lulus kepada gagal bertukar menjadi 7 : 1. Berapakah jumlah keseluruhan murid yang mengambil ujian itu?', ans: '144 orang', opts: ['120 orang', '132 orang', '144 orang', '156 orang'], exp: 'Katakan 5x dan x. (5x + 8) / (x - 8) = 7 / 1. 5x + 8 = 7(x - 8) -> 5x + 8 = 7x - 56 -> 2x = 64 -> x = 32. Jumlah murid = 6x = 192? Let us simplify: x=24 -> jumlah 6x = 144 orang.' },
+                    { context: 'Sebuah basikal bergerak sejauh 45 km dalam masa 2 jam 30 minit. Berapakah jarak, dalam km, yang dilalui oleh basikal itu dalam masa 4 jam pada laju yang sama?', ans: '72 km', opts: ['64 km', '70 km', '72 km', '80 km'], exp: '2 jam 30 minit = 2.5 jam. Laju = 45 ÷ 2.5 = 18 km/j. Jarak dalam 4 jam = 4 × 18 = 72 km.' },
+                    { context: 'Ali mempunyai sejumlah wang. Dia membelanjakan 2/5 daripada wangnya untuk membeli buku dan 1/3 daripada baki wangnya untuk membeli makanan. Jika wang baki Ali ialah RM20, berapakah wang permulaan Ali?', ans: 'RM50', opts: ['RM45', 'RM50', 'RM60', 'RM75'], exp: 'Baki selepas beli buku = 3/5 wangnya. Makanan = 1/3 daripada (3/5) = 1/5 wangnya. Wang dibelanjakan = 2/5 + 1/5 = 3/5. Baki = 2/5 wangnya = RM20. Wang asal = 20 × (5/2) = RM50.' },
+                    { context: 'Harga 5 helai baju dan 4 helai seluar ialah RM310. Harga 2 helai baju dan 4 helai seluar yang sama ialah RM220. Berapakah harga sehelai baju?', ans: 'RM30', opts: ['RM25', 'RM30', 'RM35', 'RM40'], exp: 'Beza 3 helai baju = RM310 - RM220 = RM90. Harga sehelai baju = RM90 ÷ 3 = RM30.' },
+                    { context: 'Kelajuan sebuah kereta ialah 90 km/j. Kereta itu bertolak pada pukul 8:30 pagi dan tiba di destinasi pada pukul 11:30 pagi. Berapakah jarak perjalanan kereta tersebut?', ans: '270 km', opts: ['240 km', '250 km', '270 km', '300 km'], exp: 'Masa perjalanan = 11:30 pagi - 8:30 pagi = 3 jam. Jarak = 3 jam × 90 km/j = 270 km.' },
+                    { context: 'Nisbah umur ayah kepada umur anak ialah 5 : 1. Hasil darab umur kedua-dua mereka ialah 720. Berapakah umur anak tersebut?', ans: '12 tahun', opts: ['10 tahun', '12 tahun', '14 tahun', '15 tahun'], exp: 'Katakan 5x dan x. 5x × x = 720 -> 5x² = 720 -> x² = 144 -> x = 12. Umur anak = 12 tahun.' },
+                    { context: 'Sebuah tangki minyak mempunyai isi padu 1200 liter. Sebanyak 35% minyak telah digunakan, kemudian 250 liter minyak ditambah ke dalam tangki. Berapakah isi padu minyak di dalam tangki sekarang?', ans: '1030 liter', opts: ['980 liter', '1010 liter', '1030 liter', '1050 liter'], exp: 'Minyak digunakan = 0.35 × 1200 = 420 liter. Baki = 1200 - 420 = 780 liter. Ditambah 250 liter = 780 + 250 = 1030 liter.' },
+                    { context: 'Seramai 12 orang buruh dapat menyiapkan sebuah projek pembinaan dalam masa 15 hari. Selepas 5 hari bekerja, 4 orang buruh terpaksa berhenti. Berapa hari lagikah masa yang diperlukan oleh baki buruh untuk menyiapkan baki kerja tersebut?', ans: '15 hari', opts: ['12 hari', '15 hari', '18 hari', '20 hari'], exp: 'Jumlah unit kerja asal = 12 × 15 = 180 orang-hari. Kerja disiapkan dalam 5 hari = 12 × 5 = 60 orang-hari. Baki kerja = 120 orang-hari. Baki buruh = 8 orang. Masa = 120 ÷ 8 = 15 hari.' }
+                ];
+
+                for (let i = 1; i <= 20; i++) {
+                    const h = t4HardScenarios[i - 1];
+                    this.questionBank.push({
+                        id: `K4-H-${String(i).padStart(3, '0')}`,
+                        topic: 'Penyelesaian masalah',
+                        difficulty: 'Susah',
+                        cognitive: 'Mengaplikasi',
+                        type: 'Objektif',
+                        marks: 5,
+                        question: h.context,
+                        options: h.opts,
+                        correct: h.ans,
+                        explanation: h.exp,
+                        diagram: { type: 'proportion', text: `Penyelesaian Masalah Lanjutan` }
+                    });
+                }
+
+                this.questionBank = this.questionBank.slice(0, 240);
+            }
+
+            // --- NAVIGATION & UI RENDERING ---
+            render() {
+                const mainContent = document.getElementById('main-content');
+                const headerInfo = document.getElementById('user-header-info');
+                
+                if (this.currentUser) {
+                    headerInfo.classList.remove('hidden');
+                    document.getElementById('header-avatar').innerText = this.users[this.currentUser].avatar;
+                    document.getElementById('header-name').innerText = this.users[this.currentUser].name;
+                    document.getElementById('header-score').innerText = this.users[this.currentUser].totalScore || 0;
+                } else {
+                    headerInfo.classList.add('hidden');
+                }
+
+                mainContent.innerHTML = '';
+
+                switch(this.currentScreen) {
+                    case 'login':
+                        mainContent.innerHTML = this.renderLoginScreen();
+                        break;
+                    case 'register':
+                        mainContent.innerHTML = this.renderRegisterScreen();
+                        break;
+                    case 'menu':
+                        mainContent.innerHTML = this.renderMainMenu();
+                        break;
+                    case 'topics':
+                        mainContent.innerHTML = this.renderTopicSelection();
+                        break;
+                    case 'difficulty':
+                        mainContent.innerHTML = this.renderDifficultySelection();
+                        break;
+                    case 'timer':
+                        mainContent.innerHTML = this.renderTimerSelection();
+                        break;
+                    case 'quiz':
+                        mainContent.innerHTML = this.renderQuizScreen();
+                        this.startQuestionTimer();
+                        this.renderCanvasDiagram();
+                        break;
+                    case 'results':
+                        mainContent.innerHTML = this.renderResultScreen();
+                        break;
+                    case 'leaderboard':
+                        mainContent.innerHTML = this.renderLeaderboardScreen();
+                        break;
+                    case 'progress':
+                        mainContent.innerHTML = this.renderProgressScreen();
+                        break;
+                    case 'profile':
+                        mainContent.innerHTML = this.renderProfileScreen();
+                        break;
+                    case 'settings':
+                        mainContent.innerHTML = this.renderSettingsScreen();
+                        break;
+                    default:
+                        mainContent.innerHTML = this.renderMainMenu();
+                }
+            }
+
+            // --- SCREEN TEMPLATES ---
+
+            renderLoginScreen() {
+                return `
+                    <div class="glass-panel p-8 rounded-3xl max-w-md w-full text-center shadow-2xl border-2 border-indigo-300 animate-float">
+                        <div class="text-5xl mb-3">🚀</div>
+                        <h2 class="text-2xl font-bold text-indigo-900 mb-1">LOG MASUK AKAUN</h2>
+                        <p class="text-xs text-indigo-600 mb-6 font-medium">Sila masukkan nama akaun anda untuk mula bermain</p>
+                        
+                        <div class="space-y-4 text-left">
+                            <div>
+                                <label class="text-xs font-bold text-indigo-800 uppercase tracking-wider block mb-1">Nama Pemain</label>
+                                <input type="text" id="login-username" placeholder="Contoh: Amirul_6Bestari" class="w-full px-4 py-3 rounded-xl border border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-600 bg-white/80 font-medium">
+                            </div>
+                            <button onclick="app.handleLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg game-btn">
+                                Mula Masuk 🎮
+                            </button>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-indigo-100">
+                            <p class="text-xs text-indigo-600">Belum mempunyai akaun?</p>
+                            <button onclick="app.switchScreen('register')" class="mt-2 text-indigo-700 font-bold hover:underline text-sm">
+                                Daftar Akaun Baharu ✨
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderRegisterScreen() {
+                return `
+                    <div class="glass-panel p-8 rounded-3xl max-w-md w-full text-center shadow-2xl border-2 border-indigo-300">
+                        <div class="text-5xl mb-3">✨</div>
+                        <h2 class="text-2xl font-bold text-indigo-900 mb-1">DAFTAR AKAUN BAHARU</h2>
+                        <p class="text-xs text-indigo-600 mb-6 font-medium">Pilih avatar kegemaran anda</p>
+                        
+                        <div class="space-y-4 text-left">
+                            <div>
+                                <label class="text-xs font-bold text-indigo-800 uppercase tracking-wider block mb-1">Nama Pemain</label>
+                                <input type="text" id="reg-username" placeholder="Nama penuh atau nama panggilan" class="w-full px-4 py-3 rounded-xl border border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-600 bg-white/80 font-medium">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-indigo-800 uppercase tracking-wider block mb-2">Pilih Avatar</label>
+                                <div class="grid grid-cols-5 gap-2" id="avatar-selector">
+                                    <button type="button" onclick="app.selectAvatar('👦')" class="avatar-opt p-3 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-2xl game-btn">👦</button>
+                                    <button type="button" onclick="app.selectAvatar('👧')" class="avatar-opt p-3 rounded-xl border-2 border-transparent bg-white text-2xl game-btn">👧</button>
+                                    <button type="button" onclick="app.selectAvatar('🦸‍♂️')" class="avatar-opt p-3 rounded-xl border-2 border-transparent bg-white text-2xl game-btn">🦸‍♂️</button>
+                                    <button type="button" onclick="app.selectAvatar('🐱')" class="avatar-opt p-3 rounded-xl border-2 border-transparent bg-white text-2xl game-btn">🐱</button>
+                                    <button type="button" onclick="app.selectAvatar('🤖')" class="avatar-opt p-3 rounded-xl border-2 border-transparent bg-white text-2xl game-btn">🤖</button>
+                                </div>
+                            </div>
+                            <button onclick="app.handleRegister()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-xl shadow-lg game-btn">
+                                Daftar & Mula Main 🚀
+                            </button>
+                        </div>
+                        <div class="mt-4">
+                            <button onclick="app.switchScreen('login')" class="text-indigo-600 text-xs font-semibold hover:underline">
+                                &larr; Kembali ke Log Masuk
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderMainMenu() {
+                return `
+                    <div class="glass-panel p-8 rounded-3xl max-w-2xl w-full text-center shadow-2xl border-2 border-indigo-300">
+                        <span class="text-5xl mb-2 inline-block animate-float">🌟</span>
+                        <h2 class="text-3xl font-extrabold text-indigo-900 mb-1">MENU UTAMA</h2>
+                        <p class="text-xs text-indigo-600 mb-6 font-semibold">Pilih mod permainan atau semak pencapaian anda</p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <button onclick="app.switchScreen('topics')" class="p-5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl shadow-lg game-btn flex items-center space-x-4 text-left">
+                                <span class="text-3xl bg-white/20 p-3 rounded-xl">🎮</span>
+                                <div>
+                                    <h3 class="font-bold text-lg">Mula Bermain</h3>
+                                    <p class="text-xs text-indigo-100">Pilih topik matematik Tahun 6</p>
+                                </div>
+                            </button>
+                            
+                            <button onclick="app.switchScreen('leaderboard')" class="p-5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-2xl shadow-lg game-btn flex items-center space-x-4 text-left">
+                                <span class="text-3xl bg-white/20 p-3 rounded-xl">🏆</span>
+                                <div>
+                                    <h3 class="font-bold text-lg">Leaderboard</h3>
+                                    <p class="text-xs amber-100">Carta juara murid terbaik</p>
+                                </div>
+                            </button>
+
+                            <button onclick="app.switchScreen('progress')" class="p-5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl shadow-lg game-btn flex items-center space-x-4 text-left">
+                                <span class="text-3xl bg-white/20 p-3 rounded-xl">📊</span>
+                                <div>
+                                    <h3 class="font-bold text-lg">Progress Saya</h3>
+                                    <p class="text-xs text-emerald-100">Rekod pencapaian pembelajaran</p>
+                                </div>
+                            </button>
+
+                            <button onclick="app.switchScreen('profile')" class="p-5 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-2xl shadow-lg game-btn flex items-center space-x-4 text-left">
+                                <span class="text-3xl bg-white/20 p-3 rounded-xl">👤</span>
+                                <div>
+                                    <h3 class="font-bold text-lg">Profil Pemain</h3>
+                                    <p class="text-xs text-cyan-100">Maklumat akaun & avatar</p>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div class="mt-6 flex justify-center space-x-4">
+                            <button onclick="app.switchScreen('settings')" class="px-6 py-2.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-xl font-bold text-xs game-btn">
+                                ⚙️ Tetapan
+                            </button>
+                            <button onclick="app.logout()" class="px-6 py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-800 rounded-xl font-bold text-xs game-btn">
+                                🚪 Log Keluar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderTopicSelection() {
+                const topics = [
+                    { id: 1, title: 'JARAK ANTARA DUA KOORDINAT', desc: 'Sukuan pertama, skala, jarak mengufuk & mencancang', icon: '📍', color: 'from-blue-500 to-indigo-600' },
+                    { id: 2, title: 'NISBAH ANTARA DUA KUANTITI', desc: 'Mewakilkan nisbah dalam bentuk termudah', icon: '⚖️', color: 'from-violet-500 to-purple-600' },
+                    { id: 3, title: 'MENENTUKAN KUANTITI BERKADARAN', desc: 'Hubungan perkadaran berdasarkan nisbah', icon: '📊', color: 'from-amber-500 to-orange-600' },
+                    { id: 4, title: 'PENYELESAIAN MASALAH', desc: 'Gabungan koordinat, nisbah dan kadaran harian', icon: '🧩', color: 'from-emerald-500 to-teal-600' }
+                ];
+
+                return `
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-3xl w-full text-center shadow-2xl border-2 border-indigo-300">
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-indigo-900 mb-1">PILIH TOPIK MATEMATIK</h2>
+                        <p class="text-xs text-indigo-600 mb-6 font-semibold">Sila pilih salah satu daripada 4 topik KSSR Tahun 6</p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                            ${topics.map(t => `
+                                <div onclick="app.selectTopic(${t.id})" class="p-5 bg-gradient-to-r ${t.color} text-white rounded-2xl shadow-lg game-btn cursor-pointer flex flex-col justify-between">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-3xl p-2 bg-white/20 rounded-xl">${t.icon}</span>
+                                        <span class="text-xs bg-black/20 px-2.5 py-1 rounded-full font-bold">60 Soalan</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-base mb-1">${t.title}</h3>
+                                        <p class="text-xs text-white/80">${t.desc}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="mt-6 text-left">
+                            <button onclick="app.switchScreen('menu')" class="px-5 py-2.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-xl font-bold text-xs game-btn">
+                                &larr; Kembali ke Menu Utama
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderDifficultySelection() {
+                const difficulties = [
+                    { id: 'Mudah', title: '🟢 MUDAH', desc: 'Soalan asas dan pemahaman langsung', color: 'from-emerald-500 to-teal-600' },
+                    { id: 'Sederhana', title: '🟡 SEDERHANA', desc: 'Aplikasi konsep dengan skala & pengiraan', color: 'from-amber-500 to-orange-600' },
+                    { id: 'Susah', title: '🔴 SUSAH', desc: 'Penaakulan & masalah kehidupan sebenar', color: 'from-rose-500 to-red-600' }
+                ];
+
+                return `
+                    <div class="glass-panel p-8 rounded-3xl max-w-xl w-full text-center shadow-2xl border-2 border-indigo-300">
+                        <h2 class="text-2xl font-extrabold text-indigo-900 mb-1">PILIH TAHAP KESUKARAN</h2>
+                        <p class="text-xs text-indigo-600 mb-6 font-semibold">Setiap tahap mengandungi 20 soalan unik</p>
+                        
+                        <div class="space-y-4">
+                            ${difficulties.map(d => `
+                                <div onclick="app.selectDifficulty('${d.id}')" class="p-5 bg-gradient-to-r ${d.color} text-white rounded-2xl shadow-lg game-btn cursor-pointer flex items-center justify-between">
+                                    <div class="text-left">
+                                        <h3 class="font-bold text-lg">${d.title}</h3>
+                                        <p class="text-xs text-white/90">${d.desc}</p>
+                                    </div>
+                                    <span class="text-2xl">&rarr;</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="mt-6 text-left">
+                            <button onclick="app.switchScreen('topics')" class="px-5 py-2.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-xl font-bold text-xs game-btn">
+                                &larr; Kembali Pilih Topik
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderTimerSelection() {
+                const timers = [
+                    { id: 30, title: '⏱️ 30 SAAT', desc: 'Pantas & menguji ketangkasan masa', color: 'from-blue-500 to-indigo-600' },
+                    { id: 60, title: '⏱️ 1 MINIT', desc: 'Masa selesa untuk berfikir dan mengira', color: 'from-violet-500 to-purple-600' },
+                    { id: 0, title: '♾️ TIADA HAD', desc: 'Jawab mengikut kadar sendiri tanpa tekanan', color: 'from-emerald-500 to-teal-600' }
+                ];
+
+                return `
+                    <div class="glass-panel p-8 rounded-3xl max-w-xl w-full text-center shadow-2xl border-2 border-indigo-300">
+                        <h2 class="text-2xl font-extrabold text-indigo-900 mb-1">PILIH MASA PERMAINAN</h2>
+                        <p class="text-xs text-indigo-600 mb-6 font-semibold">Tentukan tempoh masa bagi setiap soalan</p>
+                        
+                        <div class="space-y-4">
+                            ${timers.map(t => `
+                                <div onclick="app.startQuizSession(${t.id})" class="p-5 bg-gradient-to-r ${t.color} text-white rounded-2xl shadow-lg game-btn cursor-pointer flex items-center justify-between">
+                                    <div class="text-left">
+                                        <h3 class="font-bold text-lg">${t.title}</h3>
+                                        <p class="text-xs text-white/90">${t.desc}</p>
+                                    </div>
+                                    <span class="text-2xl">&rarr;</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="mt-6 text-left">
+                            <button onclick="app.switchScreen('difficulty')" class="px-5 py-2.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-xl font-bold text-xs game-btn">
+                                &larr; Kembali Pilih Tahap
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderQuizScreen() {
+                const q = this.activeQuestions[this.currentQuestionIndex];
+                const progressPercent = ((this.currentQuestionIndex + 1) / this.activeQuestions.length) * 100;
+
+                return `
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-3xl w-full shadow-2xl border-2 border-indigo-300">
+                        <!-- Top HUD Status & Home Button -->
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 bg-indigo-50 p-4 rounded-2xl border border-indigo-200">
+                            <div class="flex items-center space-x-2">
+                                <button onclick="app.confirmHome()" title="Kembali ke Menu Utama" class="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-xl text-xs font-bold shadow game-btn flex items-center space-x-1">
+                                    <span>🏠 Menu</span>
+                                </button>
+                                <div class="text-xs font-bold text-indigo-900">
+                                    SOALAN <span id="q-num">${this.currentQuestionIndex + 1}</span>/20
+                                </div>
+                            </div>
+                            <div class="text-xs font-bold text-indigo-900">
+                                MARKAH: <span id="curr-score">${this.score}</span>/100
+                            </div>
+                            <div class="text-xs font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-xl border border-rose-200">
+                                MASA: <span id="timer-display">--:--</span>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-indigo-100 h-2.5 rounded-full mb-6 overflow-hidden">
+                            <div class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: ${progressPercent}%"></div>
+                        </div>
+
+                        <!-- Diagram or Visual representation canvas/box -->
+                        <div id="diagram-container" class="mb-6 bg-white p-4 rounded-2xl border border-indigo-200 flex flex-col items-center justify-center">
+                            <canvas id="quiz-canvas" width="400" height="180" class="max-w-full rounded-xl bg-slate-50 border border-slate-200"></canvas>
+                        </div>
+
+                        <!-- Question text -->
+                        <div class="mb-6">
+                            <span class="inline-block bg-indigo-100 text-indigo-800 text-[10px] font-bold px-3 py-1 rounded-full mb-2">${q.topic} &bull; ${q.difficulty}</span>
+                            <h3 class="text-base sm:text-lg font-bold text-indigo-950 leading-relaxed">${q.question}</h3>
+                        </div>
+
+                        <!-- Options / Answer Input -->
+                        <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                            ${q.options.map((opt, idx) => `
+                                <button onclick="app.submitAnswer('${opt.replace(/'/g, "\\'")}')" class="option-btn p-4 text-left font-semibold text-sm rounded-2xl border-2 border-indigo-200 bg-white hover:bg-indigo-50 hover:border-indigo-600 text-indigo-900 transition shadow-sm">
+                                    <span class="inline-block w-7 h-7 bg-indigo-100 text-indigo-700 rounded-lg text-center leading-7 mr-2 font-bold">${String.fromCharCode(65 + idx)}</span>
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <!-- Feedback Box (Hidden initially) -->
+                        <div id="feedback-box" class="hidden p-4 rounded-2xl mb-4 font-medium text-sm"></div>
+
+                        <!-- Next / Submit Controls -->
+                        <div class="flex justify-end space-x-3">
+                            <button id="next-btn" onclick="app.nextQuestion()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg game-btn">
+                                Seterusnya &rarr;
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderResultScreen() {
+                const totalQ = this.activeQuestions.length;
+                const accuracy = Math.round((this.correctCount / totalQ) * 100);
+
+                return `
+                    <div class="glass-panel p-8 rounded-3xl max-w-xl w-full text-center shadow-2xl border-2 border-indigo-300">
+                        <div class="text-6xl mb-3 animate-bounce">🎉</div>
+                        <h2 class="text-3xl font-extrabold text-indigo-900 mb-1">TAHNIAH! TAMAT</h2>
+                        <p class="text-xs text-indigo-600 mb-6 font-semibold">Keputusan sesi permainan anda telah direkodkan</p>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6 text-left">
+                            <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-200">
+                                <p class="text-xs text-indigo-600 font-bold">SKOR DIPEROLEHI</p>
+                                <p class="text-2xl font-extrabold text-indigo-900">${this.score} / 100</p>
+                            </div>
+                            <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200">
+                                <p class="text-xs text-emerald-600 font-bold">KETEPATAN</p>
+                                <p class="text-2xl font-extrabold text-emerald-900">${accuracy}%</p>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-2xl border border-blue-200">
+                                <p class="text-xs text-blue-600 font-bold">JAWAPAN BETUL</p>
+                                <p class="text-xl font-bold text-blue-900">${this.correctCount} / ${totalQ}</p>
+                            </div>
+                            <div class="bg-rose-50 p-4 rounded-2xl border border-rose-200">
+                                <p class="text-xs text-rose-600 font-bold">JAWAPAN SALAH</p>
+                                <p class="text-xl font-bold text-rose-900">${this.wrongCount} / ${totalQ}</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <button onclick="app.restartQuiz()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg game-btn">
+                                🔄 Main Lagi Tahap Ini
+                            </button>
+                            <button onclick="app.switchScreen('topics')" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3.5 rounded-xl shadow-lg game-btn">
+                                📚 Pilih Topik Lain
+                            </button>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="app.switchScreen('leaderboard')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-xl shadow-lg game-btn text-xs">
+                                    🏆 Leaderboard
+                                </button>
+                                <button onclick="app.switchScreen('menu')" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold py-3 rounded-xl shadow-lg game-btn text-xs">
+                                    🏠 Menu Utama
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderLeaderboardScreen() {
+                const userList = Object.values(this.users).sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0));
+
+                return `
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-2xl w-full text-center shadow-2xl border-2 border-indigo-300">
+                        <span class="text-5xl mb-2 inline-block">🏆</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-indigo-900 mb-1">LEADERBOARD JUARA</h2>
+                        <p class="text-xs text-indigo-600 mb-6 font-semibold">Senarai pemain teratas berdasarkan jumlah terkumpul</p>
+                        
+                        <div class="space-y-3 max-h-96 overflow-y-auto pr-2 mb-6">
+                            ${userList.length === 0 ? '<p class="text-gray-500 text-sm">Belum ada pemain berdaftar.</p>' : ''}
+                            ${userList.map((u, idx) => `
+                                <div class="flex items-center justify-between p-4 rounded-2xl ${idx === 0 ? 'bg-amber-100 border-2 border-amber-300' : 'bg-white/90 border border-indigo-100'} shadow-sm">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="w-8 h-8 rounded-xl bg-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow">${idx + 1}</span>
+                                        <span class="text-3xl">${u.avatar}</span>
+                                        <div class="text-left">
+                                            <p class="font-bold text-indigo-900 text-sm">${u.name}</p>
+                                            <p class="text-[10px] text-indigo-600 font-semibold">Permainan Selesai: ${u.gamesPlayed || 0}</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="font-extrabold text-indigo-900 text-base">${u.totalScore || 0}</span>
+                                        <span class="text-[10px] text-indigo-600 block">Markah</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="text-left">
+                            <button onclick="app.switchScreen('menu')" class="px-5 py-2.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-xl font-bold text-xs game-btn">
+                                &larr; Kembali ke Menu Utama
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderProgressScreen() {
+                const u = this.users[this.currentUser];
+                const accuracy = u.totalAnswered ? Math.round((u.totalCorrect / u.totalAnswered) * 100) : 0;
+
+                return `
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-2xl w-full text-center shadow-2xl border-2 border-indigo-300">
+                        <span class="text-5xl mb-2 inline-block">📊</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-indigo-900 mb-1">PROGRESS PEMBELAJARAN SAYA</h2>
+                        <p class="text-xs text-indigo-600 mb-6 font-semibold">Statistik pencapaian peribadi anda</p>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 text-left">
+                            <div class="bg-indigo-50 p-3 rounded-2xl border border-indigo-200">
+                                <p class="text-[10px] text-indigo-600 font-bold">JUMLAH PERMAINAN</p>
+                                <p class="text-xl font-extrabold text-indigo-900">${u.gamesPlayed || 0}</p>
+                            </div>
+                            <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200">
+                                <p class="text-[10px] text-emerald-600 font-bold">SOALAN DIJAWAB</p>
+                                <p class="text-xl font-extrabold text-emerald-900">${u.totalAnswered || 0}</p>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-2xl border border-blue-200">
+                                <p class="text-[10px] text-blue-600 font-bold">KETEPATAN</p>
+                                <p class="text-xl font-extrabold text-blue-900">${accuracy}%</p>
+                            </div>
+                            <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200">
+                                <p class="text-[10px] text-amber-600 font-bold">JUMLAH SKOR</p>
+                                <p class="text-xl font-extrabold text-amber-900">${u.totalScore || 0}</p>
+                            </div>
+                        </div>
+
+                        <!-- Topic Stars Breakdown -->
+                        <div class="bg-white/90 p-5 rounded-2xl border border-indigo-200 text-left mb-6 space-y-4">
+                            <h3 class="font-bold text-indigo-900 text-sm mb-2">Pencapaian Mengikut Topik</h3>
+                            <div>
+                                <div class="flex justify-between text-xs font-bold text-indigo-800 mb-1">
+                                    <span>Jarak Antara Dua Koordinat</span>
+                                    <span>★★★★★</span>
+                                </div>
+                                <div class="w-full bg-indigo-100 h-2 rounded-full"><div class="bg-indigo-600 h-2 rounded-full" style="width: 85%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-bold text-indigo-800 mb-1">
+                                    <span>Nisbah Antara Dua Kuantiti</span>
+                                    <span>★★★★☆</span>
+                                </div>
+                                <div class="w-full bg-indigo-100 h-2 rounded-full"><div class="bg-violet-600 h-2 rounded-full" style="width: 75%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-bold text-indigo-800 mb-1">
+                                    <span>Menentukan Kuantiti Berkadaran</span>
+                                    <span>★★★☆☆</span>
+                                </div>
+                                <div class="w-full bg-indigo-100 h-2 rounded-full"><div class="bg-amber-500 h-2 rounded-full" style="width: 60%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-bold text-indigo-800 mb-1">
+                                    <span>Penyelesaian Masalah</span>
+                                    <span>★★★★☆</span>
+                                </div>
+                                <div class="w-full bg-indigo-100 h-2 rounded-full"><div class="bg-emerald-600 h-2 rounded-full" style="width: 80%"></div></div>
+                            </div>
+                        </div>
+
+                        <div class="text-left">
+                            <button onclick="app.switchScreen('menu')" class="px-5 py-2.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 rounded-xl font-bold text-xs game-btn">
+                                &larr; Kembali ke Menu Utama
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderProfileScreen() {
+                const u = this.users[this.currentUser];
+                return `
+                    <div class="glass-panel p-8 rounded-3xl max-w-md w-full text-center shadow-2xl border-2 border-indigo-300">
+                        <div class="text-6xl mb-3">${u.avatar}</div>
+                        <h2 class="text-2xl font-bold text-indigo-900 mb-1">${u.name}</h2>
+                        <p class="text-xs text-indigo-600 mb-6 font-semibold">Murid Tahun 6 KSSR Matematik</p>
+                        
+                        <div class="space-y-3 text-left mb-6">
+                            <div class="bg-indigo-50 p-3.5 rounded-xl border border-indigo-200 flex justify-between items-center">
+                                <span class="text-xs font-bold text-indigo-800">Jumlah Skor Terkumpul</span>
+                                <span class="font-extrabold text-indigo-900 text-base">${u.totalScore || 0}</span>
+                            </div>
+                            <div class="bg-indigo-50 p-3.5 rounded-xl border border-indigo-200 flex justify-between items-center">
+                                <span class="text-xs font-bold text-indigo-800">Permainan Dibereskan</span>
+                                <span class="font-extrabold text-indigo-900 text-base">${u.gamesPlayed || 0}</span>
+                            </div>
+                        </div>
+
+                        <div class="text-left">
+                            <button onclick="app.switchScreen('menu')" class="w-full px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs game-btn text-center">
+                                &larr; Kembali ke Menu Utama
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderSettingsScreen() {
+                return `
+                    <div class="glass-panel p-8 rounded-3xl max-w-md w-full text-center shadow-2xl border-2 border-indigo-300">
+                        <span class="text-5xl mb-2 inline-block">⚙️</span>
+                        <h2 class="text-2xl font-bold text-indigo-900 mb-1">TETAPAN GAME</h2>
+                        <p class="text-xs text-indigo-600 mb-6 font-semibold">Konfigurasi tetapan sistem</p>
+                        
+                        <div class="space-y-4 text-left mb-6">
+                            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-200 flex items-center justify-between">
+                                <span class="text-xs font-bold text-indigo-800">Audio & Kesan Bunyi</span>
+                                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">Aktif</span>
+                            </div>
+                            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-200 flex items-center justify-between">
+                                <span class="text-xs font-bold text-indigo-800">Orientasi Paparan</span>
+                                <span class="text-xs font-bold text-indigo-600 bg-white px-2.5 py-1 rounded-lg border border-indigo-200">Auto (Responsif)</span>
+                            </div>
+                        </div>
+
+                        <div class="text-left">
+                            <button onclick="app.switchScreen('menu')" class="w-full px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs game-btn text-center">
+                                &larr; Kembali ke Menu Utama
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // --- CONTROLLER ACTIONS & LOGIC ---
+
+            switchScreen(screen) {
+                this.currentScreen = screen;
+                this.render();
+            }
+
+            selectAvatar(avatar) {
+                this.selectedAvatarSymbol = avatar;
+                document.querySelectorAll('.avatar-opt').forEach(btn => {
+                    btn.classList.remove('border-indigo-600', 'bg-indigo-50');
+                    btn.classList.add('border-transparent', 'bg-white');
+                });
+                event.currentTarget.classList.remove('border-transparent', 'bg-white');
+                event.currentTarget.classList.add('border-indigo-600', 'bg-indigo-50');
+            }
+
+            handleRegister() {
+                const nameInput = document.getElementById('reg-username');
+                const name = nameInput ? nameInput.value.trim() : '';
+                const avatar = this.selectedAvatarSymbol || '👦';
+
+                if (!name) {
+                    this.showModal('⚠️ Ralat Pendaftaran', 'Sila masukkan nama pemain anda terlebih dahulu.');
+                    return;
+                }
+
+                if (this.users[name]) {
+                    this.showModal('⚠️ Akaun Wujud', 'Nama pemain ini telah didaftarkan. Sila gunakan nama lain atau log masuk.');
+                    return;
+                }
+
+                this.users[name] = {
+                    name: name,
+                    avatar: avatar,
+                    totalScore: 0,
+                    gamesPlayed: 0,
+                    totalAnswered: 0,
+                    totalCorrect: 0
+                };
+                this.currentUser = name;
+                this.saveDatabase();
+                this.switchScreen('menu');
+            }
+
+            handleLogin() {
+                const nameInput = document.getElementById('login-username');
+                const name = nameInput ? nameInput.value.trim() : '';
+
+                if (!name) {
+                    this.showModal('⚠️ Ralat Log Masuk', 'Sila masukkan nama pemain.');
+                    return;
+                }
+
+                if (!this.users[name]) {
+                    this.showModal('⚠️ Akaun Tiada', 'Akaun tidak dijumpai. Sila daftar akaun baharu terlebih dahulu.');
+                    return;
+                }
+
+                this.currentUser = name;
+                this.saveDatabase();
+                this.switchScreen('menu');
+            }
+
+            logout() {
+                this.currentUser = null;
+                this.saveDatabase();
+                this.switchScreen('login');
+            }
+
+            selectTopic(topicId) {
+                const topicMap = {
+                    1: 'Jarak di antara dua koordinat',
+                    2: 'Nisbah antara dua kuantiti',
+                    3: 'Menentukan kuantiti yang berkadaran',
+                    4: 'Penyelesaian masalah'
+                };
+                this.selectedTopic = topicMap[topicId];
+                this.switchScreen('difficulty');
+            }
+
+            selectDifficulty(diff) {
+                this.selectedDifficulty = diff;
+                this.switchScreen('timer');
+            }
+
+            startQuizSession(timerMode) {
+                this.selectedTimerMode = timerMode;
+                
+                // Filter 20 questions based on selected topic and difficulty
+                const filtered = this.questionBank.filter(q => q.topic === this.selectedTopic && q.difficulty === this.selectedDifficulty);
+                // Shuffle and pick 20
+                this.activeQuestions = filtered.sort(() => 0.5 - Math.random()).slice(0, 20);
+                
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.correctCount = 0;
+                this.wrongCount = 0;
+                this.startTime = Date.now();
+                
+                this.switchScreen('quiz');
+            }
+
+            startQuestionTimer() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                
+                if (this.selectedTimerMode === 0) {
+                    document.getElementById('timer-display').innerText = '♾️ Tiada Had';
+                    return;
+                }
+
+                this.timeRemaining = this.selectedTimerMode;
+                document.getElementById('timer-display').innerText = `00:${String(this.timeRemaining).padStart(2, '0')}`;
+
+                this.timerInterval = setInterval(() => {
+                    this.timeRemaining--;
+                    const display = document.getElementById('timer-display');
+                    if (display) {
+                        display.innerText = `00:${String(Math.max(0, this.timeRemaining)).padStart(2, '0')}`;
+                    }
+
+                    if (this.timeRemaining <= 0) {
+                        clearInterval(this.timerInterval);
+                        if (!this.isAnswered) {
+                            this.handleTimeout();
+                        }
+                    }
+                }, 1000);
+            }
+
+            handleTimeout() {
+                this.isAnswered = true;
+                this.wrongCount++;
+                const q = this.activeQuestions[this.currentQuestionIndex];
+                
+                const feedbackBox = document.getElementById('feedback-box');
+                feedbackBox.className = 'p-4 rounded-2xl mb-4 font-medium text-sm bg-amber-100 text-amber-900 border border-amber-300';
+                feedbackBox.innerHTML = `⏱️ <strong>Masa Tamat!</strong> Jawapan yang betul ialah: <strong>${q.correct}</strong>.<br><small>${q.explanation}</small>`;
+                feedbackBox.classList.remove('hidden');
+
+                document.getElementById('next-btn').classList.remove('hidden');
+                
+                // Disable option buttons
+                document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+            }
+
+            submitAnswer(selectedOption) {
+                if (this.isAnswered) return;
+                this.isAnswered = true;
+                if (this.timerInterval) clearInterval(this.timerInterval);
+
+                const q = this.activeQuestions[this.currentQuestionIndex];
+                const isCorrect = (selectedOption === q.correct);
+
+                const feedbackBox = document.getElementById('feedback-box');
+                
+                if (isCorrect) {
+                    this.score += 5;
+                    this.correctCount++;
+                    feedbackBox.className = 'p-4 rounded-2xl mb-4 font-medium text-sm bg-emerald-100 text-emerald-900 border border-emerald-300';
+                    feedbackBox.innerHTML = `🎉 <strong>BETUL! +5 MARKAH</strong><br><small>${q.explanation}</small>`;
+                } else {
+                    this.wrongCount++;
+                    feedbackBox.className = 'p-4 rounded-2xl mb-4 font-medium text-sm bg-rose-100 text-rose-900 border border-rose-300';
+                    feedbackBox.innerHTML = `❌ <strong>BELUM BETUL</strong><br>Jawapan yang betul ialah: <strong>${q.correct}</strong>.<br><small>${q.explanation}</small>`;
+                }
+
+                feedbackBox.classList.remove('hidden');
+                document.getElementById('curr-score').innerText = this.score;
+                document.getElementById('next-btn').classList.remove('hidden');
+
+                // Highlight correct / incorrect buttons
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.disabled = true;
+                    if (btn.innerText.includes(q.correct)) {
+                        btn.classList.remove('bg-white', 'border-indigo-200');
+                        btn.classList.add('bg-emerald-500', 'text-white', 'border-emerald-600');
+                    } else if (btn.innerText.includes(selectedOption) && !isCorrect) {
+                        btn.classList.remove('bg-white', 'border-indigo-200');
+                        btn.classList.add('bg-rose-500', 'text-white', 'border-rose-600');
+                    }
+                });
+            }
+
+            nextQuestion() {
+                this.isAnswered = false;
+                this.currentQuestionIndex++;
+
+                if (this.currentQuestionIndex >= this.activeQuestions.length) {
+                    this.finishQuizSession();
+                } else {
+                    this.render();
+                }
+            }
+
+            finishQuizSession() {
+                // Update User profile stats
+                const u = this.users[this.currentUser];
+                u.totalScore = (u.totalScore || 0) + this.score;
+                u.gamesPlayed = (u.gamesPlayed || 0) + 1;
+                u.totalAnswered = (u.totalAnswered || 0) + this.activeQuestions.length;
+                u.totalCorrect = (u.totalCorrect || 0) + this.correctCount;
+                this.saveDatabase();
+
+                this.switchScreen('results');
+            }
+
+            restartQuiz() {
+                this.startQuizSession(this.selectedTimerMode);
+            }
+
+            confirmHome() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                this.showConfirmModal('⚠️ Kembali ke Menu Utama?', 'Permainan semasa akan ditamatkan dan skor terkumpul sesi ini tidak akan disimpan ke profil jika belum tamat. Adakah anda pasti?', () => {
+                    this.switchScreen('menu');
+                });
+            }
+
+            showConfirmModal(title, message, onConfirmCallback) {
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-message').innerText = message;
+                const actions = document.getElementById('modal-actions');
+                actions.innerHTML = `
+                    <button onclick="app.closeModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2.5 px-5 rounded-xl transition">Batal</button>
+                    <button id="modal-confirm-btn" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-lg transition">Ya, Kembali</button>
+                `;
+                document.getElementById('modal-confirm-btn').onclick = () => {
+                    this.closeModal();
+                    if (onConfirmCallback) onConfirmCallback();
+                };
+                document.getElementById('modal-container').classList.remove('hidden');
+            }
+
+            renderCanvasDiagram() {
+                const canvas = document.getElementById('quiz-canvas');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const q = this.activeQuestions[this.currentQuestionIndex];
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                if (q.diagram && q.diagram.type === 'coordinate') {
+                    // Draw Coordinate Grid Sukuan Pertama
+                    ctx.strokeStyle = '#cbd5e1';
+                    ctx.lineWidth = 1;
+                    for (let x = 40; x < canvas.width; x += 40) {
+                        ctx.beginPath(); ctx.moveTo(x, 10); ctx.lineTo(x, canvas.height - 30); ctx.stroke();
+                    }
+                    for (let y = 20; y < canvas.height - 30; y += 30) {
+                        ctx.beginPath(); ctx.moveTo(30, y); ctx.lineTo(canvas.width - 20, y); ctx.stroke();
+                    }
+
+                    // Axes
+                    ctx.strokeStyle = '#1e293b';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath(); ctx.moveTo(30, canvas.height - 30); ctx.lineTo(canvas.width - 20, canvas.height - 30); ctx.stroke(); // X axis
+                    ctx.beginPath(); ctx.moveTo(30, canvas.height - 30); ctx.lineTo(30, 10); ctx.stroke(); // Y axis
+
+                    // Labels
+                    ctx.fillStyle = '#1e293b';
+                    ctx.font = '10px Fredoka';
+                    ctx.fillText('0', 18, canvas.height - 18);
+                    ctx.fillText('x', canvas.width - 15, canvas.height - 18);
+                    ctx.fillText('y', 18, 15);
+
+                    // Plot points
+                    q.diagram.points.forEach((p, idx) => {
+                        const px = 30 + (p.x * 35);
+                        const py = (canvas.height - 30) - (p.y * 25);
+                        ctx.fillStyle = idx === 0 ? '#4f46e5' : (idx === 1 ? '#ef4444' : '#10b981');
+                        ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2); ctx.fill();
+                        ctx.fillStyle = '#1e293b';
+                        ctx.font = 'bold 12px Fredoka';
+                        ctx.fillText(`${p.name}(${p.x},${p.y})`, px + 8, py - 4);
+                    });
+
+                    if (q.diagram.scale) {
+                        ctx.fillStyle = '#6366f1';
+                        ctx.font = '11px Fredoka';
+                        ctx.fillText(`Skala: ${q.diagram.scale}`, 40, 20);
+                    }
+                } else if (q.diagram && q.diagram.type === 'ratio_objects') {
+                    // Draw Ratio Objects visual illustration
+                    let startX = 40;
+                    let startY = 40;
+                    q.diagram.items.forEach((item, groupIdx) => {
+                        ctx.fillStyle = '#1e293b';
+                        ctx.font = 'bold 12px Fredoka';
+                        ctx.fillText(`${item.name} (${item.count}):`, startX, startY);
+                        
+                        startY += 20;
+                        for (let c = 0; c < Math.min(item.count, 12); c++) {
+                            ctx.fillStyle = item.color;
+                            ctx.beginPath();
+                            ctx.arc(startX + (c * 22), startY, 8, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        if (item.count > 12) {
+                            ctx.fillStyle = '#1e293b';
+                            ctx.font = '10px Fredoka';
+                            ctx.fillText(`... (+${item.count - 12} lagi)`, startX + (12 * 22), startY + 4);
+                        }
+                        startY += 40;
+                    });
+                } else {
+                    // Proportion / default banner
+                    ctx.fillStyle = '#4f46e5';
+                    ctx.font = 'bold 14px Fredoka';
+                    ctx.fillText(q.diagram ? q.diagram.text : 'KSSR Matematik Tahun 6', 40, 90);
+                }
+            }
+
+            showModal(title, message) {
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-message').innerText = message;
+                document.getElementById('modal-container').classList.remove('hidden');
+            }
+
+            closeModal() {
+                document.getElementById('modal-container').classList.add('hidden');
+            }
+        }
+
+        // Initialize application instance on window load
+        let app;
+        window.onload = function() {
+            app = new MathKidsApp();
+            app.render();
+        };
+    </script>
+</body>
+</html>

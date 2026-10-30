@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="ms" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Kids – Edu Kidz Tahun 4 | Pengurusan Data</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins for child-friendly look -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            user-select: none;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(-5%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+            50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 2s infinite;
+        }
+    </style>
+</head>
+<body class="h-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-slate-800 flex flex-col items-center justify-center overflow-x-hidden p-2 sm:p-4">
+
+    <div id="app" class="w-full max-w-6xl h-full max-h-[96vh] bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl flex flex-col overflow-hidden border-4 border-white relative">
+        
+        <!-- TOP HEADER NAVBAR -->
+        <header id="main-header" class="hidden bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 flex flex-wrap items-center justify-between shadow-md z-10">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/20 p-2 rounded-xl text-yellow-300 text-xl font-bold">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg sm:text-xl tracking-wide">EDU KIDZ <span class="text-yellow-300">TAHUN 4</span></h1>
+                    <p class="text-xs text-blue-100">KPM • Pengurusan Data Interaktif</p>
+                </div>
+            </div>
+            
+            <div id="user-stats-bar" class="hidden flex items-center space-x-4 my-1 sm:my-0">
+                <div class="bg-black/20 px-3 py-1.5 rounded-full text-xs sm:text-sm flex items-center space-x-2">
+                    <i class="fa-solid fa-user text-yellow-300"></i>
+                    <span id="header-username" class="font-semibold text-white">Pelajar</span>
+                </div>
+                <div class="bg-black/20 px-3 py-1.5 rounded-full text-xs sm:text-sm flex items-center space-x-2">
+                    <i class="fa-solid fa-star text-yellow-300"></i>
+                    <span id="header-score" class="font-semibold text-white">0 Markah</span>
+                </div>
+                <button onclick="router.navigate('menu')" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow">
+                    <i class="fa-solid fa-house mr-1"></i> Menu
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN VIEWPORT CONTAINER -->
+        <main id="viewport" class="flex-1 overflow-y-auto relative flex flex-col">
+            <!-- Dynamic Views injected via JS -->
+        </main>
+    </div>
+
+    <!-- NOTIFICATION / CUSTOM MODAL OVERLAY -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div id="modal-content" class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl transform transition-all scale-95 opacity-0 text-center">
+            <div id="modal-icon" class="text-5xl mb-3">🎉</div>
+            <h3 id="modal-title" class="text-2xl font-bold mb-2 text-slate-800">Tajuk</h3>
+            <p id="modal-message" class="text-slate-600 mb-6">Mesej di sini...</p>
+            <div id="modal-actions" class="flex justify-center space-x-3">
+                <button onclick="closeModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold shadow transition">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CANVAS FOR CONFETTI / FIREWORKS -->
+    <canvas id="fx-canvas" class="fixed inset-0 pointer-events-none z-40 hidden"></canvas>
+
+    <script>
+        const fxCanvas = document.getElementById('fx-canvas');
+        const fxCtx = fxCanvas ? fxCanvas.getContext('2d') : null;
+        let particles = [];
+
+        function resizeFxCanvas() {
+            if (fxCanvas) {
+                fxCanvas.width = window.innerWidth;
+                fxCanvas.height = window.innerHeight;
+            }
+        }
+        window.addEventListener('resize', resizeFxCanvas);
+        resizeFxCanvas();
+
+        function triggerConfetti() {
+            if (!fxCanvas || !fxCtx) return;
+            fxCanvas.classList.remove('hidden');
+            particles = [];
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2,
+                    vx: (Math.random() - 0.5) * 15,
+                    vy: (Math.random() - 0.7) * 15,
+                    size: Math.random() * 8 + 4,
+                    color: ['#facc15', '#ec4899', '#3b82f6', '#10b981', '#8b5cf6'][Math.floor(Math.random() * 5)],
+                    life: 100
+                });
+            }
+            animateFx();
+        }
+
+        function animateFx() {
+            if (!fxCtx || !fxCanvas) return;
+            fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.4;
+                p.life--;
+                fxCtx.fillStyle = p.color;
+                fxCtx.fillRect(p.x, p.y, p.size, p.size);
+                if (p.life <= 0) particles.splice(index, 1);
+            });
+            if (particles.length > 0) {
+                requestAnimationFrame(animateFx);
+            } else {
+                fxCanvas.classList.add('hidden');
+            }
+        }
+
+        function showModal(title, message, icon = '🎉', callback = null) {
+            const modal = document.getElementById('custom-modal');
+            const content = document.getElementById('modal-content');
+            if (!modal || !content) return;
+            const tEl = document.getElementById('modal-title');
+            const mEl = document.getElementById('modal-message');
+            const iEl = document.getElementById('modal-icon');
+            if (tEl) tEl.innerText = title;
+            if (mEl) mEl.innerText = message;
+            if (iEl) iEl.innerHTML = icon;
+            
+            const actions = document.getElementById('modal-actions');
+            if (actions) {
+                if (callback) {
+                    actions.innerHTML = `
+                        <button id="modal-cancel" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 rounded-xl font-bold transition">Batal</button>
+                        <button id="modal-confirm" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold shadow transition">Ya</button>
+                    `;
+                    const cBtn = document.getElementById('modal-cancel');
+                    const cfBtn = document.getElementById('modal-confirm');
+                    if (cBtn) cBtn.onclick = closeModal;
+                    if (cfBtn) cfBtn.onclick = () => { closeModal(); callback(); };
+                } else {
+                    actions.innerHTML = `<button onclick="closeModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-2.5 rounded-xl font-bold shadow transition">OK</button>`;
+                }
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('custom-modal');
+            const content = document.getElementById('modal-content');
+            if (!modal || !content) return;
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+
+        const AppState = {
+            currentUser: null,
+            users: JSON.parse(localStorage.getItem('edu_kidz_users') || '[]'),
+            currentView: 'splash',
+            activeTopic: null,
+            activeDifficulty: 'mudah',
+            activeGameType: 'objektif',
+            activeTimeLimit: 30,
+            gameQuestions: [],
+            currentQuestionIdx: 0,
+            score: 0,
+            correctCount: 0,
+            wrongCount: 0,
+            startTime: null,
+            questionTimer: null,
+            timeLeft: 30
+        };
+
+        function saveUsers() {
+            localStorage.setItem('edu_kidz_users', JSON.stringify(AppState.users));
+            if (AppState.currentUser) {
+                const idx = AppState.users.findIndex(u => u.username === AppState.currentUser.username);
+                if (idx !== -1) AppState.users[idx] = AppState.currentUser;
+                localStorage.setItem('edu_kidz_current_user', JSON.stringify(AppState.currentUser));
+            }
+        }
+
+        const questionBank = {};
+        const topicsList = [
+            { id: 1, name: 'Bina Piktograf', icon: '📋', desc: 'Membina dan melengkapkan piktograf berdasarkan data' },
+            { id: 2, name: 'Bina Carta Palang', icon: '📊', desc: 'Menentukan skala, paksi dan tinggi palang carta' },
+            { id: 3, name: 'Tafsir Piktograf', icon: '🔎', desc: 'Membaca simbol, petunjuk dan membandingkan data' },
+            { id: 4, name: 'Tafsir Carta Palang', icon: '📈', desc: 'Menganalisis nilai palang, tertinggi dan terendah' },
+            { id: 5, name: 'Penyelesaian Masalah', icon: '🧠', desc: 'Situasi harian melibatkan pengiraan dan perbandingan' }
+        ];
+
+        const difficulties = ['mudah', 'sederhana', 'susah'];
+        const gameTypesList = [
+            { id: 'objektif', name: '🎯 Objektif', desc: 'Pilih jawapan A, B, C atau D' },
+            { id: 'padanan', name: '🔗 Padanan', desc: 'Padankan nilai dengan kategori sepadan' },
+            { id: 'isitempat', name: '✏️ Isi Tempat Kosong', desc: 'Taip atau pilih nilai yang hilang' },
+            { id: 'campuran', name: '🔀 Campuran', desc: 'Gabungan pelbagai bentuk soalan interaktif' }
+        ];
+
+        function rand(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function generateBarChartVisual(categoriesData, title, yAxisLabel) {
+            const maxVal = Math.max(...categoriesData.map(d => d.value)) || 10;
+            return `
+                <div class="bg-white border-2 border-indigo-100 rounded-2xl p-4 my-3 shadow-inner">
+                    <div class="text-center font-extrabold text-slate-800 text-sm mb-3 uppercase tracking-wide">📊 ${title}</div>
+                    <div class="flex items-end justify-center space-x-4 sm:space-x-8 h-40 border-b-2 border-l-2 border-slate-400 p-2 relative">
+                        <div class="absolute -left-10 top-1/2 -rotate-90 text-[10px] font-bold text-slate-500">${yAxisLabel}</div>
+                        ${categoriesData.map(d => {
+                            const barHeight = Math.round((d.value / Math.max(maxVal, 10)) * 110);
+                            return `
+                                <div class="flex flex-col items-center h-full justify-end group">
+                                    <span class="text-[11px] font-extrabold text-indigo-600 mb-1">${d.value}</span>
+                                    <div style="height: ${Math.max(barHeight, 15)}px;" class="w-8 sm:w-12 bg-gradient-to-t from-indigo-600 to-purple-500 rounded-t-lg shadow-md transition-all duration-300 group-hover:from-indigo-500 group-hover:to-pink-500 flex items-center justify-center text-white text-xs font-bold"></div>
+                                    <span class="text-[11px] font-bold text-slate-700 mt-2 truncate max-w-[60px]">${d.label}</span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function generatePictographVisual(itemsData, iconChar, keyVal, title) {
+            return `
+                <div class="bg-white border-2 border-pink-100 rounded-2xl p-4 my-3 shadow-inner">
+                    <div class="text-center font-extrabold text-slate-800 text-sm mb-2 uppercase tracking-wide">📋 ${title}</div>
+                    <div class="text-center text-xs font-bold text-pink-600 mb-3 bg-pink-50 py-1 px-3 rounded-full inline-block mx-auto">Petunjuk: ${iconChar} = ${keyVal} unit</div>
+                    <div class="space-y-2">
+                        ${itemsData.map(item => {
+                            const symCount = Math.round(item.val / keyVal);
+                            const iconsStr = iconChar.repeat(Math.max(symCount, 1));
+                            return `
+                                <div class="flex items-center justify-between bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">
+                                    <span class="font-bold text-slate-700 w-28 text-xs">${item.name}:</span>
+                                    <div class="flex-1 text-left text-lg tracking-wider">${iconsStr} <span class="text-xs text-slate-400 font-mono">(${item.val})</span></div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        const namePools = [
+            ['Amirul', 'Siti', 'Kumar'],
+            ['Aina', 'Mei Ling', 'Zul'],
+            ['Fatimah', 'David', 'Ranjit'],
+            ['Haziq', 'Chloe', 'Devi'],
+            ['Farhan', 'Mei Yee', 'Jason'],
+            ['Aiman', 'Saraswathy', 'Daniel']
+        ];
+
+        topicsList.forEach(topic => {
+            questionBank[topic.id] = {};
+            difficulties.forEach(diff => {
+                let qList = [];
+                for (let i = 1; i <= 20; i++) {
+                    qList.push(generateQuestionData(topic.id, diff, i));
+                }
+                questionBank[topic.id][diff] = qList;
+            });
+        });
+
+        function generateQuestionData(topicId, diff, index) {
+            const fruitList = ['Epal', 'Oren', 'Mangga', 'Pisang', 'Anggur'];
+            const namesSubset = namePools[(index - 1) % namePools.length];
+            let q = {
+                id: `${topicId}-${diff}-${index}`,
+                topicId: topicId,
+                difficulty: diff,
+                questionNumber: index,
+                score: 5,
+                cognitive: diff === 'mudah' ? 'Mengingat' : diff === 'sederhana' ? 'Memahami' : 'Mengaplikasi'
+            };
+
+            if (topicId === 1) { // Bina Piktograf
+                let item = fruitList[rand(0, fruitList.length - 1)];
+                let keyVal = diff === 'mudah' ? 2 : (diff === 'sederhana' ? 5 : 10);
+                let count = rand(3, 8) * keyVal;
+                let symbolsCount = count / keyVal;
+                
+                q.title = `Soalan ${index}: Bina Piktograf`;
+                q.prompt = `Diberi data jualan ${item} ialah ${count} biji. Jika petunjuk mewakili ${keyVal} biji (${item === 'Epal' ? '🍎' : '🍊'} = ${keyVal}), berapakah bilangan simbol yang perlu dilukis?`;
+                q.dataSnippet = `Kategori: ${item}\nJumlah Sebenar: ${count}\nPetunjuk: 1 Simbol = ${keyVal}`;
+                q.options = shuffle([symbolsCount.toString(), (symbolsCount + 2).toString(), (symbolsCount - 1).toString(), (symbolsCount * 2).toString()]);
+                q.correctAnswer = symbolsCount.toString();
+                q.explanation = `Bilangan simbol dikira dengan membahagikan jumlah sebenar (${count}) dengan nilai petunjuk (${keyVal}). Jadi, ${count} ÷ ${keyVal} = ${symbolsCount} simbol.`;
+            } 
+            else if (topicId === 2) { // Bina Carta Palang
+                let n1 = rand(2, 8) * 5;
+                let n2 = rand(2, 8) * 5;
+                let n3 = rand(2, 8) * 5;
+                let chartData = [
+                    { label: namesSubset[0], value: n1 },
+                    { label: namesSubset[1], value: n2 },
+                    { label: namesSubset[2], value: n3 }
+                ];
+                q.title = `Soalan ${index}: Bina Carta Palang`;
+                q.prompt = `Diberi jadual buku dibaca oleh murid: ${namesSubset[0]} (${n1}), ${namesSubset[1]} (${n2}), ${namesSubset[2]} (${n3}). Dengan skala 1 unit mewakili 5 buah buku, berapakah tinggi palang untuk ${namesSubset[0]}?`;
+                let ans = n1 / 5;
+                q.visualHtml = generateBarChartVisual(chartData, 'Carta Buku Dibaca Murid', 'Bilangan Buku');
+                q.dataSnippet = q.visualHtml + `Data: ${namesSubset[0]} = ${n1}, ${namesSubset[1]} = ${n2}, ${namesSubset[2]} = ${n3}\nSkala: 1 unit = 5 buah buku`;
+                q.options = shuffle([ans.toString(), (ans + 1).toString(), (ans > 1 ? ans - 1 : ans + 2).toString(), (ans + 3).toString()]);
+                q.correctAnswer = ans.toString();
+                q.explanation = `Skala carta ialah 5 buah buku untuk 1 unit tinggi. Untuk ${n1} buah buku, tinggi palang adalah ${n1} ÷ 5 = ${ans} unit. Rujuk carta palang di atas.`;
+            }
+            else if (topicId === 3) { // Tafsir Piktograf
+                let fruitName = fruitList[rand(0, fruitList.length - 1)];
+                let iconChar = fruitName === 'Epal' ? '🍎' : (fruitName === 'Oren' ? '🍊' : '🍌');
+                let keyVal = rand(2, 5) * 2;
+                let symCount = rand(3, 7);
+                let totalVal = symCount * keyVal;
+                let pData = [
+                    { name: namesSubset[0], val: totalVal },
+                    { name: namesSubset[1], val: totalVal + (keyVal * 2) }
+                ];
+                q.title = `Soalan ${index}: Tafsir Piktograf`;
+                q.prompt = `Berdasarkan piktograf ${fruitName} di bawah, berapakah jumlah ${fruitName} bagi ${namesSubset[0]}?`;
+                q.visualHtml = generatePictographVisual(pData, iconChar, keyVal, `Piktograf Jualan ${fruitName}`);
+                q.dataSnippet = q.visualHtml + `Petunjuk: ${iconChar} = ${keyVal} unit\nRujuk piktograf di atas untuk ${namesSubset[0]}.`;
+                q.options = shuffle([totalVal.toString(), (totalVal + keyVal).toString(), (totalVal - keyVal).toString(), (totalVal + (keyVal * 2)).toString()]);
+                q.correctAnswer = totalVal.toString();
+                q.explanation = `${namesSubset[0]} mempunyai ${symCount} simbol. Setiap simbol mewakili ${keyVal} unit. Jadi, ${symCount} × ${keyVal} = ${totalVal}.`;
+            }
+            else if (topicId === 4) { // Tafsir Carta Palang
+                let v1 = rand(10, 40);
+                let v2 = rand(10, 40);
+                let v3 = rand(10, 40);
+                let chartData = [
+                    { label: namesSubset[0], value: v1 },
+                    { label: namesSubset[1], value: v2 },
+                    { label: namesSubset[2], value: v3 }
+                ];
+                let maxV = Math.max(v1, v2, v3);
+                q.title = `Soalan ${index}: Tafsir Carta Palang`;
+                q.prompt = `Berdasarkan carta palang markah subjek Matematik bagi ${namesSubset[0]}, ${namesSubset[1]} dan ${namesSubset[2]} di bawah, siapakah yang mendapat markah PALING TINGGI?`;
+                let highestName = v1 === maxV ? namesSubset[0] : (v2 === maxV ? namesSubset[1] : namesSubset[2]);
+                q.visualHtml = generateBarChartVisual(chartData, 'Carta Markah Matematik Murid', 'Markah');
+                q.dataSnippet = q.visualHtml + `Rujuk carta palang di atas untuk mengenal pasti palang tertinggi antara ${namesSubset.join(', ')}.`;
+                q.options = shuffle([highestName, namesSubset[0] === highestName ? namesSubset[1] : namesSubset[0], namesSubset[2], 'Sama tinggi']);
+                q.correctAnswer = highestName;
+                q.explanation = `Palang paling tinggi pada carta menunjukkan nilai ${maxV} yang dimiliki oleh ${highestName}. Rujuk carta palang di atas.`;
+            }
+            else { // Penyelesaian Masalah
+                let baseCount = rand(50, 120);
+                let added = rand(20, 50);
+                let sold = rand(10, 30);
+                let finalVal = baseCount + added - sold;
+                let probData = [
+                    { label: 'Pagi', value: baseCount },
+                    { label: 'Tambah', value: added },
+                    { label: 'Baki', value: finalVal }
+                ];
+                q.title = `Soalan ${index}: Penyelesaian Masalah Data`;
+                q.prompt = `Gerai ${namesSubset[0]} mempunyai ${baseCount} kotak air pada waktu pagi. Pekerja menambah ${added} kotak lagi, kemudian murid membeli ${sold} kotak pada waktu rehat. Berapakah baki kotak air sekarang?`;
+                q.visualHtml = generateBarChartVisual(probData, 'Carta Aliran Stok Air', 'Bilangan Kotak');
+                q.dataSnippet = q.visualHtml + `Permulaan: ${baseCount} | Ditambah: ${added} | Dijual: ${sold}`;
+                q.options = shuffle([finalVal.toString(), (finalVal + 10).toString(), (finalVal - 5).toString(), (baseCount + added).toString()]);
+                q.correctAnswer = finalVal.toString();
+                q.explanation = `Langkah 1: ${baseCount} + ${added} = ${baseCount + added}.\nLangkah 2: ${baseCount + added} - ${sold} = ${finalVal} kotak air berbaki.`;
+            }
+
+            return q;
+        }
+
+        const router = {
+            navigate(viewName, params = {}) {
+                AppState.currentView = viewName;
+                const viewport = document.getElementById('viewport');
+                const header = document.getElementById('main-header');
+                const statsBar = document.getElementById('user-stats-bar');
+
+                if (!viewport || !header || !statsBar) return;
+
+                if (viewName === 'splash' || viewName === 'auth') {
+                    header.classList.add('hidden');
+                } else {
+                    header.classList.remove('hidden');
+                    if (AppState.currentUser) {
+                        statsBar.classList.remove('hidden');
+                        const hUser = document.getElementById('header-username');
+                        const hScore = document.getElementById('header-score');
+                        if (hUser) hUser.innerText = AppState.currentUser.username;
+                        if (hScore) hScore.innerText = `${AppState.currentUser.totalScore || 0} Markah`;
+                    } else {
+                        statsBar.classList.add('hidden');
+                    }
+                }
+
+                switch(viewName) {
+                    case 'splash':
+                        viewport.innerHTML = renderSplashView();
+                        break;
+                    case 'auth':
+                        viewport.innerHTML = renderAuthView();
+                        break;
+                    case 'menu':
+                        if (!AppState.currentUser) {
+                            router.navigate('auth');
+                            return;
+                        }
+                        viewport.innerHTML = renderMainMenuView();
+                        break;
+                    case 'config':
+                        viewport.innerHTML = renderConfigGameView();
+                        break;
+                    case 'game':
+                        viewport.innerHTML = renderGamePlayView();
+                        initGameSession();
+                        break;
+                    case 'result':
+                        viewport.innerHTML = renderResultView();
+                        break;
+                    case 'leaderboard':
+                        viewport.innerHTML = renderLeaderboardView();
+                        break;
+                    case 'progress':
+                        viewport.innerHTML = renderProgressView();
+                        break;
+                    default:
+                        viewport.innerHTML = renderSplashView();
+                }
+            }
+        };
+
+        function renderSplashView() {
+            return `
+                <div class="flex-1 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-indigo-50 via-purple-50 to-pink-50 relative overflow-hidden">
+                    <div class="absolute -top-12 -left-12 w-48 h-48 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-bounce-slow"></div>
+                    <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-bounce-slow"></div>
+                    
+                    <div class="z-10 max-w-2xl mx-auto space-y-6">
+                        <div class="inline-block bg-yellow-400 text-purple-900 px-4 py-1.5 rounded-full font-extrabold text-xs sm:text-sm tracking-wider shadow-md uppercase mb-2">
+                            ✨ KPM Kurikulum Standard Sekolah Rendah
+                        </div>
+                        <h1 class="text-4xl sm:text-6xl font-extrabold text-indigo-900 tracking-tight leading-none drop-shadow-sm">
+                            MATH KIDS <br/><span class="text-pink-600">EDU KIDZ</span>
+                        </h1>
+                        <p class="text-xl sm:text-2xl font-bold text-slate-700">TAHUN 4 • PENGURUSAN DATA</p>
+                        <p class="text-slate-500 text-sm sm:text-base max-w-md mx-auto">
+                            Terokai carta palang, piktograf interaktif dan penyelesaian masalah Matematik Tahun 4!
+                        </p>
+
+                        <div class="flex flex-wrap justify-center gap-4 pt-4">
+                            <button onclick="router.navigate('auth')" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-lg font-bold px-8 py-4 rounded-2xl shadow-lg transform hover:-translate-y-1 transition flex items-center space-x-3">
+                                <i class="fa-solid fa-play text-xl"></i>
+                                <span>MULA BERMAIN</span>
+                            </button>
+                            <button onclick="router.navigate('leaderboard')" class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white text-lg font-bold px-6 py-4 rounded-2xl shadow-lg transform hover:-translate-y-1 transition flex items-center space-x-3">
+                                <i class="fa-solid fa-trophy text-xl"></i>
+                                <span>LEADERBOARD</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAuthView() {
+            return `
+                <div class="flex-1 flex items-center justify-center p-6 bg-slate-50">
+                    <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-xl border border-slate-100">
+                        <div class="text-center mb-6">
+                            <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-inner">
+                                <i class="fa-solid fa-user-astronaut"></i>
+                            </div>
+                            <h2 class="text-2xl font-extrabold text-slate-800">Profil Pemain</h2>
+                            <p class="text-xs text-slate-500">Daftar atau log masuk untuk simpan rekod markah anda</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Nama Pengguna</label>
+                                <input type="text" id="auth-username" placeholder="Cth: Amirul_4B" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-800 font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Kata Laluan (PIN)</label>
+                                <input type="password" id="auth-password" placeholder="Cth: 1234" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-800 font-medium">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 pt-2">
+                                <button onclick="handleLogin()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow transition">
+                                    <i class="fa-solid fa-right-to-bracket mr-1"></i> Login
+                                </button>
+                                <button onclick="handleRegister()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition">
+                                    <i class="fa-solid fa-user-plus mr-1"></i> Daftar
+                                </button>
+                            </div>
+                            
+                            <div class="text-center pt-2">
+                                <button onclick="router.navigate('splash')" class="text-xs text-slate-400 hover:text-slate-600 font-semibold">
+                                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Utama
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleRegister() {
+            const uInput = document.getElementById('auth-username');
+            const pInput = document.getElementById('auth-password');
+            if (!uInput || !pInput) return;
+            const username = uInput.value.trim();
+            const password = pInput.value.trim();
+            if (!username || !password) {
+                showModal('Perhatian', 'Sila masukkan nama pengguna dan kata laluan.', '⚠️');
+                return;
+            }
+            let existing = AppState.users.find(u => u.username === username);
+            if (existing) {
+                showModal('Nama Telah Wujud', 'Nama pengguna ini sudah berdaftar. Sila gunakan nama lain atau terus login.', '❌');
+                return;
+            }
+            const newUser = {
+                username,
+                password,
+                totalScore: 0,
+                completedTopics: [],
+                questionsAnswered: 0,
+                correctAnswers: 0,
+                history: []
+            };
+            AppState.users.push(newUser);
+            AppState.currentUser = newUser;
+            saveUsers();
+            showModal('Pendaftaran Berjaya! 🎉', `Selamat datang ke Edu Kidz, ${username}!`, '⭐', () => router.navigate('menu'));
+        }
+
+        function handleLogin() {
+            const uInput = document.getElementById('auth-username');
+            const pInput = document.getElementById('auth-password');
+            if (!uInput || !pInput) return;
+            const username = uInput.value.trim();
+            const password = pInput.value.trim();
+            let user = AppState.users.find(u => u.username === username && u.password === password);
+            if (!user) {
+                showModal('Log Masuk Gagal', 'Nama pengguna atau kata laluan tidak sepadan. Sila cuba lagi.', '❌');
+                return;
+            }
+            AppState.currentUser = user;
+            saveUsers();
+            router.navigate('menu');
+        }
+
+        function renderMainMenuView() {
+            return `
+                <div class="flex-1 p-6 bg-slate-50 flex flex-col">
+                    <div class="max-w-4xl mx-auto w-full flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800">Menu Utama Pengurusan Data</h2>
+                                    <p class="text-sm text-slate-500">Pilih salah satu topik pembelajaran Tahun 4 KPM di bawah:</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="router.navigate('progress')" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1">
+                                        <i class="fa-solid fa-chart-pie"></i><span>Progress</span>
+                                    </button>
+                                    <button onclick="router.navigate('leaderboard')" class="bg-amber-100 hover:bg-amber-200 text-amber-700 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1">
+                                        <i class="fa-solid fa-trophy"></i><span>Leaderboard</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                ${topicsList.map(t => `
+                                    <div onclick="selectTopic(${t.id})" class="bg-white rounded-2xl p-5 shadow-md hover:shadow-xl border border-slate-100 cursor-pointer transform hover:-translate-y-1 transition flex flex-col justify-between">
+                                        <div>
+                                            <div class="text-4xl mb-3">${t.icon}</div>
+                                            <h3 class="font-bold text-lg text-slate-800 mb-1">${t.name}</h3>
+                                            <p class="text-xs text-slate-500 mb-4">${t.desc}</p>
+                                        </div>
+                                        <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold text-indigo-600">
+                                            <span>20 Soalan / Tahap</span>
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                                
+                                <div onclick="router.navigate('auth')" class="bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-2xl p-5 shadow-md hover:shadow-xl cursor-pointer transform hover:-translate-y-1 transition flex flex-col justify-between">
+                                    <div>
+                                        <div class="text-4xl mb-3">👤</div>
+                                        <h3 class="font-bold text-lg mb-1">Tukar Akaun</h3>
+                                        <p class="text-xs text-slate-300 mb-4">Log keluar atau tukar profil pemain lain.</p>
+                                    </div>
+                                    <div class="flex items-center justify-between pt-3 border-t border-slate-700 text-xs font-bold text-yellow-300">
+                                        <span>Log Keluar</span>
+                                        <i class="fa-solid fa-right-from-bracket"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center text-xs text-slate-400 py-4">
+                            Math Kids Edu Kidz Tahun 4 • Selaras Kurikulum Standard Sekolah Rendah KPM
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectTopic(topicId) {
+            AppState.activeTopic = topicsList.find(t => t.id === topicId);
+            router.navigate('config');
+        }
+
+        function renderConfigGameView() {
+            const topic = AppState.activeTopic;
+            return `
+                <div class="flex-1 p-6 bg-slate-50 flex items-center justify-center">
+                    <div class="bg-white rounded-3xl p-8 max-w-lg w-full shadow-xl border border-slate-100">
+                        <div class="text-center mb-6">
+                            <div class="text-4xl mb-2">${topic.icon}</div>
+                            <h2 class="text-2xl font-extrabold text-slate-800">${topic.name}</h2>
+                            <p class="text-xs text-slate-500">Tetapkan bentuk permainan, aras kesukaran dan masa menjawab</p>
+                        </div>
+
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Bentuk Permainan</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    ${gameTypesList.map(gt => `
+                                        <button onclick="setGameType('${gt.id}')" id="gtype-${gt.id}" class="p-2.5 rounded-xl border-2 ${gt.id === 'objektif' ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600'} font-bold text-xs transition text-left">
+                                            ${gt.name}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Tahap Kesukaran</label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <button onclick="setDifficulty('mudah')" id="diff-mudah" class="p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-700 font-bold text-sm transition">
+                                        🟢 Mudah
+                                    </button>
+                                    <button onclick="setDifficulty('sederhana')" id="diff-sederhana" class="p-3 rounded-xl border-2 border-slate-200 text-slate-600 font-bold text-sm transition">
+                                        🟡 Sederhana
+                                    </button>
+                                    <button onclick="setDifficulty('susah')" id="diff-susah" class="p-3 rounded-xl border-2 border-slate-200 text-slate-600 font-bold text-sm transition">
+                                        🔴 Susah
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Masa Menjawab</label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <button onclick="setTimeLimit(30)" id="time-30" class="p-3 rounded-xl border-2 border-indigo-500 bg-indigo-50 text-indigo-700 font-bold text-sm transition">
+                                        ⏱️ 30s
+                                    </button>
+                                    <button onclick="setTimeLimit(60)" id="time-60" class="p-3 rounded-xl border-2 border-slate-200 text-slate-600 font-bold text-sm transition">
+                                        ⏱️ 1 Min
+                                    </button>
+                                    <button onclick="setTimeLimit(0)" id="time-0" class="p-3 rounded-xl border-2 border-slate-200 text-slate-600 font-bold text-sm transition">
+                                        ♾️ Tiada Had
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex space-x-3 pt-2">
+                                <button onclick="router.navigate('menu')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3.5 rounded-xl transition">
+                                    Kembali
+                                </button>
+                                <button onclick="router.navigate('game')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition">
+                                    Mula 🚀
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setGameType(gtype) {
+            AppState.activeGameType = gtype;
+            gameTypesList.forEach(gt => {
+                const btn = document.getElementById(`gtype-${gt.id}`);
+                if (btn) {
+                    if (gt.id === gtype) {
+                        btn.className = `p-2.5 rounded-xl border-2 border-indigo-500 bg-indigo-50 text-indigo-700 font-bold text-xs transition text-left`;
+                    } else {
+                        btn.className = `p-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-bold text-xs transition text-left`;
+                    }
+                }
+            });
+        }
+
+        function setDifficulty(diff) {
+            AppState.activeDifficulty = diff;
+            ['mudah', 'sederhana', 'susah'].forEach(d => {
+                const btn = document.getElementById(`diff-${d}`);
+                if (btn) {
+                    if (d === diff) {
+                        btn.className = `p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-700 font-bold text-sm transition`;
+                    } else {
+                        btn.className = `p-3 rounded-xl border-2 border-slate-200 text-slate-600 font-bold text-sm transition`;
+                    }
+                }
+            });
+        }
+
+        function setTimeLimit(t) {
+            AppState.activeTimeLimit = t;
+            [30, 60, 0].forEach(val => {
+                const btn = document.getElementById(`time-${val}`);
+                if (btn) {
+                    if (val === t) {
+                        btn.className = `p-3 rounded-xl border-2 border-indigo-500 bg-indigo-50 text-indigo-700 font-bold text-sm transition`;
+                    } else {
+                        btn.className = `p-3 rounded-xl border-2 border-slate-200 text-slate-600 font-bold text-sm transition`;
+                    }
+                }
+            });
+        }
+
+        function renderGamePlayView() {
+            return `
+                <div class="flex-1 p-4 sm:p-6 bg-slate-50 flex flex-col max-w-4xl mx-auto w-full">
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-wrap items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-xl text-xs">
+                                ${AppState.activeTopic ? AppState.activeTopic.name : ''} (${AppState.activeDifficulty.toUpperCase()})
+                            </span>
+                            <span class="text-xs text-slate-500 font-medium">Soalan <span id="q-idx" class="font-bold text-slate-800">1</span>/20</span>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-amber-50 text-amber-700 font-bold px-3 py-1 rounded-xl text-xs flex items-center space-x-1">
+                                <i class="fa-solid fa-star text-amber-500"></i>
+                                <span id="live-score">0 Markah</span>
+                            </div>
+                            <div id="timer-box" class="bg-rose-50 text-rose-700 font-bold px-3 py-1 rounded-xl text-xs flex items-center space-x-1">
+                                <i class="fa-solid fa-clock text-rose-500"></i>
+                                <span id="live-timer">30s</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="question-card" class="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-slate-100 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span id="q-cognitive" class="bg-purple-100 text-purple-700 font-semibold px-3 py-0.5 rounded-full text-xs">Aras: Mengingat</span>
+                                <span class="text-xs font-bold text-slate-400">5 Markah</span>
+                            </div>
+                            <h3 id="q-prompt" class="text-base sm:text-lg font-bold text-slate-800 mb-3">Soalan sedang dimuatkan...</h3>
+                            
+                            <div id="q-visual" class="mb-4"></div>
+
+                            <div id="q-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4"></div>
+                        </div>
+
+                        <div id="feedback-area" class="hidden pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <div id="feedback-text" class="font-bold text-sm"></div>
+                            <button onclick="nextQuestion()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold shadow transition">
+                                Seterusnya <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function initGameSession() {
+            if (!AppState.activeTopic) return;
+            AppState.gameQuestions = JSON.parse(JSON.stringify(questionBank[AppState.activeTopic.id][AppState.activeDifficulty]));
+            shuffle(AppState.gameQuestions);
+            AppState.currentQuestionIdx = 0;
+            AppState.score = 0;
+            AppState.correctCount = 0;
+            AppState.wrongCount = 0;
+            AppState.startTime = new Date();
+            loadCurrentQuestion();
+        }
+
+        function loadCurrentQuestion() {
+            if (AppState.currentQuestionIdx >= 20) {
+                finishGameSession();
+                return;
+            }
+
+            const q = AppState.gameQuestions[AppState.currentQuestionIdx];
+            const elQIdx = document.getElementById('q-idx');
+            const elLiveScore = document.getElementById('live-score');
+            const elQCog = document.getElementById('q-cognitive');
+            const elQPrompt = document.getElementById('q-prompt');
+            const elQVisual = document.getElementById('q-visual');
+            const elOptions = document.getElementById('q-options');
+            const elFbArea = document.getElementById('feedback-area');
+
+            if (elQIdx) elQIdx.innerText = AppState.currentQuestionIdx + 1;
+            if (elLiveScore) elLiveScore.innerText = `${AppState.score} Markah`;
+            if (elQCog) elQCog.innerText = `Aras: ${q.cognitive}`;
+            if (elQPrompt) elQPrompt.innerText = q.prompt;
+            if (elQVisual) elQVisual.innerHTML = q.visualHtml || '';
+
+            if (elOptions) {
+                elOptions.innerHTML = '';
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = `p-3 rounded-2xl border-2 border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 text-slate-700 font-bold text-sm sm:text-base transition text-left flex items-center space-x-3 shadow-sm`;
+                    btn.innerHTML = `<span class="w-7 h-7 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center font-extrabold text-xs flex-shrink-0">${String.fromCharCode(65 + idx)}</span><span class="truncate">${opt}</span>`;
+                    btn.onclick = () => submitAnswer(opt, q.correctAnswer);
+                    elOptions.appendChild(btn);
+                });
+            }
+
+            if (elFbArea) elFbArea.classList.add('hidden');
+            startQuestionTimer();
+        }
+
+        function startQuestionTimer() {
+            if (AppState.questionTimer) clearInterval(AppState.questionTimer);
+            const timerBox = document.getElementById('timer-box');
+            if (!timerBox) return;
+
+            if (AppState.activeTimeLimit === 0) {
+                timerBox.classList.add('hidden');
+                return;
+            }
+            timerBox.classList.remove('hidden');
+            AppState.timeLeft = AppState.activeTimeLimit;
+            const liveTimer = document.getElementById('live-timer');
+            if (liveTimer) liveTimer.innerText = `${AppState.timeLeft}s`;
+
+            AppState.questionTimer = setInterval(() => {
+                AppState.timeLeft--;
+                const lt = document.getElementById('live-timer');
+                if (lt) lt.innerText = `${AppState.timeLeft}s`;
+                if (AppState.timeLeft <= 0) {
+                    clearInterval(AppState.questionTimer);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function handleTimeOut() {
+            const q = AppState.gameQuestions[AppState.currentQuestionIdx];
+            AppState.wrongCount++;
+            disableOptions();
+            showFeedback(false, `MASA TAMAT! Jawapan yang betul ialah: ${q.correctAnswer}\n\nPenerangan: ${q.explanation}`);
+        }
+
+        function submitAnswer(selected, correct) {
+            if (AppState.questionTimer) clearInterval(AppState.questionTimer);
+            disableOptions();
+            const q = AppState.gameQuestions[AppState.currentQuestionIdx];
+
+            if (selected === correct) {
+                AppState.score += 5;
+                AppState.correctCount++;
+                triggerConfetti();
+                showFeedback(true, `✅ BETUL!\nSyabas! Jawapan anda tepat (+5 Markah).`);
+            } else {
+                AppState.wrongCount++;
+                showFeedback(false, `❌ SALAH!\nJawapan yang betul ialah: ${correct}\n\nPenerangan: ${q.explanation}`);
+            }
+            const ls = document.getElementById('live-score');
+            if (ls) ls.innerText = `${AppState.score} Markah`;
+        }
+
+        function disableOptions() {
+            const btns = document.querySelectorAll('#q-options button');
+            btns.forEach(b => b.disabled = true);
+        }
+
+        function showFeedback(isCorrect, message) {
+            const fbArea = document.getElementById('feedback-area');
+            const fbText = document.getElementById('feedback-text');
+            if (!fbArea || !fbText) return;
+            fbText.className = `font-bold text-sm whitespace-pre-line ${isCorrect ? 'text-emerald-600' : 'text-rose-600'}`;
+            fbText.innerText = message;
+            fbArea.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            AppState.currentQuestionIdx++;
+            loadCurrentQuestion();
+        }
+
+        function finishGameSession() {
+            if (AppState.questionTimer) clearInterval(AppState.questionTimer);
+            const endTime = new Date();
+            const durationSec = Math.floor((endTime - AppState.startTime) / 1000);
+
+            if (AppState.currentUser) {
+                AppState.currentUser.totalScore = (AppState.currentUser.totalScore || 0) + AppState.score;
+                AppState.currentUser.questionsAnswered = (AppState.currentUser.questionsAnswered || 0) + 20;
+                AppState.currentUser.correctAnswers = (AppState.currentUser.correctAnswers || 0) + AppState.correctCount;
+                
+                if (AppState.activeTopic && !AppState.currentUser.completedTopics.includes(AppState.activeTopic.name)) {
+                    AppState.currentUser.completedTopics.push(AppState.activeTopic.name);
+                }
+
+                AppState.currentUser.history.push({
+                    topic: AppState.activeTopic ? AppState.activeTopic.name : '',
+                    difficulty: AppState.activeDifficulty,
+                    score: AppState.score,
+                    correct: AppState.correctCount,
+                    duration: durationSec,
+                    date: new Date().toLocaleDateString()
+                });
+                saveUsers();
+            }
+
+            router.navigate('result');
+        }
+
+        function renderResultView() {
+            triggerConfetti();
+            const percentage = Math.round((AppState.score / 100) * 100);
+            return `
+                <div class="flex-1 p-6 bg-slate-50 flex items-center justify-center">
+                    <div class="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl border border-slate-100 text-center">
+                        <div class="text-6xl mb-3 animate-bounce-slow">🎉</div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-1">TAHNIAH, ${AppState.currentUser ? AppState.currentUser.username.toUpperCase() : 'PELAJAR'}!</h2>
+                        <p class="text-xs text-slate-500 mb-6">Anda telah menyelesaikan set soalan ${AppState.activeTopic ? AppState.activeTopic.name : ''}.</p>
+
+                        <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 mb-6 grid grid-cols-2 gap-4 text-left">
+                            <div>
+                                <span class="text-xs text-slate-500 block">Jumlah Markah</span>
+                                <span class="text-2xl font-extrabold text-indigo-600">${AppState.score} / 100</span>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-500 block">Peratusan</span>
+                                <span class="text-2xl font-extrabold text-emerald-600">${percentage}%</span>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-500 block">Jawapan Betul</span>
+                                <span class="text-lg font-bold text-slate-800">${AppState.correctCount} / 20</span>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-500 block">Jawapan Salah</span>
+                                <span class="text-lg font-bold text-slate-800">${AppState.wrongCount} / 20</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="router.navigate('game')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow transition">
+                                <i class="fa-solid fa-rotate-right mr-1"></i> Main Lagi
+                            </button>
+                            <button onclick="router.navigate('menu')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3.5 rounded-xl transition">
+                                <i class="fa-solid fa-house mr-1"></i> Menu Utama
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLeaderboardView() {
+            const sortedUsers = [...AppState.users].sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0));
+            return `
+                <div class="flex-1 p-6 bg-slate-50 flex flex-col max-w-4xl mx-auto w-full">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-slate-800">🏆 LEADERBOARD EDU KIDZ</h2>
+                            <p class="text-xs text-slate-500">Kedudukan murid cemerlang dalam Pengurusan Data Tahun 4</p>
+                        </div>
+                        <button onclick="router.navigate('menu')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow">
+                            <i class="fa-solid fa-house mr-1"></i> Menu
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden flex-1">
+                        <div class="divide-y divide-slate-100">
+                            ${sortedUsers.length === 0 ? `
+                                <div class="p-8 text-center text-slate-400">Belum ada rekod pemain lagi. Jom daftar dan mula bermain!</div>
+                            ` : sortedUsers.map((u, i) => `
+                                <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-10 h-10 rounded-2xl flex items-center justify-center font-extrabold text-sm ${i === 0 ? 'bg-amber-100 text-amber-700' : i === 1 ? 'bg-slate-200 text-slate-700' : i === 2 ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-500'}">
+                                            ${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-slate-800">${u.username}</h4>
+                                            <p class="text-xs text-slate-400">Topik Selesai: ${u.completedTopics ? u.completedTopics.length : 0} / 5</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="font-extrabold text-indigo-600 text-lg">${u.totalScore || 0}</span>
+                                        <span class="text-xs text-slate-400 block">Markah Keseluruhan</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProgressView() {
+            const user = AppState.currentUser || { username: 'Tetamu', completedTopics: [], questionsAnswered: 0, correctAnswers: 0, totalScore: 0 };
+            return `
+                <div class="flex-1 p-6 bg-slate-50 flex flex-col max-w-4xl mx-auto w-full">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-slate-800">📊 PROGRESS SAYA</h2>
+                            <p class="text-xs text-slate-500">Statistik pencapaian pembelajaran untuk ${user.username}</p>
+                        </div>
+                        <button onclick="router.navigate('menu')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow">
+                            <i class="fa-solid fa-house mr-1"></i> Menu
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+                            <span class="text-xs text-slate-400 font-bold block mb-1">JUMLAH MARKAH</span>
+                            <span class="text-3xl font-extrabold text-indigo-600">${user.totalScore || 0}</span>
+                        </div>
+                        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+                            <span class="text-xs text-slate-400 font-bold block mb-1">SOALAN DIJAWAB</span>
+                            <span class="text-3xl font-extrabold text-emerald-600">${user.questionsAnswered || 0}</span>
+                        </div>
+                        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+                            <span class="text-xs text-slate-400 font-bold block mb-1">KETEPATAN JAWAPAN</span>
+                            <span class="text-3xl font-extrabold text-amber-600">${user.questionsAnswered ? Math.round((user.correctAnswers / user.questionsAnswered) * 100) : 0}%</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                        <h3 class="font-bold text-slate-800 mb-4">Pencapaian Topik Pengurusan Data</h3>
+                        <div class="space-y-4">
+                            ${topicsList.map(t => {
+                                const isDone = user.completedTopics && user.completedTopics.includes(t.name);
+                                return `
+                                    <div>
+                                        <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                                            <span>${t.icon} ${t.name}</span>
+                                            <span>${isDone ? '100% (Selesai)' : '0%'}</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                                            <div class="bg-indigo-600 h-full rounded-full transition-all duration-500" style="width: ${isDone ? '100%' : '5%'}"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.onload = function() {
+            const savedUser = localStorage.getItem('edu_kidz_current_user');
+            if (savedUser) {
+                try { AppState.currentUser = JSON.parse(savedUser); } catch(e) {}
+            }
+            router.navigate('splash');
+        };
+    </script>
+</body>
+</html>

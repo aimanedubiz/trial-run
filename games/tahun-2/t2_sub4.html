@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Kids – Edu Kidz | Matematik Tahun 2: Masa dan Waktu</title>
+    <!-- Tailwind CSS for modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins and Fredoka for kid-friendly typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%);
+            min-height: 100vh;
+            user-select: none;
+        }
+        .kid-font {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.8); }
+        }
+        .glow-box {
+            animation: pulse-glow 2s infinite;
+        }
+        .analog-clock-container {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto;
+            position: relative;
+        }
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <div id="app" class="flex-1 flex flex-col max-w-5xl w-full mx-auto p-4 sm:p-6">
+        
+        <!-- Header bar -->
+        <header class="flex justify-between items-center bg-white/80 backdrop-blur-md rounded-2xl p-4 mb-6 shadow-lg border border-white/50">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="appState.navigateTo('home')">
+                <div class="bg-gradient-to-tr from-amber-400 to-yellow-300 w-12 h-12 rounded-2xl flex items-center justify-center shadow-md text-2xl floating">
+                    ⏰
+                </div>
+                <div>
+                    <h1 class="kid-font text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">MATH KIDS</h1>
+                    <p class="text-xs text-slate-500 font-medium">✨ EDU KIDZ • Tahun 2 Masa & Waktu</p>
+                </div>
+            </div>
+            
+            <div id="user-header-info" class="hidden flex items-center space-x-3">
+                <div class="bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-100 flex items-center space-x-2">
+                    <span class="text-lg">👤</span>
+                    <span id="current-username-display" class="font-bold text-sm text-blue-700">Pemain</span>
+                </div>
+                <button onclick="logoutUser()" class="bg-rose-100 hover:bg-rose-200 text-rose-600 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm">
+                    🚪 Keluar
+                </button>
+            </div>
+        </header>
+
+        <!-- Dynamic Main Content Container -->
+        <main id="main-content" class="flex-1 flex flex-col justify-center">
+            <!-- Rendered dynamically by JS -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center py-4 text-xs text-slate-500 font-medium mt-auto">
+            🇲🇾 Selaras dengan KSPK & KPM Kurikulum Standard Sekolah Rendah Matematik Tahun 2
+        </footer>
+    </div>
+
+    <!-- Notification Modal / Dialog box -->
+    <div id="modal-container" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div id="modal-box" class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-4 border-blue-400 transform transition-all scale-95 opacity-0">
+            <div class="text-center">
+                <div id="modal-icon" class="text-5xl mb-3">🎉</div>
+                <h3 id="modal-title" class="kid-font text-2xl font-bold text-slate-800 mb-2">Tajuk</h3>
+                <p id="modal-message" class="text-slate-600 mb-6 text-sm sm:text-base">Mesej di sini...</p>
+                <div id="modal-actions" class="flex justify-center space-x-3">
+                    <button onclick="closeModal()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-6 py-2.5 rounded-2xl shadow-lg transition transform hover:scale-105">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const categories = [
+            { id: 1, title: "Kenali Jam dan Masa", icon: "⏰", desc: "Mengenal jam analog, jarum jam, jarum minit dan baca waktu." },
+            { id: 2, title: "Rekod Waktu", icon: "🕐", desc: "Memadankan jam analog, waktu digital dan bacaan minit." },
+            { id: 3, title: "Perkaitan Waktu", icon: "🔄", desc: "Hubungan unit masa (jam, minit, hari, minggu, bulan)." },
+            { id: 4, title: "Lengkapkan Ayat Matematik", icon: "🧩", desc: "Ayat matematik melibatkan jam, minit dan operasi waktu." },
+            { id: 5, title: "Penyelesaian Masalah", icon: "🧠", desc: "Situasi harian tempoh masa, waktu mula dan waktu tamat." }
+        ];
+
+        const levels = [
+            { id: 'mudah', title: '🟢 Mudah', desc: 'Mengingat & Memahami asas waktu' },
+            { id: 'sederhana', title: '🟡 Sederhana', desc: 'Memahami & Mengaplikasi bacaan 5-minit' },
+            { id: 'sukar', title: '🔴 Sukar', desc: 'Pengiraan tempoh & penaakulan masa' }
+        ];
+
+        const gameModes = [
+            { id: 'objektif', title: '🎯 Objektif', desc: 'Pilih jawapan yang betul daripada 4 pilihan' },
+            { id: 'padanan', title: '🔗 Padanan', desc: 'Padankan waktu jam dengan padanan yang tepat' },
+            { id: 'dragdrop', title: '🖱️ Seret & Lepas', desc: 'Seret jawapan ke petak ruang kosong' },
+            { id: 'isikosong', title: '✏️ Isi Tempat Kosong', desc: 'Taip atau pilih jawapan ringkas' },
+            { id: 'campuran', title: '🎮 Campuran', desc: 'Gabungan pelbagai bentuk soalan secara rawak' }
+        ];
+
+        const timeLimits = [
+            { id: 30, title: '⏱️ 30 Saat', secs: 30 },
+            { id: 60, title: '⏱️ 1 Minit', secs: 60 },
+            { id: 0, title: '♾️ Tiada Had', secs: 0 }
+        ];
+
+        function generateQuestionBank() {
+            const bank = {};
+            const names = ['Ali', 'Siti', 'Ahmad', 'Mei Ling', 'Rani', 'John', 'Fatimah', 'Zul'];
+            
+            categories.forEach(cat => {
+                bank[cat.id] = {};
+                levels.forEach(lvl => {
+                    bank[cat.id][lvl.id] = [];
+                    for (let i = 1; i <= 20; i++) {
+                        let q = generateSingleQuestion(cat.id, lvl.id, i, names);
+                        bank[cat.id][lvl.id].push(q);
+                    }
+                });
+            });
+            return bank;
+        }
+
+        function generateSingleQuestion(catId, lvlId, index, names) {
+            const name = names[index % names.length];
+            let qObj = {
+                id: `Q-${catId}-${lvlId}-${index}`,
+                category: catId,
+                level: lvlId,
+                score: 5,
+                explanation: "Syabas! Teruskan kefahaman tentang konsep masa dan waktu."
+            };
+
+            if (catId === 1) { // Kenali Jam dan Masa
+                if (lvlId === 'mudah') {
+                    const hours = (index % 12) + 1;
+                    qObj.question = `Apakah waktu yang ditunjukkan pada jam analog di atas (jarum panjang di 12)?`;
+                    qObj.clockTime = { hour: hours, minute: 0 };
+                    const correctStr = `${hours}:00`;
+                    qObj.answer = correctStr;
+                    qObj.type = 'objektif';
+                    qObj.options = shuffleArray([correctStr, `${(hours%12)+1}:00`, `${(hours-2+12)%12+1}:00`, `${(hours+3)%12+1}:00`]);
+                    qObj.explanation = `Jarum pendek menunjuk ke nombor ${hours} dan jarum panjang di nombor 12 bermaksud pukul ${hours}:00.`;
+                } else if (lvlId === 'sederhana') {
+                    const hours = (index % 12) + 1;
+                    const mins = (index % 4) * 15; // 0, 15, 30, 45
+                    qObj.question = `Jarum pendek pada ${hours} dan jarum minit pada ${(mins===0?12:mins/5)}. Pukul berapakah itu?`;
+                    qObj.clockTime = { hour: hours, minute: mins };
+                    const correctStr = `${hours}:${mins < 10 ? '0'+mins : mins}`;
+                    qObj.answer = correctStr;
+                    qObj.type = 'objektif';
+                    qObj.options = shuffleArray([correctStr, `${(hours%12)+1}:${mins}`, `${hours}:${(mins+15)%60 < 10 ? '0'+((mins+15)%60) : (mins+15)%60}`, `${(hours-1+12)%12+1}:30`]);
+                    qObj.explanation = `Setiap nombor pada jam mewakili 5 minit. Suku jam ialah 15 minit dan setengah jam ialah 30 minit.`;
+                } else { // sukar
+                    const hours = (index % 12) + 1;
+                    const mins = ((index * 5) % 12) * 5;
+                    qObj.question = `Perhatikan kedudukan jarum jam dan minit. Jika jarum minit bergerak melepasi beberapa angka, apakah waktu yang tepat?`;
+                    qObj.clockTime = { hour: hours, minute: mins };
+                    const correctStr = `${hours}:${mins < 10 ? '0'+mins : mins}`;
+                    qObj.answer = correctStr;
+                    qObj.type = 'objektif';
+                    qObj.options = shuffleArray([correctStr, `${(hours%12)+1}:${(mins+10)%60 < 10 ? '0'+(mins+10)%60 : (mins+10)%60}`, `${hours}:${(mins+30)%60 < 10 ? '0'+((mins+30)%60) : (mins+30)%60}`, `${(hours-1+12)%12+1}:15`]);
+                    qObj.explanation = `Bacaan jarum pendek dahulu diikuti jarum minit (darab 5 setiap angka). Jawapannya ialah ${correctStr}.`;
+                }
+            } else if (catId === 2) { // Rekod Waktu
+                if (lvlId === 'mudah') {
+                    const h = (index % 12) + 1;
+                    qObj.question = `Padankan jam analog berikut dengan waktu digital yang sepadan.`;
+                    qObj.clockTime = { hour: h, minute: 0 };
+                    qObj.answer = `${h}:00`;
+                    qObj.type = 'objektif';
+                    qObj.options = shuffleArray([`${h}:00`, `${h}:30`, `${(h%12)+1}:00`, `${(h+2)%12+1}:15`]);
+                    qObj.explanation = `Waktu tepat ditunjukkan apabila jarum minit di angka 12.`;
+                } else if (lvlId === 'sederhana') {
+                    const h = (index % 12) + 1;
+                    qObj.question = `${name} melihat jam menunjukkan pukul ${h}:30 pagi. Apakah rekod waktu digital yang betul?`;
+                    qObj.clockTime = { hour: h, minute: 30 };
+                    qObj.answer = `${h}:30 pagi`;
+                    qObj.type = 'objektif';
+                    qObj.options = shuffleArray([`${h}:30 pagi`, `${h}:15 pagi`, `${(h%12)+1}:30 pagi`, `${h}:00 pagi`]);
+                    qObj.explanation = `Setengah jam bersamaan 30 minit. Jadi rekodnya ialah ${h}:30 pagi.`;
+                } else {
+                    const h = (index % 11) + 1;
+                    qObj.question = `Pilih waktu petang yang betul bagi jarum jam di angka ${h} dan jarum minit di angka 6 (30 minit).`;
+                    qObj.clockTime = { hour: h, minute: 30 };
+                    qObj.answer = `${h}:30 petang`;
+                    qObj.type = 'objektif';
+                    qObj.options = shuffleArray([`${h}:30 petang`, `${h}:00 petang`, `${(h%12)+1}:30 petang`, `${h}:15 petang`]);
+                    qObj.explanation = `Waktu petang merujuk kepada aktiviti selepas tengah hari sehingga senja.`;
+                }
+            } else if (catId === 3) { // Perkaitan Waktu
+                if (lvlId === 'mudah') {
+                    const val = index % 3;
+                    if (val === 0) {
+                        qObj.question = `1 jam bersamaan dengan berapa minit?`;
+                        qObj.answer = `60 minit`;
+                        qObj.options = shuffleArray([`60 minit`, `30 minit`, `24 minit`, `12 minit`]);
+                    } else if (val === 1) {
+                        qObj.question = `1 hari bersamaan dengan berapa jam?`;
+                        qObj.answer = `24 jam`;
+                        qObj.options = shuffleArray([`24 jam`, `12 jam`, `60 jam`, `7 jam`]);
+                    } else {
+                        qObj.question = `1 minggu bersamaan dengan berapa hari?`;
+                        qObj.answer = `7 hari`;
+                        qObj.options = shuffleArray([`7 hari`, `30 hari`, `12 hari`, `24 hari`]);
+                    }
+                    qObj.type = 'objektif';
+                } else if (lvlId === 'sederhana') {
+                    const val = index % 3;
+                    if (val === 0) {
+                        qObj.question = `½ jam bersamaan dengan berapa minit?`;
+                        qObj.answer = `30 minit`;
+                        qObj.options = shuffleArray([`30 minit`, `15 minit`, `45 minit`, `60 minit`]);
+                    } else if (val === 1) {
+                        qObj.question = `¼ jam bersamaan dengan berapa minit?`;
+                        qObj.answer = `15 minit`;
+                        qObj.options = shuffleArray([`15 minit`, `30 minit`, `10 minit`, `20 minit`]);
+                    } else {
+                        qObj.question = `1 tahun bersamaan dengan berapa bulan?`;
+                        qObj.answer = `12 bulan`;
+                        qObj.options = shuffleArray([`12 bulan`, `7 bulan`, `24 bulan`, `365 bulan`]);
+                    }
+                    qObj.type = 'objektif';
+                } else {
+                    qObj.question = `Berapakah jumlah minit dalam 2 jam?`;
+                    qObj.answer = `120 minit`;
+                    qObj.type = 'objektif';
+                    qObj.options = shuffleArray([`120 minit`, `60 minit`, `90 minit`, `180 minit`]);
+                    qObj.explanation = `1 jam = 60 minit. Maka 2 jam = 60 + 60 = 120 minit.`;
+                }
+            } else if (catId === 4) { // KATEGORI 4: LENGKAPKAN AYAT MATEMATIK (REFINED: COMPLETELY UNIQUE, TEXT-ONLY, NO DUPLICATES)
+                const uniqueQuestions = {
+                    mudah: [
+                        { q: "Lengkapkan ayat matematik hubungan unit asas:\n60 minit = ____ jam", ans: "1", opts: ["1", "2", "60", "12"], exp: "60 minit adalah tepat sama dengan 1 jam." },
+                        { q: "Lengkapkan ayat matematik pecahan separuh masa:\n30 minit = ____ jam", ans: "1/2", opts: ["1/2", "1/4", "1", "2"], exp: "30 minit ialah separuh atau 1/2 jam." },
+                        { q: "Lengkapkan ayat matematik suku jam:\n15 minit = ____ jam", ans: "1/4", opts: ["1/4", "1/2", "1", "3"], exp: "15 minit dikenali sebagai suku jam atau 1/4 jam." },
+                        { q: "Lengkapkan ayat matematik bilangan hari:\n7 hari = ____ minggu", ans: "1", opts: ["1", "7", "24", "30"], exp: "7 hari lengkap mengira 1 minggu." },
+                        { q: "Lengkapkan ayat matematik pusingan jam sehari:\n24 jam = ____ hari", ans: "1", opts: ["1", "24", "7", "12"], exp: "24 jam sehari semalam bersamaan dengan 1 hari." },
+                        { q: "Lengkapkan ayat matematik bulan dalam setahun:\n12 bulan = ____ tahun", ans: "1", opts: ["1", "12", "365", "24"], exp: "12 bulan lengkap membentuk 1 tahun kalendar." },
+                        { q: "Lengkapkan ayat tambah mudah waktu:\n1 jam + 1 jam = ____ jam", ans: "2", opts: ["2", "1", "3", "60"], exp: "1 jam ditambah 1 jam menghasilkan 2 jam." },
+                        { q: "Lengkapkan ayat tolak mudah waktu:\n4 jam - 1 jam = ____ jam", ans: "3", opts: ["3", "4", "2", "5"], exp: "4 jam ditolak 1 jam baki 3 jam." },
+                        { q: "Lengkapkan ayat matematik waktu pagi:\nPukul 8:00 pagi ke 9:00 pagi melibatkan tempoh ____ jam", ans: "1", opts: ["1", "2", "60", "30"], exp: "Jarak masa dari pukul 8:00 pagi hingga 9:00 pagi ialah 1 jam." },
+                        { q: "Lengkapkan ayat matematik tempoh minit:\nPukul 2:00 petang hingga 2:30 petang ialah ____ minit", ans: "30", opts: ["30", "15", "60", "45"], exp: "Dari 2:00 ke 2:30 ialah 30 minit." },
+                        { q: "Lengkapkan ayat matematik hari bekerja sekolah:\nDalam seminggu, hari persekolahan ialah ____ hari", ans: "5", opts: ["5", "7", "2", "6"], exp: "Hari persekolahan kebiasaannya adalah 5 hari (Isnin hingga Jumaat)." },
+                        { q: "Lengkapkan ayat matematik hujung minggu:\nHujung minggu (Sabtu dan Ahad) berjumlah ____ hari", ans: "2", opts: ["2", "5", "7", "1"], exp: "Sabtu dan Ahad ialah 2 hari cuti hujung minggu." },
+                        { q: "Lengkapkan ayat matematik pertukaran jam:\n2 jam = ____ minit", ans: "120", opts: ["120", "60", "90", "180"], exp: "2 darab 60 minit = 120 minit." },
+                        { q: "Lengkapkan ayat matematik separuh jam:\n½ jam = ____ minit", ans: "30", opts: ["30", "15", "60", "45"], exp: "Setengah jam bernilai 30 minit." },
+                        { q: "Lengkapkan ayat matematik suku jam:\n¼ jam = ____ minit", ans: "15", opts: ["15", "30", "60", "10"], exp: "Suku jam bernilai 15 minit." },
+                        { q: "Lengkapkan ayat matematik gandaan hari:\n14 hari = ____ minggu", ans: "2", opts: ["2", "1", "7", "14"], exp: "14 bahagi 7 hari = 2 minggu." },
+                        { q: "Lengkapkan ayat matematik jam sehari semalam:\n1 hari = ____ jam", ans: "24", opts: ["24", "12", "60", "7"], exp: "Sehari semalam lengkap berputar selama 24 jam." },
+                        { q: "Lengkapkan ayat matematik jumlah bulan:\n2 tahun = ____ bulan", ans: "24", opts: ["24", "12", "36", "18"], exp: "2 darab 12 bulan = 24 bulan." },
+                        { q: "Lengkapkan ayat matematik asas minggu:\n1 minggu = ____ hari", ans: "7", opts: ["7", "30", "12", "24"], exp: "Seminggu mengandungi 7 hari." },
+                        { q: "Lengkapkan ayat matematik unit masa pendek:\n1 minit = ____ saat", ans: "60", opts: ["60", "24", "12", "100"], exp: "1 minit bersamaan dengan 60 saat." }
+                    ],
+                    sederhana: [
+                        { q: "Lengkapkan ayat operasi tambah jam:\n3 jam + 2 jam = ____ jam", ans: "5", opts: ["5", "3", "6", "1"], exp: "3 ditambah 2 menghasilkan 5 jam." },
+                        { q: "Lengkapkan ayat operasi tolak jam:\n6 jam - 3 jam = ____ jam", ans: "3", opts: ["3", "2", "4", "6"], exp: "6 ditolak 3 baki 3 jam." },
+                        { q: "Lengkapkan ayat penukaran jam kepada minit:\n3 jam = ____ minit", ans: "180", opts: ["180", "120", "150", "90"], exp: "3 darab 60 minit = 180 minit." },
+                        { q: "Lengkapkan ayat penukaran minggu kepada hari:\n3 minggu = ____ hari", ans: "21", opts: ["21", "14", "28", "7"], exp: "3 darab 7 hari = 21 hari." },
+                        { q: "Lengkapkan ayat tambah minit:\n20 minit + 40 minit = ____ jam", ans: "1", opts: ["1", "60", "2", "30"], exp: "20 minit + 40 minit = 60 minit, iaitu 1 jam." },
+                        { q: "Lengkapkan ayat tolak minit:\n60 minit - 15 minit = ____ minit", ans: "45", opts: ["45", "30", "50", "15"], exp: "60 - 15 = 45 minit." },
+                        { q: "Lengkapkan ayat gabungan unit:\nPukul 4:30 bermaksud 4 jam ____ minit", ans: "30", opts: ["30", "15", "45", "60"], exp: "Angka 30 pada minit bermaksud 30 minit." },
+                        { q: "Lengkapkan ayat tempoh jam:\nDari pukul 1:00 petang ke pukul 5:00 petang ialah ____ jam", ans: "4", opts: ["4", "5", "3", "6"], exp: "5 tolak 1 = 4 jam." },
+                        { q: "Lengkapkan ayat penukaran tahun:\n36 bulan = ____ tahun", ans: "3", opts: ["3", "2", "4", "12"], exp: "36 bahagi 12 bulan = 3 tahun." },
+                        { q: "Lengkapkan ayat perbandingan masa:\n120 minit adalah sama nilai dengan ____ jam", ans: "2", opts: ["2", "1", "3", "4"], exp: "120 bahagi 60 = 2 jam." },
+                        { q: "Lengkapkan ayat penambahan hari:\n5 hari + 2 hari = ____ minggu", ans: "1", opts: ["1", "7", "2", "5"], exp: "5 + 2 = 7 hari, bersamaan 1 minggu." },
+                        { q: "Lengkapkan ayat baki jam dalam sehari:\nJika sudah berlalu 10 jam, baki masa dalam sehari ialah ____ jam", ans: "14", opts: ["14", "12", "10", "24"], exp: "24 jam - 10 jam = 14 jam." },
+                        { q: "Lengkapkan ayat pengiraan suku jam:\n3 keping suku jam (3 × ¼ jam) = ____ minit", ans: "45", opts: ["45", "30", "15", "60"], exp: "3 darab 15 minit = 45 minit." },
+                        { q: "Lengkapkan ayat penukaran 180 minit:\n180 minit = ____ jam", ans: "3", opts: ["3", "2", "4", "1"], exp: "180 bahagi 60 = 3 jam." },
+                        { q: "Lengkapkan ayat tambah waktu petang:\nPukul 3:00 petang tambah 2 jam menjadi pukul ____ petang", ans: "5:00", opts: ["5:00", "4:00", "6:00", "3:00"], exp: "3 + 2 = pukul 5:00 petang." },
+                        { q: "Lengkapkan ayat tolak waktu pagi:\nPukul 10:00 pagi tolak 3 jam ialah pukul ____ pagi", ans: "7:00", opts: ["7:00", "8:00", "6:00", "9:00"], exp: "10 - 3 = pukul 7:00 pagi." },
+                        { q: "Lengkapkan ayat penukaran 4 minggu:\n4 minggu = ____ hari", ans: "28", opts: ["28", "21", "14", "30"], exp: "4 darab 7 hari = 28 hari." },
+                        { q: "Lengkapkan ayat penambahan setengah jam:\n30 minit + 30 minit = ____ jam", ans: "1", opts: ["1", "2", "60", "0"], exp: "30 + 30 = 60 minit = 1 jam." },
+                        { q: "Lengkapkan ayat pengiraan minit jam 4:\n4 jam = ____ minit", ans: "240", opts: ["240", "180", "120", "300"], exp: "4 darab 60 minit = 240 minit." },
+                        { q: "Lengkapkan ayat baki hari dalam seminggu:\nJika hari ini Isnin, 3 hari kemudian ialah hari ____", ans: "Khamis", opts: ["Khamis", "Rabu", "Jumaat", "Selasa"], exp: "Isnin (+3 hari) = Khamis." }
+                    ],
+                    sukar: [
+                        { q: "Lengkapkan ayat penukaran minit kompleks:\n90 minit = ____ jam ____ minit", ans: "1 jam 30 minit", opts: ["1 jam 30 minit", "1 jam 15 minit", "2 jam 30 minit", "1 jam 45 minit"], exp: "90 minit = 60 minit (1 jam) + 30 minit." },
+                        { q: "Lengkapkan ayat penukaran minit 75:\n75 minit = ____ jam ____ minit", ans: "1 jam 15 minit", opts: ["1 jam 15 minit", "1 jam 30 minit", "1 jam 10 minit", "2 jam 15 minit"], exp: "75 minit = 60 minit (1 jam) + 15 minit." },
+                        { q: "Lengkapkan ayat penukaran minit 105:\n105 minit = ____ jam ____ minit", ans: "1 jam 45 minit", opts: ["1 jam 45 minit", "1 jam 30 minit", "2 jam 15 minit", "1 jam 15 minit"], exp: "105 minit = 60 minit (1 jam) + 45 minit." },
+                        { q: "Lengkapkan ayat operasi tambah masa:\n1 jam 20 minit + 40 minit = ____ jam", ans: "2 jam", opts: ["2 jam", "1 jam 60 minit", "3 jam", "1 jam 45 minit"], exp: "20 minit + 40 minit = 60 minit (1 jam). 1 jam + 1 jam = 2 jam." },
+                        { q: "Lengkapkan ayat operasi tolak masa kompleks:\n2 jam 30 minit - 30 minit = ____ jam", ans: "2 jam", opts: ["2 jam", "1 jam 30 minit", "2 jam 30 minit", "1 jam"], exp: "30 minit tolak 30 minit habis, tinggal 2 jam." },
+                        { q: "Lengkapkan ayat tambah jam dan minit:\n1 jam 15 minit + 1 jam 15 minit = ____ jam ____ minit", ans: "2 jam 30 minit", opts: ["2 jam 30 minit", "2 jam", "3 jam", "1 jam 45 minit"], exp: "1 jam + 1 jam = 2 jam; 15 minit + 15 minit = 30 minit." },
+                        { q: "Lengkapkan ayat penukaran 150 minit:\n150 minit = ____ jam ____ minit", ans: "2 jam 30 minit", opts: ["2 jam 30 minit", "2 jam 15 minit", "1 jam 30 minit", "3 jam"], exp: "150 minit = 120 minit (2 jam) + 30 minit." },
+                        { q: "Lengkapkan ayat penukaran 210 minit:\n210 minit = ____ jam ____ minit", ans: "3 jam 30 minit", opts: ["3 jam 30 minit", "3 jam", "2 jam 30 minit", "4 jam"], exp: "210 minit = 180 minit (3 jam) + 30 minit." },
+                        { q: "Lengkapkan ayat tempoh hari ke minggu:\n21 hari = ____ minggu", ans: "3 minggu", opts: ["3 minggu", "2 minggu", "4 minggu", "5 minggu"], exp: "21 bahagi 7 hari = 3 minggu." },
+                        { q: "Lengkapkan ayat tempoh hari ke minggu 28:\n28 hari = ____ minggu", ans: "4 minggu", opts: ["4 minggu", "3 minggu", "5 minggu", "2 minggu"], exp: "28 bahagi 7 hari = 4 minggu." },
+                        { q: "Lengkapkan ayat jumlah jam sehari semalam:\nBilangan jam dalam 2 hari = ____ jam", ans: "48 jam", opts: ["48 jam", "24 jam", "36 jam", "60 jam"], exp: "24 jam × 2 = 48 jam." },
+                        { q: "Lengkapkan ayat pengiraan tempoh hari:\nDari 1 Mei hingga 8 Mei ialah ____ hari", ans: "7 hari", opts: ["7 hari", "8 hari", "6 hari", "5 hari"], exp: "8 - 1 = 7 hari tempoh." },
+                        { q: "Lengkapkan ayat penukaran 3 tahun 6 bulan:\n3 tahun 6 bulan = ____ bulan", ans: "42 bulan", opts: ["42 bulan", "36 bulan", "40 bulan", "48 bulan"], exp: "3 tahun × 12 = 36 bulan + 6 bulan = 42 bulan." },
+                        { q: "Lengkapkan ayat penukaran 2 tahun 3 bulan:\n2 tahun 3 bulan = ____ bulan", ans: "27 bulan", opts: ["27 bulan", "24 bulan", "25 bulan", "30 bulan"], exp: "2 tahun × 12 = 24 bulan + 3 bulan = 27 bulan." },
+                        { q: "Lengkapkan ayat perbezaan minit:\nPerbezaan antara 2 jam dengan 90 minit ialah ____ minit", ans: "30 minit", opts: ["30 minit", "60 minit", "15 minit", "45 minit"], exp: "120 minit - 90 minit = 30 minit." },
+                        { q: "Lengkapkan ayat baki masa jam:\nJika aktiviti bermula pukul 2:00 petang dan tamat pukul 4:30 petang, tempohnya ialah ____ jam ____ minit", ans: "2 jam 30 minit", opts: ["2 jam 30 minit", "2 jam", "3 jam", "1 jam 30 minit"], exp: "Dari 2:00 ke 4:00 ialah 2 jam, ditambah 30 minit menjadi 2 jam 30 minit." },
+                        { q: "Lengkapkan ayat operasi tambah jam pecahan:\n1 jam + ½ jam = ____ minit", ans: "90 minit", opts: ["90 minit", "60 minit", "75 minit", "120 minit"], exp: "60 minit + 30 minit = 90 minit." },
+                        { q: "Lengkapkan ayat operasi tolak jam pecahan:\n2 jam - ½ jam = ____ minit", ans: "90 minit", opts: ["90 minit", "120 minit", "60 minit", "100 minit"], exp: "120 minit - 30 minit = 90 minit." },
+                        { q: "Lengkapkan ayat penambahan hari minggu:\n1 minggu 3 hari = ____ hari", ans: "10 hari", opts: ["10 hari", "7 hari", "14 hari", "12 hari"], exp: "7 hari + 3 hari = 10 hari." },
+                        { q: "Lengkapkan ayat penukaran 50 jam:\n50 jam = ____ hari ____ jam", ans: "2 hari 2 jam", opts: ["2 hari 2 jam", "2 hari", "1 hari 24 jam", "3 hari"], exp: "48 jam (2 hari) baki 2 jam." }
+                    ]
+                };
+
+                const subQList = uniqueQuestions[lvlId];
+                const selectedData = subQList[(index - 1) % subQList.length];
+
+                qObj.question = selectedData.q;
+                qObj.answer = selectedData.ans;
+                qObj.type = 'objektif';
+                qObj.options = shuffleArray(selectedData.opts);
+                qObj.explanation = selectedData.exp;
+            } else if (catId === 5) { // KATEGORI 5: PENYELESAIAN MASALAH (REFINED: TEXT-ONLY, UNIQUE, NO DUPLICATES ACROSS LEVELS)
+                const uniqueProblemQuestions = {
+                    mudah: [
+                        { q: "Ahmad mula membaca buku cerita pada pukul 3:00 petang. Dia membaca selama 1 jam. Pukul berapakah Ahmad selesai membaca?", ans: "4:00 petang", opts: ["4:00 petang", "3:30 petang", "5:00 petang", "2:00 petang"], exp: "3:00 petang ditambah 1 jam menghasilkan pukul 4:00 petang." },
+                        { q: "Siti melukis gambar selama 2 jam. Jika dia mula pada pukul 2:00 petang, pukul berapakah Siti tamat melukis?", ans: "4:00 petang", opts: ["4:00 petang", "3:00 petang", "5:00 petang", "4:30 petang"], exp: "Pukul 2:00 petang + 2 jam = pukul 4:00 petang." },
+                        { q: "Ali bermain bola sepak di padang selama 1 jam. Dia mula pada pukul 5:00 petang. Pukul berapakah Ali balik ke rumah?", ans: "6:00 petang", opts: ["6:00 petang", "5:30 petang", "7:00 petang", "4:00 petang"], exp: "5:00 petang + 1 jam = 6:00 petang." },
+                        { q: "Ibu menyiapkan masakan malam dalam masa 2 jam. Jika ibu mula memasak pada pukul 6:00 petang, pukul berapakah siap?", ans: "8:00 malam", opts: ["8:00 malam", "7:00 malam", "9:00 malam", "7:30 malam"], exp: "6:00 petang + 2 jam = 8:00 malam." },
+                        { q: "Aktiviti senamrobik di sekolah bermula pada pukul 8:00 pagi dan berlangsung selama 1 jam. Pukul berapakah tamat?", ans: "9:00 pagi", opts: ["9:00 pagi", "8:30 pagi", "10:00 pagi", "7:30 pagi"], exp: "8:00 pagi + 1 jam = 9:00 pagi." },
+                        { q: "Mei Ling mengulang kaji pelajaran selama 1 jam bermula pada pukul 7:00 malam. Pukul berapakah dia berehat?", ans: "8:00 malam", opts: ["8:00 malam", "7:30 malam", "9:00 malam", "6:00 malam"], exp: "7:00 malam + 1 jam = 8:00 malam." },
+                        { q: "Zul membantu datuknya di kebun selama 2 jam dari pukul 9:00 pagi. Pukul berapakah mereka berhenti?", ans: "11:00 pagi", opts: ["11:00 pagi", "10:00 pagi", "12:00 tengah hari", "10:30 pagi"], exp: "9:00 pagi + 2 jam = 11:00 pagi." },
+                        { q: "Sebuah bas sekolah bertolak pada pukul 1:00 tengah hari dan perjalanan mengambil masa 1 jam. Pukul berapakah bas sampai?", ans: "2:00 petang", opts: ["2:00 petang", "1:30 petang", "3:00 petang", "12:30 tengah hari"], exp: "1:00 tengah hari + 1 jam = 2:00 petang." },
+                        { q: "Fatimah menyiram pokok bunga selama setengah jam (30 minit) bermula pukul 5:00 petang. Pukul berapakah selesai?", ans: "5:30 petang", opts: ["5:30 petang", "6:00 petang", "5:15 petang", "4:30 petang"], exp: "5:00 petang + 30 minit = 5:30 petang." },
+                        { q: "Rani menonton rancangan televisyen selama 1 jam bermula pukul 4:00 petang. Pukul berapakah rancangan tamat?", ans: "5:00 petang", opts: ["5:00 petang", "4:30 petang", "6:00 petang", "3:30 petang"], exp: "4:00 petang + 1 jam = 5:00 petang." },
+                        { q: "John menyiapkan kerja sekolah dalam masa 2 jam bermula pukul 3:00 petang. Pukul berapakah dia siap?", ans: "5:00 petang", opts: ["5:00 petang", "4:00 petang", "6:00 petang", "4:30 petang"], exp: "3:00 petang + 2 jam = 5:00 petang." },
+                        { q: "Kelas lukisan bermula pada pukul 10:00 pagi selama 1 jam. Pukul berapakah kelas tamat?", ans: "11:00 pagi", opts: ["11:00 pagi", "10:30 pagi", "12:00 tengah hari", "9:00 pagi"], exp: "10:00 pagi + 1 jam = 11:00 pagi." },
+                        { q: "Cikgu Amin mengajar subjek Matematik selama 1 jam dari pukul 8:00 pagi. Pukul berapakah tamat?", ans: "9:00 pagi", opts: ["9:00 pagi", "8:30 pagi", "10:00 pagi", "7:30 pagi"], exp: "8:00 pagi + 1 jam = 9:00 pagi." },
+                        { q: "Keluarga Ali berkelah di pantai selama 3 jam dari pukul 9:00 pagi. Pukul berapakah mereka pulang?", ans: "12:00 tengah hari", opts: ["12:00 tengah hari", "11:00 pagi", "1:00 petang", "11:30 pagi"], exp: "9:00 pagi + 3 jam = 12:00 tengah hari." },
+                        { q: "Aminah membaca majalah selama setengah jam bermula pukul 2:00 petang. Pukul berapakah selesai?", ans: "2:30 petang", opts: ["2:30 petang", "3:00 petang", "2:15 petang", "1:30 petang"], exp: "2:00 petang + 30 minit = 2:30 petang." },
+                        { q: "Pameran sains dibuka pada pukul 10:00 pagi dan ditutup 2 jam kemudian. Pukul berapakah tutup?", ans: "12:00 tengah hari", opts: ["12:00 tengah hari", "11:00 pagi", "1:00 petang", "11:30 pagi"], exp: "10:00 pagi + 2 jam = 12:00 tengah hari." },
+                        { q: "Azman tidur petang selama 1 jam bermula pukul 4:00 petang. Pukul berapakah dia terjaga?", ans: "5:00 petang", opts: ["5:00 petang", "4:30 petang", "6:00 petang", "3:30 petang"], exp: "4:00 petang + 1 jam = 5:00 petang." },
+                        { q: "Siti membantu ibu mengemas ruang tamu selama 1 jam bermula pukul 10:00 pagi. Pukul berapakah siap?", ans: "11:00 pagi", opts: ["11:00 pagi", "10:30 pagi", "12:00 tengah hari", "9:30 pagi"], exp: "10:00 pagi + 1 jam = 11:00 pagi." },
+                        { q: "Perlawanan bola keranjang berlangsung selama 2 jam bermula pukul 4:00 petang. Pukul berapakah perlawanan tamat?", ans: "6:00 petang", opts: ["6:00 petang", "5:00 petang", "7:00 petang", "5:30 petang"], exp: "4:00 petang + 2 jam = 6:00 petang." },
+                        { q: "Zulkifli menyiram pokok bunga selama 1 jam bermula pukul 5:00 petang. Pukul berapakah dia selesai?", ans: "6:00 petang", opts: ["6:00 petang", "5:30 petang", "7:00 petang", "4:30 petang"], exp: "5:00 petang + 1 jam = 6:00 petang." }
+                    ],
+                    sederhana: [
+                        { q: "Ahmad mula bermain basikal pada pukul 4:30 petang dan berhenti pada pukul 5:30 petang. Berapa lamakah Ahmad bermain?", ans: "1 jam", opts: ["1 jam", "30 minit", "2 jam", "45 minit"], exp: "Dari 4:30 petang ke 5:30 petang adalah tepat 1 jam." },
+                        { q: "Siti mula melukis pada pukul 2:00 petang dan siap pada pukul 3:30 petang. Berapakah tempoh masa melukis?", ans: "1 jam 30 minit", opts: ["1 jam 30 minit", "1 jam", "2 jam", "45 minit"], exp: "Dari 2:00 ke 3:00 ialah 1 jam, ditambah 30 minit menjadi 1 jam 30 minit." },
+                        { q: "Ali menyiapkan kerja sekolah dari pukul 8:00 malam hingga 9:30 malam. Berapa lamakah masa diambil?", ans: "1 jam 30 minit", opts: ["1 jam 30 minit", "2 jam", "1 jam", "2 jam 30 minit"], exp: "Dari 8:00 ke 9:00 (1 jam) + 30 minit = 1 jam 30 minit." },
+                        { q: "Ibu memasak juadah petang dari pukul 4:00 petang hingga 5:15 petang. Berapakah tempoh masa memasak?", ans: "1 jam 15 minit", opts: ["1 jam 15 minit", "1 jam", "1 jam 30 minit", "2 jam"], exp: "Tempoh dari 4:00 ke 5:15 ialah 1 jam 15 minit." },
+                        { q: "Mei Ling mengulang kaji pelajaran dari pukul 7:00 malam sampai 8:00 malam. Berapa lamakah masanya?", ans: "1 jam", opts: ["1 jam", "30 minit", "2 jam", "1 jam 30 minit"], exp: "Pukul 7:00 malam ke 8:00 malam ialah 1 jam." },
+                        { q: "Zul menyertai kelas renang dari pukul 9:00 pagi hingga 11:00 pagi. Berapa lamakah tempoh kelas tersebut?", ans: "2 jam", opts: ["2 jam", "1 jam", "3 jam", "1 jam 30 minit"], exp: "11:00 pagi tolak 9:00 pagi = 2 jam." },
+                        { q: "Rani melawat perpustakaan dari pukul 10:00 pagi hingga 11:30 pagi. Berapa lamakah dia di sana?", ans: "1 jam 30 minit", opts: ["1 jam 30 minit", "1 jam", "2 jam", "45 minit"], exp: "Dari 10:00 pagi ke 11:30 pagi ialah 1 jam 30 minit." },
+                        { q: "John mengayuh basikal dari pukul 5:00 petang hingga 6:00 petang. Berapa lamakah masa kayuhan?", ans: "1 jam", opts: ["1 jam", "2 jam", "30 minit", "1 jam 30 minit"], exp: "Dari 5:00 ke 6:00 petang adalah 1 jam." },
+                        { q: "Fatimah membuat kraf tangan dari pukul 3:00 petang sampai 5:00 petang. Berapa lamakah tempohnya?", ans: "2 jam", opts: ["2 jam", "1 jam", "3 jam", "1 jam 30 minit"], exp: "5:00 petang - 3:00 petang = 2 jam." },
+                        { q: "Keluarga Ahmad berkelah dari pukul 9:00 pagi hingga 12:00 tengah hari. Berapa lamakah masa perkelahan?", ans: "3 jam", opts: ["3 jam", "2 jam", "4 jam", "2 jam 30 minit"], exp: "12:00 tengah hari - 9:00 pagi = 3 jam." },
+                        { q: "Kelas muzik bermula pukul 2:30 petang dan tamat pada pukul 4:00 petang. Berapakah tempoh masa kelas?", ans: "1 jam 30 minit", opts: ["1 jam 30 minit", "1 jam", "2 jam", "45 minit"], exp: "Dari 2:30 ke 3:30 (1 jam) + 30 minit = 1 jam 30 minit." },
+                        { q: "Azman menonton televisyen dari pukul 8:00 malam hingga 10:00 malam. Berapa lamakah masa tontonan?", ans: "2 jam", opts: ["2 jam", "1 jam", "3 jam", "1 jam 30 minit"], exp: "10:00 malam - 8:00 malam = 2 jam." },
+                        { q: "Cikgu Salma mengadakan mesyuarat dari pukul 2:00 petang hingga 3:15 petang. Berapa lamakah mesyuarat itu?", ans: "1 jam 15 minit", opts: ["1 jam 15 minit", "1 jam", "1 jam 30 minit", "2 jam"], exp: "Tempoh dari 2:00 ke 3:15 ialah 1 jam 15 minit." },
+                        { q: "Aktiviti gotong-royong sekolah bermula pukul 8:00 pagi dan tamat pukul 11:00 pagi. Berapa lamakah tempohnya?", ans: "3 jam", opts: ["3 jam", "2 jam", "4 jam", "1 jam 30 minit"], exp: "11:00 pagi - 8:00 pagi = 3 jam." },
+                        { q: "Amin menyiapkan lukisan pemandangan dari pukul 3:30 petang hingga 5:00 petang. Berapakah tempoh masa?", ans: "1 jam 30 minit", opts: ["1 jam 30 minit", "1 jam", "2 jam", "45 minit"], exp: "Dari 3:30 ke 4:30 (1 jam) + 30 minit = 1 jam 30 minit." },
+                        { q: "Siti mengulang kaji mata pelajaran Sains dari pukul 4:00 petang hingga 5:00 petang. Berapa lamakah masa?", ans: "1 jam", opts: ["1 jam", "2 jam", "30 minit", "1 jam 30 minit"], exp: "Pukul 4:00 petang ke 5:00 petang ialah 1 jam." },
+                        { q: "Rani membantu ibunya di kedai dari pukul 9:00 pagi hingga 1:00 petang. Berapa lamakah masa bertugas?", ans: "4 jam", opts: ["4 jam", "3 jam", "5 jam", "2 jam"], exp: "1:00 petang (13:00) - 9:00 pagi = 4 jam." },
+                        { q: "Zulkifli menyertai latihan bola sepak dari pukul 5:00 petang hingga 7:00 malam. Berapa lamakah latihan?", ans: "2 jam", opts: ["2 jam", "1 jam", "3 jam", "1 jam 30 minit"], exp: "Pukul 5:00 petang ke 7:00 malam ialah 2 jam." },
+                        { q: "Ahmad membaca buku cerita dari pukul 2:00 petang hingga 3:45 petang. Berapa lamakah masa membaca?", ans: "1 jam 45 minit", opts: ["1 jam 45 minit", "1 jam 30 minit", "2 jam", "1 jam"], exp: "Dari 2:00 ke 3:00 (1 jam) + 45 minit = 1 jam 45 minit." },
+                        { q: "Mei Ling menyiram pokok di taman dari pukul 6:00 petang hingga 6:30 petang. Berapakah tempoh masa?", ans: "30 minit", opts: ["30 minit", "1 jam", "15 minit", "45 minit"], exp: "Dari 6:00 hingga 6:30 ialah 30 minit." }
+                    ],
+                    sukar: [
+                        { q: "Ali tidur malam pada pukul 9:00 malam dan bangun pada pukul 6:00 pagi keesokan harinya. Berapakah jumlah masa tidur Ali?", ans: "9 jam", opts: ["9 jam", "8 jam", "10 jam", "7 jam"], exp: "3 jam (9 mlm ke 12 tgh mlm) + 6 jam (12 tgh mlm ke 6 pg) = 9 jam." },
+                        { q: "Siti mula membuat ulang kaji pada pukul 2:15 petang selama 1 jam 30 minit. Pukul berapakah Siti selesai?", ans: "3:45 petang", opts: ["3:45 petang", "3:30 petang", "4:00 petang", "3:15 petang"], exp: "2:15 + 1 jam = 3:15, ditambah 30 minit menjadi 3:45 petang." },
+                        { q: "Sebuah program motivasi bermula pada pukul 8:30 pagi dan tamat pada pukul 11:30 pagi. Berapakah jumlah tempoh program?", ans: "3 jam", opts: ["3 jam", "2 jam", "3 jam 30 minit", "4 jam"], exp: "Dari 8:30 pagi ke 11:30 pagi adalah tepat 3 jam." },
+                        { q: "Ahmad menaiki kereta bersama keluarganya selama 2 jam 15 minit. Jika perjalanan bermula pukul 9:00 pagi, pukul berapakah mereka tiba?", ans: "11:15 pagi", opts: ["11:15 pagi", "11:00 pagi", "11:30 pagi", "12:15 tengah hari"], exp: "9:00 pagi + 2 jam 15 minit = 11:15 pagi." },
+                        { q: "Zul tidur awal pada pukul 8:30 malam dan bangun pada pukul 5:30 pagi. Berapakah jumlah tempoh tidur Zul?", ans: "9 jam", opts: ["9 jam", "8 jam", "10 jam", "8 jam 30 minit"], exp: "3 jam 30 minit (sebelum tengah malam) + 5 jam 30 minit (selepas tengah malam) = 9 jam." },
+                        { q: "Rani menyiapkan projek sekolah bermula pukul 3:00 petang hingga pukul 5:15 petang. Berapakah tempoh masa keseluruhan projek?", ans: "2 jam 15 minit", opts: ["2 jam 15 minit", "2 jam", "3 jam", "2 jam 30 minit"], exp: "Dari 3:00 ke 5:00 ialah 2 jam, ditambah 15 minit menjadi 2 jam 15 minit." },
+                        { q: "John menyertai perkhemahan unit beruniform yang bermula pukul 8:00 pagi Sabtu dan berakhir pukul 12:00 tengah hari Ahad (keesokan harinya). Berapakah jumlah jam keseluruhan?", ans: "28 jam", opts: ["28 jam", "24 jam", "36 jam", "48 jam"], exp: "Sabtu 8:00 pagi ke Ahad 8:00 pagi = 24 jam, ditambah 4 jam (8 pagi ke 12 tgh hari) = 28 jam." },
+                        { q: "Fatimah mula melukis pada pukul 10:30 pagi dan menyiapkannya pada pukul 12:45 tengah hari. Berapakah tempoh masa yang diambil?", ans: "2 jam 15 minit", opts: ["2 jam 15 minit", "2 jam", "2 jam 30 minit", "1 jam 45 minit"], exp: "Dari 10:30 ke 12:30 (2 jam) + 15 minit = 2 jam 15 minit." },
+                        { q: "Cikgu Amin memulakan mesyuarat pada pukul 2:30 petang selama 1 jam 45 minit. Pukul berapakah mesyuarat itu bersurai?", ans: "4:15 petang", opts: ["4:15 petang", "4:00 petang", "4:30 petang", "3:45 petang"], exp: "2:30 + 1 jam = 3:30, ditambah 45 minit menjadi 4:15 petang." },
+                        { q: "Mei Ling tidur malam pada pukul 10:00 malam dan bangun pada pukul 6:00 pagi. Berapakah jumlah masa tidur Mei Ling?", ans: "8 jam", opts: ["8 jam", "9 jam", "7 jam", "8 jam 30 minit"], exp: "2 jam (10 mlm ke 12 tgh mlm) + 6 jam (12 tgh mlm ke 6 pg) = 8 jam." },
+                        { q: "Sebuah bas ekspres bertolak pada pukul 9:00 pagi dan tiba di destinasi pada pukul 1:30 petang. Berapakah tempoh perjalanan bas tersebut?", ans: "4 jam 30 minit", opts: ["4 jam 30 minit", "4 jam", "5 jam", "3 jam 30 minit"], exp: "Dari 9:00 pagi ke 1:00 petang ialah 4 jam, ditambah 30 minit menjadi 4 jam 30 minit." },
+                        { q: "Azman membuat latihan Matematik dari pukul 4:00 petang hingga 6:15 petang. Berapakah tempoh masa yang digunakan?", ans: "2 jam 15 minit", opts: ["2 jam 15 minit", "2 jam", "2 jam 30 minit", "1 jam 45 minit"], exp: "Dari 4:00 ke 6:00 ialah 2 jam, ditambah 15 minit = 2 jam 15 minit." },
+                        { q: "Keluarga Siti memulakan perjalanan balik kampung pada pukul 7:00 pagi dan sampai pada pukul 10:15 pagi. Berapakah masa perjalanan?", ans: "3 jam 15 minit", opts: ["3 jam 15 minit", "3 jam", "3 jam 30 minit", "4 jam"], exp: "Dari 7:00 pagi ke 10:00 pagi (3 jam) + 15 minit = 3 jam 15 minit." },
+                        { q: "Zulkifli mula menyusun buku di perpustakaan pada pukul 11:00 pagi dan siap pada pukul 1:15 petang. Berapakah tempoh masa?", ans: "2 jam 15 minit", opts: ["2 jam 15 minit", "2 jam", "2 jam 30 minit", "1 jam 45 minit"], exp: "Dari 11:00 pagi ke 1:00 petang (2 jam) + 15 minit = 2 jam 15 minit." },
+                        { q: "Ahmad tidur malam pada pukul 9:30 malam dan bangun pada pukul 5:30 pagi. Berapakah jumlah jam tidur Ahmad?", ans: "8 jam", opts: ["8 jam", "7 jam", "9 jam", "8 jam 30 minit"], exp: "2 jam 30 minit (9:30 mlm ke 12 mlm) + 5 jam 30 minit (12 mlm ke 5:30 pg) = 8 jam." },
+                        { q: "Rani mula memasak pada pukul 5:00 petang dan selesai menghidang pada pukul 6:45 petang. Berapakah tempoh masa tersebut?", ans: "1 jam 45 minit", opts: ["1 jam 45 minit", "1 jam 30 minit", "2 jam", "1 jam 15 minit"], exp: "Dari 5:00 ke 6:00 (1 jam) + 45 minit = 1 jam 45 minit." },
+                        { q: "John menyertai kuiz sains yang bermula pada pukul 10:15 pagi dan tamat pada pukul 11:45 pagi. Berapakah tempoh kuiz?", ans: "1 jam 30 minit", opts: ["1 jam 30 minit", "1 jam", "2 jam", "1 jam 15 minit"], exp: "Dari 10:15 ke 11:15 (1 jam) + 30 minit = 1 jam 30 minit." },
+                        { q: "Fatimah membaca buku cerita dari pukul 3:15 petang hingga 5:00 petang. Berapakah tempoh membaca?", ans: "1 jam 45 minit", opts: ["1 jam 45 minit", "1 jam 30 minit", "2 jam", "1 jam 15 minit"], exp: "Dari 3:15 ke 4:15 (1 jam) + 45 minit = 1 jam 45 minit." },
+                        { q: "Zul mula membaiki basikal pada pukul 2:00 petang dan siap pada pukul 4:30 petang. Berapakah tempoh masa kerja membaiki?", ans: "2 jam 30 minit", opts: ["2 jam 30 minit", "2 jam", "3 jam", "2 jam 15 minit"], exp: "Dari 2:00 ke 4:00 (2 jam) + 30 minit = 2 jam 30 minit." },
+                        { q: "Kelas renang bermula pada pukul 8:00 pagi dan tamat pada pukul 10:15 pagi. Berapakah tempoh keseluruhan kelas?", ans: "2 jam 15 minit", opts: ["2 jam 15 minit", "2 jam", "2 jam 30 minit", "3 jam"], exp: "Dari 8:00 ke 10:00 (2 jam) + 15 minit = 2 jam 15 minit." }
+                    ]
+                };
+
+                const subQList = uniqueProblemQuestions[lvlId];
+                const selectedData = subQList[(index - 1) % subQList.length];
+
+                qObj.question = selectedData.q;
+                qObj.answer = selectedData.ans;
+                qObj.type = 'objektif';
+                qObj.options = shuffleArray(selectedData.opts);
+                qObj.explanation = selectedData.exp;
+            }
+            return qObj;
+        }
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        let questionBank = generateQuestionBank();
+        let appState = {
+            currentView: 'home',
+            currentUser: null,
+            selectedCategory: null,
+            selectedLevel: null,
+            selectedMode: null,
+            selectedTimeLimit: 30,
+            gameQuestions: [],
+            currentQuestionIndex: 0,
+            score: 0,
+            correctCount: 0,
+            incorrectCount: 0,
+            timer: null,
+            timeLeft: 30
+        };
+
+        function getUsers() {
+            const users = localStorage.getItem('math_kids_users');
+            return users ? JSON.parse(users) : {};
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('math_kids_users', JSON.stringify(users));
+        }
+
+        appState.navigateTo = function(viewName) {
+            this.currentView = viewName;
+            render();
+        };
+
+        function render() {
+            const main = document.getElementById('main-content');
+            const headerInfo = document.getElementById('user-header-info');
+            
+            if (appState.currentUser) {
+                headerInfo.classList.remove('hidden');
+                document.getElementById('current-username-display').innerText = appState.currentUser;
+            } else {
+                headerInfo.classList.add('hidden');
+            }
+
+            switch(appState.currentView) {
+                case 'home':
+                    main.innerHTML = renderHomeView();
+                    break;
+                case 'register':
+                    main.innerHTML = renderRegisterView();
+                    break;
+                case 'login':
+                    main.innerHTML = renderLoginView();
+                    break;
+                case 'dashboard':
+                    main.innerHTML = renderDashboardView();
+                    break;
+                case 'category_select':
+                    main.innerHTML = renderCategorySelectView();
+                    break;
+                case 'level_select':
+                    main.innerHTML = renderLevelSelectView();
+                    break;
+                case 'mode_select':
+                    main.innerHTML = renderModeSelectView();
+                    break;
+                case 'time_select':
+                    main.innerHTML = renderTimeSelectView();
+                    break;
+                case 'game':
+                    main.innerHTML = renderGameView();
+                    initGameTimer();
+                    break;
+                case 'result':
+                    main.innerHTML = renderResultView();
+                    break;
+                case 'leaderboard':
+                    main.innerHTML = renderLeaderboardView();
+                    break;
+                default:
+                    main.innerHTML = renderHomeView();
+            }
+        }
+
+        function renderHomeView() {
+            return `
+                <div class="text-center py-6 sm:py-10 animate-fade-in">
+                    <div class="inline-block bg-white/80 backdrop-blur-md px-6 py-2 rounded-full shadow-md border border-white mb-4">
+                        <span class="text-amber-500 font-bold">📚 MASA DAN WAKTU – TAHUN 2 KPM</span>
+                    </div>
+                    <h2 class="kid-font text-4xl sm:text-6xl font-bold text-blue-600 mb-3 drop-shadow-sm">
+                        🎮 MATH KIDS <span class="text-pink-500">✨ EDU KIDZ</span>
+                    </h2>
+                    <p class="text-slate-600 text-sm sm:text-lg max-w-xl mx-auto mb-8 font-medium">
+                        Aplikasi pembelajaran interaktif menyeronokkan untuk menguasai kemahiran jam, minit, dan waktu dengan ceria!
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto px-4">
+                        <button onclick="checkAuthAndProceed('category_select')" class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-4 px-6 rounded-3xl shadow-xl transform transition hover:scale-105 flex items-center justify-center space-x-3 text-lg">
+                            <span class="text-2xl">▶️</span>
+                            <span>MULA BERMAIN</span>
+                        </button>
+                        
+                        ${appState.currentUser ? `
+                            <button onclick="appState.navigateTo('dashboard')" class="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold py-4 px-6 rounded-3xl shadow-xl transform transition hover:scale-105 flex items-center justify-center space-x-3 text-lg">
+                                <span class="text-2xl">📊</span>
+                                <span>PROGRESS SAYA</span>
+                            </button>
+                        ` : `
+                            <button onclick="appState.navigateTo('register')" class="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-4 px-6 rounded-3xl shadow-xl transform transition hover:scale-105 flex items-center justify-center space-x-3 text-lg">
+                                <span class="text-2xl">👤</span>
+                                <span>DAFTAR AKAUN</span>
+                            </button>
+                        `}
+
+                        ${!appState.currentUser ? `
+                            <button onclick="appState.navigateTo('login')" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-4 px-6 rounded-3xl shadow-xl transform transition hover:scale-105 flex items-center justify-center space-x-3 text-lg">
+                                <span class="text-2xl">🔐</span>
+                                <span>LOGIN AKAUN</span>
+                            </button>
+                        ` : ''}
+
+                        <button onclick="appState.navigateTo('leaderboard')" class="bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white font-bold py-4 px-6 rounded-3xl shadow-xl transform transition hover:scale-105 flex items-center justify-center space-x-3 text-lg sm:col-span-2 md:col-span-1">
+                            <span class="text-2xl">🏆</span>
+                            <span>LEADERBOARD</span>
+                        </button>
+                    </div>
+
+                    <div class="mt-12 flex justify-center space-x-6 text-3xl">
+                        <span class="floating" style="animation-delay: 0s;">⏰</span>
+                        <span class="floating" style="animation-delay: 0.5s;">⭐</span>
+                        <span class="floating" style="animation-delay: 1s;">🕐</span>
+                        <span class="floating" style="animation-delay: 1.5s;">🏆</span>
+                        <span class="floating" style="animation-delay: 2s;">🎯</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRegisterView() {
+            return `
+                <div class="max-w-md mx-auto bg-white/90 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-white">
+                    <div class="text-center mb-6">
+                        <div class="text-4xl mb-2">👤</div>
+                        <h3 class="kid-font text-2xl font-bold text-slate-800">Daftar Akaun Baharu</h3>
+                        <p class="text-xs text-slate-500">Cipta profil pemain untuk simpan markah & progress!</p>
+                    </div>
+                    <form onsubmit="handleRegister(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Nama Pengguna</label>
+                            <input type="text" id="reg-username" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-medium" placeholder="Cth: Iman_Tahun2">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Kata Laluan</label>
+                            <input type="password" id="reg-password" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm font-medium" placeholder="Cth: 1234">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition transform hover:scale-105">
+                            ✨ Daftar Sekarang
+                        </button>
+                    </form>
+                    <div class="text-center mt-6">
+                        <button onclick="appState.navigateTo('home')" class="text-xs text-slate-500 hover:text-blue-600 font-bold">
+                            ⬅️ Kembali ke Menu Utama
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLoginView() {
+            return `
+                <div class="max-w-md mx-auto bg-white/90 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-white">
+                    <div class="text-center mb-6">
+                        <div class="text-4xl mb-2">🔐</div>
+                        <h3 class="kid-font text-2xl font-bold text-slate-800">Log Masuk Pemain</h3>
+                        <p class="text-xs text-slate-500">Masukkan nama pengguna anda untuk mula bermain!</p>
+                    </div>
+                    <form onsubmit="handleLogin(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Nama Pengguna</label>
+                            <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm font-medium" placeholder="Nama pengguna anda">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Kata Laluan</label>
+                            <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm font-medium" placeholder="Kata laluan">
+                        </div>
+                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-2xl shadow-lg transition transform hover:scale-105">
+                            🚀 Log Masuk
+                        </button>
+                    </form>
+                    <div class="text-center mt-6 flex justify-between items-center text-xs">
+                        <button onclick="appState.navigateTo('register')" class="text-blue-600 font-bold hover:underline">
+                            Daftar akaun baharu?
+                        </button>
+                        <button onclick="appState.navigateTo('home')" class="text-slate-500 hover:text-slate-700 font-bold">
+                            ⬅️ Menu Utama
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDashboardView() {
+            const users = getUsers();
+            const user = users[appState.currentUser] || {
+                totalScore: 0, totalGames: 0, totalQuestions: 0, correctAnswers: 0, incorrectAnswers: 0, achievements: [], categoryProgress: {}
+            };
+            
+            const accuracy = user.totalQuestions > 0 ? Math.round((user.correctAnswers / user.totalQuestions) * 100) : 0;
+
+            return `
+                <div class="max-w-3xl mx-auto bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-white">
+                    <div class="flex flex-col sm:flex-row justify-between items-center mb-6 border-b pb-4">
+                        <div class="flex items-center space-x-3 mb-3 sm:mb-0">
+                            <div class="bg-blue-100 text-blue-600 w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-inner">👤</div>
+                            <div>
+                                <h3 class="kid-font text-2xl font-bold text-slate-800">${appState.currentUser}</h3>
+                                <p class="text-xs text-slate-500 font-medium">Profil Murid Tahun 2 • Matematik Masa dan Waktu</p>
+                            </div>
+                        </div>
+                        <button onclick="appState.navigateTo('category_select')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-5 py-2.5 rounded-2xl shadow-md transition text-sm">
+                            ▶️ Main Sekarang
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100 text-center">
+                            <p class="text-xs text-blue-600 font-bold mb-1">⭐ Skor Keseluruhan</p>
+                            <p class="text-2xl kid-font font-bold text-blue-700">${user.totalScore}</p>
+                        </div>
+                        <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-center">
+                            <p class="text-xs text-emerald-600 font-bold mb-1">🎮 Jumlah Permainan</p>
+                            <p class="text-2xl kid-font font-bold text-emerald-700">${user.totalGames}</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100 text-center">
+                            <p class="text-xs text-purple-600 font-bold mb-1">✅ Jawapan Betul</p>
+                            <p class="text-2xl kid-font font-bold text-purple-700">${user.correctAnswers} / ${user.totalQuestions}</p>
+                        </div>
+                        <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100 text-center">
+                            <p class="text-xs text-amber-600 font-bold mb-1">📊 Ketepatan</p>
+                            <p class="text-2xl kid-font font-bold text-amber-700">${accuracy}%</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 mb-6">
+                        <h4 class="kid-font font-bold text-lg text-slate-700 mb-3">📚 Penguasaan Subtopik Masa & Waktu</h4>
+                        <div class="space-y-3">
+                            ${categories.map(cat => {
+                                const prog = (user.categoryProgress && user.categoryProgress[cat.id]) || { answered: 0, correct: 0 };
+                                const pct = prog.answered > 0 ? Math.round((prog.correct / prog.answered) * 100) : 0;
+                                const stars = Math.min(5, Math.floor(pct / 20) + (pct > 0 ? 1 : 0));
+                                return `
+                                    <div>
+                                        <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                                            <span>${cat.icon} ${cat.title}</span>
+                                            <span>${'⭐'.repeat(stars)}${'☆'.repeat(5-stars)} (${pct}%)</span>
+                                        </div>
+                                        <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                                            <div class="bg-gradient-to-r from-blue-500 to-indigo-500 h-3 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <button onclick="appState.navigateTo('leaderboard')" class="text-purple-600 font-bold text-xs hover:underline flex items-center space-x-1">
+                            <span>🏆 Lihat Leaderboard Keseluruhan</span>
+                        </button>
+                        <button onclick="appState.navigateTo('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition">
+                            ⬅️ Menu Utama
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCategorySelectView() {
+            return `
+                <div class="max-w-3xl mx-auto">
+                    <div class="text-center mb-6">
+                        <span class="bg-blue-100 text-blue-700 font-bold text-xs px-3 py-1 rounded-full">LANGKAH 1 DARI 4</span>
+                        <h3 class="kid-font text-3xl font-bold text-slate-800 mt-2">Pilih Kategori Permainan</h3>
+                        <p class="text-slate-600 text-xs sm:text-sm">Pilih topik Masa dan Waktu Tahun 2 yang ingin anda terokai.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        ${categories.map(cat => `
+                            <div onclick="selectCategory(${cat.id})" class="bg-white/90 hover:bg-blue-50 hover:border-blue-400 border-2 border-white rounded-3xl p-5 shadow-lg cursor-pointer transition transform hover:scale-105 flex items-start space-x-4">
+                                <div class="text-4xl bg-blue-100 p-3 rounded-2xl shadow-inner">${cat.icon}</div>
+                                <div>
+                                    <h4 class="kid-font font-bold text-lg text-slate-800 mb-1">${cat.title}</h4>
+                                    <p class="text-xs text-slate-500 leading-relaxed">${cat.desc}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="text-center">
+                        <button onclick="appState.navigateTo('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 rounded-2xl text-xs font-bold transition">
+                            ⬅️ Kembali ke Menu Utama
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLevelSelectView() {
+            return `
+                <div class="max-w-2xl mx-auto text-center">
+                    <span class="bg-amber-100 text-amber-700 font-bold text-xs px-3 py-1 rounded-full">LANGKAH 2 DARI 4</span>
+                    <h3 class="kid-font text-3xl font-bold text-slate-800 mt-2 mb-2">Pilih Tahap Kesukaran</h3>
+                    <p class="text-slate-600 text-xs sm:text-sm mb-6">Pilih tahap cabaran soalan untuk menguji minda anda.</p>
+
+                    <div class="space-y-4 mb-6">
+                        ${levels.map(lvl => `
+                            <div onclick="selectLevel('${lvl.id}')" class="bg-white/90 hover:bg-amber-50 hover:border-amber-400 border-2 border-white rounded-3xl p-5 shadow-lg cursor-pointer transition transform hover:scale-105 flex items-center justify-between">
+                                <div class="text-left">
+                                    <h4 class="kid-font font-bold text-xl text-slate-800">${lvl.title}</h4>
+                                    <p class="text-xs text-slate-500">${lvl.desc}</p>
+                                </div>
+                                <div class="text-2xl">👉</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <button onclick="appState.navigateTo('category_select')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 rounded-2xl text-xs font-bold transition">
+                        ⬅️ Kembali Pilih Kategori
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderModeSelectView() {
+            return `
+                <div class="max-w-2xl mx-auto text-center">
+                    <span class="bg-emerald-100 text-emerald-700 font-bold text-xs px-3 py-1 rounded-full">LANGKAH 3 DARI 4</span>
+                    <h3 class="kid-font text-3xl font-bold text-slate-800 mt-2 mb-2">Pilih Bentuk Permainan</h3>
+                    <p class="text-slate-600 text-xs sm:text-sm mb-6">Bagaimanakah anda mahu menjawab soalan?</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        ${gameModes.map(m => `
+                            <div onclick="selectMode('${m.id}')" class="bg-white/90 hover:bg-emerald-50 hover:border-emerald-400 border-2 border-white rounded-3xl p-5 shadow-lg cursor-pointer transition transform hover:scale-105 text-left">
+                                <h4 class="kid-font font-bold text-lg text-slate-800 mb-1">${m.title}</h4>
+                                <p class="text-xs text-slate-500">${m.desc}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <button onclick="appState.navigateTo('level_select')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 rounded-2xl text-xs font-bold transition">
+                        ⬅️ Kembali Pilih Tahap
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderTimeSelectView() {
+            return `
+                <div class="max-w-xl mx-auto text-center">
+                    <span class="bg-purple-100 text-purple-700 font-bold text-xs px-3 py-1 rounded-full">LANGKAH 4 DARI 4</span>
+                    <h3 class="kid-font text-3xl font-bold text-slate-800 mt-2 mb-2">Pilih Masa Menjawab</h3>
+                    <p class="text-slate-600 text-xs sm:text-sm mb-6">Tetapkan masa countdown untuk setiap soalan.</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                        ${timeLimits.map(t => `
+                            <div onclick="startGameWithTime(${t.secs})" class="bg-white/90 hover:bg-purple-50 hover:border-purple-400 border-2 border-white rounded-3xl p-6 shadow-lg cursor-pointer transition transform hover:scale-105 text-center">
+                                <div class="text-3xl mb-2">${t.title.split(' ')[0]}</div>
+                                <h4 class="kid-font font-bold text-base text-slate-800">${t.title.split(' ').slice(1).join(' ')}</h4>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <button onclick="appState.navigateTo('mode_select')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 rounded-2xl text-xs font-bold transition">
+                        ⬅️ Kembali Pilih Bentuk Game
+                    </button>
+                </div>
+            `;
+        }
+
+        function selectCategory(catId) {
+            appState.selectedCategory = catId;
+            appState.navigateTo('level_select');
+        }
+
+        function selectLevel(lvlId) {
+            appState.selectedLevel = lvlId;
+            appState.navigateTo('mode_select');
+        }
+
+        function selectMode(modeId) {
+            appState.selectedMode = modeId;
+            appState.navigateTo('time_select');
+        }
+
+        function startGameWithTime(secs) {
+            appState.selectedTimeLimit = secs;
+            let pool = [...questionBank[appState.selectedCategory][appState.selectedLevel]];
+            appState.gameQuestions = shuffleArray(pool).slice(0, 20);
+            appState.currentQuestionIndex = 0;
+            appState.score = 0;
+            appState.correctCount = 0;
+            appState.incorrectCount = 0;
+            appState.navigateTo('game');
+        }
+
+        function renderGameView() {
+            const q = appState.gameQuestions[appState.currentQuestionIndex];
+            if (!q) {
+                finishGame();
+                return '';
+            }
+
+            return `
+                <div class="max-w-2xl mx-auto bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-white">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="bg-blue-100 text-blue-700 font-bold text-xs px-3 py-1 rounded-full">
+                            📝 SOALAN: ${appState.currentQuestionIndex + 1} / 20
+                        </span>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-amber-100 text-amber-700 font-bold text-xs px-3 py-1 rounded-full">
+                                ⭐ SKOR: ${appState.score}
+                            </span>
+                            ${appState.selectedTimeLimit > 0 ? `
+                                <span id="timer-badge" class="bg-rose-100 text-rose-700 font-bold text-xs px-3 py-1 rounded-full">
+                                    ⏱️ ${appState.timeLeft}s
+                                </span>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Question Prompt & Optional Analog Clock Visual (only shown if clockTime exists) -->
+                    <div class="text-center mb-6">
+                        ${q.clockTime ? renderAnalogClockSVG(q.clockTime.hour, q.clockTime.minute) : ''}
+                        <h4 class="kid-font text-lg sm:text-xl font-bold text-slate-800 mt-4 px-2 whitespace-pre-line">
+                            "${q.question}"
+                        </h4>
+                    </div>
+
+                    <!-- Options Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6" id="options-grid">
+                        ${q.options.map((opt, idx) => `
+                            <button onclick="submitAnswer('${escapeQuotes(opt)}')" class="option-btn bg-slate-50 hover:bg-blue-50 hover:border-blue-500 border-2 border-slate-200 text-slate-700 font-bold py-3.5 px-4 rounded-2xl shadow-sm transition transform hover:scale-102 text-sm sm:text-base text-left flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">${String.fromCharCode(65 + idx)}</span>
+                                <span class="flex-1">${opt}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div class="text-center">
+                        <button onclick="appState.navigateTo('category_select')" class="text-slate-400 hover:text-rose-500 font-bold text-xs">
+                            ❌ Tamatkan Sesi Permainan
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAnalogClockSVG(hour, minute) {
+            const hourDeg = (hour % 12) * 30 + (minute / 60) * 30;
+            const minDeg = minute * 6;
+
+            return `
+                <div class="analog-clock-container my-4">
+                    <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md">
+                        <circle cx="100" cy="100" r="95" fill="#ffffff" stroke="#3b82f6" stroke-width="8" />
+                        <circle cx="100" cy="100" r="88" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2" />
+                        
+                        ${[...Array(12)].map((_, i) => {
+                            const angle = (i + 1) * 30 * (Math.PI / 180);
+                            const x1 = 100 + 75 * Math.sin(angle);
+                            const y1 = 100 - 75 * Math.cos(angle);
+                            const x2 = 100 + 84 * Math.sin(angle);
+                            const y2 = 100 - 84 * Math.cos(angle);
+                            const tx = 100 + 62 * Math.sin(angle);
+                            const ty = 100 - 62 * Math.cos(angle);
+                            const num = i + 1;
+                            return `
+                                <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#334155" stroke-width="3" stroke-linecap="round" />
+                                <text x="${tx}" y="${ty + 5}" font-family="Fredoka" font-size="14" font-weight="bold" fill="#1e293b" text-anchor="middle">${num}</text>
+                            `;
+                        }).join('')}
+
+                        ${[...Array(60)].map((_, i) => {
+                            if (i % 5 === 0) return '';
+                            const angle = i * 6 * (Math.PI / 180);
+                            const x1 = 100 + 80 * Math.sin(angle);
+                            const y1 = 100 - 80 * Math.sin(angle);
+                            const x2 = 100 + 84 * Math.sin(angle);
+                            const y2 = 100 - 84 * Math.sin(angle);
+                            return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#cbd5e1" stroke-width="1.5" />`;
+                        }).join('')}
+
+                        <line x1="100" y1="100" x2="${100 + 45 * Math.sin(hourDeg * Math.PI / 180)}" y2="${100 - 45 * Math.cos(hourDeg * Math.PI / 180)}" stroke="#1e293b" stroke-width="6" stroke-linecap="round" />
+                        <line x1="100" y1="100" x2="${100 + 65 * Math.sin(minDeg * Math.PI / 180)}" y2="${100 - 65 * Math.cos(minDeg * Math.PI / 180)}" stroke="#ef4444" stroke-width="4" stroke-linecap="round" />
+                        <circle cx="100" cy="100" r="6" fill="#3b82f6" />
+                    </svg>
+                </div>
+            `;
+        }
+
+        function escapeQuotes(str) {
+            return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        function initGameTimer() {
+            if (appState.selectedTimeLimit <= 0) return;
+            appState.timeLeft = appState.selectedTimeLimit;
+            if (appState.timer) clearInterval(appState.timer);
+
+            appState.timer = setInterval(() => {
+                appState.timeLeft--;
+                const badge = document.getElementById('timer-badge');
+                if (badge) badge.innerText = `⏱️ ${appState.timeLeft}s`;
+
+                if (appState.timeLeft <= 0) {
+                    clearInterval(appState.timer);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function handleTimeOut() {
+            const q = appState.gameQuestions[appState.currentQuestionIndex];
+            appState.incorrectCount++;
+            showModal("⏰ Masa Tamat!", `Maaf, masa telah tamat.\nJawapan yang betul ialah: ${q.answer}\n\n${q.explanation}`, false, nextQuestion);
+        }
+
+        function submitAnswer(selectedOpt) {
+            if (appState.timer) clearInterval(appState.timer);
+            const q = appState.gameQuestions[appState.currentQuestionIndex];
+            
+            const isCorrect = String(selectedOpt).trim().toLowerCase() === String(q.answer).trim().toLowerCase();
+
+            if (isCorrect) {
+                appState.score += 5;
+                appState.correctCount++;
+                showModal("🎉 Hebat! Betul!", `Syabas! Jawapan anda tepat.\n\n${q.explanation}`, true, nextQuestion);
+            } else {
+                appState.incorrectCount++;
+                showModal("❌ Jawapan Belum Tepat", `Jawapan yang betul ialah: ${q.answer}\n\n${q.explanation}`, false, nextQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            appState.currentQuestionIndex++;
+            if (appState.currentQuestionIndex >= appState.gameQuestions.length || appState.currentQuestionIndex >= 20) {
+                finishGame();
+            } else {
+                render();
+            }
+        }
+
+        function finishGame() {
+            if (appState.timer) clearInterval(appState.timer);
+            
+            if (appState.currentUser) {
+                let users = getUsers();
+                if (users[appState.currentUser]) {
+                    let u = users[appState.currentUser];
+                    u.totalScore += appState.score;
+                    u.totalGames += 1;
+                    u.totalQuestions += (appState.correctCount + appState.incorrectCount);
+                    u.correctAnswers += appState.correctCount;
+                    u.incorrectAnswers += appState.incorrectCount;
+
+                    if (!u.categoryProgress) u.categoryProgress = {};
+                    let catId = appState.selectedCategory;
+                    if (!u.categoryProgress[catId]) u.categoryProgress[catId] = { answered: 0, correct: 0 };
+                    u.categoryProgress[catId].answered += (appState.correctCount + appState.incorrectCount);
+                    u.categoryProgress[catId].correct += appState.correctCount;
+
+                    users[appState.currentUser] = u;
+                    saveUsers(users);
+                }
+            }
+
+            appState.navigateTo('result');
+        }
+
+        function renderResultView() {
+            const totalQ = appState.correctCount + appState.incorrectCount;
+            const accuracy = totalQ > 0 ? Math.round((appState.correctCount / totalQ) * 100) : 0;
+            let maxPossible = totalQ * 5;
+            if (maxPossible === 0) maxPossible = 100;
+
+            let msg = "💪 Jangan berputus asa! Cuba lagi!";
+            let icon = "💪";
+            if (accuracy >= 90) {
+                msg = "🏆 Hebat! Anda memang juara Matematik!";
+                icon = "🏆";
+            } else if (accuracy >= 75) {
+                msg = "🌟 Syabas! Prestasi yang sangat baik!";
+                icon = "🌟";
+            } else if (accuracy >= 50) {
+                msg = "👍 Bagus! Teruskan berlatih!";
+                icon = "👍";
+            }
+
+            return `
+                <div class="max-w-xl mx-auto bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-white text-center">
+                    <div class="text-6xl mb-2">${icon}</div>
+                    <h3 class="kid-font text-3xl font-bold text-slate-800 mb-1">🎉 TAMAT PERMAINAN!</h3>
+                    <p class="text-slate-500 text-xs sm:text-sm mb-6">${msg}</p>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                        <div class="bg-amber-50 p-3 rounded-2xl border border-amber-100">
+                            <p class="text-xs text-amber-600 font-bold mb-1">⭐ SKOR</p>
+                            <p class="text-xl kid-font font-bold text-amber-700">${appState.score}</p>
+                        </div>
+                        <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-100">
+                            <p class="text-xs text-emerald-600 font-bold mb-1">✅ BETUL</p>
+                            <p class="text-xl kid-font font-bold text-emerald-700">${appState.correctCount}</p>
+                        </div>
+                        <div class="bg-rose-50 p-3 rounded-2xl border border-rose-100">
+                            <p class="text-xs text-rose-600 font-bold mb-1">❌ SALAH</p>
+                            <p class="text-xl kid-font font-bold text-rose-700">${appState.incorrectCount}</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-2xl border border-blue-100">
+                            <p class="text-xs text-blue-600 font-bold mb-1">📊 KETEPATAN</p>
+                            <p class="text-xl kid-font font-bold text-blue-700">${accuracy}%</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button onclick="startGameWithTime(appState.selectedTimeLimit)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-2xl shadow-md transition text-sm">
+                            🔄 MAIN LAGI
+                        </button>
+                        <button onclick="appState.navigateTo('category_select')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-2xl shadow-md transition text-sm">
+                            📚 PILIH KATEGORI
+                        </button>
+                        <button onclick="appState.navigateTo('dashboard')" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-4 rounded-2xl shadow-md transition text-sm">
+                            📊 LIHAT PROGRESS
+                        </button>
+                        <button onclick="appState.navigateTo('leaderboard')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 rounded-2xl shadow-md transition text-sm">
+                            🏆 LEADERBOARD
+                        </button>
+                    </div>
+
+                    <div class="mt-6">
+                        <button onclick="appState.navigateTo('home')" class="text-slate-500 hover:text-slate-700 font-bold text-xs">
+                            🏠 Kembali ke Menu Utama
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLeaderboardView() {
+            const users = getUsers();
+            const sortedUsers = Object.keys(users).map(name => ({
+                name, ...users[name]
+            })).sort((a, b) => b.totalScore - a.totalScore);
+
+            return `
+                <div class="max-w-2xl mx-auto bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-white">
+                    <div class="text-center mb-6">
+                        <div class="text-4xl mb-2">🏆</div>
+                        <h3 class="kid-font text-3xl font-bold text-slate-800">Leaderboard Pemain</h3>
+                        <p class="text-xs text-slate-500">Kedudukan skor tertinggi semua pemain Math Kids</p>
+                    </div>
+
+                    <div class="space-y-3 mb-6 max-h-96 overflow-y-auto pr-1">
+                        ${sortedUsers.length === 0 ? `
+                            <p class="text-center text-slate-400 text-sm py-8">Belum ada pemain berdaftar. Daftar akaun sekarang!</p>
+                        ` : sortedUsers.map((u, index) => {
+                            let badge = `#${index + 1}`;
+                            let badgeBg = 'bg-slate-100 text-slate-600';
+                            if (index === 0) { badge = '🥇 1'; badgeBg = 'bg-amber-100 text-amber-700 border border-amber-300'; }
+                            else if (index === 1) { badge = '🥈 2'; badgeBg = 'bg-slate-200 text-slate-700 border border-slate-300'; }
+                            else if (index === 2) { badge = '🥉 3'; badgeBg = 'bg-orange-100 text-orange-700 border border-orange-300'; }
+
+                            const acc = u.totalQuestions > 0 ? Math.round((u.correctAnswers / u.totalQuestions) * 100) : 0;
+
+                            return `
+                                <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="w-10 h-10 rounded-xl ${badgeBg} flex items-center justify-center font-bold text-sm">${badge}</span>
+                                        <div>
+                                            <h4 class="kid-font font-bold text-base text-slate-800">${u.name}</h4>
+                                            <p class="text-xs text-slate-500">${u.totalGames} permainan • Ketepatan: ${acc}%</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="kid-font font-bold text-lg text-blue-600">${u.totalScore}</span>
+                                        <span class="text-xs text-slate-400 block">markah</span>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <div class="text-center">
+                        <button onclick="appState.navigateTo('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 rounded-2xl text-xs font-bold transition">
+                            ⬅️ Menu Utama
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const user = document.getElementById('reg-username').value.trim();
+            const pass = document.getElementById('reg-password').value.trim();
+            
+            let users = getUsers();
+            if (users[user]) {
+                showModal("⚠️ Ralat Pendaftaran", "Nama pengguna ini telah wujud. Sila guna nama lain atau log masuk.", false);
+                return;
+            }
+
+            users[user] = {
+                password: pass,
+                totalScore: 0,
+                totalGames: 0,
+                totalQuestions: 0,
+                correctAnswers: 0,
+                incorrectAnswers: 0,
+                categoryProgress: {}
+            };
+            saveUsers(users);
+
+            appState.currentUser = user;
+            showModal("🎉 Pendaftaran Berjaya!", `Selamat datang, ${user}! Akaun anda telah berjaya dicipta.`, true, () => {
+                closeModal();
+                appState.navigateTo('dashboard');
+            });
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+
+            let users = getUsers();
+            if (!users[user] || users[user].password !== pass) {
+                showModal("❌ Log Masuk Gagal", "Nama pengguna atau kata laluan tidak sah. Sila cuba lagi.", false);
+                return;
+            }
+
+            appState.currentUser = user;
+            showModal("🚀 Log Masuk Berjaya", `Selamat kembali, ${user}! Jom teruskan belajar.`, true, () => {
+                closeModal();
+                appState.navigateTo('dashboard');
+            });
+        }
+
+        function logoutUser() {
+            appState.currentUser = null;
+            showModal("🚪 Log Keluar", "Anda telah berjaya log keluar daripada akaun.", true, () => {
+                closeModal();
+                appState.navigateTo('home');
+            });
+        }
+
+        function checkAuthAndProceed(targetView) {
+            if (!appState.currentUser) {
+                showModal("👤 Log Masuk Diperlukan", "Sila log masuk atau daftar akaun dahulu untuk merekodkan skor dan progress anda!", false, () => {
+                    closeModal();
+                    appState.navigateTo('login');
+                });
+            } else {
+                appState.navigateTo(targetView);
+            }
+        }
+
+        let modalCallback = null;
+        function showModal(title, message, isSuccess = true, callback = null) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('modal-icon').innerText = isSuccess ? '🎉' : '⚠️';
+            modalCallback = callback;
+
+            const box = document.getElementById('modal-box');
+            const container = document.getElementById('modal-container');
+            container.classList.remove('hidden');
+            setTimeout(() => {
+                box.classList.remove('scale-95', 'opacity-0');
+                box.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const box = document.getElementById('modal-box');
+            const container = document.getElementById('modal-container');
+            box.classList.remove('scale-100', 'opacity-100');
+            box.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                container.classList.add('hidden');
+                if (modalCallback) {
+                    let cb = modalCallback;
+                    modalCallback = null;
+                    cb();
+                }
+            }, 200);
+        }
+
+        window.onload = function() {
+            render();
+        };
+    </script>
+</body>
+</html>

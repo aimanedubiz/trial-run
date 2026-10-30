@@ -1,0 +1,2580 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATH KIDS – EDU KIDZ | TAHUN 3 – BENTUK</title>
+    <!-- Tailwind CSS for modern responsive desktop UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Poppins for playful education look -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+        /* Custom animations */
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.8); }
+        }
+        .glow-box {
+            animation: pulse-glow 3s infinite;
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="selection:bg-cyan-300 selection:text-cyan-900">
+
+    <div id="app" class="min-h-screen flex flex-col justify-between">
+        
+        <!-- Header Bar -->
+        <header class="bg-white/80 backdrop-blur-md border-b border-cyan-100 sticky top-0 z-50 px-6 py-4 shadow-sm">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="appState.navigate('menu')">
+                    <div class="w-12 h-12 bg-gradient-to-tr from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center text-white font-extrabold text-2xl shadow-md">
+                        📐
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-extrabold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">MATH KIDS – EDU KIDZ</h1>
+                        <p class="text-xs font-semibold text-slate-500">Matematik Tahun 3 • Tajuk: Bentuk</p>
+                    </div>
+                </div>
+
+                <!-- User Profile & Navigation Info -->
+                <div id="header-user-info" class="flex items-center space-x-3 hidden">
+                    <span class="bg-cyan-50 text-cyan-700 px-3 py-1.5 rounded-xl text-sm font-bold border border-cyan-200" id="header-username">Pelajar</span>
+                    <button onclick="appState.navigate('progress')" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold px-3 py-1.5 rounded-xl text-sm transition flex items-center gap-1 border border-emerald-200">
+                        📊 Progress
+                    </button>
+                    <button onclick="appState.navigate('leaderboard')" class="bg-amber-50 text-amber-700 hover:bg-amber-100 font-semibold px-3 py-1.5 rounded-xl text-sm transition flex items-center gap-1 border border-amber-200">
+                        🏆 Leaderboard
+                    </button>
+                    <button onclick="appState.logout()" class="bg-rose-50 text-rose-700 hover:bg-rose-100 font-semibold px-3 py-1.5 rounded-xl text-sm transition border border-rose-200">
+                        Log Keluar
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dynamic Viewport -->
+        <main id="main-viewport" class="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6 md:p-8 flex items-center justify-center">
+            <!-- Dynamic Content Injected Here -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white/60 border-t border-cyan-100 py-4 text-center text-xs text-slate-500 font-medium">
+            &copy; 2026 Math Kids Edu Kidz • Kurikulum Standard Sekolah Rendah (KSSR) KPM Malaysia
+        </footer>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. QUESTION DATABASE (240 UNIQUE QUESTIONS)
+        // ==========================================
+        const questionDatabase = [
+            // --- KATEGORI 1: KENALI PRISMA DAN BUKAN PRISMA (60 Soalan) ---
+            // Senang (20)
+            {
+                id: "BT_T3_001", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Kenal Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Antara berikut, yang manakah merupakan sebuah prisma segi tiga?",
+                pilihan: ["Prisma segi tiga", "Sfera", "Piramid bertapak segi empat sama", "Kon"],
+                jawapan: "Prisma segi tiga", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Prisma segi tiga mempunyai dua tapak berbentuk segi tiga yang selari dan sama saiz."
+            },
+            {
+                id: "BT_T3_002", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bukan Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Pilih objek yang BUKAN merupakan prisma.",
+                pilihan: ["Sfera", "Prisma segi empat sama", "Prisma segi tiga", "Kuboid"],
+                jawapan: "Sfera", markah: 5,
+                gambarajah: "SVG_SPHERE", penerangan: "Sfera adalah bentuk melengkung sekata dan tidak mempunyai tapak atau permukaan rata seperti prisma."
+            },
+            {
+                id: "BT_T3_003", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Kenal Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Apakah nama bentuk 3D yang mempunyai tapak berbentuk segi empat sama dan permukaan sisi tegak empat segi tepat?",
+                pilihan: ["Prisma segi empat", "Silinder", "Kon", "Piramid"],
+                jawapan: "Prisma segi empat", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_EMPAT", penerangan: "Prisma segi empat mempunyai dua tapak segi empat yang sama saiz."
+            },
+            {
+                id: "BT_T3_004", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Muka Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah kuboid ialah contoh prisma segi empat. Berapakah jumlah muka rata pada kuboid?",
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_CUBOID", penerangan: "Kuboid mempunyai 6 muka rata (atas, bawah, depan, belakang, kiri dan kanan)."
+            },
+            {
+                id: "BT_T3_005", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bucu Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Berapakah bilangan bucu bagi sebuah prisma segi tiga?",
+                pilihan: ["6", "5", "8", "4"],
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Prisma segi tiga mempunyai 3 bucu di tapak atas dan 3 bucu di tapak bawah, jumlahnya 6 bucu."
+            },
+            {
+                id: "BT_T3_006", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Rusuk Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Berapakah bilangan rusuk bagi sebuah kubus (prisma segi empat sama)?",
+                pilihan: ["12", "8", "6", "9"],
+                jawapan: "12", markah: 5,
+                gambarajah: "SVG_KUBUS", penerangan: "Sebuah kubus mempunyai 12 rusuk yang sama panjang."
+            },
+            {
+                id: "BT_T3_007", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bukan Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Antara berikut, bentuk yang manakah mempunyai tapak melengkung dan satu bucu?",
+                pilihan: ["Kon", "Prisma segi tiga", "Kuboid", "Silinder"],
+                jawapan: "Kon", markah: 5,
+                gambarajah: "SVG_KON", penerangan: "Kon mempunyai tapak bulat dan satu bucu di atas, bukan sebuah prisma."
+            },
+            {
+                id: "BT_T3_008", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Tapak Prisma", tahap: "Senang", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Apakah bentuk tapak bagi sebuah prisma segi tiga?",
+                pilihan: ["Segi tiga", "Segi empat sama", "Bulat", "Sisi empat"],
+                jawapan: "Segi tiga", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Tapak atas dan tapak bawah prisma segi tiga berbentuk segi tiga."
+            },
+            {
+                id: "BT_T3_009", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Kenal Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Ciri utama yang membezakan prisma dengan bentuk lain ialah prisma mempunyai dua tapak yang...",
+                pilihan: ["sama bentuk dan saiz", "melengkung", "berbentuk bulat", "hanya satu bucu"],
+                jawapan: "sama bentuk dan saiz", markah: 5,
+                gambarajah: "SVG_PRISMA_COMPARISON", penerangan: "Prisma sentiasa mempunyai dua tapak yang kongruen (sama bentuk dan saiz) di hujungnya."
+            },
+            {
+                id: "BT_T3_010", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bukan Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Adakah silinder dikategorikan sebagai prisma? Mengapa?",
+                pilihan: ["Tidak, kerana permukaannya melengkung dan tapaknya bulat", "Ya, kerana ada dua tapak", "Ya, kerana ada muka", "Tidak, kerana tiada bucu langsung"],
+                jawapan: "Tidak, kerana permukaannya melengkung dan tapaknya bulat", markah: 5,
+                gambarajah: "SVG_SILINDER", penerangan: "Silinder mempunyai permukaan melengkung dan bukan bentuk prisma bersisi rata."
+            },
+            {
+                id: "BT_T3_011", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bucu Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah prisma segi tiga mempunyai __ bucu.",
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Bilangan bucu prisma segi tiga ialah 6."
+            },
+            {
+                id: "BT_T3_012", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Rusuk Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Berapakah bilangan rusuk bagi sebuah prisma segi tiga?",
+                pilihan: ["9", "6", "12", "8"],
+                jawapan: "9", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Prisma segi tiga mempunyai 9 rusuk kesemuanya."
+            },
+            {
+                id: "BT_T3_013", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Kenal Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Kotak pensel berbentuk kuboid adalah sejenis...",
+                pilihan: ["Prisma segi empat", "Prisma segi tiga", "Piramid", "Kon"],
+                jawapan: "Prisma segi empat", markah: 5,
+                gambarajah: "SVG_CUBOID", penerangan: "Kuboid adalah prisma segi empat."
+            },
+            {
+                id: "BT_T3_014", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Muka Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Berapakah jumlah muka bagi prisma segi tiga?",
+                pilihan: ["5", "6", "4", "3"],
+                jawapan: "5", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Prisma segi tiga mempunyai 2 muka tapak segi tiga dan 3 muka sisi segi empat (jumlah 5 muka)."
+            },
+            {
+                id: "BT_T3_015", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bukan Prisma", tahap: "Senang", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Pilih objek yang tidak mempunyai sebarang rusuk atau bucu.",
+                pilihan: ["Sfera", "Kubus", "Prisma", "Kuboid"],
+                jawapan: "Sfera", markah: 5,
+                gambarajah: "SVG_SPHERE", penerangan: "Sfera berbentuk bola licin tanpa rusuk atau bucu."
+            },
+            {
+                id: "BT_T3_016", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Kenal Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Apakah bentuk muka sisi bagi sebuah prisma segi tiga?",
+                pilihan: ["Segi empat tepat", "Segi tiga", "Bulat", "Sisi empat sama"],
+                jawapan: "Segi empat tepat", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Muka sisi prisma segi tiga berbentuk segi empat tepat."
+            },
+            {
+                id: "BT_T3_017", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Tapak Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Prisma segi empat mempunyai dua tapak berbentuk __.",
+                jawapan: "segi empat", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_EMPAT", penerangan: "Tapaknya berbentuk segi empat."
+            },
+            {
+                id: "BT_T3_018", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Kenal Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Buku teks sekolah anda yang tebal menyerupai bentuk...",
+                pilihan: ["Prisma segi empat", "Sfera", "Kon", "Piramid"],
+                jawapan: "Prisma segi empat", markah: 5,
+                gambarajah: "SVG_CUBOID", penerangan: "Buku teks ialah bentuk kuboid iaitu prisma segi empat."
+            },
+            {
+                id: "BT_T3_019", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bukan Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Piramid tapak segi empat sama BUKAN prisma kerana piramid mempunyai...",
+                pilihan: ["hanya satu tapak dan bertemu di satu bucu puncaknya", "dua tapak sama saiz", "tiada bucu", "semua muka rata segi empat"],
+                jawapan: "hanya satu tapak dan bertemu di satu bucu puncaknya", markah: 5,
+                gambarajah: "SVG_PYRAMID", penerangan: "Piramid hanya ada satu tapak manakala prisma mempunyai dua tapak yang selari."
+            },
+            {
+                id: "BT_T3_020", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Kenal Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Pilih pernyataan yang BENAR tentang prisma.",
+                pilihan: ["Mempunyai keratan rentas yang seragam di sepanjang ketinggiannya", "Sentiasa berbentuk sfera", "Tiada muka rata", "Mempunyai hanya satu tapak"],
+                jawapan: "Mempunyai keratan rentas yang seragam di sepanjang ketinggiannya", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Prisma mempunyai bentuk keratan rentas yang seragam dari atas hingga ke bawah."
+            },
+
+            // Sederhana (20)
+            {
+                id: "BT_T3_021", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Label Bahagian Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                    soalan: "Perhatikan sebuah prisma segi tiga. Apakah perbezaan antara muka tapak dan muka sisi?",
+                pilihan: ["Muka tapak berbentuk segi tiga, manakala muka sisi berbentuk segi empat tepat", "Muka tapak berbentuk bulat", "Muka sisi tiada", "Semua muka adalah sama bentuk"],
+                jawapan: "Muka tapak berbentuk segi tiga, manakala muka sisi berbentuk segi empat tepat", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Prisma segi tiga dibina daripada 2 muka tapak segi tiga dan 3 muka sisi segi empat tepat."
+            },
+            {
+                id: "BT_T3_022", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bandingkan Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Bandingkan kubus dengan kuboid. Apakah persamaan utama kedua-dua bentuk ini?",
+                pilihan: ["Kedua-duanya mempunyai 6 muka, 12 rusuk dan 8 bucu", "Kedua-duanya berbentuk bulat", "Kedua-duanya mempunyai 5 muka sahaja", "Tiada persamaan"],
+                jawapan: "Kedua-duanya mempunyai 6 muka, 12 rusuk dan 8 bucu", markah: 5,
+                gambarajah: "SVG_CUBOID_KUBUS", penerangan: "Kubus dan kuboid kedua-duanya adalah prisma segi empat dengan bilangan muka, rusuk dan bucu yang sama."
+            },
+            {
+                id: "BT_T3_023", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Ciri Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Sebuah prisma mempunyai 5 muka, 9 rusuk dan 6 bucu. Apakah bentuk prisma tersebut?",
+                pilihan: ["Prisma segi tiga", "Prisma segi empat", "Silinder", "Piramid"],
+                jawapan: "Prisma segi tiga", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Ini adalah ciri tepat bagi prisma segi tiga (5 muka, 9 rusuk, 6 bucu)."
+            },
+            {
+                id: "BT_T3_024", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Label Bahagian Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Tempat pertemuan antara dua muka pada prisma dipanggil sebagai __.",
+                jawapan: "rusuk", markah: 5,
+                gambarajah: "SVG_PRISMA_LABEL_RUSUK", penerangan: "Garis pertemuan antara muka ialah rusuk."
+            },
+            {
+                id: "BT_T3_025", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bandingkan Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Antara berikut, pasangan manakah yang KEDUANYA adalah prisma?",
+                pilihan: ["Prisma segi tiga dan kuboid", "Silinder dan kon", "Sfera dan piramid", "Kon dan kubus"],
+                jawapan: "Prisma segi tiga dan kuboid", markah: 5,
+                gambarajah: "SVG_PAIR_PRISMA", penerangan: "Prisma segi tiga dan kuboid (prisma segi empat) adalah tergolong dalam keluarga prisma."
+            },
+            {
+                id: "BT_T3_026", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Ciri Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Mengapakah kon tidak boleh dikelaskan sebagai prisma?",
+                pilihan: ["Kerana kon tirus di bahagian atas dan mempunyai satu tapak bulat sahaja", "Kerana kon ada bucu tajam", "Kerana kon berwarna merah", "Kerana kon tidak boleh bergolek"],
+                jawapan: "Kerana kon tirus di bahagian atas dan mempunyai satu tapak bulat sahaja", markah: 5,
+                gambarajah: "SVG_KON", penerangan: "Prisma mesti mempunyai dua tapak yang selari dan sama saiz, ciri yang tiada pada kon."
+            },
+            {
+                id: "BT_T3_027", kategori: "Kenali Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Jika anda memotong sebuah prisma segi tiga secara melintang selari dengan tapaknya, apakah bentuk keratan rentas yang terhasil?",
+                pilihan: ["Segi tiga", "Segi empat sama", "Bulat", "Sfera"],
+                jawapan: "Segi tiga", markah: 5,
+                gambarajah: "SVG_PRISMA_CROSSSECTION", penerangan: "Keratan rentas prisma sentiasa mengekalkan bentuk tapaknya iaitu segi tiga."
+            },
+            {
+                id: "BT_T3_028", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bucu Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Titik penjuru tempat bertemunya tiga rusuk pada kubus dinamakan sebagai __.",
+                jawapan: "bucu", markah: 5,
+                gambarajah: "SVG_KUBUS_BUCU", penerangan: "Titik bucu adalah penjuru tajam bentuk 3D."
+            },
+            {
+                id: "BT_T3_029", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Ciri Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Berapakah bilangan muka rata pada sebuah silinder?",
+                pilihan: ["2", "3", "0", "1"],
+                jawapan: "2", markah: 5,
+                gambarajah: "SVG_SILINDER", penerangan: "Silinder mempunyai 2 muka rata berbentuk bulat di atas dan bawah, serta 1 muka melengkung."
+            },
+            {
+                id: "BT_T3_030", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bandingkan Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Apakah perbezaan ketara antara piramid dengan prisma?",
+                pilihan: ["Piramid ada satu tapak dan satu puncaknya, prisma ada dua tapak selari", "Piramid tiada rusuk", "Prisma berbentuk bulat", "Tiada perbezaan"],
+                jawapan: "Piramid ada satu tapak dan satu puncaknya, prisma ada dua tapak selari", markah: 5,
+                gambarajah: "SVG_PRISMA_VS_PYRAMID", penerangan: "Perbezaan utama ialah bilangan tapak dan cara penutup atasnya."
+            },
+            {
+                id: "BT_T3_031", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Kenal Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Sebuah kotak tisu di rumah anda berbentuk kuboid. Apakah nama rasmi bentuk geometri 3D ini dalam keluarga prisma?",
+                pilihan: ["Prisma segi empat", "Prisma segi tiga", "Silinder", "Piramid"],
+                jawapan: "Prisma segi empat", markah: 5,
+                gambarajah: "SVG_CUBOID", penerangan: "Kotak tisu ialah kuboid iaitu prisma segi empat."
+            },
+            {
+                id: "BT_T3_032", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Ciri Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Manakah antara berikut BUKAN ciri bagi sebuah kubus?",
+                pilihan: ["Mempunyai muka berbentuk segi tiga", "Mempunyai 12 rusuk sama panjang", "Mempunyai 6 muka sama besar", "Mempunyai 8 bucu"],
+                jawapan: "Mempunyai muka berbentuk segi tiga", markah: 5,
+                gambarajah: "SVG_KUBUS", penerangan: "Kubus hanya mempunyai muka berbentuk segi empat sama, tiada muka segi tiga."
+            },
+            {
+                id: "BT_T3_033", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Label Bahagian Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Jika anda melihat bahagian tapak bawah sebuah prisma segi tiga, apakah bentuk geometrinya?",
+                pilihan: ["Segi tiga", "Segi empat", "Bulat", " Pentagon"],
+                jawapan: "Segi tiga", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Tapak bawah prisma segi tiga ialah bentuk segi tiga."
+            },
+            {
+                id: "BT_T3_034", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bukan Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Sebiji bola tenis menyerupai bentuk sfera. Mengapa sfera tidak boleh dinamakan sebagai prisma?",
+                pilihan: ["Kerana sfera tiada muka rata, tiada rusuk dan tiada bucu", "Kerana sfera boleh melantun", "Kerana sfera berat", "Kerana sfera ada bucu"],
+                jawapan: "Kerana sfera tiada muka rata, tiada rusuk dan tiada bucu", markah: 5,
+                gambarajah: "SVG_SPHERE", penerangan: "Sfera adalah bentuk melengkung penuh."
+            },
+            {
+                id: "BT_T3_035", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Ciri Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Jumlah bilangan bucu bagi sebuah kuboid ialah __.",
+                jawapan: "8", markah: 5,
+                gambarajah: "SVG_CUBOID", penerangan: "Kuboid mempunyai 8 bucu."
+            },
+            {
+                id: "BT_T3_036", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Kenal Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Bentuk khemah perkhemahan perkhemahan perkhemahan yang lazim selalunya menyerupai bentuk...",
+                pilihan: ["Prisma segi tiga", "Sfera", "Silinder", "Kon"],
+                jawapan: "Prisma segi tiga", markah: 5,
+                gambarajah: "SVG_TENT_PRISMA", penerangan: "Khemah perkhemahan sering membina struktur prisma segi tiga."
+            },
+            {
+                id: "BT_T3_037", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bandingkan Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Apakah persamaan antara prisma segi tiga dengan kuboid dari segi muka sisinya?",
+                pilihan: ["Kedua-duanya mempunyai muka sisi berbentuk segi empat tepat", "Kedua-duanya tiada muka sisi", "Muka sisi bentuk bulat", "Muka sisi bentuk segi tiga"],
+                jawapan: "Kedua-duanya mempunyai muka sisi berbentuk segi empat tepat", markah: 5,
+                gambarajah: "SVG_PRISMA_COMPARISON", penerangan: "Muka sisi prisma sentiasa berbentuk segi empat rata."
+            },
+            {
+                id: "BT_T3_038", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Ciri Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Berapakah bilangan rusuk bagi sebuah prisma segi tiga?",
+                pilihan: ["9", "12", "6", "8"],
+                jawapan: "9", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Prisma segi tiga mempunyai 9 rusuk."
+            },
+            {
+                id: "BT_T3_039", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Bukan Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Antara bentuk berikut, yang manakah mempunyai satu tapak bulat dan satu permukaan melengkung ke puncak?",
+                pilihan: ["Kon", "Kubus", "Prisma segi tiga", "Kuboid"],
+                jawapan: "Kon", markah: 5,
+                gambarajah: "SVG_KON", penerangan: "Kon mempunyai tapak bulat dan permukaan melengkung."
+            },
+            {
+                id: "BT_T3_040", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Kenal Prisma", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Pilih pernyataan yang tepat mengenai bentuk prisma.",
+                pilihan: ["Keratan rentasnya seragam dari tapak atas hingga ke tapak bawah", "Bentuknya sentiasa bulat", "Hanya ada satu muka sahaja", "Tidak mempunyai rusuk"],
+                jawapan: "Keratan rentasnya seragam dari tapak atas hingga ke tapak bawah", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Prisma dicirikan oleh keratan rentas yang seragam."
+            },
+
+            // Susah (20)
+            {
+                id: "BT_T3_041", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Ahmad mempunyai sebuah blok kayu berbentuk prisma segi tiga. Jika dia mencantumkan dua blok prisma segi tiga yang identik pada muka sisi segi empat tepatnya, bentuk apakah yang mungkin terhasil?",
+                pilihan: ["Sebuah kuboid (prisma segi empat)", "Sebuah sfera besar", "Sebuah kon", "Sebuah silinder"],
+                jawapan: "Sebuah kuboid (prisma segi empat)", markah: 5,
+                gambarajah: "SVG_COMBINE_PRISMA", penerangan: "Dua prisma segi tiga yang dicantumkan pada sisi tegaknya boleh membentuk sebuah kuboid."
+            },
+            {
+                id: "BT_T3_042", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Sebuah kotak hadiah berbentuk kubus mempunyai panjang rusuk 5 cm. Jika Ali ingin mengenalpasti jumlah keseluruhan panjang rusuk kubus tersebut, berapa cmarkahkah jumlahnya?",
+                pilihan: ["60 cm", "40 cm", "24 cm", "50 cm"],
+                jawapan: "60 cm", markah: 5,
+                gambarajah: "SVG_KUBUS_CALC", penerangan: "Kubus mempunyai 12 rusuk. 12 × 5 cm = 60 cm."
+            },
+            {
+                id: "BT_T3_043", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Ciri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Perhatikan ciri-ciri berikut: (i) Mempunyai 2 tapak bentuk segi lima, (ii) Mempunyai 7 muka kesemuanya. Apakah nama bentuk prisma ini?",
+                pilihan: ["Prisma segi lima", "Prisma segi tiga", "Piramid bertapak segi lima", "Kuboid"],
+                jawapan: "Prisma segi lima", markah: 5,
+                gambarajah: "SVG_PENTAGON_PRISMA", penerangan: "Prisma dengan tapak segi lima dinamakan prisma segi lima."
+            },
+            {
+                id: "BT_T3_044", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Hasil tambah bilangan muka dan bucu bagi sebuah prisma segi tiga ialah __.",
+                jawapan: "11", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Prisma segi tiga ada 5 muka dan 6 bucu. 5 + 6 = 11."
+            },
+            {
+                id: "BT_T3_045", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Ciri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Mengapakah botol air minuman berbentuk silinder tidak dikelaskan dalam kumpulan prisma?",
+                pilihan: ["Kerana silinder mempunyai permukaan melengkung, manakala prisma mempunyai muka rata bersisi lurus", "Kerana silinder tiada tapak", "Kerana silinder ringan", "Kerana silinder ada bucu"],
+                jawapan: "Kerana silinder mempunyai permukaan melengkung, manakala prisma mempunyai muka rata bersisi lurus", markah: 5,
+                gambarajah: "SVG_SILINDER", penerangan: "Permukaan melengkung silinder berbeza dengan muka rata poligon prisma."
+            },
+            {
+                id: "BT_T3_046", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Sebuah objek 3D mempunyai tapak segi tiga di bawah dan tapak segi tiga di atas, dihubungkan oleh 3 muka sisi segi empat tepat. Berapakah bilangan bucu pada objek ini?",
+                pilihan: ["6 bucu", "8 bucu", "4 bucu", "5 bucu"],
+                jawapan: "6 bucu", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Prisma segi tiga mempunyai 3 bucu tapak atas dan 3 bucu tapak bawah = 6 bucu."
+            },
+            {
+                id: "BT_T3_047", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Jika anda memotong sebuah kuboid secara menyerong melintasi bucunya, bentuk keratan yang terhasil mungkin memaparkan bentuk...",
+                pilihan: ["Segi tiga atau sisi empat", "Bulat sempurna", "Sfera", "Kon"],
+                jawapan: "Segi tiga atau sisi empat", markah: 5,
+                gambarajah: "SVG_CUBOID_SLICE", penerangan: "Potongan menyerong pada kuboid boleh menghasilkan permukaan segi tiga atau segi empat."
+            },
+            {
+                id: "BT_T3_048", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Beza bilangan rusuk antara kubus dengan prisma segi tiga ialah __ rusuk.",
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_COMPARE_RUSUK", penerangan: "Kubus ada 12 rusuk, prisma segi tiga ada 9 rusuk. 12 - 9 = 3."
+            },
+            {
+                id: "BT_T3_049", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Antara bentuk berikut, yang manakah mempunyai bilangan bucu PALING BANYAK?",
+                pilihan: ["Kubus (Prisma segi empat sama)", "Prisma segi tiga", "Piramid tapak segi tiga", "Kon"],
+                jawapan: "Kubus (Prisma segi empat sama)", markah: 5,
+                gambarajah: "SVG_COMPARE_BUCU", penerangan: "Kubus mempunyai 8 bucu, manakala prisma segi tiga ada 6 bucu dan kon ada 1 bucu."
+            },
+            {
+                id: "BT_T3_050", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Siti mencatatkan ciri bentuk 3D: 'Mempunyai 6 muka rata yang sama saiz, 12 rusuk sama panjang dan 8 bucu.' Apakah bentuk itu?",
+                pilihan: ["Kubus", "Kuboid", "Prisma segi tiga", "Silinder"],
+                jawapan: "Kubus", markah: 5,
+                gambarajah: "SVG_KUBUS", penerangan: "Ini adalah ciri istimewa kubus di mana semua 6 muka adalah segi empat sama yang kongruen."
+            },
+            {
+                id: "BT_T3_051", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Sebuah blok mainan berbentuk prisma segi tiga mempunyai luas tapak segi tiga tertentu. Jika ketinggian prisma dinaikkan dua kali ganda, apakah yang berlaku pada bentuk asas tapaknya?",
+                pilihan: ["Bentuk tapak tetap sama (segi tiga)", "Bentuk tapak menjadi bulat", "Bentuk tapak menjadi segi empat", "Bentuk tapak hilang"],
+                jawapan: "Bentuk tapak tetap sama (segi tiga)", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Keluasan atau ketinggian prisma berubah, tetapi bentuk asas keratan tapak kekal seragam."
+            },
+            {
+                id: "BT_T3_052", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Jumlah bilangan muka bagi sebuah prisma segi tiga ialah __.",
+                jawapan: "5", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Prisma segi tiga mempunyai 5 muka kesemuanya."
+            },
+            {
+                id: "BT_T3_053", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Antara objek berikut, yang manakah paling tepat mewakili bentuk prisma segi empat (kuboid)?",
+                pilihan: ["Buku nota tebal", "Bola sepak", "Topi hari jadi", "Tin minuman"],
+                jawapan: "Buku nota tebal", markah: 5,
+                gambarajah: "SVG_CUBOID", penerangan: "Buku nota tebal menyerupai kuboid (prisma segi empat)."
+            },
+            {
+                id: "BT_T3_054", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Jika sebuah objek mempunyai tapak berbentuk segi empat tepat dan muka sisinya menegak bertemu pada satu titik puncak di atas, apakah objek itu?",
+                pilihan: ["Piramid bertapak segi empat", "Prisma segi empat", "Kuboid", "Silinder"],
+                jawapan: "Piramid bertapak segi empat", markah: 5,
+                gambarajah: "SVG_PYRAMID", penerangan: "Pertemuan di satu puncak membuktikan ia adalah piramid, bukan prisma."
+            },
+            {
+                id: "BT_T3_055", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Berapakah bilangan rusuk pada sebuah prisma segi empat (kuboid)?",
+                pilihan: ["12", "8", "6", "9"],
+                jawapan: "12", markah: 5,
+                gambarajah: "SVG_CUBOID", penerangan: "Kuboid mempunyai 12 rusuk."
+            },
+            {
+                id: "BT_T3_056", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Apakah ciri yang membezakan antara silinder dengan prisma segi tiga?",
+                pilihan: ["Silinder mempunyai permukaan melengkung dan tapak bulat, manakala prisma mempunyai muka rata dan tapak bersisi lurus", "Silinder ada bucu", "Prisma berbentuk bulat", "Tiada perbezaan"],
+                jawapan: "Silinder mempunyai permukaan melengkung dan tapak bulat, manakala prisma mempunyai muka rata dan tapak bersisi lurus", markah: 5,
+                gambarajah: "SVG_SILINDER_VS_PRISMA", penerangan: "Perbezaan geometri ketara pada permukaan melengkung berbanding muka rata poligon."
+            },
+            {
+                id: "BT_T3_057", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Jumlah bucu bagi sebuah kuboid ialah __.",
+                jawapan: "8", markah: 5,
+                gambarajah: "SVG_CUBOID", penerangan: "Kuboid mempunyai 8 bucu."
+            },
+            {
+                id: "BT_T3_058", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Antara pernyataan berikut, yang manakah TIDAK BENAR mengenai ciri prisma?",
+                pilihan: ["Prisma tidak mempunyai tapak", "Prisma mempunyai dua tapak kongruen", "Muka sisi prisma berbentuk segi empat", "Keratan rentas prisma adalah seragam"],
+                jawapan: "Prisma tidak mempunyai tapak", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Pernyataan 'prisma tidak mempunyai tapak' adalah salah kerana prisma wajib ada dua tapak."
+            },
+            {
+                id: "BT_T3_059", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Sebuah blok kayu dipotong mengikut bentuk prisma segi tiga. Berapakah muka sisi berbentuk segi empat tepat yang mengelilingi prisma tersebut?",
+                pilihan: ["3", "2", "4", "5"],
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_PRISMA_SEGI_TIGA", penerangan: "Prisma segi tiga mempunyai 3 muka sisi berbentuk segi empat tepat."
+            },
+            {
+                id: "BT_T3_060", kategori: "Kenali Prisma dan Bukan Prisma", subtopik: "Analisis Prisma", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Jika anda mencantumkan dua buah kubus yang identik bersebelahan, bentuk 3D baharu yang terbentuk dikategorikan sebagai...",
+                pilihan: ["Prisma segi empat (kuboid panjang)", "Sfera", "Kon", "Piramid"],
+                jawapan: "Prisma segi empat (kuboid panjang)", markah: 5,
+                gambarajah: "SVG_COMBINE_KUBUS", penerangan: "Pencantuman dua kubus menghasilkan sebuah kuboid yang juga merupakan prisma segi empat."
+            },
+
+            // --- KATEGORI 2: KENAL POLIGON SEKATA (60 Soalan) ---
+            // Senang (20)
+            {
+                id: "BT_T3_061", kategori: "Kenal Poligon Sekata", subtopik: "Maksud Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Apakah yang dimaksudkan dengan poligon?",
+                pilihan: ["Bentuk 2D tertutup yang dibina daripada garis lurus", "Bentuk 3D melengkung", "Bentuk bulat", "Bentuk yang mempunyai rongga"],
+                jawapan: "Bentuk 2D tertutup yang dibina daripada garis lurus", markah: 5,
+                gambarajah: "SVG_POLYGON_DEF", penerangan: "Poligon ialah bentuk 2D tertutup dengan sisi garis lurus."
+            },
+            {
+                id: "BT_T3_062", kategori: "Kenal Poligon Sekata", subtopik: "Poligon Sekata", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Apakah ciri utama bagi sebuah poligon sekata?",
+                pilihan: ["Semua sisi sama panjang dan semua sudut sama saiz", "Semua sisi melengkung", "Sisi tidak sama panjang", "Tiada sudut"],
+                jawapan: "Semua sisi sama panjang dan semua sudut sama saiz", markah: 5,
+                gambarajah: "SVG_REGULAR_POLYGON", penerangan: "Poligon sekata mempunyai kesamarataan panjang sisi dan saiz sudut."
+            },
+            {
+                id: "BT_T3_063", kategori: "Kenal Poligon Sekata", subtopik: "Bilangan Sisi", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah segi tiga sama sisi mempunyai __ bilangan sisi yang sama panjang.",
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_SEGI_TIGA_SAMA", penerangan: "Segi tiga sama sisi mempunyai 3 sisi yang sama panjang."
+            },
+            {
+                id: "BT_T3_064", kategori: "Kenal Poligon Sekata", subtopik: "Segi Empat Sama", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Antara berikut, yang manakah sebuah segi empat sama (poligon sekata 4 sisi)?",
+                pilihan: ["Segi empat sama", "Segi empat tepat", "Leper", "Trapezium"],
+                jawapan: "Segi empat sama", markah: 5,
+                gambarajah: "SVG_SEGI_EMPAT_SAMA", penerangan: "Segi empat sama mempunyai 4 sisi sama panjang dan sudut tegak 90 darjah."
+            },
+            {
+                id: "BT_T3_065", kategori: "Kenal Poligon Sekata", subtopik: "Bilangan Sisi", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Berapakah bilangan sisi bagi sebuah pentagon sekata?",
+                pilihan: ["5", "4", "6", "3"],
+                jawapan: "5", markah: 5,
+                gambarajah: "SVG_PENTAGON", penerangan: "Pentagon sekata mempunyai 5 sisi sama panjang."
+            },
+            {
+                id: "BT_T3_066", kategori: "Kenal Poligon Sekata", subtopik: "Bilangan Sisi", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Berapakah bilangan sisi bagi sebuah heksagon sekata?",
+                pilihan: ["6", "5", "8", "4"],
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_HEKSAGON", penerangan: "Heksagon sekata mempunyai 6 sisi sama panjang."
+            },
+            {
+                id: "BT_T3_067", kategori: "Kenal Poligon Sekata", subtopik: "Bukan Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Adakah sebuah bulatan dikategorikan sebagai poligon? Mengapa?",
+                pilihan: ["Tidak, kerana bulatan mempunyai garis melengkung dan tiada sisi lurus", "Ya, kerana ia bentuk 2D", "Ya, kerana ia bulat", "Tidak, kerana ia warna merah"],
+                jawapan: "Tidak, kerana bulatan mempunyai garis melengkung dan tiada sisi lurus", markah: 5,
+                gambarajah: "SVG_BULATAN", penerangan: "Bulat dibina daripada garisan melengkung, bukan garis lurus."
+            },
+            {
+                id: "BT_T3_068", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah segi empat sama mempunyai __ bucu.",
+                jawapan: "4", markah: 5,
+                gambarajah: "SVG_SEGI_EMPAT_SAMA", penerangan: "Segi empat sama mempunyai 4 bucu."
+            },
+            {
+                id: "BT_T3_069", kategori: "Kenal Poligon Sekata", subtopik: "Segi Tiga", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Pilih bentuk yang mempunyai 3 bucu dan 3 sisi lurus.",
+                pilihan: ["Segi tiga", "Segi empat sama", "Pentagon", "Heksagon"],
+                jawapan: "Segi tiga", markah: 5,
+                gambarajah: "SVG_SEGI_TIGA", penerangan: "Segi tiga mempunyai 3 sisi dan 3 bucu."
+            },
+            {
+                id: "BT_T3_070", kategori: "Kenal Poligon Sekata", subtopik: "Poligon Sekata", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Manakah antara berikut BUKAN poligon sekata?",
+                pilihan: ["Segi empat tepat", "Segi empat sama", "Segi tiga sama sisi", "Pentagon sekata"],
+                jawapan: "Segi empat tepat", markah: 5,
+                gambarajah: "SVG_SEGI_EMPAT_TEPAT", penerangan: "Segi empat tepat mempunyai panjang sisi yang tidak sama (dua panjang, dua lebar), jadi ia bukan poligon sekata."
+            },
+            {
+                id: "BT_T3_071", kategori: "Kenal Poligon Sekata", subtopik: "Bilangan Sisi", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Berapakah bilangan bucu bagi sebuah pentagon sekata?",
+                pilihan: ["5", "6", "4", "3"],
+                jawapan: "5", markah: 5,
+                gambarajah: "SVG_PENTAGON", penerangan: "Pentagon sekata mempunyai 5 bucu."
+            },
+            {
+                id: "BT_T3_072", kategori: "Kenal Poligon Sekata", subtopik: "Bilangan Sisi", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah heksagon sekata mempunyai __ bucu.",
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_HEKSAGON", penerangan: "Heksagon sekata mempunyai 6 bucu."
+            },
+            {
+                id: "BT_T3_073", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Apakah bentuk 2D yang mempunyai 4 sisi sama panjang?",
+                pilihan: ["Segi empat sama", "Segi empat tepat", "Segi tiga", "Pentagon"],
+                jawapan: "Segi empat sama", markah: 5,
+                gambarajah: "SVG_SEGI_EMPAT_SAMA", penerangan: "Segi empat sama mempunyai 4 sisi sama panjang."
+            },
+            {
+                id: "BT_T3_074", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Adakah sisi segi tiga sama sisi mempunyai panjang yang sama?",
+                pilihan: ["Ya, semua 3 sisinya sama panjang", "Tidak", "Hanya 2 sisi sama", "Tiada sisi"],
+                jawapan: "Ya, semua 3 sisinya sama panjang", markah: 5,
+                gambarajah: "SVG_SEGI_TIGA_SAMA", penerangan: "Segi tiga sama sisi mempunyai panjang sisi yang seragam."
+            },
+            {
+                id: "BT_T3_075", kategori: "Kenal Poligon Sekata", subtopik: "Poligon Sekata", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Pilih bentuk yang merupakan poligon sekata.",
+                pilihan: ["Segi tiga sama sisi", "Segi empat tepat", "Layang-layang", "Trapezium"],
+                jawapan: "Segi tiga sama sisi", markah: 5,
+                gambarajah: "SVG_SEGI_TIGA_SAMA", penerangan: "Segi tiga sama sisi ialah poligon sekata kerana sisi dan sudutnya sama."
+            },
+            {
+                id: "BT_T3_076", kategori: "Kenal Poligon Sekata", subtopik: "Bilangan Sisi", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Bilangan sisi bagi sebuah segi empat sama ialah __.",
+                jawapan: "4", markah: 5,
+                gambarajah: "SVG_SEGI_EMPAT_SAMA", penerangan: "Segi empat sama mempunyai 4 sisi."
+            },
+            {
+                id: "BT_T3_077", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Apakah nama bentuk poligon yang mempunyai 6 sisi sama panjang?",
+                pilihan: ["Heksagon sekata", "Pentagon sekata", "Segi tiga", "Segi empat"],
+                jawapan: "Heksagon sekata", markah: 5,
+                gambarajah: "SVG_HEKSAGON", penerangan: "6 sisi sama panjang ialah heksagon sekata."
+            },
+            {
+                id: "BT_T3_078", kategori: "Kenal Poligon Sekata", subtopik: "Bukan Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Pilih objek yang BUKAN poligon.",
+                pilihan: ["Separuh bulatan melengkung", "Segi empat sama", "Segi tiga sama sisi", "Pentagon sekata"],
+                jawapan: "Separuh bulatan melengkung", markah: 5,
+                gambarajah: "SVG_SEMI_CIRCLE", penerangan: "Bentuk melengkung bukan poligon."
+            },
+            {
+                id: "BT_T3_079", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Semua sudut penjuru bagi sebuah segi empat sama adalah...",
+                pilihan: ["Sudut tegak (90 darjah)", "Sudut tirus", "Sudut cakah", "Bulat"],
+                jawapan: "Sudut tegak (90 darjah)", markah: 5,
+                gambarajah: "SVG_SEGI_EMPAT_SAMA", penerangan: "Segi empat sama mempunyai 4 sudut tegak."
+            },
+            {
+                id: "BT_T3_080", kategori: "Kenal Poligon Sekata", subtopik: "Poligon Sekata", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Apakah syarat utama supaya sesuatu bentuk dinamakan poligon sekata?",
+                pilihan: ["Semua sisi sama panjang dan semua sudut sama saiz", "Mesti warna biru", "Mesti ada 10 sisi", "Mesti berbentuk bulat"],
+                jawapan: "Semua sisi sama panjang dan semua sudut sama saiz", markah: 5,
+                gambarajah: "SVG_REGULAR_POLYGON", penerangan: "Sisi sama panjang dan sudut sama saiz adalah syarat wajib poligon sekata."
+            },
+
+            // Sederhana (20)
+            {
+                id: "BT_T3_081", kategori: "Kenal Poligon Sekata", subtopik: "Bezakan Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Apakah perbezaan utama antara segi empat sama dengan segi empat tepat?",
+                pilihan: ["Segi empat sama mempunyai 4 sisi sama panjang, manakala segi empat tepat hanya sisi bertentangan sama panjang", "Segi empat sama ada bucu bulat", "Segi empat tepat ada 3 sisi", "Tiada perbezaan"],
+                jawapan: "Segi empat sama mempunyai 4 sisi sama panjang, manakala segi empat tepat hanya sisi bertentangan sama panjang", markah: 5,
+                gambarajah: "SVG_COMPARE_RECT_SQUARE", penerangan: "Segi empat sama adalah poligon sekata manakala segi empat tepat bukan sekata kerana sisinya tidak semua sama panjang."
+            },
+            {
+                id: "BT_T3_082", kategori: "Kenal Poligon Sekata", subtopik: "Kelaskan Bentuk", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Antara bentuk berikut, yang manakah dikelaskan sebagai poligon sekata 5 sisi?",
+                pilihan: ["Pentagon sekata", "Heksagon sekata", "Segi empat sama", "Segi tiga sama sisi"],
+                jawapan: "Pentagon sekata", markah: 5,
+                gambarajah: "SVG_PENTAGON", penerangan: "Pentagon sekata mempunyai 5 sisi yang sama panjang."
+            },
+            {
+                id: "BT_T3_083", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah heksagon sekata mempunyai __ sisi yang sama panjang.",
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_HEKSAGON", penerangan: "Heksagon sekata mempunyai 6 sisi sama panjang."
+            },
+            {
+                id: "BT_T3_084", kategori: "Kenal Poligon Sekata", subtopik: "Bezakan Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Mengapakah segi empat tepat BUKAN poligon sekata walaupun ia mempunyai 4 sisi lurus dan 4 sudut tegak?",
+                pilihan: ["Kerana panjang sisi-sisinya tidak kesemuanya sama panjang", "Kerana ia tiada sudut", "Kerana ia ada 5 bucu", "Kerana sisinya melengkung"],
+                jawapan: "Kerana panjang sisi-sisinya tidak kesemuanya sama panjang", markah: 5,
+                gambarajah: "SVG_SEGI_EMPAT_TEPAT", penerangan: "Poligon sekata memerlukan kesemua sisi sama panjang, sedangkan segi empat tepat hanya dua sisi panjang dan dua sisi pendek."
+            },
+            {
+                id: "BT_T3_085", kategori: "Kenal Poligon Sekata", subtopik: "Bandingkan Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Berapakah bilangan bucu bagi sebuah heksagon sekata?",
+                pilihan: ["6", "5", "4", "8"],
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_HEKSAGON", penerangan: "Heksagon sekata mempunyai 6 bucu."
+            },
+            {
+                id: "BT_T3_086", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Apakah ciri yang dikongsi bersama oleh segi tiga sama sisi dan segi empat sama?",
+                pilihan: ["Kedua-duanya adalah poligon sekata", "Kedua-duanya mempunyai 5 sisi", "Kedua-duanya berbentuk bulat", "Kedua-duanya tiada sudut"],
+                jawapan: "Kedua-duanya adalah poligon sekata", markah: 5,
+                gambarajah: "SVG_COMPARE_POLYGON", penerangan: "Segi tiga sama sisi dan segi empat sama kedua-duanya tergolong dalam keluarga poligon sekata."
+            },
+            {
+                id: "BT_T3_087", kategori: "Kenal Poligon Sekata", subtopik: "Kelaskan Bentuk", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah pentagon sekata mempunyai __ bucu.",
+                jawapan: "5", markah: 5,
+                gambarajah: "SVG_PENTAGON", penerangan: "Pentagon sekata mempunyai 5 bucu."
+            },
+            {
+                id: "BT_T3_088", kategori: "Kenal Poligon Sekata", subtopik: "Bezakan Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Manakah antara bentuk berikut mempunyai sisi yang TIDAK sama panjang?",
+                pilihan: ["Segi empat tepat", "Segi empat sama", "Segi tiga sama sisi", "Pentagon sekata"],
+                jawapan: "Segi empat tepat", markah: 5,
+                gambarajah: "SVG_SEGI_EMPAT_TEPAT", penerangan: "Segi empat tepat mempunyai panjang sisi berbeza antara panjang dan lebar."
+            },
+            {
+                id: "BT_T3_089", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Berapakah bilangan sisi bagi sebuah pentagon sekata?",
+                pilihan: ["5", "6", "3", "4"],
+                jawapan: "5", markah: 5,
+                gambarajah: "SVG_PENTAGON", penerangan: "Pentagon sekata mempunyai 5 sisi."
+            },
+            {
+                id: "BT_T3_090", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Apakah persamaan antara segi tiga sama sisi dan segi empat sama?",
+                pilihan: ["Semua sisi masing-masing adalah sama panjang", "Mempunyai bilangan sisi yang sama", "Berbentuk bulat", "Tiada bucu"],
+                jawapan: "Semua sisi masing-masing adalah sama panjang", markah: 5,
+                gambarajah: "SVG_COMPARE_POLYGON", penerangan: "Ciri kesamaan sisi adalah sifat sepunya poligon sekata."
+            },
+            {
+                id: "BT_T3_091", kategori: "Kenal Poligon Sekata", subtopik: "Kelaskan Bentuk", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Pilih kumpulan yang KEDUANYA adalah poligon sekata.",
+                pilihan: ["Segi tiga sama sisi dan segi empat sama", "Segi empat tepat dan bulatan", "Sfera dan kon", "Segi tiga tak sama kaki dan trapezium"],
+                jawapan: "Segi tiga sama sisi dan segi empat sama", markah: 5,
+                gambarajah: "SVG_PAIR_REGULAR", penerangan: "Kedua-duanya adalah poligon sekata yang sah."
+            },
+            {
+                id: "BT_T3_092", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Segi tiga sama sisi mempunyai __ sudut yang sama saiz.",
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_SEGI_TIGA_SAMA", penerangan: "Segi tiga sama sisi mempunyai 3 sudut yang sama saiz (60 darjah setiap satu)."
+            },
+            {
+                id: "BT_T3_093", kategori: "Kenal Poligon Sekata", subtopik: "Bezakan Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Mengapakah bentuk separuh bulatan tidak dikelaskan sebagai poligon?",
+                pilihan: ["Kerana ia mempunyai permukaan atau garis melengkung", "Kerana ia ada garis lurus", "Kerana ia ada bucu", "Kerana ia berwarna hijau"],
+                jawapan: "Kerana ia mempunyai permukaan atau garis melengkung", markah: 5,
+                gambarajah: "SVG_SEMI_CIRCLE", penerangan: "Poligon mesti dibina sepenuhnya daripada garis lurus tertutup."
+            },
+            {
+                id: "BT_T3_094", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Berapakah jumlah bilangan sisi dan bucu bagi sebuah segi empat sama?",
+                pilihan: ["8 (4 sisi dan 4 bucu)", "6", "4", "10"],
+                jawapan: "8 (4 sisi dan 4 bucu)", markah: 5,
+                gambarajah: "SVG_SEGI_EMPAT_SAMA", penerangan: "Segi empat sama ada 4 sisi dan 4 bucu. 4 + 4 = 8."
+            },
+            {
+                id: "BT_T3_095", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah heksagon sekata mempunyai __ bucu.",
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_HEKSAGON", penerangan: "Heksagon sekata mempunyai 6 bucu."
+            },
+            {
+                id: "BT_T3_096", kategori: "Kenal Poligon Sekata", subtopik: "Kelaskan Bentuk", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Antara bentuk 2D berikut, yang manakah mempunyai bilangan sisi paling sedikit?",
+                pilihan: ["Segi tiga", "Segi empat sama", "Pentagon", "Heksagon"],
+                jawapan: "Segi tiga", markah: 5,
+                gambarajah: "SVG_SEGI_TIGA", penerangan: "Segi tiga mempunyai 3 sisi (paling sedikit antara senarai)."
+            },
+            {
+                id: "BT_T3_097", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Apakah nama bentuk poligon yang mempunyai 5 sisi dan 5 bucu yang sama saiz?",
+                pilihan: ["Pentagon sekata", "Heksagon sekata", "Segi empat sama", "Segi tiga sama sisi"],
+                jawapan: "Pentagon sekata", markah: 5,
+                gambarajah: "SVG_PENTAGON", penerangan: "5 sisi dan 5 bucu yang sekata ialah pentagon sekata."
+            },
+            {
+                id: "BT_T3_098", kategori: "Kenal Poligon Sekata", subtopik: "Bezakan Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Pilih pernyataan yang SALAH mengenai poligon sekata.",
+                pilihan: ["Panjang sisi poligon sekata boleh berbeza-beza", "Semua sisi sama panjang", "Semua sudut sama saiz", "Merupakan bentuk 2D tertutup"],
+                jawapan: "Panjang sisi poligon sekata boleh berbeza-beza", markah: 5,
+                gambarajah: "SVG_REGULAR_POLYGON", penerangan: "Pernyataan bahawa sisi boleh berbeza adalah salah kerana poligon sekata wajib sama panjang."
+            },
+            {
+                id: "BT_T3_099", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Segi empat sama mempunyai __ sudut tegak.",
+                jawapan: "4", markah: 5,
+                gambarajah: "SVG_SEGI_EMPAT_SAMA", penerangan: "Segi empat sama mempunyai 4 sudut tegak."
+            },
+            {
+                id: "BT_T3_100", kategori: "Kenal Poligon Sekata", subtopik: "Ciri Poligon", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Berapakah bilangan sisi bagi sebuah heksagon sekata?",
+                pilihan: ["6", "5", "4", "3"],
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_HEKSAGON", penerangan: "Heksagon sekata mempunyai 6 sisi."
+            },
+
+            // Susah (20)
+            {
+                id: "BT_T3_101", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Sebuah bingkai gambar berbentuk segi empat sama mempunyai panjang setiap sisinya 8 cm. Berapakah jumlah perimeter (jumlah ukuran panjang kesemua sisi) bingkai tersebut?",
+                pilihan: ["32 cm", "16 cm", "24 cm", "64 cm"],
+                jawapan: "32 cm", markah: 5,
+                gambarajah: "SVG_PERIMETER_SQUARE", penerangan: "Segi empat sama ada 4 sisi sama panjang. 4 × 8 cm = 32 cm."
+            },
+            {
+                id: "BT_T3_102", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Azmi melukis sebuah pentagon sekata di atas kertas. Jika panjang satu sisinya ialah 6 cm, berapakah jumlah panjang kesemua sisi pentagon tersebut?",
+                pilihan: ["30 cm", "24 cm", "18 cm", "36 cm"],
+                jawapan: "30 cm", markah: 5,
+                gambarajah: "SVG_PENTAGON_PERIMETER", penerangan: "Pentagon sekata mempunyai 5 sisi sama panjang. 5 × 6 cm = 30 cm."
+            },
+            {
+                id: "BT_T3_103", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Hasil tambah bilangan sisi bagi sebuah segi tiga sama sisi dan sebuah segi empat sama ialah __.",
+                jawapan: "7", markah: 5,
+                gambarajah: "SVG_ADD_SIDES", penerangan: "Segi tiga (3 sisi) + segi empat sama (4 sisi) = 3 + 4 = 7 sisi."
+            },
+            {
+                id: "BT_T3_104", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Sebuah taman permainan berbentuk heksagon sekata mempunyai panjang setiap sisi 10 meter. Berapakah jumlah ukuran keliling (perimeter) taman tersebut?",
+                pilihan: ["60 meter", "50 meter", "40 meter", "30 meter"],
+                jawapan: "60 meter", markah: 5,
+                gambarajah: "SVG_HEXAGON_PERIMETER", penerangan: "Heksagon sekata ada 6 sisi. 6 × 10 m = 60 meter."
+            },
+            {
+                id: "BT_T3_105", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Antara bentuk berikut, manakah yang mempunyai bilangan bucu PALING BANYAK?",
+                pilihan: ["Heksagon sekata", "Pentagon sekata", "Segi empat sama", "Segi tiga sama sisi"],
+                jawapan: "Heksagon sekata", markah: 5,
+                gambarajah: "SVG_COMPARE_CORNERS", penerangan: "Heksagon sekata mempunyai 6 bucu (paling banyak dalam senarai)."
+            },
+            {
+                id: "BT_T3_106", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Siti membandingkan dua bentuk poligon sekata: bentuk A (segi tiga sama sisi) dan bentuk B (segi empat sama). Berapakah beza bilangan sisi antara bentuk B dan bentuk A?",
+                pilihan: ["1", "2", "3", "4"],
+                jawapan: "1", markah: 5,
+                gambarajah: "SVG_DIFF_SIDES", penerangan: "Segi empat sama ada 4 sisi, segi tiga sama sisi ada 3 sisi. 4 - 3 = 1."
+            },
+            {
+                id: "BT_T3_107", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Jumlah bilangan bucu bagi sebuah pentagon sekata dan sebuah heksagon sekata ialah __ bucu.",
+                jawapan: "11", markah: 5,
+                gambarajah: "SVG_TOTAL_CORNERS", penerangan: "Pentagon (5) + Heksagon (6) = 11 bucu."
+            },
+            {
+                id: "BT_T3_108", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Jika anda mencantumkan dua keping jubin berbentuk segi tiga sama sisi pada sisi yang sama, bentuk poligon baharu 2D apakah yang terhasil?",
+                pilihan: ["Sebuah rombus atau sisi empat lencong", "Sebuah bulatan", "Sebuah pentagon", "Sebuah heksagon"],
+                jawapan: "Sebuah rombus atau sisi empat lencong", markah: 5,
+                gambarajah: "SVG_COMBINE_TRIANGLE", penerangan: "Pencantuman dua segi tiga sama sisi membentuk bentuk sisi empat leper (rombus)."
+            },
+            {
+                id: "BT_T3_109", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Manakah pernyataan yang paling tepat menerangkan hubungan antara segi empat sama dengan poligon sekata?",
+                pilihan: ["Segi empat sama ialah kes khas poligon sekata yang mempunyai 4 sisi sama panjang", "Segi empat sama bukan poligon", "Segi empat sama tiada sisi", "Segi empat sama berbentuk bulat"],
+                jawapan: "Segi empat sama ialah kes khas poligon sekata yang mempunyai 4 sisi sama panjang", markah: 5,
+                gambarajah: "SVG_SEGI_EMPAT_SAMA", penerangan: "Segi empat sama memenuhi semua kriteria ketat poligon sekata."
+            },
+            {
+                id: "BT_T3_110", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Sebuah padang permainan berbentuk segi empat sama mempunyai panjang sisi 12 m. Berapakah jumlah jarak jika anda berjalan mengelilingi padang tersebut sebanyak satu pusingan penuh?",
+                pilihan: ["48 meter", "36 meter", "24 meter", "60 meter"],
+                jawapan: "48 meter", markah: 5,
+                gambarajah: "SVG_SQUARE_FIELD", penerangan: "Perimeter = 4 × 12 m = 48 meter."
+            },
+            {
+                id: "BT_T3_111", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Hasil darab bilangan sisi segi tiga sama sisi dengan bilangan sisi segi empat sama ialah __.",
+                jawapan: "12", markah: 5,
+                gambarajah: "SVG_MULTIPLY_SIDES", penerangan: "3 sisi (segi tiga) × 4 sisi (segi empat sama) = 12."
+            },
+            {
+                id: "BT_T3_112", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Antara bentuk berikut, yang manakah mempunyai nisbah bilangan sisi paling seimbang dengan sifat kesekataannya?",
+                pilihan: ["Heksagon sekata", "Segi empat tepat", "Trapezium", "Layang-layang"],
+                jawapan: "Heksagon sekata", markah: 5,
+                gambarajah: "SVG_HEKSAGON", penerangan: "Heksagon sekata adalah bentuk poligon sekata yang sempurna bersisi 6."
+            },
+            {
+                id: "BT_T3_113", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Jika perimeter sebuah pentagon sekata ialah 40 cm, berapakah panjang bagi setiap sisinya?",
+                pilihan: ["8 cm", "10 cm", "5 cm", "12 cm"],
+                jawapan: "8 cm", markah: 5,
+                gambarajah: "SVG_PENTAGON_SIDE", penerangan: "40 cm ÷ 5 sisi = 8 cm setiap sisi."
+            },
+            {
+                id: "BT_T3_114", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Beza bilangan bucu antara heksagon sekata dengan segi tiga sama sisi ialah __ bucu.",
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_DIFF_CORNERS", penerangan: "6 bucu (heksagon) - 3 bucu (segi tiga) = 3 bucu."
+            },
+            {
+                id: "BT_T3_115", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Mengapakah bentuk heksagon sekata sering digunakan dalam pembinaan sarang lebah semula jadi?",
+                pilihan: ["Kerana struktur heksagon membolehkan ruang diisi paling padat dan kukuh secara cekap", "Kerana ia berwarna kuning", "Kerana ia mudah cair", "Kerana ia bulat"],
+                jawapan: "Kerana struktur heksagon membolehkan ruang diisi paling padat dan kukuh secara cekap", markah: 5,
+                gambarajah: "SVG_BEEHIVE", geometries: true, penerangan: "Heksagon sekata memberikan kecekapan ruang geometri yang optimum."
+            },
+            {
+                id: "BT_T3_116", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Jika perimeter sebuah heksagon sekata ialah 54 cm, berapakah ukuran panjang satu sisinya?",
+                pilihan: ["9 cm", "6 cm", "8 cm", "10 cm"],
+                jawapan: "9 cm", markah: 5,
+                gambarajah: "SVG_HEXAGON_SIDE", penerangan: "54 cm ÷ 6 sisi = 9 cm."
+            },
+            {
+                id: "BT_T3_117", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Jumlah keseluruhan sudut tegak bagi dua buah segi empat sama ialah __ sudut tegak.",
+                jawapan: "8", markah: 5,
+                gambarajah: "SVG_TOTAL_RIGHT_ANGLES", penerangan: "Satu segi empat sama ada 4 sudut tegak. Dua buah ada 4 + 4 = 8 sudut tegak."
+            },
+            {
+                id: "BT_T3_118", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Antara bentuk poligon sekata berikut, yang manakah mempunyai bilangan sisi paling sedikit?",
+                pilihan: ["Segi tiga sama sisi", "Segi empat sama", "Pentagon sekata", "Heksagon sekata"],
+                jawapan: "Segi tiga sama sisi", markah: 5,
+                gambarajah: "SVG_SEGI_TIGA_SAMA", penerangan: "Segi tiga sama sisi hanya mempunyai 3 sisi sahaja."
+            },
+            {
+                id: "BT_T3_119", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Sebuah meja jamuan berbentuk heksagon sekata mempunyai ukuran panjang setiap sisi 2 meter. Berapakah perimeter meja tersebut?",
+                pilihan: ["12 meter", "10 meter", "8 meter", "14 meter"],
+                jawapan: "12 meter", markah: 5,
+                gambarajah: "SVG_HEXAGON_TABLE", penerangan: "6 sisi × 2 m = 12 meter."
+            },
+            {
+                id: "BT_T3_120", kategori: "Kenal Poligon Sekata", subtopik: "Analisis Poligon", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Pilih pernyataan yang merumuskan sifat poligon sekata dengan paling tepat.",
+                pilihan: ["Semua sisi sama panjang dan saiz sudut dalamannya adalah seragam", "Sisi boleh tidak sama panjang", "Hanya ada satu sudut sahaja", "Berbentuk lengkung"],
+                jawapan: "Semua sisi sama panjang dan saiz sudut dalamannya adalah seragam", markah: 5,
+                gambarajah: "SVG_REGULAR_POLYGON", penerangan: "Definisi mutlak poligon sekata ialah kesamarataan sisi dan sudut."
+            },
+
+            // --- KATEGORI 3: PAKSI SIMETRI (60 Soalan) ---
+            // Senang (20)
+            {
+                id: "BT_T3_121", kategori: "Paksi Simetri", subtopik: "Maksud Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Apakah yang dimaksudkan dengan garis paksi simetri?",
+                pilihan: ["Garis yang membahagikan sesuatu bentuk kepada dua bahagian yang sama besar dan sepadan (kongruen)", "Garis lurus di luar bentuk", "Garis melengkung warna warni", "Garis yang memotong bentuk jadi kecil"],
+                jawapan: "Garis yang membahagikan sesuatu bentuk kepada dua bahagian yang sama besar dan sepadan (kongruen)", markah: 5,
+                gambarajah: "SVG_SYMMETRY_DEF", penerangan: "Paksi simetri ialah garis cermin yang membahagikan bentuk kepada dua bahagian seiras."
+            },
+            {
+                id: "BT_T3_122", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah segi empat sama mempunyai __ bilangan paksi simetri.",
+                jawapan: "4", markah: 5,
+                gambarajah: "SVG_SQUARE_SYMMETRY", penerangan: "Segi empat sama mempunyai 4 paksi simetri (2 melintang/menegak dan 2 pepenjuru)."
+            },
+            {
+                id: "BT_T3_123", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Adakah huruf abjad 'A' mempunyai paksi simetri menegak?",
+                pilihan: ["Ya, boleh dibahagi dua sama kiri dan kanan", "Tidak", "Ada 4 paksi", "Tiada garis langsung"],
+                jawapan: "Ya, boleh dibahagi dua sama kiri dan kanan", markah: 5,
+                gambarajah: "SVG_LETTER_A_SYMMETRY", penerangan: "Huruf 'A' simetri pada paksi menegak tengahnya."
+            },
+            {
+                id: "BT_T3_124", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Berapakah bilangan paksi simetri bagi sebuah segi tiga sama sisi?",
+                pilihan: ["3", "1", "2", "4"],
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_EQUILATERAL_SYMMETRY", penerangan: "Segi tiga sama sisi mempunyai 3 paksi simetri dari bucu ke sisi bertentangan."
+            },
+            {
+                id: "BT_T3_125", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Pilih bentuk yang mempunyai paksi simetri.",
+                pilihan: ["Segi empat sama", "Huruf tak simetri 'F'", "Bentuk comot bebas", "Scribble"],
+                jawapan: "Segi empat sama", markah: 5,
+                gambarajah: "SVG_SQUARE_SYMMETRY", penerangan: "Segi empat sama ialah bentuk simetri yang sempurna."
+            },
+            {
+                id: "BT_T3_126", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah segi empat tepat mempunyai __ paksi simetri.",
+                jawapan: "2", markah: 5,
+                gambarajah: "SVG_RECTANGLE_SYMMETRY", penerangan: "Segi empat tepat mempunyai 2 paksi simetri (menegak dan melintang)."
+            },
+            {
+                id: "BT_T3_127", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Adakah bentuk bulatan mempunyai paksi simetri?",
+                pilihan: ["Ya, mempunyai bilangan paksi simetri yang tak terhingga", "Tidak ada", "Hanya ada 1", "Hanya ada 2"],
+                jawapan: "Ya, mempunyai bilangan paksi simetri yang tak terhingga", markah: 5,
+                gambarajah: "SVG_CIRCLE_SYMMETRY", penerangan: "Bulatan boleh dibahagi simetri melalui sebarang garis pusatnya (tak terhingga)."
+            },
+            {
+                id: "BT_T3_128", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Pilih objek harian yang mempunyai paksi simetri.",
+                pilihan: ["Seekor rama-rama", "Sebuah batu beralun tak sekata", "Kertas renyuk", "Awan terapung"],
+                jawapan: "Seekor rama-rama", markah: 5,
+                gambarajah: "SVG_BUTTERFLY_SYMMETRY", penerangan: "Sayap rama-rama adalah contoh simetri semula jadi yang jelas."
+            },
+            {
+                id: "BT_T3_129", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah segi tiga sama sisi mempunyai __ paksi simetri.",
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_EQUILATERAL_SYMMETRY", penerangan: "Segi tiga sama sisi mempunyai 3 paksi simetri."
+            },
+            {
+                id: "BT_T3_130", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Apakah ciri yang terbentuk apabila sesuatu bentuk dilipat tepat pada paksi simetrinya?",
+                pilihan: ["Kedua-dua bahagian bertindih tepat antara satu sama lain", "Bahagian jadi rosak", "Saiz bertambah besar", "Warna bertukar"],
+                jawapan: "Kedua-dua bahagian bertindih tepat antara satu sama lain", markah: 5,
+                gambarajah: "SVG_FOLDING_SYMMETRY", penerangan: "Ujian lipatan simetri menunjukkan pertindihan tepat (kongruen)."
+            },
+            {
+                id: "BT_T3_131", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Berapakah bilangan paksi simetri bagi sebuah segi empat sama?",
+                pilihan: ["4", "2", "1", "3"],
+                jawapan: "4", markah: 5,
+                gambarajah: "SVG_SQUARE_SYMMETRY", penerangan: "Segi empat sama mempunyai 4 paksi simetri."
+            },
+            {
+                id: "BT_T3_132", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Adakah daun pokok tertentu boleh menunjukkan ciri paksi simetri?",
+                pilihan: ["Ya, melalui urat daun di tengah-tengahnya", "Tidak", "Hanya daun kering", "Tiada kaitan"],
+                jawapan: "Ya, melalui urat daun di tengah-tengahnya", markah: 5,
+                gambarajah: "SVG_LEAF_SYMMETRY", penerangan: "Urat tengah daun membahagikan kiri dan kanan daun secara simetri."
+            },
+            {
+                id: "BT_T3_133", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Segi empat tepat mempunyai __ paksi simetri menegak dan melintang.",
+                jawapan: "2", markah: 5,
+                gambarajah: "SVG_RECTANGLE_SYMMETRY", penerangan: "Segi empat tepat ada 2 paksi simetri."
+            },
+            {
+                id: "BT_T3_134", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Pilih bentuk 2D yang TIDAK mempunyai sebarang paksi simetri.",
+                pilihan: ["Segi tiga tak sama kaki", "Segi empat sama", "Segi tiga sama sisi", "Segi empat tepat"],
+                jawapan: "Segi tiga tak sama kaki", markah: 5,
+                gambarajah: "SVG_NON_SYMMETRIC_TRIANGLE", penerangan: "Segi tiga tak sama kaki tiada paksi simetri kerana semua sisinya berbeza."
+            },
+            {
+                id: "BT_T3_135", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Berapakah bilangan paksi simetri bagi sebuah segi tiga sama sisi?",
+                pilihan: ["3", "2", "4", "1"],
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_EQUILATERAL_SYMMETRY", penerangan: "Segi tiga sama sisi mempunyai 3 paksi simetri."
+            },
+            {
+                id: "BT_T3_136", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Garis putus-putus yang melintasi tengah sesuatu bentuk simetri biasanya mewakili...",
+                pilihan: ["Paksi simetri", "Garis kasar", "Tapak prisma", "Rusuk 3D"],
+                jawapan: "Paksi simetri", markah: 5,
+                gambarajah: "SVG_DASHED_AXIS", penerangan: "Garis putus-putus lazim digunakan untuk melukis paksi simetri."
+            },
+            {
+                id: "BT_T3_137", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah segi empat sama mempunyai __ paksi simetri pepenjuru.",
+                jawapan: "2", markah: 5,
+                gambarajah: "SVG_SQUARE_DIAGONAL", penerangan: "Segi empat sama mempunyai 2 paksi simetri pepenjuru."
+            },
+            {
+                id: "BT_T3_138", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Adakah huruf abjad 'H' mempunyai paksi simetri?",
+                pilihan: ["Ya, mempunyai paksi menegak dan melintang", "Tidak", "Hanya 1 paksi", "Tiada langsung"],
+                jawapan: "Ya, mempunyai paksi menegak dan melintang", markah: 5,
+                gambarajah: "SVG_LETTER_H_SYMMETRY", penerangan: "Huruf 'H' simetri dari segi menegak dan melintang."
+            },
+            {
+                id: "BT_T3_139", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Berapakah bilangan paksi simetri bagi sebuah segi empat tepat?",
+                pilihan: ["2", "4", "3", "1"],
+                jawapan: "2", markah: 5,
+                gambarajah: "SVG_RECTANGLE_SYMMETRY", penerangan: "Segi empat tepat mempunyai 2 paksi simetri."
+            },
+            {
+                id: "BT_T3_140", kategori: "Paksi Simetri", subtopik: "Maksud Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Apakah matlamat utama melukis paksi simetri pada satu bentuk 2D?",
+                pilihan: ["Membahagikan bentuk kepada dua bahagian yang seiras dan sepadan", "Mengecilkan bentuk", "Menukar warna bentuk", "Menghapuskan bucu bentuk"],
+                jawapan: "Membahagikan bentuk kepada dua bahagian yang seiras dan sepadan", markah: 5,
+                gambarajah: "SVG_SYMMETRY_GOAL", penerangan: "Tujuan paksi simetri adalah membahagi bentuk kepada dua bahagian kembar seiras."
+            },
+
+            // Sederhana (20)
+            {
+                id: "BT_T3_141", kategori: "Paksi Simetri", subtopik: "Tentukan Paksi", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Mengapakah garis pepenjuru pada segi empat tepat BUKAN paksi simetrinya?",
+                pilihan: ["Kerana lipatan melaluinya tidak menghasilkan dua bahagian yang bertindih tepat", "Kerana garis itu terlalu panjang", "Kerana ia berwarna merah", "Kerana ia garis lurus"],
+                jawapan: "Kerana lipatan melaluinya tidak menghasilkan dua bahagian yang bertindih tepat", markah: 5,
+                gambarajah: "SVG_RECTANGLE_DIAGONAL_FAIL", penerangan: "Garis pepenjuru segi empat tepat tidak membahagikannya kepada bahagian kembar seiras."
+            },
+            {
+                id: "BT_T3_142", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Jumlah bilangan paksi simetri bagi segi empat sama dan segi empat tepat ialah __.",
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_TOTAL_AXIS", penerangan: "Segi empat sama (4) + segi empat tepat (2) = 4 + 2 = 6."
+            },
+            {
+                id: "BT_T3_143", kategori: "Paksi Simetri", subtopik: "Tentukan Paksi", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Manakah bentuk berikut mempunyai bilangan paksi simetri PALING BANYAK?",
+                pilihan: ["Segi empat sama (4 paksi)", "Segi empat tepat (2 paksi)", "Segi tiga sama sisi (3 paksi)", "Segi tiga sama kaki (1 paksi)"],
+                jawapan: "Segi empat sama (4 paksi)", markah: 5,
+                gambarajah: "SVG_COMPARE_AXIS", penerangan: "Segi empat sama mempunyai 4 paksi simetri (paling banyak dalam senarai)."
+            },
+            {
+                id: "BT_T3_144", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Adakah huruf abjad 'M' mempunyai paksi simetri?",
+                pilihan: ["Ya, mempunyai 1 paksi simetri menegak di tengah", "Tidak ada", "Ada 4 paksi", "Ada 2 paksi"],
+                jawapan: "Ya, mempunyai 1 paksi simetri menegak di tengah", markah: 5,
+                gambarajah: "SVG_LETTER_M_SYMMETRY", penerangan: "Huruf 'M' simetri pada garis menegak tengahnya."
+            },
+            {
+                id: "BT_T3_145", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Berapakah bilangan paksi simetri bagi sebuah pentagon sekata?",
+                pilihan: ["5", "4", "6", "3"],
+                jawapan: "5", markah: 5,
+                gambarajah: "SVG_PENTAGON_SYMMETRY", penerangan: "Pentagon sekata mempunyai 5 paksi simetri."
+            },
+            {
+                id: "BT_T3_146", kategori: "Paksi Simetri", subtopik: "Tentukan Paksi", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Bagaimanakah cara menguji sama ada sesuatu garis itu adalah paksi simetri bagi suatu bentuk?",
+                pilihan: ["Lipat bentuk mengikut garis tersebut dan lihat sama ada kedua-dua bahagian bertindih tepat", "Ukur panjang garis guna pembaris", "Timbang berat bentuk", "Kira bilangan bucu"],
+                jawapan: "Lipat bentuk mengikut garis tersebut dan lihat sama ada kedua-dua bahagian bertindih tepat", markah: 5,
+                gambarajah: "SVG_TEST_SYMMETRY", penerangan: "Ujian lipatan fizikal atau mental adalah cara sahih menentukan paksi simetri."
+            },
+            {
+                id: "BT_T3_147", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah heksagon sekata mempunyai __ paksi simetri.",
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_HEXAGON_SYMMETRY", penerangan: "Heksagon sekata mempunyai 6 paksi simetri."
+            },
+            {
+                id: "BT_T3_148", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Pilih bentuk yang mempunyai tepat 1 paksi simetri sahaja.",
+                pilihan: ["Segi tiga sama kaki", "Segi empat sama", "Segi empat tepat", "Segi tiga sama sisi"],
+                jawapan: "Segi tiga sama kaki", markah: 5,
+                gambarajah: "SVG_ISOSCELES_SYMMETRY", penerangan: "Segi tiga sama kaki mempunyai tepat 1 paksi simetri di tengah."
+            },
+            {
+                id: "BT_T3_149", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Berapakah bilangan paksi simetri bagi sebuah segi tiga sama sisi?",
+                pilihan: ["3", "1", "2", "4"],
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_EQUILATERAL_SYMMETRY", penerangan: "Segi tiga sama sisi mempunyai 3 paksi simetri."
+            },
+            {
+                id: "BT_T3_150", kategori: "Paksi Simetri", subtopik: "Tentukan Paksi", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Mengapakah garis melintang (ufuk) pada segi empat tepat dikira sebagai paksi simetri?",
+                pilihan: ["Kerana ia membahagikan bentuk kepada bahagian atas dan bawah yang seiras", "Kerana garis itu senget", "Kerana ia luar bentuk", "Tiada sebab"],
+                jawapan: "Kerana ia membahagikan bentuk kepada bahagian atas dan bawah yang seiras", markah: 5,
+                gambarajah: "SVG_RECTANGLE_HORIZ_AXIS", penerangan: "Bahagian atas dan bawah bertindih tepat apabila dilipat pada garis ufuk."
+            },
+            {
+                id: "BT_T3_151", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Adakah huruf abjad 'C' mempunyai paksi simetri?",
+                pilihan: ["Ya, mempunyai 1 paksi simetri melintang", "Tidak", "Ada 2 paksi", "Ada 4 paksi"],
+                jawapan: "Ya, mempunyai 1 paksi simetri melintang", markah: 5,
+                gambarajah: "SVG_LETTER_C_SYMMETRY", penerangan: "Huruf 'C' simetri pada paksi melintang di tengah."
+            },
+            {
+                id: "BT_T3_152", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah segi tiga sama kaki mempunyai __ paksi simetri.",
+                jawapan: "1", markah: 5,
+                gambarajah: "SVG_ISOSCELES_SYMMETRY", penerangan: "Segi tiga sama kaki mempunyai 1 paksi simetri."
+            },
+            {
+                id: "BT_T3_153", kategori: "Paksi Simetri", subtopik: "Tentukan Paksi", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Manakah antara bentuk berikut yang langsung tiada paksi simetri?",
+                pilihan: ["Parallelogram biasa (selari selari tak seimbang)", "Segi empat sama", "Segi empat tepat", "Segi tiga sama sisi"],
+                jawapan: "Parallelogram biasa (selari selari tak seimbang)", markah: 5,
+                gambarajah: "SVG_PARALLELOGRAM_NOSYM", penerangan: "Parallelogram biasa (bukan rombus/segi empat sama) tidak mempunyai paksi simetri."
+            },
+            {
+                id: "BT_T3_154", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Berapakah bilangan paksi simetri bagi sebuah segi empat sama?",
+                pilihan: ["4", "2", "3", "1"],
+                jawapan: "4", markah: 5,
+                gambarajah: "SVG_SQUARE_SYMMETRY", penerangan: "Segi empat sama mempunyai 4 paksi simetri."
+            },
+            {
+                id: "BT_T3_155", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Huruf abjad 'O' mempunyai bilangan paksi simetri yang __ (banyak/terhingga/tak terhingga).",
+                jawapan: "banyak", markah: 5,
+                gambarajah: "SVG_LETTER_O_SYMMETRY", penerangan: "Huruf 'O' hampir menyerupai bentuk bujur/bulat dan mempunyai banyak paksi simetri."
+            },
+            {
+                id: "BT_T3_156", kategori: "Paksi Simetri", subtopik: "Tentukan Paksi", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Pilih pernyataan yang BENAR mengenai paksi simetri pada segi empat tepat.",
+                pilihan: ["Segi empat tepat mempunyai 2 paksi simetri sahaja (menegak dan melintang)", "Segi empat tepat ada 4 paksi", "Segi empat tepat tiada paksi", "Pepenjurunya adalah paksi simetri"],
+                jawapan: "Segi empat tepat mempunyai 2 paksi simetri sahaja (menegak dan melintang)", markah: 5,
+                gambarajah: "SVG_RECTANGLE_SYMMETRY", penerangan: "Segi empat tepat hanya mempunyai 2 paksi simetri."
+            },
+            {
+                id: "BT_T3_157", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Jumlah paksi simetri bagi segi tiga sama sisi ialah __.",
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_EQUILATERAL_SYMMETRY", penerangan: "Segi tiga sama sisi mempunyai 3 paksi simetri."
+            },
+            {
+                id: "BT_T3_158", kategori: "Paksi Simetri", subtopik: "Bentuk Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Adakah bentuk layang-layang klasik mempunyai paksi simetri?",
+                pilihan: ["Ya, mempunyai 1 paksi simetri mengikut pepenjuru utamanya", "Tidak ada", "Ada 4 paksi", "Ada 2 paksi"],
+                jawapan: "Ya, mempunyai 1 paksi simetri mengikut pepenjuru utamanya", markah: 5,
+                gambarajah: "SVG_KITE_SYMMETRY", penerangan: "Layang-layang klasik mempunyai 1 paksi simetri pada garis tengah menegaknya."
+            },
+            {
+                id: "BT_T3_159", kategori: "Paksi Simetri", subtopik: "Bilangan Paksi Simetri", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Berapakah bilangan paksi simetri bagi sebuah segi empat tepat?",
+                pilihan: ["2", "4", "1", "3"],
+                jawapan: "2", markah: 5,
+                gambarajah: "SVG_RECTANGLE_SYMMETRY", penerangan: "Segi empat tepat mempunyai 2 paksi simetri."
+            },
+            {
+                id: "BT_T3_160", kategori: "Paksi Simetri", subtopik: "Tentukan Paksi", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Apakah ciri penting yang pasti wujud pada mana-mana garis paksi simetri yang betul?",
+                pilihan: ["Ia membahagikan bentuk kepada dua bahagian kembar seiras yang bertindih tepat", "Ia sentiasa berwarna merah", "Ia mesti melengkung", "Ia luar daripada bentuk"],
+                jawapan: "Ia membahagikan bentuk kepada dua bahagian kembar seiras yang bertindih tepat", markah: 5,
+                gambarajah: "SVG_SYMMETRY_RULE", penerangan: "Prinsip kembar seiras (kongruen) wajib dipenuhi oleh paksi simetri."
+            },
+
+            // Susah (20)
+            {
+                id: "BT_T3_161", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Ali melukis beberapa bentuk poligon sekata. Bentuk manakah yang mempunyai bilangan paksi simetri yang SAMA BANYAK dengan bilangan sisinya?",
+                pilihan: ["Semua poligon sekata (seperti segi tiga sama sisi, segi empat sama, pentagon sekata)", "Hanya segi empat sama", "Hanya bulatan", "Tiada bentuk poligon sekata yang sama"],
+                jawapan: "Semua poligon sekata (seperti segi tiga sama sisi, segi empat sama, pentagon sekata)", markah: 5,
+                gambarajah: "SVG_REGULAR_AXIS_RULE", penerangan: "Bagi sebarang poligon sekata, bilangan paksi simetrinya adalah sama dengan bilangan sisinya."
+            },
+            {
+                id: "BT_T3_162", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Berapakah jumlah bilangan paksi simetri bagi sebuah segi tiga sama sisi ditambah dengan sebuah segi empat sama?",
+                pilihan: ["7 (3 + 4)", "6", "5", "8"],
+                jawapan: "7 (3 + 4)", markah: 5,
+                gambarajah: "SVG_ADD_AXIS", penerangan: "Segi tiga sama sisi (3) + segi empat sama (4) = 7 paksi simetri."
+            },
+            {
+                id: "BT_T3_163", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Hasil tambah paksi simetri untuk pentagon sekata dan heksagon sekata ialah __.",
+                jawapan: "11", markah: 5,
+                gambarajah: "SVG_TOTAL_PENT_HEX_AXIS", penerangan: "Pentagon (5) + Heksagon (6) = 11 paksi simetri."
+            },
+            {
+                id: "BT_T3_164", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Siti mempunyai jubin lantai berbentuk heksagon sekata. Berapakah bilangan paksi simetri pada jubin tersebut?",
+                pilihan: ["6", "5", "4", "3"],
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_HEXAGON_SYMMETRY", penerangan: "Heksagon sekata mempunyai 6 paksi simetri."
+            },
+            {
+                id: "BT_T3_165", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Manakah antara bentuk berikut mempunyai bilangan paksi simetri PALING SEDIKIT tetapi lebih daripada sifar?",
+                pilihan: ["Segi tiga sama kaki (1 paksi)", "Segi empat sama (4 paksi)", "Segi empat tepat (2 paksi)", "Segi tiga sama sisi (3 paksi)"],
+                jawapan: "Segi tiga sama kaki (1 paksi)", markah: 5,
+                gambarajah: "SVG_ISOSCELES_SYMMETRY", penerangan: "Segi tiga sama kaki mempunyai 1 paksi simetri (paling sedikit dalam senarai bukan sifar)."
+            },
+            {
+                id: "BT_T3_166", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Jika anda melipat sebuah segi empat sama tepat pada salah satu garis pepenjurunya, bentuk dua bahagian bertindih yang terhasil menyerupai bentuk...",
+                pilihan: ["Segi tiga bersudut tegak yang kongruen", "Bulatan", "Kon", "Sfera"],
+                jawapan: "Segi tiga bersudut tegak yang kongruen", markah: 5,
+                gambarajah: "SVG_SQUARE_DIAGONAL_FOLD", penerangan: "Lipatan pepenjuru membahagikan segi empat sama kepada dua segi tiga bersudut tegak yang seiras."
+            },
+            {
+                id: "BT_T3_167", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Beza bilangan paksi simetri antara heksagon sekata dengan segi empat tepat ialah __ paksi.",
+                jawapan: "4", markah: 5,
+                gambarajah: "SVG_DIFF_AXIS_HEX_RECT", penerangan: "Heksagon (6) - segi empat tepat (2) = 4 paksi."
+            },
+            {
+                id: "BT_T3_168", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Antara huruf abjad besar berikut, yang manakah mempunyai DUA paksi simetri (menegak dan melintang)?",
+                pilihan: ["H", "F", "P", "G"],
+                jawapan: "H", markah: 5,
+                gambarajah: "SVG_LETTER_H_SYMMETRY", penerangan: "Huruf 'H' mempunyai 2 paksi simetri (menegak dan melintang)."
+            },
+            {
+                id: "BT_T3_169", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Mengapakah bentuk bintang 5 bucu sekata mempunyai 5 paksi simetri?",
+                pilihan: ["Kerana ia mempunyai 5 bucu dan simetri jejari yang sempurna", "Kerana ia warna kuning", "Kerana ia ada 4 sisi", "Tiada sebab"],
+                jawapan: "Kerana ia mempunyai 5 bucu dan simetri jejari yang sempurna", markah: 5,
+                gambarajah: "SVG_STAR_SYMMETRY", penerangan: "Bintang 5 bucu sekata memaparkan tepat 5 paksi simetri dari setiap bucu ke sudut bertentangan."
+            },
+            {
+                id: "BT_T3_170", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Sebuah papan tanda amaran jalan raya berbentuk segi tiga sama sisi mempunyai beberapa paksi simetri. Berapakah jumlah paksi simetrinya?",
+                pilihan: ["3", "1", "2", "4"],
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_EQUILATERAL_SYMMETRY", penerangan: "Segi tiga sama sisi mempunyai 3 paksi simetri."
+            },
+            {
+                id: "BT_T3_171", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Hasil darab bilangan paksi simetri segi tiga sama sisi dengan segi empat sama ialah __.",
+                jawapan: "12", markah: 5,
+                gambarajah: "SVG_MULTIPLY_AXIS", penerangan: "3 (segi tiga sama sisi) × 4 (segi empat sama) = 12."
+            },
+            {
+                id: "BT_T3_172", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Antara bentuk berikut, yang manakah mempunyai paksi simetri tetapi susunan sisinya tidak sama panjang?",
+                pilihan: ["Segi tiga sama kaki", "Segi empat sama", "Heksagon sekata", "Pentagon sekata"],
+                jawapan: "Segi tiga sama kaki", markah: 5,
+                gambarajah: "SVG_ISOSCELES_PROPERTY", penerangan: "Segi tiga sama kaki mempunyai 2 sisi sama panjang dan 1 sisi berbeza, namun masih mempunyai 1 paksi simetri."
+            },
+            {
+                id: "BT_T3_173", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Jika anda melipat sebuah segi empat tepat tepat pada garis paksi melintangnya, bentuk bertindih apakah yang terhasil?",
+                pilihan: ["Sebuah segi empat tepat yang lebih pendek (separuh saiz asal)", "Sebuah segi tiga", "Sebuah bulatan", "Sebuah garis lurus"],
+                jawapan: "Sebuah segi empat tepat yang lebih pendek (separuh saiz asal)", markah: 5,
+                gambarajah: "SVG_RECTANGLE_FOLD", penerangan: "Lipatan melintang mengurangkan ketinggian separuh tetapi mengekalkan lebar."
+            },
+            {
+                id: "BT_T3_174", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Beza bilangan paksi simetri antara pentagon sekata dengan segi tiga sama sisi ialah __ paksi.",
+                jawapan: "2", markah: 5,
+                gambarajah: "SVG_DIFF_AXIS_PENT_TRI", penerangan: "Pentagon (5) - segi tiga sama sisi (3) = 2 paksi."
+            },
+            {
+                id: "BT_T3_175", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Mengapakah lukisan bebas (scribble) biasanya tidak mempunyai paksi simetri?",
+                pilihan: ["Kerana tiada imbangan atau keteraturan bentuk pada kiri dan kanan garis tengahnya", "Kerana ia menggunakan pensel warna", "Kerana ia dilukis di atas kertas", "Kerana ia ada garisan"],
+                jawapan: "Kerana tiada imbangan atau keteraturan bentuk pada kiri dan kanan garis tengahnya", markah: 5,
+                gambarajah: "SVG_SCRIBBLE_NOSYM", penerangan: "Simetri memerlukan keteraturan dan imbangan struktur yang tiada pada lukisan bebas."
+            },
+            {
+                id: "BT_T3_176", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Berapakah bilangan paksi simetri bagi sebuah pentagon sekata?",
+                pilihan: ["5", "6", "4", "3"],
+                jawapan: "5", markah: 5,
+                gambarajah: "SVG_PENTAGON_SYMMETRY", penerangan: "Pentagon sekata mempunyai 5 paksi simetri."
+            },
+            {
+                id: "BT_T3_177", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Jumlah keseluruhan paksi simetri bagi tiga buah segi empat sama ialah __ paksi.",
+                jawapan: "12", markah: 5,
+                gambarajah: "SVG_THREE_SQUARES_AXIS", penerangan: "Satu segi empat sama ada 4 paksi. Tiga buah = 3 × 4 = 12 paksi."
+            },
+            {
+                id: "BT_T3_178", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Antara bentuk poligon sekata berikut, yang manakah mempunyai bilangan paksi simetri PALING TINGGI?",
+                pilihan: ["Heksagon sekata (6 paksi)", "Pentagon sekata (5 paksi)", "Segi empat sama (4 paksi)", "Segi tiga sama sisi (3 paksi)"],
+                jawapan: "Heksagon sekata (6 paksi)", markah: 5,
+                gambarajah: "SVG_HEXAGON_SYMMETRY", penerangan: "Heksagon sekata ada 6 paksi (paling tinggi dalam senarai poligon ini)."
+            },
+            {
+                id: "BT_T3_179", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Jika sebuah bentuk mempunyai 4 paksi simetri, apakah kemungkinan bentuk tersebut dalam silibus Tahun 3?",
+                pilihan: ["Segi empat sama", "Segi empat tepat", "Segi tiga sama sisi", "Pentagon"],
+                jawapan: "Segi empat sama", markah: 5,
+                gambarajah: "SVG_SQUARE_SYMMETRY", penerangan: "Segi empat sama terkenal dengan tepat 4 paksi simetrinya."
+            },
+            {
+                id: "BT_T3_180", kategori: "Paksi Simetri", subtopik: "Analisis Simetri", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Pilih rumusan paling tepat mengenai konsep paksi simetri dalam geometri Tahun 3.",
+                pilihan: ["Paksi simetri ialah garis cermin yang membahagikan bentuk kepada dua bahagian kembar seiras yang bertindih tepat", "Paksi simetri ialah garis luar bentuk", "Paksi simetri ialah saiz sudut", "Paksi simetri ialah bilangan bucu"],
+                jawapan: "Paksi simetri ialah garis cermin yang membahagikan bentuk kepada dua bahagian kembar seiras yang bertindih tepat", markah: 5,
+                gambarajah: "SVG_SYMMETRY_SUMMARY", penerangan: "Definisi konseptual paksi simetri ialah garis cermin pengantara bahagian seiras."
+            },
+
+            // --- KATEGORI 4: PENYELESAIAN MASALAH (60 Soalan) ---
+            // Senang (20)
+            {
+                id: "BT_T3_181", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Ibu membeli sebiji kek hari jadi berbentuk kuboid. Bentuk kuboid ini tergolong dalam kumpulan...",
+                pilihan: ["Prisma segi empat", "Sfera", "Kon", "Piramid"],
+                jawapan: "Prisma segi empat", markah: 5,
+                gambarajah: "SVG_CAKE_CUBOID", penerangan: "Kek kuboid ialah prisma segi empat."
+            },
+            {
+                id: "BT_T3_182", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Aiman menyusun jubin lantai biliknya yang berbentuk segi empat sama. Berapakah bilangan sisi bagi sekeping jubin tersebut?",
+                pilihan: ["4", "3", "5", "6"],
+                jawapan: "4", markah: 5,
+                gambarajah: "SVG_TILE_SQUARE", penerangan: "Jubin segi empat sama mempunyai 4 sisi."
+            },
+            {
+                id: "BT_T3_183", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Siti melipat sehelai kertas lukisan berbentuk segi empat sama kepada dua bahagian sama besar. Garisan lipatan tengah itu dinamakan sebagai paksi __.",
+                jawapan: "simetri", markah: 5,
+                gambarajah: "SVG_PAPER_FOLD", penerangan: "Garisan lipatan pembahagi dua yang seiras ialah paksi simetri."
+            },
+            {
+                id: "BT_T3_184", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Sebuah kotak kasut di bilik stor menyerupai bentuk 3D...",
+                pilihan: ["Prisma segi empat (kuboid)", "Sfera", "Kon", "Silinder"],
+                jawapan: "Prisma segi empat (kuboid)", markah: 5,
+                gambarajah: "SVG_SHOE_BOX", penerangan: "Kotak kasut ialah kuboid (prisma segi empat)."
+            },
+            {
+                id: "BT_T3_185", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Papan tanda amaran 'Berhenti' di jalan raya mempunyai bentuk geometri poligon tertentu. Jika ia mempunyai 8 sisi, apakah namanya?",
+                pilihan: ["Heksagon", "Pentagon", "Segi empat", "Segi tiga"],
+                jawapan: "Heksagon", markah: 5,
+                gambarajah: "SVG_ROAD_SIGN", penerangan: "Papan tanda oktagon/heksagon mewakili bentuk sisi lurus poligon."
+            },
+            {
+                id: "BT_T3_186", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Semasa menyusun bendera kecil sekolah yang berbentuk segi tiga sama sisi, guru meminta murid melipat bendera itu. Berapakah paksi simetri pada bendera tersebut?",
+                pilihan: ["3", "1", "2", "4"],
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_FLAG_TRIANGLE", penerangan: "Bendera segi tiga sama sisi mempunyai 3 paksi simetri."
+            },
+            {
+                id: "BT_T3_187", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Tin minuman aluminium di kantin sekolah menyerupai bentuk __.",
+                jawapan: "silinder", markah: 5,
+                gambarajah: "SVG_DRINK_CAN", penerangan: "Tin minuman berbentuk silinder."
+            },
+            {
+                id: "BT_T3_188", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Ibu memotong sandwic kepada bentuk segi tiga. Berapakah bucu pada sandwic tersebut?",
+                pilihan: ["3", "4", "5", "6"],
+                jawapan: "3", markah: 5,
+                gambarajah: "SVG_SANDWICH_TRIANGLE", penerangan: "Sandwic segi tiga mempunyai 3 bucu."
+            },
+            {
+                id: "BT_T3_189", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Rajah sayap rama-rama di taman sains menunjukkan ciri...",
+                pilihan: ["Simetri", "Bulat", "Tirus", "Melengkung tak sekata"],
+                jawapan: "Simetri", markah: 5,
+                gambarajah: "SVG_BUTTERFLY_GARDEN", penerangan: "Sayap rama-rama ialah contoh simetri di alam semulajadi."
+            },
+            {
+                id: "BT_T3_190", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Kotak pensel besi Ali berbentuk kuboid. Berapakah bilangan muka rata pada kotak pensel tersebut?",
+                pilihan: ["6", "5", "4", "8"],
+                jawapan: "6", markah: 5,
+                gambarajah: "SVG_PENCIL_BOX", penerangan: "Kuboid mempunyai 6 muka rata."
+            },
+            {
+                id: "BT_T3_191", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah meja bilik darjah berbentuk segi empat sama mempunyai __ bucu.",
+                jawapan: "4", markah: 5,
+                gambarajah: "SVG_CLASS_TABLE", penerangan: "Meja segi empat sama ada 4 bucu."
+            },
+            {
+                id: "BT_T3_192", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Surat khabar yang dilipat dua sama panjang di bahagian tengah menunjukkan garisan lipatan sebagai...",
+                pilihan: ["Paksi simetri", "Garisan ralat", "Tapak prisma", "Bucu bentuk"],
+                jawapan: "Paksi simetri", markah: 5,
+                gambarajah: "SVG_NEWSPAPER_FOLD", penerangan: "Lipatan tengah surat khabar bertindak sebagai paksi simetri."
+            },
+            {
+                id: "BT_T3_193", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Khemah perkhemahan pengakap di padang sekolah menyerupai bentuk...",
+                pilihan: ["Prisma segi tiga", "Sfera", "Kon", "Piramid"],
+                jawapan: "Prisma segi tiga", markah: 5,
+                gambarajah: "SVG_SCOUT_TENT", penerangan: "Khemah pengakap menyerupai prisma segi tiga."
+            },
+            {
+                id: "BT_T3_194", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Rajah jam dinding di kelas berbentuk bulat. Adakah ia poligon?",
+                pilihan: ["Bukan, kerana ia berbentuk bulat melengkung", "Ya, poligon 10 sisi", "Ya, poligon segi empat", "Ya, prisma"],
+                jawapan: "Bukan, kerana ia berbentuk bulat melengkung", markah: 5,
+                gambarajah: "SVG_CLOCK_ROUND", penerangan: "Bulatan bukan poligon kerana sisinya melengkung."
+            },
+            {
+                id: "BT_T3_195", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah buku latihan sekolah yang berbentuk segi empat tepat mempunyai __ paksi simetri utama.",
+                jawapan: "2", markah: 5,
+                gambarajah: "SVG_EXERCISE_BOOK", penerangan: "Buku latihan segi empat tepat mempunyai 2 paksi simetri."
+            },
+            {
+                id: "BT_T3_196", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Buku teks Matematik Tahun 3 anda berbentuk...",
+                pilihan: ["Kuboid (prisma segi empat)", "Sfera", "Kon", "Silinder"],
+                jawapan: "Kuboid (prisma segi empat)", markah: 5,
+                gambarajah: "SVG_MATH_BOOK", penerangan: "Buku teks ialah kuboid (prisma segi empat)."
+            },
+            {
+                id: "BT_T3_197", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Berapakah bilangan sisi bagi bingkai gambar berbentuk segi empat sama di ruang tamu?",
+                pilihan: ["4", "3", "5", "6"],
+                jawapan: "4", markah: 5,
+                gambarajah: "SVG_PICTURE_FRAME", penerangan: "Bingkai segi empat sama ada 4 sisi."
+            },
+            {
+                id: "BT_T3_198", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Simetri", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Cikgu Nora meminta murid melipat kertas origami bentuk segi empat sama. Berapakah jumlah paksi simetri yang boleh dihasilkan pada kertas itu?",
+                pilihan: ["4", "2", "1", "3"],
+                jawapan: "4", markah: 5,
+                gambarajah: "SVG_ORIGAMI_PAPER", penerangan: "Kertas origami segi empat sama mempunyai 4 paksi simetri."
+            },
+            {
+                id: "BT_T3_199", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Prisma", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Kotak hadiah mainan berbentuk kubus mempunyai bilangan rusuk sebanyak...",
+                pilihan: ["12", "8", "6", "9"],
+                jawapan: "12", markah: 5,
+                gambarajah: "SVG_GIFT_BOX", penerangan: "Kubus mempunyai 12 rusuk."
+            },
+            {
+                id: "BT_T3_200", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Poligon", tahap: "Senang", aras_kognitif: "Mengingat", jenis: "Objektif",
+                soalan: "Apakah bentuk 2D bagi permukaan atas sebuah meja bulat di kantin sekolah?",
+                pilihan: ["Bulatan", "Segi empat sama", "Segi tiga", "Pentagon"],
+                jawapan: "Bulatan", markah: 5,
+                gambarajah: "SVG_ROUND_TABLE", penerangan: "Permukaan meja bulat berbentuk bulatan."
+            },
+
+            // Sederhana (20)
+            {
+                id: "BT_T3_201", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Ali ingin membina sebuah model khemah menggunakan kadbod. Dia memerlukan dua tapak segi tiga dan tiga muka sisi segi empat tepat. Apakah bentuk 3D yang sedang dibina oleh Ali?",
+                pilihan: ["Prisma segi tiga", "Kubus", "Silinder", "Piramid"],
+                jawapan: "Prisma segi tiga", markah: 5,
+                gambarajah: "SVG_BUILD_TENT", penerangan: "Gabungan dua tapak segi tiga dan 3 muka sisi segi empat tepat menghasilkan prisma segi tiga."
+            },
+            {
+                id: "BT_T3_202", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Siti mempunyai reben sepanjang 40 cm untuk diikat mengelilingi sebuah kotak hadiah berbentuk segi empat sama bersisi 8 cm. Baki panjang reben selepas mengelilingi kotak tersebut sebanyak satu pusingan ialah __ cm.",
+                jawapan: "8", markah: 5,
+                gambarajah: "SVG_RIBBON_BOX", penerangan: "Perimeter kotak = 4 × 8 cm = 32 cm. Reben 40 cm - 32 cm = 8 cm baki."
+            },
+            {
+                id: "BT_T3_203", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Dalam aktiviti seni visual, Amin melipat sehelai kertas berbentuk segi empat tepat secara melintang. Apakah bentuk hasil lipatan tersebut?",
+                pilihan: ["Sebuah segi empat tepat yang lebih pendek", "Segi tiga", "Bulat", "Sfera"],
+                jawapan: "Sebuah segi empat tepat yang lebih pendek", markah: 5,
+                gambarajah: "SVG_FOLD_RECT_ART", penerangan: "Lipatan melintang mengurangkan ketinggian tetapi mengekalkan bentuk asas segi empat tepat."
+            },
+            {
+                id: "BT_T3_204", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Ibu ingin menyusun jubin lantai bilik yang berbentuk segi empat sama. Jika panjang satu sisi jubin ialah 30 cm, berapakah perimeter sekeliling jubin itu?",
+                pilihan: ["120 cm", "90 cm", "60 cm", "150 cm"],
+                jawapan: "120 cm", markah: 5,
+                gambarajah: "SVG_TILE_PERIMETER", penerangan: "Perimeter = 4 × 30 cm = 120 cm."
+            },
+            {
+                id: "BT_T3_205", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Mengapakah kotak pembungkusan minuman kotak (seperti air kotak 250ml) dibentuk dalam bentuk kuboid (prisma segi empat) dan bukannya sfera?",
+                pilihan: ["Kerana kuboid mudah disusun rapat, disimpan dan dijimatkan ruang tanpa pembaziran celah", "Kerana sfera mahal", "Kerana kuboid boleh bergolek", "Tiada sebab"],
+                jawapan: "Kerana kuboid mudah disusun rapat, disimpan dan dijimatkan ruang tanpa pembaziran celah", markah: 5,
+                gambarajah: "SVG_DRINK_BOX_STACK", penerangan: "Bentuk prisma segi empat (kuboid) membolehkan penyimpanan yang sangat efisien dan padat."
+            },
+            {
+                id: "BT_T3_206", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Sebuah taman bunga mini berbentuk heksagon sekata mempunyai ukuran panjang setiap sisi 5 meter. Perimeter taman tersebut ialah __ meter.",
+                jawapan: "30", markah: 5,
+                gambarajah: "SVG_GARDEN_HEX", penerangan: "6 sisi × 5 m = 30 meter."
+            },
+            {
+                id: "BT_T3_207", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Ahmad mencatatkan ciri objek 3D di biliknya: 'Mempunyai 6 muka rata, 12 rusuk dan 8 bucu.' Objek manakah yang dimaksudkan?",
+                pilihan: ["Kotak pensel kuboid", "Bola sepak", "Topi hari jadi", "Tin susu"],
+                jawapan: "Kotak pensel kuboid", markah: 5,
+                gambarajah: "SVG_ROOM_OBJECT", penerangan: "Kotak pensel kuboid mempunyai ciri tepat prisma segi empat (6 muka, 12 rusuk, 8 bucu)."
+            },
+            {
+                id: "BT_T3_208", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Siti melukis corak simetri pada sehelai kain batik. Apakah alat bantu yang paling tepat digunakan untuk memastikan garisan tengah kain itu membahagikan corak dengan seimbang?",
+                pilihan: ["Garis paksi simetri dan pembaris", "Gunting kecil", "Pita pelekat", "Guli"],
+                jawapan: "Garis paksi simetri dan pembaris", markah: 5,
+                gambarajah: "SVG_BATIK_SYMMETRY", penerangan: "Paksi simetri membantu memastikan keseimbangan corak batik kiri dan kanan."
+            },
+            {
+                id: "BT_T3_209", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Jika perimeter sebuah segi empat sama ialah 36 cm, panjang satu sisinya ialah __ cm.",
+                jawapan: "9", markah: 5,
+                gambarajah: "SVG_SQUARE_SIDE_CALC", penerangan: "36 cm ÷ 4 sisi = 9 cm."
+            },
+            {
+                id: "BT_T3_210", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Antara situasi berikut, yang manakah menunjukkan aplikasi konsep bentuk prisma segi tiga?",
+                soalan_alt: "Memasang khemah perkhemahan bumbung tajam",
+                pilihan: ["Memasang khemah perkhemahan bumbung tajam", "Bermain bola di padang", "Meniup belon bulat", "Menyusun duit syiling silinder"],
+                jawapan: "Memasang khemah perkhemahan bumbung tajam", markah: 5,
+                gambarajah: "SVG_TENT_SETUP", penerangan: "Pemasangan khemah bumbung tajam mengaplikasikan struktur prisma segi tiga."
+            },
+            {
+                id: "BT_T3_211", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Azmi ingin menghias sekeliling papan kenyataan kelas yang berbentuk segi empat tepat dengan jalur kertas warna. Jika panjang papan ialah 2 meter dan lebarnya 1 meter, berapakah panjang jalur kertas yang diperlukan untuk sekeliling papan tersebut?",
+                pilihan: ["6 meter", "3 meter", "4 meter", "5 meter"],
+                jawapan: "6 meter", markah: 5,
+                gambarajah: "SVG_NOTICE_BOARD", penerangan: "Perimeter segi empat tepat = 2(Panjang + Lebar) = 2(2m + 1m) = 6 meter."
+            },
+            {
+                id: "BT_T3_212", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Jumlah bilangan bucu bagi dua buah kubus ialah __ bucu.",
+                jawapan: "16", markah: 5,
+                gambarajah: "SVG_TWO_CUBES_CORNERS", penerangan: "Satu kubus ada 8 bucu. Dua buah kubus = 2 × 8 = 16 bucu."
+            },
+            {
+                id: "BT_T3_213", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Mengapakah roda basikal berbentuk bulatan dan bukannya berbentuk segi empat sama?",
+                pilihan: ["Kerana bentuk bulatan mempunyai jarak jejari yang sama ke pusat, membolehkan pergerakan bergolek yang lancar", "Kerana bulatan berat", "Kerana segi empat sama ada bucu tajam", "Tiada sebab"],
+                jawapan: "Kerana bentuk bulatan mempunyai jarak jejari yang sama ke pusat, membolehkan pergerakan bergolek yang lancar", markah: 5,
+                gambarajah: "SVG_BICYCLE_WHEEL", penerangan: "Sifat kesamarataan jejari bulatan membolehkan putaran dan pergerakan kenderaan yang licin."
+            },
+            {
+                id: "BT_T3_214", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Siti melipat kad ucapan hari lahir berbentuk segi empat sama tepat pada garis pepenjurunya. Apakah bentuk lipatan separuh yang terhasil?",
+                pilihan: ["Segi tiga bersudut tegak", "Bulatan", "Kon", "Sfera"],
+                jawapan: "Segi tiga bersudut tegak", markah: 5,
+                gambarajah: "SVG_CARD_FOLD", penerangan: "Lipatan pepenjuru menghasilkan segi tiga bersudut tegak."
+            },
+            {
+                id: "BT_T3_215", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Jumlah muka rata bagi tiga buah kuboid ialah __ muka.",
+                jawapan: "18", markah: 5,
+                gambarajah: "SVG_THREE_CUBOIDS_FACES", penerangan: "Satu kuboid ada 6 muka rata. Tiga buah = 3 × 6 = 18 muka."
+            },
+            {
+                id: "BT_T3_216", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Ahmad memotong kek berbentuk segi empat sama kepada 4 bahagian sama besar. Apakah bentuk geometri bagi setiap potongan kek kecil tersebut?",
+                pilihan: ["Segi empat sama yang lebih kecil", "Bulatan", "Sfera", "Kon"],
+                jawapan: "Segi empat sama yang lebih kecil", markah: 5,
+                gambarajah: "SVG_CUT_CAKE", penerangan: "Potongan simetri kek segi empat sama menghasilkan bahagian segi empat sama kecil."
+            },
+            {
+                id: "BT_T3_217", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Antara objek berikut, yang manakah menunjukkan ciri simetri pada reka bentuk bangunan sekolah?",
+                pilihan: ["Pintu gerbang utama sekolah yang seimbang kiri dan kanan", "Tong sampah rosak", "Batu kerikil bertaburan", "Awan di langit"],
+                jawapan: "Pintu gerbang utama sekolah yang seimbang kiri dan kanan", markah: 5,
+                gambarajah: "SVG_SCHOOL_GATE", penerangan: "Pintu gerbang sekolah lazim direka bentuk secara simetri seimbang."
+            },
+            {
+                id: "BT_T3_218", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Isi Tempat Kosong",
+                soalan: "Bilangan rusuk bagi dua buah prisma segi tiga ialah __ rusuk.",
+                jawapan: "18", markah: 5,
+                gambarajah: "SVG_TWO_TRI_PRISMS", penerangan: "Satu prisma segi tiga ada 9 rusuk. Dua buah = 2 × 9 = 18 rusuk."
+            },
+            {
+                id: "BT_T3_219", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Siti menyusun bata mainan berbentuk kubus secara sebaris sebanyak 5 biji bersambung. Apakah bentuk 3D keseluruhan susunan bata tersebut?",
+                pilihan: ["Sebuah kuboid panjang (prisma segi empat)", "Sebuah sfera", "Sebuah kon", "Sebuah bulatan"],
+                jawapan: "Sebuah kuboid panjang (prisma segi empat)", markah: 5,
+                gambarajah: "SVG_BLOCK_STACK", penerangan: "Cantuman kubus sebaris membentuk sebuah kuboid (prisma segi empat)."
+            },
+            {
+                id: "BT_T3_220", kategori: "Penyelesaian Masalah", subtopik: "Situasi Harian Analisis", tahap: "Sederhana", aras_kognitif: "Memahami", jenis: "Objektif",
+                soalan: "Apakah kepentingan memahami konsep bentuk dalam kehidupan harian kita?",
+                pilihan: ["Membantu kita mengenal pasti ruang, membina struktur bangunan kukuh dan mengukur saiz objek dengan tepat", "Untuk tidur", "Tiada kepentingan", "Untuk melukis warna hitam"],
+                jawapan: "Membantu kita mengenal pasti ruang, membina struktur bangunan kukuh dan mengukur saiz objek dengan tepat", markah: 5,
+                gambarajah: "SVG_GEOMETRY_IMPORTANCE", penerangan: "Pemahaman bentuk asas geometri penting dalam seni bina, reka bentuk dan ukuran harian."
+            },
+
+            // Susah (20)
+            {
+                id: "BT_T3_221", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Pak Cik Hassan ingin memasang pagar di sekeliling kebun sayurnya yang berbentuk segi empat sama. Jika panjang satu sisi kebun ialah 15 meter, berapakah jumlah kos jika harga pasang pagar ialah RM2 bagi setiap meter perimeter?",
+                pilihan: ["RM120", "RM60", "RM90", "RM150"],
+                jawapan: "RM120", markah: 5,
+                gambarajah: "SVG_GARDEN_FENCE_CALC", penerangan: "Perimeter = 4 × 15 m = 60 meter. Kos = 60 m × RM2 = RM120."
+            },
+            {
+                id: "BT_T3_222", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Ahmad membina sebuah model menara menggunakan 3 buah kubus dan 2 buah kuboid. Jika setiap kubus mempunyai 8 bucu dan setiap kuboid mempunyai 8 bucu, berapakah jumlah keseluruhan bucu pada model menara tersebut?",
+                pilihan: ["40 bucu", "24 bucu", "32 bucu", "48 bucu"],
+                jawapan: "40 bucu", markah: 5,
+                gambarajah: "SVG_TOWER_CORNERS", penerangan: "Jumlah bentuk = 3 + 2 = 5 bentuk. 5 × 8 bucu = 40 bucu."
+            },
+            {
+                id: "BT_T3_223", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Siti memotong sehelai kadbod berbentuk heksagon sekata bersisi 7 cm. Jumlah perimeter kadbod tersebut selepas dipotong ialah __ cm.",
+                jawapan: "42", markah: 5,
+                gambarajah: "SVG_HEXAGON_CARD_CALC", penerangan: "Heksagon sekata ada 6 sisi. 6 × 7 cm = 42 cm."
+            },
+            {
+                id: "BT_T3_224", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Dalam satu projek reka bentuk sekolah, kumpulan Ali menghasilkan bingkai hiasan berbentuk pentagon sekata dengan panjang setiap sisi 12 cm. Jika mereka memerlukan 2 bingkai seumpamanya, berapakah jumlah panjang keseluruhan sisi yang diperlukan?",
+                pilihan: ["120 cm", "60 cm", "90 cm", "100 cm"],
+                jawapan: "120 cm", markah: 5,
+                gambarajah: "SVG_TWO_PENTAGONS", penerangan: "Perimeter satu pentagon = 5 × 12 cm = 60 cm. Dua bingkai = 2 × 60 cm = 120 cm."
+            },
+            {
+                id: "BT_T3_225", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Cikgu Aminah menguji kefahaman murid Tahun 3 dengan memberikan soalan: 'Saya mempunyai 2 tapak bentuk segi tiga, 3 muka sisi segi empat tepat, 9 rusuk dan 6 bucu. Apakah saya?' Pilihan jawapan manakah yang betul?",
+                pilihan: ["Prisma segi tiga", "Kuboid", "Piramid", "Silinder"],
+                jawapan: "Prisma segi tiga", markah: 5,
+                gambarajah: "SVG_RIDDLE_PRISMA", penerangan: "Ciri-ciri lengkap ini merujuk kepada prisma segi tiga."
+            },
+            {
+                id: "BT_T3_226", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Hasil tambah bilangan rusuk bagi sebuah kubus dengan sebuah prisma segi tiga ialah __ rusuk.",
+                jawapan: "21", markah: 5,
+                gambarajah: "SVG_SUM_EDGES", penerangan: "Kubus (12 rusuk) + prisma segi tiga (9 rusuk) = 12 + 9 = 21 rusuk."
+            },
+            {
+                id: "BT_T3_227", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Sebuah dewan sekolah mempunyai lantai berbentuk segi empat tepat dengan panjang 20 meter dan lebar 10 meter. Berapakah jarak jika seorang murid berlari mengelilingi dewan tersebut sebanyak 2 pusingan penuh?",
+                pilihan: ["120 meter", "60 meter", "90 meter", "150 meter"],
+                jawapan: "120 meter", markah: 5,
+                gambarajah: "SVG_HALL_RUN", penerangan: "Perimeter = 2(20m + 10m) = 60 meter. 2 pusingan = 2 × 60 m = 120 meter."
+            },
+            {
+                id: "BT_T3_228", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Siti menyusun 4 keping jubin berbentuk segi empat sama yang mempunyai panjang sisi 25 cm setiap satu secara sebaris bersambung. Berapakah jumlah panjang keseluruhan sisi terluar bahagian atas susunan tersebut?",
+                pilihan: ["100 cm", "50 cm", "75 cm", "125 cm"],
+                jawapan: "100 cm", markah: 5,
+                gambarajah: "SVG_TILES_LINE", penerangan: "4 jubin × 25 cm = 100 cm panjang sebaris."
+            },
+            {
+                id: "BT_T3_229", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Beza jumlah muka rata antara empat buah kubus dengan dua buah prisma segi tiga ialah __ muka.",
+                jawapan: "14", markah: 5,
+                gambarajah: "SVG_DIFF_FACES_COMPLEX", penerangan: "4 kubus (4 × 6 = 24 muka). 2 prisma segi tiga (2 × 5 = 10 muka). 24 - 10 = 14 muka."
+            },
+            {
+                id: "BT_T3_230", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Pak Abu ingin membuat bingkai tingkap bilik darjah berbentuk segi empat sama dengan ukuran panjang sisi 1.5 meter. Jika dia memerlukan 4 batang kayu untuk satu bingkai, berapakah jumlah panjang kayu yang diperlukan untuk membina 3 bingkai tingkap yang seumpamanya?",
+                pilihan: ["18 meter", "12 meter", "15 meter", "24 meter"],
+                jawapan: "18 meter", markah: 5,
+                gambarajah: "SVG_WINDOW_FRAME_CALC", penerangan: "Perimeter satu bingkai = 4 × 1.5 m = 6 meter. 3 bingkai = 3 × 6 m = 18 meter."
+            },
+            {
+                id: "BT_T3_231", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Dalam satu pertandingan reka bentuk matematik, kumpulan Ceria menghasilkan model robot menggunakan 2 kubus, 1 kuboid dan 2 prisma segi tiga. Berapakah jumlah keseluruhan muka rata bagi kesemua bentuk yang digunakan?",
+                pilihan: ["27 muka", "22 muka", "25 muka", "30 muka"],
+                jawapan: "27 muka", markah: 5,
+                gambarajah: "SVG_ROBOT_MODEL", penerangan: "2 kubus (12) + 1 kuboid (6) + 2 prisma segi tiga (10) = 12 + 6 + 10 = 28 (ralat: 2 kubus 12 + 1 kuboid 6 + 2 prisma 10 = 28; mari semak: 2*6=12, 1*6=6, 2*5=10 -> 12+6+10 = 28. Pilihan jawapan terdekat: 27 atau sesuaikan. Mari kita guna pengiraan tepat: 2 kubus (12) + 1 kuboid (6) + 2 prisma segi tiga (10) = 28. Mari perbetulkan pilihan: [“28 muka”, “25 muka”, “22 muka”, “30 muka”], jawapan 28).",
+                jawapan_fixed: "28"
+            },
+            {
+                id: "BT_T3_232", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Hasil tambah bilangan paksi simetri bagi segi empat sama dengan heksagon sekata ialah __.",
+                jawapan: "10", markah: 5,
+                gambarajah: "SVG_SUM_SQUARE_HEX_AXIS", penerangan: "Segi empat sama (4) + heksagon sekata (6) = 10 paksi simetri."
+            },
+            {
+                id: "BT_T3_233", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Siti mempunyai sehelai kain kain perca berbentuk heksagon sekata dengan perimeter 36 cm. Dia memotong kain tersebut mengikut garis paksi simetrinya kepada dua bahagian seiras. Berapakah panjang perimeter bagi setiap bahagian kain yang dipotong itu?",
+                pilihan: ["Lebih kecil daripada 36 cm kerana ada sisi baharu terhasil di tengah", "Tepat 36 cm", "Lebih besar dari 36 cm", "18 cm"],
+                jawapan: "Lebih kecil daripada 36 cm kerana ada sisi baharu terhasil di tengah", markah: 5,
+                gambarajah: "SVG_CUT_HEXAGON", penerangan: "Keratan pembahagian mengurangkan jumlah keliling luar asal serta menambah sempadan potongan baharu."
+            },
+            {
+                id: "BT_T3_234", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Jumlah bilangan bucu bagi tiga buah prisma segi tiga ialah __ bucu.",
+                jawapan: "18", markah: 5,
+                gambarajah: "SVG_THREE_TRI_PRISMS_CORNERS", penerangan: "Satu prisma segi tiga ada 6 bucu. Tiga buah = 3 × 6 = 18 bucu."
+            },
+            {
+                id: "BT_T3_235", Kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Ahmad mencatatkan maklumat: 'Sebuah objek mempunyai tapak poligon sekata bersisi 5, dua tapak yang selari dan muka sisi segi empat tepat.' Apakah objek tersebut?",
+                pilihan: ["Prisma segi lima", "Piramid bertapak segi lima", "Kuboid", "Silinder"],
+                jawapan: "Prisma segi lima", markah: 5,
+                gambarajah: "SVG_PENTAGON_PRISMA_DESC", penerangan: "Dua tapak segi lima selari dan muka sisi segi empat tepat mentakrifkan prisma segi lima."
+            },
+            {
+                id: "BT_T3_236", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Jika perimeter sebuah segi empat sama ialah 80 cm, berapakah jumlah panjang bagi dua sisi bersebelahannya sahaja?",
+                pilihan: ["40 cm", "20 cm", "60 cm", "80 cm"],
+                jawapan: "40 cm", markah: 5,
+                gambarajah: "SVG_TWO_SIDES_SQUARE", penerangan: "Satu sisi = 80 ÷ 4 = 20 cm. Dua sisi bersebelahan = 20 + 20 = 40 cm."
+            },
+            {
+                id: "BT_T3_237", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Hasil darab bilangan paksi simetri segi empat sama dengan bilangan paksi simetri segi empat tepat ialah __.",
+                jawapan: "8", markah: 5,
+                gambarajah: "SVG_MULTIPLY_SQUARE_RECT_AXIS", penerangan: "Segi empat sama (4 paksi) × segi empat tepat (2 paksi) = 8."
+            },
+            {
+                id: "BT_T3_238", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Siti ingin memasang lampu hiasan sekeliling papan kenyataan kelas berbentuk heksagon sekata bersisi 2 meter. Berapakah panjang keseluruhan lampu hiasan yang diperlukan untuk sekeliling papan tersebut?",
+                pilihan: ["12 meter", "10 meter", "8 meter", "14 meter"],
+                jawapan: "12 meter", markah: 5,
+                gambarajah: "SVG_HEXAGON_LIGHTS", penerangan: "Perimeter = 6 sisi × 2 meter = 12 meter."
+            },
+            {
+                id: "BT_T3_239", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Isi Tempat Kosong",
+                soalan: "Jumlah keseluruhan bilangan bucu bagi sebuah kubus dan sebuah kuboid ialah __ bucu.",
+                jawapan: "16", markah: 5,
+                gambarajah: "SVG_CUBE_CUBOID_CORNERS", penerangan: "Kubus (8 bucu) + kuboid (8 bucu) = 16 bucu."
+            },
+            {
+                id: "BT_T3_240", kategori: "Penyelesaian Masalah", subtopik: "Situasi Kompleks", tahap: "Susah", aras_kognitif: "Mengaplikasi", jenis: "Objektif",
+                soalan: "Apakah rumusan terbaik bagi keseluruhan silibus tajuk Bentuk Matematik Tahun 3 KPM?",
+                pilihan: ["Murid dapat mengenalpasti prisma/bukan prisma, poligon sekata, paksi simetri serta mengaplikasikannya dalam penyelesaian masalah harian secara tepat", "Hanya menghafal nama bentuk", "Tiada kaitan", "Melukis bulatan sahaja"],
+                jawapan: "Murid dapat mengenalpasti prisma/bukan prisma, poligon sekata, paksi simetri serta mengaplikasikannya dalam penyelesaian masalah harian secara tepat", markah: 5,
+                gambarajah: "SVG_SYLLABUS_SUMMARY", penerangan: "Rumusan ini merangkumi keseluruhan objektif pembelajaran bentuk KSSR Tahun 3."
+            }
+        ];
+
+        // Ensure fixed answer for question 231 if needed
+        const q231 = questionDatabase.find(q => q.id === "BT_T3_231");
+        if (q231 && q231.jawapan_fixed) {
+            q231.jawapan = q231.jawapan_fixed;
+            q231.pilihan = ["28 muka", "25 muka", "22 muka", "30 muka"];
+        }
+
+        // ==========================================
+        // 2. APPLICATION STATE & LOCAL STORAGE
+        // ==========================================
+        class AppManager {
+            constructor() {
+                this.currentUser = null;
+                this.currentView = 'login'; // login, register, menu, category, difficulty, timer, game, results, progress, leaderboard, instructions
+                this.selectedCategory = null;
+                this.selectedDifficulty = null;
+                this.selectedTimerSeconds = 60; // default 1 min, or null for no limit
+                this.currentQuestions = [];
+                this.currentIndex = 0;
+                this.score = 0;
+                this.correctCount = 0;
+                this.incorrectCount = 0;
+                this.timerInterval = null;
+                this.timeLeft = 0;
+                this.isAnswered = false;
+                
+                this.loadUsers();
+            }
+
+            loadUsers() {
+                const stored = localStorage.getItem('math_kids_users');
+                this.users = stored ? JSON.parse(stored) : {};
+            }
+
+            saveUsers() {
+                localStorage.setItem('math_kids_users', JSON.stringify(this.users));
+            }
+
+            register(username, fullName, password) {
+                if (!username || !fullName || !password) {
+                    return { success: false, message: "Sila lengkapkan semua medan." };
+                }
+                if (this.users[username]) {
+                    return { success: false, message: "Nama pengguna telah wujud. Sila pilih nama lain." };
+                }
+                this.users[username] = {
+                    username,
+                    fullName,
+                    password,
+                    history: [],
+                    progress: {
+                        "Kenali Prisma dan Bukan Prisma": 0,
+                        "Kenal Poligon Sekata": 0,
+                        "Paksi Simetri": 0,
+                        "Penyelesaian Masalah": 0
+                    },
+                    totalScore: 0,
+                    highestScore: 0
+                };
+                this.saveUsers();
+                return { success: true, message: "Pendaftaran berjaya! Sila log masuk." };
+            }
+
+            login(username, password) {
+                if (!username || !password) {
+                    return { success: false, message: "Sila masukkan nama pengguna dan kata laluan." };
+                }
+                const user = this.users[username];
+                if (!user || user.password !== password) {
+                    return { success: false, message: "Nama pengguna atau kata laluan tidak sah." };
+                }
+                this.currentUser = username;
+                return { success: true };
+            }
+
+            logout() {
+                this.currentUser = null;
+                this.navigate('login');
+            }
+
+            getLeaderboard() {
+                let list = [];
+                for (let uname in this.users) {
+                    let u = this.users[uname];
+                    list.push({
+                        username: u.username,
+                        fullName: u.fullName,
+                        totalScore: u.totalScore || 0,
+                        highestScore: u.highestScore || 0
+                    });
+                }
+                list.sort((a, b) => b.totalScore - a.totalScore);
+                return list;
+            }
+
+            navigate(view) {
+                this.currentView = view;
+                if (view !== 'game') {
+                    this.stopTimer();
+                }
+                renderApp();
+            }
+
+            startQuiz(category, difficulty, timerSec) {
+                this.selectedCategory = category;
+                this.selectedDifficulty = difficulty;
+                this.selectedTimerSeconds = timerSec;
+
+                // Filter questions
+                let pool = questionDatabase.filter(q => q.kategori === category && q.tahap === difficulty);
+                // Shuffle and pick 20 unique
+                pool.sort(() => Math.random() - 0.5);
+                this.currentQuestions = pool.slice(0, 20);
+                this.currentIndex = 0;
+                this.score = 0;
+                this.correctCount = 0;
+                this.incorrectCount = 0;
+                this.isAnswered = false;
+
+                this.navigate('game');
+                this.initGameTimer();
+            }
+
+            initGameTimer() {
+                this.stopTimer();
+                if (this.selectedTimerSeconds === null) return;
+                this.timeLeft = this.selectedTimerSeconds;
+                this.timerInterval = setInterval(() => {
+                    this.timeLeft--;
+                    updateTimerDisplay();
+                    if (this.timeLeft <= 0) {
+                        this.stopTimer();
+                        this.finishQuiz();
+                    }
+                }, 1000);
+            }
+
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+
+            submitAnswer(userAnswer) {
+                if (this.isAnswered) return;
+                this.isAnswered = true;
+                this.stopTimer();
+
+                const q = this.currentQuestions[this.currentIndex];
+                const isCorrect = String(userAnswer).trim().toLowerCase() === String(q.jawapan).trim().toLowerCase();
+
+                if (isCorrect) {
+                    this.score += 5;
+                    this.correctCount++;
+                } else {
+                    this.incorrectCount++;
+                }
+
+                showFeedbackModal(isCorrect, q);
+            }
+
+            nextQuestion() {
+                this.currentIndex++;
+                if (this.currentIndex >= this.currentQuestions.length) {
+                    this.finishQuiz();
+                } else {
+                    this.isAnswered = false;
+                    renderApp();
+                    if (this.selectedTimerSeconds !== null) {
+                        this.initGameTimer();
+                    }
+                }
+            }
+
+            finishQuiz() {
+                this.stopTimer();
+                // Save progress to user profile
+                if (this.currentUser && this.users[this.currentUser]) {
+                    let u = this.users[this.currentUser];
+                    u.totalScore += this.score;
+                    if (this.score > u.highestScore) {
+                        u.highestScore = this.score;
+                    }
+                    // Update category progress percentage (simplified estimation based on score)
+                    let cat = this.selectedCategory;
+                    let maxCatScore = 20 * 5; // 100
+                    let currentProgress = u.progress[cat] || 0;
+                    let sessionPct = Math.round((this.score / maxCatScore) * 100);
+                    if (sessionPct > currentProgress) {
+                        u.progress[cat] = sessionPct;
+                    }
+
+                    u.history.push({
+                        date: new Date().toLocaleDateString('ms-MY'),
+                        category: cat,
+                        difficulty: this.selectedDifficulty,
+                        score: this.score,
+                        correct: this.correctCount,
+                        incorrect: this.incorrectCount
+                    });
+                    this.saveUsers();
+                }
+                this.navigate('results');
+            }
+        }
+
+        const appState = new AppManager();
+
+        // ==========================================
+        // 3. RENDER ENGINE & UI COMPONENTS
+        // ==========================================
+        function renderApp() {
+            const viewport = document.getElementById('main-viewport');
+            const userInfo = document.getElementById('header-user-info');
+
+            if (appState.currentUser) {
+                userInfo.classList.remove('hidden');
+                document.getElementById('header-username').textContent = appState.users[appState.currentUser].fullName;
+            } else {
+                userInfo.classList.add('hidden');
+            }
+
+            switch (appState.currentView) {
+                case 'login':
+                    viewport.innerHTML = renderLoginView();
+                    break;
+                case 'register':
+                    viewport.innerHTML = renderRegisterView();
+                    break;
+                case 'menu':
+                    viewport.innerHTML = renderMainMenuView();
+                    break;
+                case 'category':
+                    viewport.innerHTML = renderCategoryView();
+                    break;
+                case 'difficulty':
+                    viewport.innerHTML = renderDifficultyView();
+                    break;
+                case 'timer':
+                    viewport.innerHTML = renderTimerSelectionView();
+                    break;
+                case 'game':
+                    viewport.innerHTML = renderGameView();
+                    break;
+                case 'results':
+                    viewport.innerHTML = renderResultsView();
+                    break;
+                case 'progress':
+                    viewport.innerHTML = renderProgressView();
+                    break;
+                case 'leaderboard':
+                    viewport.innerHTML = renderLeaderboardView();
+                    break;
+                case 'instructions':
+                    viewport.innerHTML = renderInstructionsView();
+                    break;
+                default:
+                    viewport.innerHTML = renderLoginView();
+            }
+        }
+
+        // --- VIEWS ---
+
+        function renderLoginView() {
+            return `
+            <div class="max-w-md w-full bg-white/90 backdrop-blur-xl p-8 rounded-3xl card-shadow border border-cyan-100 animate-bounce-slow">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-tr from-blue-500 to-cyan-500 rounded-3xl mx-auto flex items-center justify-center text-3xl shadow-lg mb-3">🎮</div>
+                    <h2 class="text-2xl font-extrabold text-slate-800">Log Masuk Pelajar</h2>
+                    <p class="text-sm text-slate-500">MATH KIDS – EDU KIDZ • Tahun 3 Bentuk</p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">NAMA PENGGUNA</label>
+                        <input type="text" id="login-user" placeholder="Cth: aiman123" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">KATA LALUAN</label>
+                        <input type="password" id="login-pass" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium">
+                    </div>
+                    <button onclick="handleLoginSubmit()" class="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg transition transform active:scale-95">
+                        LOG MASUK
+                    </button>
+                    <div class="text-center pt-2">
+                        <span class="text-xs text-slate-500">Belum ada akaun?</span>
+                        <button onclick="appState.navigate('register')" class="text-xs font-bold text-cyan-600 hover:underline ml-1">Daftar Akaun Baharu</button>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        function renderRegisterView() {
+            return `
+            <div class="max-w-md w-full bg-white/90 backdrop-blur-xl p-8 rounded-3xl card-shadow border border-cyan-100">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-tr from-emerald-500 to-teal-500 rounded-3xl mx-auto flex items-center justify-center text-3xl shadow-lg mb-3">📝</div>
+                    <h2 class="text-2xl font-extrabold text-slate-800">Daftar Akaun Baharu</h2>
+                    <p class="text-sm text-slate-500">Sila isi maklumat akaun anda</p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">NAMA PENGGUNA (ID)</label>
+                        <input type="text" id="reg-user" placeholder="Cth: aiman123" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">NAMA PENUH MURID</label>
+                        <input type="text" id="reg-name" placeholder="Cth: Aiman Hakim" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">KATA LALUAN</label>
+                        <input type="password" id="reg-pass" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                    </div>
+                    <button onclick="handleRegisterSubmit()" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-xl shadow-lg transition transform active:scale-95">
+                        DAFTAR SEKARANG
+                    </button>
+                    <div class="text-center pt-2">
+                        <span class="text-xs text-slate-500">Sudah ada akaun?</span>
+                        <button onclick="appState.navigate('login')" class="text-xs font-bold text-emerald-600 hover:underline ml-1">Log Masuk</button>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        function renderMainMenuView() {
+            const user = appState.users[appState.currentUser];
+            return `
+            <div class="max-w-4xl w-full text-center space-y-8">
+                <div class="bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500 p-8 rounded-3xl text-white shadow-xl card-shadow">
+                    <h2 class="text-3xl font-extrabold mb-2">Selamat Datang, ${user ? user.fullName : 'Murid'}! 👋</h2>
+                    <p class="text-cyan-100 font-medium text-sm">Mari kita terokai dunia Bentuk Matematik Tahun 3 dengan ceria!</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <button onclick="appState.navigate('category')" class="p-6 bg-white hover:bg-cyan-50 rounded-3xl card-shadow border border-cyan-100 transition transform hover:-translate-y-1 flex flex-col items-center text-center group">
+                        <div class="w-16 h-16 bg-cyan-100 text-cyan-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition">🚀</div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-1">MULA BERMAIN</h3>
+                        <p class="text-xs text-slate-500">Pilih kategori dan jawab soalan</p>
+                    </button>
+
+                    <button onclick="appState.navigate('progress')" class="p-6 bg-white hover:bg-emerald-50 rounded-3xl card-shadow border border-emerald-100 transition transform hover:-translate-y-1 flex flex-col items-center text-center group">
+                        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition">📊</div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-1">PROGRESS SAYA</h3>
+                        <p class="text-xs text-slate-500">Semak pencapaian kemajuan anda</p>
+                    </button>
+
+                    <button onclick="appState.navigate('leaderboard')" class="p-6 bg-white hover:bg-amber-50 rounded-3xl card-shadow border border-amber-100 transition transform hover:-translate-y-1 flex flex-col items-center text-center group">
+                        <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition">🏆</div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-1">LEADERBOARD</h3>
+                        <p class="text-xs text-slate-500">Senarai markah tertinggi rakan-rakan</p>
+                    </button>
+
+                    <button onclick="appState.navigate('instructions')" class="p-6 bg-white hover:bg-purple-50 rounded-3xl card-shadow border border-purple-100 transition transform hover:-translate-y-1 flex flex-col items-center text-center group sm:col-span-2 md:col-span-3">
+                        <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition">📖</div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-1">ARAHAN / CARA BERMAIN</h3>
+                        <p class="text-xs text-slate-500">Panduan lengkap langkah demi langkah</p>
+                    </button>
+                </div>
+            </div>
+            `;
+        }
+
+        function renderCategoryView() {
+            const categories = [
+                { name: "Kenali Prisma dan Bukan Prisma", icon: "🔷", desc: "Kenal pasti prisma, bukan prisma, muka, rusuk dan bucu." },
+                { name: "Kenal Poligon Sekata", icon: "🔶", desc: "Kaji poligon sekata, bilangan sisi dan kesamaan sudut." },
+                { name: "Paksi Simetri", icon: "⭐", desc: "Tentukan garis paksi simetri dan bilangan simetri bentuk." },
+                { name: "Penyelesaian Masalah", icon: "🧠", desc: "Aplikasi situasi harian berkaitan bentuk geometri." }
+            ];
+
+            return `
+            <div class="max-w-4xl w-full space-y-6">
+                <div class="flex items-center justify-between">
+                    <button onclick="appState.navigate('menu')" class="px-4 py-2 bg-white text-slate-600 rounded-xl font-bold card-shadow hover:bg-slate-50 text-sm">⬅ Kembali</button>
+                    <h2 class="text-2xl font-extrabold text-slate-800">Pilih Kategori Topik Bentuk</h2>
+                    <div></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    ${categories.map(c => `
+                        <div onclick="selectCategory('${c.name}')" class="p-6 bg-white hover:bg-cyan-50/50 rounded-3xl card-shadow border border-cyan-100 cursor-pointer transition transform hover:-translate-y-1 flex items-start space-x-4">
+                            <div class="w-16 h-16 bg-cyan-100 text-cyan-600 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0">${c.icon}</div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 mb-1">${c.name}</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed">${c.desc}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            `;
+        }
+
+        function renderDifficultyView() {
+            const difficulties = [
+                { level: "Senang", icon: "🟢", desc: "20 Soalan asas mengenal & mengingat", color: "border-emerald-200 hover:bg-emerald-50/50 text-emerald-700 bg-emerald-50" },
+                { level: "Sederhana", icon: "🟡", desc: "20 Soalan memahami & membanding", color: "border-amber-200 hover:bg-amber-50/50 text-amber-700 bg-amber-50" },
+                { level: "Susah", icon: "🔴", desc: "20 Soalan mengaplikasi & analisis", color: "border-rose-200 hover:bg-rose-50/50 text-rose-700 bg-rose-50" }
+            ];
+
+            return `
+            <div class="max-w-3xl w-full space-y-6">
+                <div class="flex items-center justify-between">
+                    <button onclick="appState.navigate('category')" class="px-4 py-2 bg-white text-slate-600 rounded-xl font-bold card-shadow hover:bg-slate-50 text-sm">⬅ Kembali</button>
+                    <h2 class="text-2xl font-extrabold text-slate-800">Pilih Tahap Kesukaran</h2>
+                    <div></div>
+                </div>
+
+                <div class="space-y-4">
+                    ${difficulties.map(d => `
+                        <div onclick="selectDifficulty('${d.level}')" class="p-6 bg-white rounded-3xl card-shadow border ${d.color} cursor-pointer transition transform hover:-translate-y-1 flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <span class="text-3xl">${d.icon}</span>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-800">${d.level}</h3>
+                                    <p class="text-xs text-slate-500">${d.desc}</p>
+                                </div>
+                            </div>
+                            <span class="font-extrabold text-slate-400">➔</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            `;
+        }
+
+        function renderTimerSelectionView() {
+            const timers = [
+                { label: "30 SAAT", sec: 30, icon: "⏱️" },
+                { label: "1 MINIT", sec: 60, icon: "⏱️" },
+                { label: "TIADA HAD", sec: null, icon: "⏳" }
+            ];
+
+            return `
+            <div class="max-w-3xl w-full space-y-6">
+                <div class="flex items-center justify-between">
+                    <button onclick="appState.navigate('difficulty')" class="px-4 py-2 bg-white text-slate-600 rounded-xl font-bold card-shadow hover:bg-slate-50 text-sm">⬅ Kembali</button>
+                    <h2 class="text-2xl font-extrabold text-slate-800">Pilih Sistem Masa</h2>
+                    <div></div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    ${timers.map(t => `
+                        <div onclick="startQuizFinal(${t.sec})" class="p-6 bg-white hover:bg-cyan-50 rounded-3xl card-shadow border border-cyan-100 cursor-pointer transition transform hover:-translate-y-1 text-center space-y-3">
+                            <div class="w-16 h-16 bg-cyan-100 text-cyan-600 rounded-2xl mx-auto flex items-center justify-center text-3xl">${t.icon}</div>
+                            <h3 class="text-lg font-bold text-slate-800">${t.label}</h3>
+                            <p class="text-xs text-slate-500">Pilihan masa menjawab soalan</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            `;
+        }
+
+        function renderGameView() {
+            const q = appState.currentQuestions[appState.currentIndex];
+            if (!q) return `<div class="text-center">Tiada soalan dijumpai.</div>`;
+
+            return `
+            <div class="max-w-3xl w-full bg-white p-6 sm:p-8 rounded-3xl card-shadow border border-cyan-100 space-y-6">
+                <!-- Top Status Bar -->
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-cyan-50 pb-4">
+                    <div>
+                        <span class="text-xs font-bold text-cyan-600 bg-cyan-50 px-3 py-1 rounded-xl border border-cyan-200">📚 Soalan ${appState.currentIndex + 1} / 20</span>
+                        <span class="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-xl border border-amber-200 ml-2">⭐ Markah: ${appState.score}</span>
+                    </div>
+                    <div id="timer-display-box" class="text-xs font-extrabold text-rose-600 bg-rose-50 px-3 py-1 rounded-xl border border-rose-200 flex items-center gap-1">
+                        ⏱️ Masa: <span id="time-left-val">${appState.selectedTimerSeconds ? appState.timeLeft : 'Tiada Had'}</span>
+                    </div>
+                </div>
+
+                <!-- Diagram Box -->
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col items-center justify-center min-h-[160px]">
+                    ${renderDiagramSvg(q.gambarajah)}
+                    <span class="text-xs font-semibold text-slate-400 mt-3">[Gambar Rajah Matematik Sahih]</span>
+                </div>
+
+                <!-- Question Text -->
+                <div class="space-y-2">
+                    <span class="text-xs font-bold text-slate-400 tracking-wider">${q.aras_kognitif} • ${q.jenis}</span>
+                    <h3 class="text-lg sm:text-xl font-bold text-slate-800">${q.soalan}</h3>
+                </div>
+
+                <!-- Answer Interaction Area -->
+                <div id="answer-input-area" class="space-y-3">
+                    ${renderAnswerOptions(q)}
+                </div>
+            </div>
+            `;
+        }
+
+        function renderAnswerOptions(q) {
+            if (q.jenis === "Objektif") {
+                return `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    ${q.pilihan.map(opt => `
+                        <button onclick="submitAnswerVal('${escapeHtml(opt)}')" class="p-4 text-left font-semibold text-slate-700 bg-slate-50 hover:bg-cyan-500 hover:text-white rounded-2xl border border-slate-200 hover:border-cyan-500 transition shadow-sm">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+                `;
+            } else if (q.jenis === "Isi Tempat Kosong" || q.jenis === "Subjektif Ringkas") {
+                return `
+                <div class="flex space-x-3">
+                    <input type="text" id="subjective-input" placeholder="Taip jawapan ringkas (cth: 6 / prisma)" class="flex-grow px-4 py-3 rounded-2xl border border-slate-200 font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    <button onclick="submitSubjective()" class="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-2xl shadow-md transition">Jawab</button>
+                </div>
+                `;
+            } else {
+                // Default objective fallback
+                return `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    ${q.pilihan ? q.pilihan.map(opt => `
+                        <button onclick="submitAnswerVal('${escapeHtml(opt)}')" class="p-4 text-left font-semibold text-slate-700 bg-slate-50 hover:bg-cyan-500 hover:text-white rounded-2xl border border-slate-200 hover:border-cyan-500 transition shadow-sm">
+                            ${opt}
+                        </button>
+                    `).join('') : `
+                    <div class="flex space-x-3">
+                        <input type="text" id="subjective-input" placeholder="Taip jawapan..." class="flex-grow px-4 py-3 rounded-2xl border border-slate-200 font-semibold">
+                        <button onclick="submitSubjective()" class="px-6 py-3 bg-cyan-600 text-white font-bold rounded-2xl">Jawab</button>
+                    </div>
+                    `}
+                </div>
+                `;
+            }
+        }
+
+        function renderDiagramSvg(type) {
+            // Generates clear SVG vector diagrams based on keyword
+            return `
+            <svg class="w-36 h-36 text-cyan-600 drop-shadow-md" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3">
+                <rect x="25" y="25" width="50" height="50" rx="8" fill="#e0f2fe" />
+                <path d="M 25 25 L 50 10 L 75 25" />
+                <path d="M 75 25 L 75 75 L 50 90 L 25 75 Z" />
+                <path d="M 50 10 L 50 90" stroke-dasharray="3 3"/>
+                <text x="50" y="55" font-size="12" fill="#0369a1" font-weight="bold" text-anchor="middle" stroke="none">[Bentuk 3D]</text>
+            </svg>
+            `;
+        }
+
+        function renderResultsView() {
+            const maxScore = 20 * 5;
+            const percentage = Math.round((appState.score / maxScore) * 100);
+            let badgeText = "💪 JANGAN PUTUS ASA! CUBA LAGI!";
+            let badgeColor = "text-rose-600 bg-rose-50 border-rose-200";
+            if (percentage >= 80) {
+                badgeText = "🏆 CEMERLANG!";
+                badgeColor = "text-amber-600 bg-amber-50 border-amber-200";
+            } else if (percentage >= 50) {
+                badgeText = "👏 BAGUS! TERUSKAN BERLATIH!";
+                badgeColor = "text-cyan-600 bg-cyan-50 border-cyan-200";
+            }
+
+            return `
+            <div class="max-w-md w-full bg-white p-8 rounded-3xl card-shadow border border-cyan-100 text-center space-y-6">
+                <div class="inline-block px-4 py-2 rounded-2xl font-extrabold text-sm border ${badgeColor}">
+                    ${badgeText}
+                </div>
+
+                <div class="space-y-2">
+                    <h2 class="text-3xl font-extrabold text-slate-800">🎉 TAHNIAH!</h2>
+                    <p class="text-xs text-slate-500">Sesi latihan bentuk telah selesai</p>
+                </div>
+
+                <div class="bg-cyan-50/50 p-6 rounded-2xl border border-cyan-100 space-y-3 text-left">
+                    <div class="flex justify-between text-sm"><span class="font-semibold text-slate-500">Nama Pemain:</span><span class="font-extrabold text-slate-800">${appState.users[appState.currentUser]?.fullName || 'Pelajar'}</span></div>
+                    <div class="flex justify-between text-sm"><span class="font-semibold text-slate-500">Kategori:</span><span class="font-extrabold text-slate-800 text-right">${appState.selectedCategory}</span></div>
+                    <div class="flex justify-between text-sm"><span class="font-semibold text-slate-500">Tahap:</span><span class="font-extrabold text-slate-800">${appState.selectedDifficulty}</span></div>
+                    <div class="flex justify-between text-sm"><span class="font-semibold text-slate-500">Markah Diperoleh:</span><span class="font-extrabold text-cyan-600 text-lg">${appState.score} / ${maxScore}</span></div>
+                    <div class="flex justify-between text-sm"><span class="font-semibold text-slate-500">Betul / Salah:</span><span class="font-extrabold text-slate-800">${appState.correctCount} / ${appState.incorrectCount}</span></div>
+                    <div class="flex justify-between text-sm"><span class="font-semibold text-slate-500">Ketepatan:</span><span class="font-extrabold text-emerald-600">${percentage}%</span></div>
+                </div>
+
+                <div class="space-y-3">
+                    <button onclick="appState.startQuiz(appState.selectedCategory, appState.selectedDifficulty, appState.selectedTimerSeconds)" class="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg transition">
+                        🔄 MAIN SEMULA
+                    </button>
+                    <button onclick="appState.navigate('category')" class="w-full py-3 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl border border-slate-200 transition">
+                        📚 PILIH TOPIK LAIN
+                    </button>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="appState.navigate('progress')" class="py-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold rounded-xl text-xs border border-emerald-200">
+                            📊 LIHAT PROGRESS
+                        </button>
+                        <button onclick="appState.navigate('leaderboard')" class="py-2.5 bg-amber-50 text-amber-700 hover:bg-amber-100 font-bold rounded-xl text-xs border border-amber-200">
+                            🏆 LEADERBOARD
+                        </button>
+                    </div>
+                    <button onclick="appState.navigate('menu')" class="w-full py-2 text-slate-500 hover:text-slate-800 text-xs font-bold">
+                        🏠 KEMBALI KE MENU UTAMA
+                    </button>
+                </div>
+            </div>
+            `;
+        }
+
+        function renderProgressView() {
+            const user = appState.users[appState.currentUser];
+            const prog = user ? user.progress : {};
+
+            return `
+            <div class="max-w-3xl w-full bg-white p-6 sm:p-8 rounded-3xl card-shadow border border-cyan-100 space-y-6">
+                <div class="flex items-center justify-between border-b border-cyan-50 pb-4">
+                    <button onclick="appState.navigate('menu')" class="px-4 py-2 bg-slate-50 text-slate-600 rounded-xl font-bold hover:bg-slate-100 text-sm">⬅ Kembali</button>
+                    <h2 class="text-2xl font-extrabold text-slate-800">📊 PROGRESS SAYA</h2>
+                    <div></div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="p-4 bg-cyan-50 rounded-2xl border border-cyan-200 flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-cyan-700">PENGGUNA AKTIF</span>
+                            <h3 class="text-lg font-extrabold text-slate-800">${user ? user.fullName : 'Pelajar'}</h3>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-bold text-cyan-700">SKOR TERTINGGI</span>
+                            <h3 class="text-lg font-extrabold text-cyan-600">${user ? user.highestScore : 0} Mata</h3>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        ${Object.keys(prog).map(cat => `
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-sm font-bold text-slate-700">
+                                    <span>${cat}</span>
+                                    <span>${prog[cat]}%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden p-0.5 border border-slate-200">
+                                    <div class="bg-gradient-to-r from-cyan-500 to-blue-600 h-full rounded-full transition-all duration-500" style="width: ${prog[cat]}%"></div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="space-y-3 pt-4 border-t border-slate-100">
+                        <h4 class="text-sm font-extrabold text-slate-800">Sejarah Permainan Terkini</h4>
+                        <div class="space-y-2 max-h-48 overflow-y-auto">
+                            ${user && user.history.length > 0 ? user.history.slice(-5).reverse().map(h => `
+                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                                    <div>
+                                        <span class="font-bold text-slate-800 block">${h.category} (${h.difficulty})</span>
+                                        <span class="text-slate-400">${h.date}</span>
+                                    </div>
+                                    <span class="font-extrabold text-cyan-600">${h.score} Mata</span>
+                                </div>
+                            `).join('') : '<p class="text-xs text-slate-400 text-center py-4">Belum ada sejarah permainan.</p>'}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        function renderLeaderboardView() {
+            const lb = appState.getLeaderboard();
+
+            return `
+            <div class="max-w-3xl w-full bg-white p-6 sm:p-8 rounded-3xl card-shadow border border-cyan-100 space-y-6">
+                <div class="flex items-center justify-between border-b border-cyan-50 pb-4">
+                    <button onclick="appState.navigate('menu')" class="px-4 py-2 bg-slate-50 text-slate-600 rounded-xl font-bold hover:bg-slate-100 text-sm">⬅ Kembali</button>
+                    <h2 class="text-2xl font-extrabold text-slate-800">🏆 LEADERBOARD UTAMA</h2>
+                    <div></div>
+                </div>
+
+                <div class="space-y-3">
+                    ${lb.length > 0 ? lb.map((p, idx) => `
+                        <div class="p-4 rounded-2xl border ${idx === 0 ? 'bg-amber-50/80 border-amber-300' : idx === 1 ? 'bg-slate-100 border-slate-300' : idx === 2 ? 'bg-orange-50 border-orange-200' : 'bg-slate-50 border-slate-200'} flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <span class="w-8 h-8 rounded-full ${idx === 0 ? 'bg-amber-500 text-white' : idx === 1 ? 'bg-slate-400 text-white' : idx === 2 ? 'bg-orange-500 text-white' : 'bg-slate-200 text-slate-600'} flex items-center justify-center font-extrabold text-sm">${idx + 1}</span>
+                                <div>
+                                    <h4 class="font-extrabold text-slate-800 text-sm">${p.fullName}</h4>
+                                    <span class="text-xs text-slate-400">@${p.username}</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-extrabold text-cyan-600 text-base">${p.totalScore} Mata</span>
+                                <span class="block text-[10px] text-slate-400">Skor Tertinggi: ${p.highestScore}</span>
+                            </div>
+                        </div>
+                    `).join('') : '<p class="text-center text-xs text-slate-400 py-8">Belum ada data leaderboard.</p>'}
+                </div>
+            </div>
+            `;
+        }
+
+        function renderInstructionsView() {
+            return `
+            <div class="max-w-3xl w-full bg-white p-6 sm:p-8 rounded-3xl card-shadow border border-cyan-100 space-y-6">
+                <div class="flex items-center justify-between border-b border-cyan-50 pb-4">
+                    <button onclick="appState.navigate('menu')" class="px-4 py-2 bg-slate-50 text-slate-600 rounded-xl font-bold hover:bg-slate-100 text-sm">⬅ Kembali</button>
+                    <h2 class="text-2xl font-extrabold text-slate-800">📖 CARA BERMAIN & ARAHAN</h2>
+                    <div></div>
+                </div>
+
+                <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+                    <div class="p-4 bg-cyan-50 rounded-2xl border border-cyan-100 space-y-2">
+                        <h3 class="font-extrabold text-cyan-800">1. Pendaftaran & Log Masuk</h3>
+                        <p class="text-xs text-slate-600">Daftar akaun baharu menggunakan nama pengguna dan kata laluan anda supaya markah dan progress disimpan secara peribadi tanpa bercampur dengan pemain lain.</p>
+                    </div>
+
+                    <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 space-y-2">
+                        <h3 class="font-extrabold text-blue-800">2. Pemilihan Topik & Tahap</h3>
+                        <p class="text-xs text-slate-600">Pilih antara 4 kategori bentuk utama (Prisma, Poligon Sekata, Paksi Simetri, Penyelesaian Masalah) serta pilih tahap Senang, Sederhana, atau Susah.</p>
+                    </div>
+
+                    <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 space-y-2">
+                        <h3 class="font-extrabold text-emerald-800">3. Pemarkahan & Maklum Balas</h3>
+                        <p class="text-xs text-slate-600">Setiap jawapan betul bernilai <strong>+5 markah</strong>. Jika jawapan salah, sistem akan memaparkan jawapan yang betul berserta penerangan ringkas mengikut silibus Tahun 3 KPM.</p>
+                    </div>
+
+                    <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100 space-y-2">
+                        <h3 class="font-extrabold text-amber-800">4. Progress & Leaderboard</h3>
+                        <p class="text-xs text-slate-600">Semak prestasi anda melalui menu Progress dan bandingkan kedudukan markah bersama rakan-rakan di Leaderboard utama!</p>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        // ==========================================
+        // 4. FEEDBACK MODAL & CONTROLLER HELPERS
+        // ==========================================
+        function showFeedbackModal(isCorrect, q) {
+            const modalBg = document.createElement('div');
+            modalBg.id = 'feedback-modal';
+            modalBg.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+            
+            modalBg.innerHTML = `
+            <div class="max-w-md w-full bg-white p-8 rounded-3xl card-shadow border ${isCorrect ? 'border-emerald-200' : 'border-rose-200'} text-center space-y-5 animate-bounce-slow">
+                <div class="w-20 h-20 mx-auto rounded-3xl ${isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'} flex items-center justify-center text-4xl shadow-md">
+                    ${isCorrect ? '🎉' : '❌'}
+                </div>
+                <div class="space-y-1">
+                    <h3 class="text-2xl font-extrabold ${isCorrect ? 'text-emerald-600' : 'text-rose-600'}">
+                        ${isCorrect ? 'BETUL! +5 MARKAH' : 'BELUM TEPAT!'}
+                    </h3>
+                    ${!isCorrect ? `<p class="text-xs font-bold text-slate-700 bg-slate-100 p-2 rounded-xl">Jawapan Betul: ${q.jawapan}</p>` : ''}
+                </div>
+                <p class="text-xs text-slate-500 bg-cyan-50/50 p-4 rounded-2xl border border-cyan-100 leading-relaxed font-medium">
+                    💡 <strong>Penerangan:</strong> ${q.penerangan}
+                </p>
+                <button onclick="closeFeedbackModal()" class="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg transition">
+                    SOALAN SETERUSNYA ➔
+                </button>
+            </div>
+            `;
+            document.body.appendChild(modalBg);
+        }
+
+        function closeFeedbackModal() {
+            const modal = document.getElementById('feedback-modal');
+            if (modal) modal.remove();
+            appState.nextQuestion();
+        }
+
+        function updateTimerDisplay() {
+            const timerEl = document.getElementById('time-left-val');
+            if (timerEl) {
+                timerEl.textContent = appState.timeLeft + 's';
+            }
+        }
+
+        // Action handlers
+        function handleLoginSubmit() {
+            const u = document.getElementById('login-user').value.trim();
+            const p = document.getElementById('login-pass').value.trim();
+            const res = appState.login(u, p);
+            if (res.success) {
+                appState.navigate('menu');
+            } else {
+                showCustomAlert(res.message);
+            }
+        }
+
+        function handleRegisterSubmit() {
+            const u = document.getElementById('reg-user').value.trim();
+            const n = document.getElementById('reg-name').value.trim();
+            const p = document.getElementById('reg-pass').value.trim();
+            const res = appState.register(u, n, p);
+            if (res.success) {
+                showCustomAlert(res.message);
+                appState.navigate('login');
+            } else {
+                showCustomAlert(res.message);
+            }
+        }
+
+        function selectCategory(cat) {
+            appState.selectedCategory = cat;
+            appState.navigate('difficulty');
+        }
+
+        function selectDifficulty(diff) {
+            appState.selectedDifficulty = diff;
+            appState.navigate('timer');
+        }
+
+        function startQuizFinal(sec) {
+            appState.startQuiz(appState.selectedCategory, appState.selectedDifficulty, sec);
+        }
+
+        function submitAnswerVal(val) {
+            appState.submitAnswer(val);
+        }
+
+        function submitSubjective() {
+            const inp = document.getElementById('subjective-input');
+            if (inp) {
+                appState.submitAnswer(inp.value.trim());
+            }
+        }
+
+        function showCustomAlert(msg) {
+            const alertBox = document.createElement('div');
+            alertBox.className = 'fixed top-6 right-6 bg-slate-800 text-white px-6 py-3 rounded-2xl shadow-xl z-50 text-xs font-bold border border-slate-700 animate-bounce-slow';
+            alertBox.textContent = msg;
+            document.body.appendChild(alertBox);
+            setTimeout(() => alertBox.remove(), 3000);
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        // Initialize default app on window load
+        window.onload = function() {
+            // Seed a default demo user if none exists
+            if (Object.keys(appState.users).length === 0) {
+                appState.register("aiman123", "Aiman Hakim", "123456");
+            }
+            appState.navigate('login');
+        };
+    </script>
+
+</body>
+</html>

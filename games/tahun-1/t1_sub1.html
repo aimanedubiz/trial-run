@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATH KIDS – EDU KIDZ | Nombor hingga 100 (Tahun 1)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Comic Neue & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            user-select: none;
+        }
+        .comic-font {
+            font-family: 'Comic Neue', cursive, sans-serif;
+        }
+        .bounce-gentle {
+            animation: bounceGentle 2s infinite ease-in-out;
+        }
+        @keyframes bounceGentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .pulse-glow {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between">
+
+    <header class="bg-white shadow-md border-b-4 border-amber-400 py-3 px-4 md:px-8 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-amber-400 rounded-2xl flex items-center justify-center shadow-inner text-2xl font-black text-white comic-font rotate-[-3deg]">
+                    100
+                </div>
+                <div>
+                    <h1 class="comic-font text-2xl md:text-3xl text-indigo-600 font-bold tracking-wide">MATH KIDS <span class="text-amber-500">- EDU KIDZ</span></h1>
+                    <p class="text-xs font-semibold text-slate-500">Matematik Tahun 1 : Nombor hingga 100 (Kurikulum KPM)</p>
+                </div>
+            </div>
+            
+            <!-- Global Stats / Profile -->
+            <div id="global-stats" class="hidden flex items-center gap-4 bg-indigo-50 px-4 py-2 rounded-2xl border border-indigo-100">
+                <div class="flex items-center gap-1.5 text-amber-500 font-bold text-sm">
+                    <span>⭐</span> <span id="stat-score">0</span> Markah
+                </div>
+                <div class="h-4 w-[1px] bg-indigo-200"></div>
+                <div class="flex items-center gap-1.5 text-emerald-600 font-bold text-sm">
+                    <span>🏆</span> <span id="stat-streak">0</span> Sambung Betul
+                </div>
+                <div class="h-4 w-[1px] bg-indigo-200"></div>
+                <button onclick="confirmExitGame()" class="text-xs font-bold bg-rose-100 text-rose-600 hover:bg-rose-200 px-3 py-1.5 rounded-xl transition">
+                    Keluar Menu
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl w-full mx-auto p-4 md:p-6 flex flex-col items-center justify-center">
+
+        <!-- SCREEN 1: MAIN MENU -->
+        <div id="screen-menu" class="w-full max-w-4xl bg-white rounded-3xl shadow-xl border-4 border-indigo-100 p-6 md:p-10 flex flex-col items-center text-center">
+            <div class="inline-block bg-amber-100 text-amber-800 font-bold text-sm px-4 py-1.5 rounded-full mb-4 comic-font tracking-wide">
+                ✨ Jom Belajar Sambil Bermain! ✨
+            </div>
+            <h2 class="comic-font text-3xl md:text-5xl text-indigo-700 mb-3 leading-tight">Terokai Dunia Nombor 1 hingga 100!</h2>
+            <p class="text-slate-600 max-w-2xl mb-8 text-sm md:text-base">
+                Pilih topik pilihan anda di bawah. Terdapat 8 kategori menyeronokkan dengan bank soalan interaktif berpandukan silibus rasmi KPM Tahun 1!
+            </p>
+
+            <!-- Topic Grid -->
+            <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8 text-left">
+                <!-- Topic 1 -->
+                <button onclick="selectTopic(0)" class="group p-4 bg-indigo-50 hover:bg-indigo-600 hover:text-white rounded-2xl border-2 border-indigo-200 transition duration-300 flex flex-col justify-between shadow-sm hover:shadow-md">
+                    <div>
+                        <div class="text-3xl mb-2 group-hover:scale-110 transition">🔢</div>
+                        <h3 class="font-bold text-indigo-900 group-hover:text-white text-sm md:text-base mb-1">1. Membilang Nombor</h3>
+                        <p class="text-xs text-slate-500 group-hover:text-indigo-100">Membilang 1 hingga 100 secara tertib & menaik/menurun.</p>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-xs font-semibold text-indigo-600 group-hover:text-amber-300">
+                        <span>60 Soalan</span> <span>Mula →</span>
+                    </div>
+                </button>
+
+                <!-- Topic 2 -->
+                <button onclick="selectTopic(1)" class="group p-4 bg-emerald-50 hover:bg-emerald-600 hover:text-white rounded-2xl border-2 border-emerald-200 transition duration-300 flex flex-col justify-between shadow-sm hover:shadow-md">
+                    <div>
+                        <div class="text-3xl mb-2 group-hover:scale-110 transition">✍️</div>
+                        <h3 class="font-bold text-emerald-900 group-hover:text-white text-sm md:text-base mb-1">2. Baca & Tulis Nombor</h3>
+                        <p class="text-xs text-slate-500 group-hover:text-emerald-100">Nombor dalam angka dan perkataan.</p>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-xs font-semibold text-emerald-600 group-hover:text-amber-300">
+                        <span>60 Soalan</span> <span>Mula →</span>
+                    </div>
+                </button>
+
+                <!-- Topic 3 -->
+                <button onclick="selectTopic(2)" class="group p-4 bg-amber-50 hover:bg-amber-600 hover:text-white rounded-2xl border-2 border-amber-200 transition duration-300 flex flex-col justify-between shadow-sm hover:shadow-md">
+                    <div>
+                        <div class="text-3xl mb-2 group-hover:scale-110 transition">⬅️➡️</div>
+                        <h3 class="font-bold text-amber-900 group-hover:text-white text-sm md:text-base mb-1">3. Sebelum & Selepas</h3>
+                        <p class="text-xs text-slate-500 group-hover:text-amber-100">Menentukan nombor sebelum, selepas dan di antara.</p>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-xs font-semibold text-amber-700 group-hover:text-indigo-200">
+                        <span>60 Soalan</span> <span>Mula →</span>
+                    </div>
+                </button>
+
+                <!-- Topic 4 -->
+                <button onclick="selectTopic(3)" class="group p-4 bg-rose-50 hover:bg-rose-600 hover:text-white rounded-2xl border-2 border-rose-200 transition duration-300 flex flex-col justify-between shadow-sm hover:shadow-md">
+                    <div>
+                        <div class="text-3xl mb-2 group-hover:scale-110 transition">⚖️</div>
+                        <h3 class="font-bold text-rose-900 group-hover:text-white text-sm md:text-base mb-1">4. Membanding Nombor</h3>
+                        <p class="text-xs text-slate-500 group-hover:text-rose-100">Lebih daripada, kurang daripada & sama banyak.</p>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-xs font-semibold text-rose-600 group-hover:text-amber-300">
+                        <span>60 Soalan</span> <span>Mula →</span>
+                    </div>
+                </button>
+
+                <!-- Topic 5 -->
+                <button onclick="selectTopic(4)" class="group p-4 bg-purple-50 hover:bg-purple-600 hover:text-white rounded-2xl border-2 border-purple-200 transition duration-300 flex flex-col justify-between shadow-sm hover:shadow-md">
+                    <div>
+                        <div class="text-3xl mb-2 group-hover:scale-110 transition">📈</div>
+                        <h3 class="font-bold text-purple-900 group-hover:text-white text-sm md:text-base mb-1">5. Susunan Menaik & Menurun</h3>
+                        <p class="text-xs text-slate-500 group-hover:text-purple-100">Menyusun nombor mengikut tertib menaik dan menurun.</p>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-xs font-semibold text-purple-600 group-hover:text-amber-300">
+                        <span>60 Soalan</span> <span>Mula →</span>
+                    </div>
+                </button>
+
+                <!-- Topic 6 -->
+                <button onclick="selectTopic(5)" class="group p-4 bg-sky-50 hover:bg-sky-600 hover:text-white rounded-2xl border-2 border-sky-200 transition duration-300 flex flex-col justify-between shadow-sm hover:shadow-md">
+                    <div>
+                        <div class="text-3xl mb-2 group-hover:scale-110 transition">🧩</div>
+                        <h3 class="font-bold text-sky-900 group-hover:text-white text-sm md:text-base mb-1">6. Nilai Tempat Puluh & Sa</h3>
+                        <p class="text-xs text-slate-500 group-hover:text-sky-100">Mengenal digit, nilai digit, puluh dan sa.</p>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-xs font-semibold text-sky-600 group-hover:text-amber-300">
+                        <span>60 Soalan</span> <span>Mula →</span>
+                    </div>
+                </button>
+
+                <!-- Topic 7 -->
+                <button onclick="selectTopic(6)" class="group p-4 bg-teal-50 hover:bg-teal-600 hover:text-white rounded-2xl border-2 border-teal-200 transition duration-300 flex flex-col justify-between shadow-sm hover:shadow-md">
+                    <div>
+                        <div class="text-3xl mb-2 group-hover:scale-110 transition">👑</div>
+                        <h3 class="font-bold text-teal-900 group-hover:text-white text-sm md:text-base mb-1">7. Terbesar & Terkecil</h3>
+                        <p class="text-xs text-slate-500 group-hover:text-teal-100">Mengenal pasti nombor paling besar dan kecil.</p>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-xs font-semibold text-teal-600 group-hover:text-amber-300">
+                        <span>60 Soalan</span> <span>Mula →</span>
+                    </div>
+                </button>
+
+                <!-- Topic 8 -->
+                <button onclick="selectTopic(7)" class="group p-4 bg-orange-50 hover:bg-orange-600 hover:text-white rounded-2xl border-2 border-orange-200 transition duration-300 flex flex-col justify-between shadow-sm hover:shadow-md">
+                    <div>
+                        <div class="text-3xl mb-2 group-hover:scale-110 transition">🔄</div>
+                        <h3 class="font-bold text-orange-900 group-hover:text-white text-sm md:text-base mb-1">8. Pola Nombor</h3>
+                        <p class="text-xs text-slate-500 group-hover:text-orange-100">Melengkapkan urutan nombor mengikut corak/pola.</p>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-xs font-semibold text-orange-600 group-hover:text-amber-300">
+                        <span>60 Soalan</span> <span>Mula →</span>
+                    </div>
+                </button>
+            </div>
+
+            <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 w-full flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="text-left">
+                    <h4 class="font-bold text-indigo-900 text-sm">Mod Pantas / Latih Tubi Penuh</h4>
+                    <p class="text-xs text-slate-600">Jawab kuiz rawak daripada keseluruhan bank soalan.</p>
+                </div>
+                <button onclick="startQuickQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md transition text-sm">
+                    🚀 Kuiz Rawak Pantas
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: DIFFICULTY SELECTION -->
+        <div id="screen-difficulty" class="hidden w-full max-w-2xl bg-white rounded-3xl shadow-xl border-4 border-indigo-100 p-6 md:p-10 flex flex-col items-center text-center">
+            <button onclick="backToMenu()" class="self-start text-sm text-indigo-600 hover:underline font-semibold mb-4 flex items-center gap-1">
+                ← Kembali ke Menu
+            </button>
+            <div id="selected-topic-badge" class="bg-indigo-100 text-indigo-800 font-bold text-sm px-4 py-1.5 rounded-full mb-3 comic-font">
+                Topik 1: Membilang Nombor
+            </div>
+            <h3 class="comic-font text-2xl md:text-3xl text-slate-800 mb-2">Pilih Tahap Kesukaran</h3>
+            <p class="text-slate-500 text-sm mb-8">Pilih aras minda yang sesuai untuk cabaran anda hari ini!</p>
+
+            <div class="w-full flex flex-col gap-4">
+                <!-- Senang -->
+                <button onclick="startGameWithDifficulty('senang')" class="p-5 bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-300 rounded-2xl flex items-center justify-between transition group shadow-sm">
+                    <div class="flex items-center gap-4 text-left">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-2xl shadow">🟢</div>
+                        <div>
+                            <h4 class="font-bold text-emerald-900 text-base md:text-lg group-hover:translate-x-1 transition">TAHAP SENANG (Mengingat)</h4>
+                            <p class="text-xs text-emerald-700">Soalan asas, nombor mudah & pembilang langsung.</p>
+                        </div>
+                    </div>
+                    <span class="text-emerald-700 font-bold text-sm">20 Soalan →</span>
+                </button>
+
+                <!-- Sederhana -->
+                <button onclick="startGameWithDifficulty('sederhana')" class="p-5 bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 rounded-2xl flex items-center justify-between transition group shadow-sm">
+                    <div class="flex items-center gap-4 text-left">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow">🟡</div>
+                        <div>
+                            <h4 class="font-bold text-amber-900 text-base md:text-lg group-hover:translate-x-1 transition">TAHAP SEDERHANA (Memahami)</h4>
+                            <p class="text-xs text-amber-700">Memerlukan pemahaman hubungan bilangan berturutan.</p>
+                        </div>
+                    </div>
+                    <span class="text-amber-700 font-bold text-sm">20 Soalan →</span>
+                </button>
+
+                <!-- Sukar -->
+                <button onclick="startGameWithDifficulty('sukar')" class="p-5 bg-rose-50 hover:bg-rose-100 border-2 border-rose-300 rounded-2xl flex items-center justify-between transition group shadow-sm">
+                    <div class="flex items-center gap-4 text-left">
+                        <div class="w-12 h-12 rounded-xl bg-rose-500 text-white flex items-center justify-center text-2xl shadow">🔴</div>
+                        <div>
+                            <h4 class="font-bold text-rose-900 text-base md:text-lg group-hover:translate-x-1 transition">TAHAP SUKAR (Mengaplikasi)</h4>
+                            <p class="text-xs text-rose-700">Cabaran minda hitungan dua-dua, lima-lima dan sepuluh-sepuluh.</p>
+                        </div>
+                    </div>
+                    <span class="text-rose-700 font-bold text-sm">20 Soalan →</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: GAMEPLAY INTERACTIVE -->
+        <div id="screen-game" class="hidden w-full max-w-3xl bg-white rounded-3xl shadow-xl border-4 border-indigo-100 p-6 md:p-8 flex flex-col">
+            <!-- Game Top Status Bar -->
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <span id="game-topic-tag" class="bg-indigo-100 text-indigo-700 font-bold text-xs px-3 py-1 rounded-full">Topik 1</span>
+                    <span id="game-diff-tag" class="bg-emerald-100 text-emerald-700 font-bold text-xs px-3 py-1 rounded-full">Senang</span>
+                </div>
+                <div class="text-slate-500 font-bold text-sm">
+                    Soalan <span id="current-q-num" class="text-indigo-600">1</span> / <span id="total-q-num">20</span>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 h-3 rounded-full mb-6 overflow-hidden">
+                <div id="progress-bar-fill" class="bg-indigo-500 h-full w-[5%] transition-all duration-300 rounded-full"></div>
+            </div>
+
+            <!-- Cognitive Level Badge & Question Box -->
+            <div class="mb-6">
+                <div class="flex items-center gap-2 mb-2">
+                    <span id="cognitive-badge" class="text-[10px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded">Aras: Mengingat</span>
+                    <span id="format-badge" class="text-[10px] font-extrabold uppercase tracking-wider bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded">Format: Objektif</span>
+                </div>
+                <h3 id="question-text" class="comic-font text-xl md:text-2xl text-slate-800 leading-snug mb-4">
+                    Apakah nombor selepas 45?
+                </h3>
+            </div>
+
+            <!-- ANSWER AREA -->
+            <div id="answer-container" class="mb-6">
+                <!-- Populated dynamically -->
+            </div>
+
+            <!-- Feedback & Next Button Area -->
+            <div id="feedback-area" class="hidden p-4 rounded-2xl mb-4 flex items-center justify-between">
+                <div id="feedback-text" class="font-bold text-sm"></div>
+                <button onclick="nextQuestion()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl shadow transition text-sm flex items-center gap-2">
+                    Seterusnya →
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: RESULTS SCREEN -->
+        <div id="screen-result" class="hidden w-full max-w-xl bg-white rounded-3xl shadow-xl border-4 border-indigo-100 p-8 flex flex-col items-center text-center">
+            <div class="text-6xl mb-4 bounce-gentle" id="result-emoji">🎉</div>
+            <h3 class="comic-font text-3xl text-indigo-700 mb-2" id="result-title">Tahniah! Hebat Sekali!</h3>
+            <p class="text-slate-600 text-sm mb-6" id="result-subtitle">Anda telah berjaya menyelesaikan kuiz ini dengan cemerlang.</p>
+
+            <div class="w-full bg-indigo-50 border border-indigo-100 rounded-2xl p-6 mb-6 flex justify-around items-center">
+                <div>
+                    <p class="text-xs text-slate-500 font-semibold mb-1">Markah Akhir</p>
+                    <p class="comic-font text-3xl text-indigo-600" id="final-score">100/100</p>
+                </div>
+                <div class="h-10 w-[1px] bg-indigo-200"></div>
+                <div>
+                    <p class="text-xs text-slate-500 font-semibold mb-1">Ketepatan</p>
+                    <p class="comic-font text-3xl text-emerald-600" id="final-accuracy">100%</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 w-full">
+                <button onclick="restartQuiz()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-2xl shadow transition text-sm">
+                    🔄 Main Semula Topik Ini
+                </button>
+                <button onclick="backToMenu()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-6 rounded-2xl transition text-sm">
+                    🏠 Pilih Topik Lain
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- CUSTOM MODAL -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-4 border-indigo-100 text-center">
+            <div class="text-4xl mb-3" id="modal-icon">⚠️</div>
+            <h4 id="modal-title" class="comic-font text-xl text-slate-800 mb-2">Keluar Kuiz?</h4>
+            <p id="modal-desc" class="text-slate-600 text-sm mb-6">Adakah anda pasti mahu keluar ke menu utama? Markah semasa akan tamat.</p>
+            <div class="flex gap-3 justify-center">
+                <button id="modal-btn-cancel" onclick="closeModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-sm transition">
+                    Batal
+                </button>
+                <button id="modal-btn-confirm" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl text-sm transition">
+                    Ya, Keluar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-500">
+        <p>MATH KIDS – EDU KIDZ © 2026 | Kurikulum Standard Sekolah Rendah (KSSR Semakan) Matematik Tahun 1 KPM</p>
+    </footer>
+
+    <script>
+        const topicNames = [
+            "Membilang nombor 1–100",
+            "Membaca dan menulis nombor",
+            "Menentukan nombor sebelum dan selepas",
+            "Membandingkan nombor",
+            "Susunan menaik dan menurun",
+            "Nilai tempat puluh dan sa",
+            "Nombor terbesar dan terkecil",
+            "Melengkapkan pola nombor"
+        ];
+
+        const numberWords = [
+            "sifar", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "lapan", "sembilan",
+            "sepuluh", "sebelas", "dua belas", "tiga belas", "empat belas", "lima belas", "enam belas", "tujuh belas", "lapan belas", "sembilan belas",
+            "dua puluh", "tiga puluh", "empat puluh", "lima puluh", "enam puluh", "tujuh puluh", "lapan puluh", "sembilan puluh", "seratus"
+        ];
+
+        function getMalayWord(n) {
+            if (n === 100) return "seratus";
+            if (n <= 19) return numberWords[n];
+            const puluh = Math.floor(n / 10);
+            const sa = n % 10;
+            const puluhStr = ["", "", "dua puluh", "tiga puluh", "empat puluh", "lima puluh", "enam puluh", "tujuh puluh", "lapan puluh", "sembilan puluh"][puluh];
+            if (sa === 0) return puluhStr;
+            return puluhStr + " " + numberWords[sa];
+        }
+
+        let currentTopicIndex = 0;
+        let currentDifficulty = 'senang';
+        let questionBank = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let userAnswersHistory = [];
+        let isAnswerSubmitted = false;
+
+        /*
+          REFINED TOPIC 0: MEMBILANG NOMBOR 1–100 (NO IMAGES, UNIQUE TEXT-BASED VARIATIONS, NO DUPLICATES)
+        */
+        function generateTopicZeroQuestions(diff) {
+            let questions = [];
+            let cognitive = diff === 'senang' ? 'MENGINGAT' : (diff === 'sederhana' ? 'MEMAHAMI' : 'MENGAPLIKASI');
+            let usedStarters = new Set();
+            
+            for (let i = 1; i <= 20; i++) {
+                let q = { id: i, topic: 0, difficulty: diff, cognitive: cognitive };
+                q.format = i % 2 === 0 ? 'objektif' : 'subjektif';
+                
+                if (diff === 'senang') {
+                    let start = (i * 3) % 75 + 1;
+                    while (usedStarters.has(start)) start = (start + 1) % 75 + 1;
+                    usedStarters.add(start);
+                    
+                    let nextVal = start + 1;
+                    let thirdVal = nextVal + 1;
+                    
+                    q.text = `Sila lengkapkan urutan membilang nombor menaik satu-satu ini: ${start}, ${nextVal}, ... Apakah nombor ketiga dalam urutan ini?`;
+                    q.answer = thirdVal.toString();
+                    
+                    if (q.format === 'objektif') {
+                        let w1 = thirdVal + 1;
+                        let w2 = Math.max(1, thirdVal - 2);
+                        let w3 = thirdVal + 2;
+                        q.options = shuffleArray([thirdVal.toString(), w1.toString(), w2.toString(), w3.toString()]);
+                    }
+                } else if (diff === 'sederhana') {
+                    let modeType = i % 4;
+                    if (modeType === 0) {
+                        let start = (i * 2) % 40 + 5;
+                        let s1 = start + 2;
+                        let s2 = s1 + 2;
+                        q.text = `Jika bilangan objek bertambah dua-dua: ${start}, ${s1}, ${s2}, ... Apakah nombor selepas ${s2} dalam bilasan dua-dua?`;
+                        let ans = s2 + 2;
+                        q.answer = ans.toString();
+                        if (q.format === 'objektif') {
+                            q.options = shuffleArray([ans.toString(), (ans + 1).toString(), (ans - 1).toString(), (ans + 3).toString()]);
+                        }
+                    } else if (modeType === 1) {
+                        let start = (i * 5) % 50 + 10;
+                        let s1 = start + 5;
+                        let s2 = s1 + 5;
+                        q.text = `Mari membilang secara tertib menaik lima-lima: ${start}, ${s1}, ${s2}, ... Apakah nombor seterusnya?`;
+                        let ans = s2 + 5;
+                        q.answer = ans.toString();
+                        if (q.format === 'objektif') {
+                            q.options = shuffleArray([ans.toString(), (ans + 5).toString(), (ans - 2).toString(), (ans + 10).toString()]);
+                        }
+                    } else if (modeType === 2) {
+                        let start = 60 + (i % 20);
+                        let s1 = start - 1;
+                        q.text = `Kira menurun secara tertib menurun satu-satu bermula dari ${start}: ${start}, ${s1}, ... Apakah nombor seterusnya?`;
+                        let ans = s1 - 1;
+                        q.answer = ans.toString();
+                        if (q.format === 'objektif') {
+                            q.options = shuffleArray([ans.toString(), (ans + 2).toString(), (ans - 2).toString(), (ans + 1).toString()]);
+                        }
+                    } else {
+                        let base = 20 + (i * 3);
+                        q.text = `Aminah membaca senarai nombor berturutan dari ${base} hingga ke hadapan. Apakah nombor kelima yang disebut termasuk ${base}?`;
+                        let ans = base + 4;
+                        q.answer = ans.toString();
+                        q.format = 'subjektif';
+                    }
+                } else {
+                    let appType = i % 3;
+                    if (appType === 0) {
+                        let packets = (i % 5) + 3;
+                        let total = packets * 10;
+                        q.text = `Encik Ali menyusun ${packets} berkas lidi. Setiap berkas mengandungi tepat 10 batang lidi. Berapakah jumlah keseluruhan lidi jika dibilang sepuluh-sepuluh?`;
+                        q.answer = total.toString();
+                        q.format = 'subjektif';
+                    } else if (appType === 1) {
+                        let start = 10 + (i * 4);
+                        q.text = `Dalam satu permainan melompat petak bernombor, Rani bermula di petak ${start} dan melompat maju sebanyak tiga langkah berturut-turut dengan setiap lompatan bernilai 2 nombor. Di nombor berapakah Rani berhenti?`;
+                        let ans = start + 6;
+                        q.answer = ans.toString();
+                        if (q.format === 'objektif') {
+                            q.options = shuffleArray([ans.toString(), (ans + 2).toString(), (ans - 2).toString(), (ans + 4).toString()]);
+                        }
+                    } else {
+                        let startPoint = 50 + (i * 2);
+                        q.text = `Sebuah lif bergerak naik dari tingkat ${startPoint} dan berhenti di tingkat yang 5 tingkat lebih tinggi. Di tingkat berapakah lif itu berhenti?`;
+                        let ans = startPoint + 5;
+                        q.answer = ans.toString();
+                        q.format = 'subjektif';
+                    }
+                }
+                questions.push(q);
+            }
+            return questions;
+        }
+
+        /*
+          REFINED TOPIC 4: SUSUNAN MENAIK DAN MENURUN (100% UNIQUE, NO IMAGES, PRECISE MATHEMATICAL ACCURACY)
+        */
+        function generateTopicFourQuestions(diff) {
+            let questions = [];
+            let cognitive = diff === 'senang' ? 'MENGINGAT' : (diff === 'sederhana' ? 'MEMAHAMI' : 'MENGAPLIKASI');
+            
+            for (let i = 1; i <= 20; i++) {
+                let q = { id: i, topic: 4, difficulty: diff, cognitive: cognitive };
+                q.format = 'objektif'; // Standardized robust objective formatting for ordering accuracy
+                
+                if (diff === 'senang') {
+                    // Tertib menaik 3 bilangan kecil berurutan atau mengisi tempat kosong
+                    let base = (i * 3) % 60 + 2;
+                    let step = (i % 2 === 0) ? 1 : 2;
+                    let n1 = base;
+                    let n2 = n1 + step;
+                    let n3 = n2 + step;
+                    
+                    if (i % 2 === 0) {
+                        // Cari nombor tengah dalam tertib menaik
+                        q.text = `Pilih susunan nombor dalam TERTIB MENAIK (dari kecil ke besar) yang betul:`;
+                        q.answer = `${n1}, ${n2}, ${n3}`;
+                        let wrong1 = `${n3}, ${n2}, ${n1}`;
+                        let wrong2 = `${n2}, ${n1}, ${n3}`;
+                        let wrong3 = `${n1}, ${n3}, ${n2}`;
+                        q.options = shuffleArray([q.answer, wrong1, wrong2, wrong3]);
+                    } else {
+                        // Cari nombor dalam tertib menurun
+                        q.text = `Pilih susunan nombor dalam TERTIB MENURUN (dari besar ke kecil) yang betul:`;
+                        let correctDesc = `${n3}, ${n2}, ${n1}`;
+                        q.answer = correctDesc;
+                        let wrong1 = `${n1}, ${n2}, ${n3}`;
+                        let wrong2 = `${n2}, ${n3}, ${n1}`;
+                        let wrong3 = `${n3}, ${n1}, ${n2}`;
+                        q.options = shuffleArray([correctDesc, wrong1, wrong2, wrong3]);
+                    }
+                } else if (diff === 'sederhana') {
+                    // Empat nombor rawak disusun tertib menaik atau menurun
+                    let start = (i * 4) % 50 + 10;
+                    let arr = [start, start + 3, start + 7, start + 12];
+                    if (i % 2 === 0) {
+                        // Menaik
+                        q.text = `Antara berikut, yang manakah susunan nombor ${arr[2]}, ${arr[0]}, ${arr[3]}, ${arr[1]} mengikut TERTIB MENAIK?`;
+                        let sorted = [...arr].join(', ');
+                        q.answer = sorted;
+                        let w1 = [...arr].reverse().join(', ');
+                        let w2 = `${arr[1]}, ${arr[3]}, ${arr[0]}, ${arr[2]}`;
+                        let w3 = `${arr[3]}, ${arr[1]}, ${arr[2]}, ${arr[0]}`;
+                        q.options = shuffleArray([sorted, w1, w2, w3]);
+                    } else {
+                        // Menurun
+                        let descArr = [...arr].reverse();
+                        q.text = `Antara berikut, yang manakah susunan nombor ${arr[1]}, ${arr[3]}, ${arr[0]}, ${arr[2]} mengikut TERTIB MENURUN?`;
+                        let sortedDesc = descArr.join(', ');
+                        q.answer = sortedDesc;
+                        let w1 = [...arr].join(', ');
+                        let w2 = `${arr[0]}, ${arr[2]}, ${arr[1]}, ${arr[3]}`;
+                        let w3 = `${arr[2]}, ${arr[0]}, ${arr[3]}, ${arr[1]}`;
+                        q.options = shuffleArray([sortedDesc, w1, w2, w3]);
+                    }
+                } else {
+                    // Sukar: Aplikasi susunan nombor melangkau dua-dua / lima-lima atau mencari tempat kosong dalam urutan
+                    let mode = i % 3;
+                    if (mode === 0) {
+                        let base = 10 + (i * 2);
+                        let s1 = base;
+                        let s2 = base + 5;
+                        let s3 = base + 10;
+                        let s4 = base + 15;
+                        q.text = `Kumpulan nombor ${s3}, ${s1}, ${s4}, ${s2} disusun mengikut tertib menaik lima-lima. Apakah susunan yang betul?`;
+                        let ans = `${s1}, ${s2}, ${s3}, ${s4}`;
+                        q.answer = ans;
+                        q.options = shuffleArray([ans, `${s4}, ${s3}, ${s2}, ${s1}`, `${s2}, ${s1}, ${s4}, ${s3}`, `${s3}, ${s2}, ${s1}, ${s4}`]);
+                    } else if (mode === 1) {
+                        let base = 50 + (i * 2);
+                        let s1 = base;
+                        let s2 = base - 2;
+                        let s3 = base - 4;
+                        let s4 = base - 6;
+                        q.text = `Susun nombor ${s3}, ${s1}, ${s4}, ${s2} mengikut TERTIB MENURUN dua-dua:`;
+                        let ans = `${s1}, ${s2}, ${s3}, ${s4}`;
+                        q.answer = ans;
+                        q.options = shuffleArray([ans, `${s4}, ${s3}, ${s2}, ${s1}`, `${s2}, ${s4}, ${s1}, ${s3}`, `${s3}, ${s1}, ${s2}, ${s4}`]);
+                    } else {
+                        let x1 = 20 + i;
+                        let x2 = x1 + 4;
+                        let x3 = x2 + 4;
+                        let x4 = x3 + 4;
+                        q.text = `Ali ingin menyusun markah kuiz rakannya ${x3}, ${x1}, ${x4}, ${x2} dari nilai terkecil kepada terbesar. Pilih jawapan yang tepat:`;
+                        let ans = `${x1}, ${x2}, ${x3}, ${x4}`;
+                        q.answer = ans;
+                        q.options = shuffleArray([ans, `${x4}, ${x3}, ${x2}, ${x1}`, `${x2}, ${x1}, ${x4}, ${x3}`, `${x3}, ${x4}, ${x1}, ${x2}`]);
+                    }
+                }
+                questions.push(q);
+            }
+            return questions;
+        }
+
+        // Standard Generator for topics 1, 2, 3, 5, 6, 7
+        function generateStandardQuestionBankFor(topicIdx, diff) {
+            let questions = [];
+            let cognitive = diff === 'senang' ? 'MENGINGAT' : (diff === 'sederhana' ? 'MEMAHAMI' : 'MENGAPLIKASI');
+            
+            for (let i = 1; i <= 20; i++) {
+                let q = { id: i, topic: topicIdx, difficulty: diff, cognitive: cognitive };
+                
+                switch(topicIdx) {
+                    case 1: // Baca & Tulis Nombor
+                        {
+                            let num = diff === 'senang' ? (i + 2) : (diff === 'sederhana' ? (i * 3 + 5) : (i * 4 + 12));
+                            if (num > 100) num = 88;
+                            let word = getMalayWord(num);
+                            q.format = i % 2 === 0 ? 'objektif' : 'subjektif';
+                            if (q.format === 'objektif') {
+                                q.text = `Apakah ejaan perkataan yang betul bagi nombor ${num}?`;
+                                let w1 = getMalayWord(Math.max(1, num - 2));
+                                let w2 = getMalayWord(Math.min(100, num + 3));
+                                let w3 = getMalayWord(Math.max(1, num - 5));
+                                q.options = shuffleArray([word, w1, w2, w3]);
+                                q.answer = word;
+                            } else {
+                                q.text = `Tuliskan dalam bentuk angka bagi perkataan: "${word}"`;
+                                q.answer = num.toString();
+                            }
+                        }
+                        break;
+                    case 2: // Sebelum & Selepas
+                        {
+                            let num = (i * 4) % 70 + 10;
+                            let isBefore = i % 2 === 0;
+                            let target = isBefore ? num - 1 : num + 1;
+                            q.format = 'objektif';
+                            q.text = isBefore ? `Apakah nombor yang hadir SEBELUM nombor ${num}?` : `Apakah nombor yang hadir SELEPAS nombor ${num}?`;
+                            let w1 = target + 1;
+                            let w2 = target - 2;
+                            let w3 = target + 3;
+                            q.options = shuffleArray([target.toString(), w1.toString(), w2.toString(), w3.toString()]);
+                            q.answer = target.toString();
+                        }
+                        break;
+                    case 3: // Membanding Nombor
+                        {
+                            let n1 = (i * 3) % 80 + 5;
+                            let n2 = n1 + ((i % 2 === 0) ? 4 : -3);
+                            if (n1 === n2) n2 = n1 + 6;
+                            q.format = 'objektif';
+                            q.text = `Antara nombor ${n1} dan ${n2}, pernyataan perbandingan manakah yang betul?`;
+                            let ansOpt = n1 > n2 ? `${n1} lebih daripada ${n2}` : `${n1} kurang daripada ${n2}`;
+                            let wrongOpt1 = n1 > n2 ? `${n1} kurang daripada ${n2}` : `${n1} lebih daripada ${n2}`;
+                            let wrongOpt2 = `${n1} adalah sama banyak dengan ${n2}`;
+                            q.options = shuffleArray([ansOpt, wrongOpt1, wrongOpt2]);
+                            q.answer = ansOpt;
+                        }
+                        break;
+                    case 5: // Nilai Tempat Puluh & Sa
+                        {
+                            let puluh = (i % 7) + 1;
+                            let sa = (i % 8) + 1;
+                            let fullNum = puluh * 10 + sa;
+                            let askPuluh = i % 2 === 0;
+                            q.format = 'objektif';
+                            q.text = `Bagi nombor ${fullNum}, apakah nilai digit bagi angka ${askPuluh ? (puluh * 10) : sa}?`;
+                            q.answer = askPuluh ? (puluh * 10).toString() : sa.toString();
+                            q.options = shuffleArray([q.answer, (puluh).toString(), (sa + 2).toString(), "10"]);
+                        }
+                        break;
+                    case 6: // Terbesar & Terkecil
+                        {
+                            let a = (i * 5) % 70 + 10;
+                            let b = (i * 7) % 70 + 10;
+                            let c = (i * 3) % 70 + 10;
+                            let numbers = [a, b, c];
+                            let askLargest = i % 2 === 0;
+                            let targetNum = askLargest ? Math.max(...numbers) : Math.min(...numbers);
+                            q.format = 'objektif';
+                            q.text = `Antara nombor ${numbers.join(', ')}, manakah nombor yang ${askLargest ? 'TERBESAR' : 'TERKECIL'}?`;
+                            q.answer = targetNum.toString();
+                            q.options = shuffleArray([targetNum.toString(), (targetNum + 4).toString(), Math.max(1, targetNum - 5).toString(), (targetNum + 2).toString()]);
+                        }
+                        break;
+                    case 7: // Pola Nombor
+                        {
+                            let start = (i * 2) % 40 + 5;
+                            let diffVal = i % 3 === 0 ? 5 : (i % 3 === 1 ? 2 : 10);
+                            let seq = [start, start + diffVal, start + (diffVal * 2), "❓"];
+                            q.format = 'subjektif';
+                            q.text = `Lengkapkan pola nombor bertambah ${diffVal} berikut: ${seq.join(', ')}`;
+                            q.answer = (start + (diffVal * 3)).toString();
+                        }
+                        break;
+                }
+                questions.push(q);
+            }
+            return questions;
+        }
+
+        function generateQuestionBankFor(topicIdx, diff) {
+            if (topicIdx === 0) {
+                return generateTopicZeroQuestions(diff);
+            } else if (topicIdx === 4) {
+                return generateTopicFourQuestions(diff);
+            } else {
+                return generateStandardQuestionBankFor(topicIdx, diff);
+            }
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function selectTopic(topicIdx) {
+            currentTopicIndex = topicIdx;
+            document.getElementById('selected-topic-badge').innerText = `Topik ${topicIdx + 1}: ${topicNames[topicIdx]}`;
+            document.getElementById('screen-menu').classList.add('hidden');
+            document.getElementById('screen-difficulty').classList.remove('hidden');
+        }
+
+        function backToMenu() {
+            document.getElementById('screen-difficulty').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-menu').classList.remove('hidden');
+            document.getElementById('global-stats').classList.add('hidden');
+        }
+
+        function startQuickQuiz() {
+            currentTopicIndex = Math.floor(Math.random() * 8);
+            startGameWithDifficulty('sederhana');
+        }
+
+        function startGameWithDifficulty(diff) {
+            currentDifficulty = diff;
+            questionBank = generateQuestionBankFor(currentTopicIndex, diff);
+            currentQuestionIndex = 0;
+            score = 0;
+            streak = 0;
+
+            document.getElementById('screen-difficulty').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            document.getElementById('global-stats').classList.remove('hidden');
+
+            updateStatsDisplay();
+            loadQuestion();
+        }
+
+        function updateStatsDisplay() {
+            document.getElementById('stat-score').innerText = score;
+            document.getElementById('stat-streak').innerText = streak;
+        }
+
+        function loadQuestion() {
+            isAnswerSubmitted = false;
+            let q = questionBank[currentQuestionIndex];
+
+            document.getElementById('game-topic-tag').innerText = `Topik ${currentTopicIndex + 1}`;
+            let diffColors = { 'senang': 'bg-emerald-100 text-emerald-700', 'sederhana': 'bg-amber-100 text-amber-700', 'sukar': 'bg-rose-100 text-rose-700' };
+            let diffEl = document.getElementById('game-diff-tag');
+            diffEl.className = `font-bold text-xs px-3 py-1 rounded-full ${diffColors[currentDifficulty]}`;
+            diffEl.innerText = currentDifficulty.toUpperCase();
+
+            document.getElementById('current-q-num').innerText = currentQuestionIndex + 1;
+            document.getElementById('total-q-num').innerText = questionBank.length;
+
+            let progressPct = ((currentQuestionIndex) / questionBank.length) * 100;
+            document.getElementById('progress-bar-fill').style.width = `${Math.max(5, progressPct)}%`;
+
+            document.getElementById('cognitive-badge').innerText = `Aras: ${q.cognitive}`;
+            document.getElementById('format-badge').innerText = `Format: ${q.format.toUpperCase()}`;
+
+            document.getElementById('question-text').innerHTML = q.text;
+            document.getElementById('feedback-area').classList.add('hidden');
+
+            let container = document.getElementById('answer-container');
+            container.innerHTML = '';
+
+            if (q.format === 'objektif') {
+                let gridDiv = document.createElement('div');
+                gridDiv.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3';
+                q.options.forEach((opt, idx) => {
+                    let btn = document.createElement('button');
+                    btn.className = 'p-4 bg-indigo-50 hover:bg-indigo-600 hover:text-white border-2 border-indigo-200 rounded-2xl font-bold text-base text-indigo-900 transition shadow-sm text-left flex items-center justify-between group';
+                    btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${opt}</span> <span class="opacity-0 group-hover:opacity-100 transition">👉</span>`;
+                    btn.onclick = () => submitAnswer(opt, q.answer, btn);
+                    gridDiv.appendChild(btn);
+                });
+                container.appendChild(gridDiv);
+            } else {
+                let wrapper = document.createElement('div');
+                wrapper.className = 'flex flex-col sm:flex-row gap-3 items-center justify-center';
+                
+                let input = document.createElement('input');
+                input.type = 'text';
+                input.id = 'user-text-input';
+                input.placeholder = 'Taip jawapan angka...';
+                input.className = 'w-full sm:w-80 px-5 py-4 bg-slate-50 border-2 border-indigo-200 rounded-2xl font-bold text-lg text-center text-indigo-900 focus:outline-none focus:border-indigo-600 transition';
+                
+                let submitBtn = document.createElement('button');
+                submitBtn.className = 'w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-4 rounded-2xl shadow transition text-base';
+                submitBtn.innerText = 'Semak Jawapan ✅';
+                submitBtn.onclick = () => {
+                    let val = document.getElementById('user-text-input').value.trim();
+                    if (!val) return;
+                    submitAnswer(val, q.answer, submitBtn);
+                };
+
+                input.onkeypress = (e) => {
+                    if (e.key === 'Enter') submitBtn.click();
+                };
+
+                wrapper.appendChild(input);
+                wrapper.appendChild(submitBtn);
+                container.appendChild(wrapper);
+                setTimeout(() => input.focus(), 100);
+            }
+        }
+
+        function submitAnswer(userAns, correctAns, element) {
+            if (isAnswerSubmitted) return;
+            isAnswerSubmitted = true;
+
+            let isCorrect = String(userAns).trim().toLowerCase() === String(correctAns).trim().toLowerCase();
+            
+            let feedbackArea = document.getElementById('feedback-area');
+            let feedbackText = document.getElementById('feedback-text');
+            feedbackArea.classList.remove('hidden');
+
+            if (isCorrect) {
+                score += 10;
+                streak += 1;
+                feedbackArea.className = 'p-4 rounded-2xl mb-4 flex items-center justify-between bg-emerald-100 border border-emerald-300 text-emerald-900';
+                feedbackText.innerHTML = `🌟 <span class="font-bold">Tahniah! Jawapan anda BETUL!</span> 🎉`;
+                if (element && element.tagName === 'BUTTON') {
+                    element.classList.remove('bg-indigo-50', 'text-indigo-900', 'border-indigo-200');
+                    element.classList.add('bg-emerald-600', 'text-white', 'border-emerald-700');
+                }
+            } else {
+                streak = 0;
+                feedbackArea.className = 'p-4 rounded-2xl mb-4 flex items-center justify-between bg-rose-100 border border-rose-300 text-rose-900';
+                feedbackText.innerHTML = `❌ <span class="font-bold">Kurang tepat!</span> Jawapan yang betul ialah: <span class="font-black">${correctAns}</span>`;
+                if (element && element.tagName === 'BUTTON') {
+                    element.classList.remove('bg-indigo-50', 'text-indigo-900', 'border-indigo-200');
+                    element.classList.add('bg-rose-600', 'text-white', 'border-rose-700');
+                }
+            }
+
+            updateStatsDisplay();
+            userAnswersHistory.push({ question: currentQuestionIndex, correct: isCorrect });
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questionBank.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('global-stats').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            let maxPossible = questionBank.length * 10;
+            let percentage = Math.round((score / maxPossible) * 100);
+
+            document.getElementById('final-score').innerText = `${score} / ${maxPossible}`;
+            document.getElementById('final-accuracy').innerText = `${percentage}%`;
+
+            let titleEl = document.getElementById('result-title');
+            let subEl = document.getElementById('result-subtitle');
+            let emojiEl = document.getElementById('result-emoji');
+
+            if (percentage >= 80) {
+                emojiEl.innerText = '🏆';
+                titleEl.innerText = 'Hebat Sekali! Cemerlang!';
+                subEl.innerText = 'Anda benar-benar menguasai susunan nombor dengan cemerlang!';
+            } else if (percentage >= 50) {
+                emojiEl.innerText = '⭐';
+                titleEl.innerText = 'Bagus Usaha Anda!';
+                subEl.innerText = 'Teruskan latihan supaya lebih cekap menyusun nombor hingga 100.';
+            } else {
+                emojiEl.innerText = '💡';
+                titleEl.innerText = 'Cuba Lagi Ya!';
+                subEl.innerText = 'Jangan berputus asa. Cuba ulangi latihan untuk mempertingkatkan kemahiran anda.';
+            }
+        }
+
+        function restartQuiz() {
+            startGameWithDifficulty(currentDifficulty);
+        }
+
+        function confirmExitGame() {
+            document.getElementById('custom-modal').classList.remove('hidden');
+            document.getElementById('modal-btn-confirm').onclick = () => {
+                closeModal();
+                backToMenu();
+            };
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

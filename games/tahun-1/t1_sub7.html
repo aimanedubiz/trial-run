@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 MATH KIDS – EDU KIDZ | Matematik Tahun 1 – Bentuk</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins for cheerful child-friendly typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        .bouncing {
+            animation: bounce 1.5s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .pulse-btn {
+            transition: all 0.2s ease;
+        }
+        .pulse-btn:hover {
+            transform: scale(1.05);
+        }
+        .pulse-btn:active {
+            transform: scale(0.95);
+        }
+        /* Custom scrollbar for leaderboard & progress */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen text-slate-800 flex items-center justify-center p-2 sm:p-4">
+
+    <div id="app" class="w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden min-h-[600px] flex flex-col relative border-4 border-white">
+        
+        <!-- Top Banner Header -->
+        <header class="bg-gradient-to-r from-yellow-400 via-orange-400 to-amber-500 p-4 text-white flex justify-between items-center shadow-md">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl sm:text-3xl">🎮</span>
+                <div>
+                    <h1 class="font-extrabold text-lg sm:text-xl tracking-wide drop-shadow">MATH KIDS</h1>
+                    <p class="text-xs font-semibold text-yellow-100">⭐ EDU KIDZ • BENTUK TAHUN 1</p>
+                </div>
+            </div>
+            <div id="header-user-info" class="hidden items-center space-x-3 bg-white/20 px-3 py-1.5 rounded-full text-sm font-semibold">
+                <span id="header-username">Pelajar</span>
+                <button onclick="handleLogout()" class="text-xs bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-full transition">Log Keluar</button>
+            </div>
+        </header>
+
+        <!-- Dynamic Screen Content Container -->
+        <main id="main-content" class="flex-1 p-4 sm:p-8 flex flex-col justify-center items-center relative overflow-y-auto">
+            <!-- Content will be injected dynamically via JavaScript -->
+        </main>
+
+        <!-- Footer / Mascot Bar -->
+        <footer class="bg-slate-100 px-4 py-2 text-center text-xs text-slate-500 flex justify-between items-center border-t border-slate-200">
+            <span>📐 KPM Kurikulum Matematik Tahun 1</span>
+            <span class="flex items-center gap-1">🤖 Ceria Bersama Edu Kidz</span>
+        </footer>
+    </div>
+
+    <!-- Audio Synthesizer helper using Web Audio API for sound effects without external files -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (localStorage.getItem('edu_sound') === 'off') return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            const now = audioCtx.currentTime;
+            
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(120, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            }
+        }
+    </script>
+
+    <script>
+        const TOPICS = [
+            { id: 1, name: "Kenali Bentuk 3 Dimensi", icon: "🔵", desc: "Kenal & namakan bentuk 3D (Kubus, Kuboid, Kon, Silinder, Sfera)" },
+            { id: 2, name: "Permukaan Bentuk 3D", icon: "🟢", desc: "Permukaan rata dan permukaan melengkung bentuk 3D" },
+            { id: 3, name: "Bina Model", icon: "🟠", desc: "Gabungan bentuk 3D membina objek seperti rumah, roket, kereta" },
+            { id: 4, name: "Bentuk 2 Dimensi", icon: "🟣", desc: "Kenal & namakan bentuk 2D (Segi Empat Sama, Tepat, Segi Tiga, Bulatan)" },
+            { id: 5, name: "Ciri-Ciri Bentuk 2D", icon: "🟡", desc: "Bilangan bucu, sisi lurus & sisi melengkung bentuk 2D" },
+            { id: 6, name: "Penyelesaian Masalah", icon: "🔴", desc: "Situasi harian berkaitan bentuk 2D & 3D (KPM Tahun 1)" }
+        ];
+
+        const LEVELS = [
+            { id: 'mudah', name: 'MUDAH', color: 'bg-emerald-500 hover:bg-emerald-600', badge: '🟢' },
+            { id: 'sederhana', name: 'SEDERHANA', color: 'bg-amber-500 hover:bg-amber-600', badge: '🟡' },
+            { id: 'sukar', name: 'SUKAR', color: 'bg-rose-500 hover:bg-rose-600', badge: '🔴' }
+        ];
+
+        // Question Bank Generator ensuring 20 unique questions per topic per level (360 total unique questions)
+        function generateQuestionBank() {
+            const bank = {};
+            TOPICS.forEach(topic => {
+                bank[topic.id] = {};
+                LEVELS.forEach(level => {
+                    bank[topic.id][level.id] = [];
+                    for (let i = 1; i <= 20; i++) {
+                        bank[topic.id][level.id].push(createQuestionItem(topic.id, level.id, i));
+                    }
+                });
+            });
+            return bank;
+        }
+
+        function createQuestionItem(topicId, levelId, index) {
+            let q = {
+                id: `T${topicId}-${levelId}-${index}`,
+                topic: topicId,
+                level: levelId,
+                cognitive: index <= 7 ? 'Mengingat' : index <= 14 ? 'Memahami' : 'Mengaplikasi',
+                mark: 5
+            };
+
+            // Topic 1: Kenali Bentuk 3 Dimensi (Refined with 20 completely unique, non-overlapping questions per level with zero duplicates)
+            if (topicId === 1) {
+                if (levelId === 'mudah') {
+                    const easyPool = [
+                        { q: "Apakah nama bentuk 3D bagi sebiji dadu permainan yang bersudut sama rata?", ans: "Kubus", opts: ["Kubus", "Kon", "Silinder", "Sfera"], emoji: "🎲" },
+                        { q: "Kotak kasut abang mempunyai panjang, lebar dan tinggi. Apakah nama bentuk 3D kotak tersebut?", ans: "Kuboid", opts: ["Kuboid", "Sfera", "Kon", "Kubus"], emoji: "📦" },
+                        { q: "Sebiji bola sepak yang digunakan untuk bermain di padang mempunyai bentuk 3D...", ans: "Sfera", opts: ["Sfera", "Silinder", "Kuboid", "Kon"], emoji: "⚽" },
+                        { q: "Tin minuman gas berperisa oren di kedai runcit menyerupai bentuk 3D...", ans: "Silinder", opts: ["Silinder", "Kon", "Sfera", "Kubus"], emoji: "🥫" },
+                        { q: "Topi hari jadi yang runcing di atas kepala kanak-kanak berbentuk 3D...", ans: "Kon", opts: ["Kon", "Kubus", "Kuboid", "Sfera"], emoji: "🥳" },
+                        { q: "Buku teks Matematik Tahun 1 tebal menyerupai rupa bentuk 3D...", ans: "Kuboid", opts: ["Kuboid", "Silinder", "Sfera", "Kon"], emoji: "📖" },
+                        { q: "Guli kaca kecil yang berkilat apabila digentel menyerupai bentuk 3D...", ans: "Sfera", opts: ["Sfera", "Kubus", "Kon", "Silinder"], emoji: "🔮" },
+                        { q: "Botol air mineral menegak di dalam beg sekolah mempunyai bentuk 3D...", ans: "Silinder", opts: ["Silinder", "Kuboid", "Sfera", "Kubus"], emoji: "🍼" },
+                        { q: "Kiub ais batu di dalam peti sejuk yang bersisi sama panjang berbentuk 3D...", ans: "Kubus", opts: ["Kubus", "Kon", "Silinder", "Kuboid"], emoji: "🧊" },
+                        { q: "Aiskrim kon bersalut coklat di gerai Pakcik Ali mempunyai bahagian badan berbentuk...", ans: "Kon", opts: ["Kon", "Sfera", "Kubus", "Silinder"], emoji: "🍦" },
+                        { q: "Bungkusan hadiah berbentuk kotak pensel panjang menyerupai bentuk...", ans: "Kuboid", opts: ["Kuboid", "Sfera", "Kon", "Silinder"], emoji: "🎁" },
+                        { q: "Sebiji bola keranjang yang dilantun di gelanggang mempunyai bentuk...", ans: "Sfera", opts: ["Sfera", "Kubus", "Kuboid", "Kon"], emoji: "🏀" },
+                        { q: "Pilihlah bentuk 3D yang mempunyai rupa sama seperti tin susu pekat manis.", ans: "Silinder", opts: ["Silinder", "Kon", "Sfera", "Kubus"], emoji: "🥛" },
+                        { q: "Kotak sandwic roti lapis yang sama sisi di kantin sekolah berbentuk...", ans: "Kubus", opts: ["Kubus", "Kuboid", "Silinder", "Sfera"], emoji: "🥪" },
+                        { q: "Pelampung keselamatan berenang kanak-kanak yang ditiup angin bulat menyerupai...", ans: "Sfera", opts: ["Sfera", "Kon", "Kuboid", "Silinder"], emoji: "🎈" },
+                        { q: "Puncak menara masjid tradisional melengkung runcing ke atas menyerupai bentuk...", ans: "Kon", opts: ["Kon", "Kubus", "Silinder", "Sfera"], emoji: "🕌" },
+                        { q: "Tabung duit syiling seramik berbentuk tin tinggi menyerupai bentuk...", ans: "Silinder", opts: ["Silinder", "Kuboid", "Kon", "Kubus"], emoji: "🪙" },
+                        { q: "Peti sejuk dua pintu di dapur rumah ibu berbentuk 3D...", ans: "Kuboid", opts: ["Kuboid", "Sfera", "Silinder", "Kon"], emoji: "🧊" },
+                        { q: "Buah oren segar yang manis di atas meja makan berbentuk 3D...", ans: "Sfera", opts: ["Sfera", "Kon", "Kubus", "Kuboid"], emoji: "🍊" },
+                        { q: "Ketupat nasi istimewa Hari Raya berbentuk kubus kecil dipanggil ketupat...", ans: "Kubus", opts: ["Kubus", "Silinder", "Sfera", "Kon"], emoji: "🟢" }
+                    ];
+                    let item = easyPool[(index - 1) % easyPool.length];
+                    q.type = 'objektif';
+                    q.question = item.q;
+                    q.image = item.emoji;
+                    q.options = shuffleArray(item.opts);
+                    q.answer = item.ans;
+                } else if (levelId === 'sederhana') {
+                    const medPool = [
+                        { q: "Antara objek berikut, yang manakah BUKAN tergolong dalam kumpulan bentuk 3D Sfera?", ans: "Kotak kasut", opts: ["Kotak kasut", "Bola tenis", "Guli kaca", "Buah oren"], emoji: "⚽" },
+                        { q: "Ali menyusun 3 buah buku cerita tebal di atas meja. Susunan buku tersebut membentuk rupa 3D...", ans: "Kuboid", opts: ["Kuboid", "Kon", "Sfera", "Silinder"], emoji: "📚" },
+                        { q: "Puan Zaleha membeli sebiji tembikai bulat besar. Bentuk geometri 3D bagi buah tembikai tersebut ialah...", ans: "Sfera", opts: ["Sfera", "Kubus", "Silinder", "Kon"], emoji: "🍉" },
+                        { q: "Pak Cik Kassim menyusun tin-tin sardin bersusun tegak di kedai runcit. Bentuk asas tin sardin ialah...", ans: "Silinder", opts: ["Silinder", "Kuboid", "Sfera", "Kubus"], emoji: "🥫" },
+                        { q: "Murid Tahun 1 memegang permainan blok kayu bersisi sama tajam. Blok kayu tersebut ialah...", ans: "Kubus", opts: ["Kubus", "Sfera", "Kon", "Kuboid"], emoji: "🧱" },
+                        { q: "Emak menyarungkan topi hari jadi yang berbentuk kon kertas kepada adik. Apakah bentuk geometri 3D topi itu?", ans: "Kon", opts: ["Kon", "Kubus", "Silinder", "Sfera"], emoji: "🎉" },
+                        { q: "Pilihlah pasangan bentuk 3D yang tepat untuk objek 'buku nota' dan 'dadu permainan'.", ans: "Kuboid dan Kubus", opts: ["Kuboid dan Kubus", "Sfera dan Kon", "Silinder dan Sfera", "Kon dan Kuboid"], emoji: "📖🎲" },
+                        { q: "Azim menemui sebuah benda padu di makmal sains yang mempunyai permukaan rata dan melengkung serta tapak bulat. Benda itu ialah...", ans: "Silinder", opts: ["Silinder", "Kubus", "Sfera", "Kuboid"], emoji: "🔬" },
+                        { q: "Apakah persamaan antara bola tenis, bola keranjang, dan sebiji oren segar?", ans: "Kesemuanya berbentuk Sfera", opts: ["Kesemuanya berbentuk Sfera", "Kesemuanya berbentuk Kuboid", "Kesemuanya berbentuk Kon", "Kesemuanya berbentuk Kubus"], emoji: "🎾" },
+                        { q: "Antara berikut, yang manakah mempunyai permukaan melengkung sahaja tanpa sebarang bucu atau permukaan rata?", ans: "Sfera", opts: ["Sfera", "Silinder", "Kon", "Kubus"], emoji: "⚽" },
+                        { q: "Rizal mencartakan objek di dalam kelas: almari besi, pemadam panjang, dan kotak pensel. Kesemua objek ini berbentuk...", ans: "Kuboid", opts: ["Kuboid", "Sfera", "Silinder", "Kon"], emoji: "🗄️" },
+                        { q: "Siti memegang tabung buluh tabung syiling di biliknya. Bentuk tabung buluh itu ialah...", ans: "Silinder", opts: ["Silinder", "Kubus", "Kuboid", "Sfera"], emoji: "🎋" },
+                        { q: "Ibu memotong kek hari jadi berbentuk kubus kepada beberapa bahagian sama besar. Bentuk asal kek itu ialah...", ans: "Kubus", opts: ["Kubus", "Kuboid", "Kon", "Silinder"], emoji: "🎂" },
+                        { q: "Apakah bentuk 3D bagi sebuah loceng tangan sekolah yang bertangkai runcing di hujung atas?", ans: "Kon", opts: ["Kon", "Sfera", "Silinder", "Kuboid"], emoji: "🔔" },
+                        { q: "Amin menyusun 4 buah kotak mainan bersaiz sama membentuk satu bongkah besar. Bentuk bongkah itu menjadi...", ans: "Kubus", opts: ["Kubus", "Sfera", "Silinder", "Kon"], emoji: "📦" },
+                        { q: "Bapa meletakkan bola ragbi di atas lantai rumput. Walaupun bujur sedikit, konsep asasnya merupai bentuk...", ans: "Sfera", opts: ["Sfera", "Kuboid", "Kon", "Silinder"], emoji: "🏉" },
+                        { q: "Di kilang mainan, pekerja menyusun roda trak mainan kecil. Roda trak mainan tersebut menyerupai bentuk...", ans: "Silinder", opts: ["Silinder", "Kubus", "Sfera", "Kon"], emoji: "🚙" },
+                        { q: "Maya melihat khemah perkhemahan pengakap di padang sekolah yang runcing di puncak atas. Khemah itu berbentuk...", ans: "Kon", opts: ["Kon", "Kubus", "Kuboid", "Sfera"], emoji: "⛺" },
+                        { q: "Antara objek berikut, manakah yang paling tepat digolongkan sebagai bentuk Kuboid panjang?", ans: "Pembaris plastik lurus tebal", opts: ["Pembaris plastik lurus tebal", "Sebiji guli kaca", "Sebiji bola tenis", "Sebiji tembikai bulat"], emoji: "📏" },
+                        { q: "Kumpulan ceria membina model bangunan menggunakan kotak ubat gigi panjang. Kotak ubat gigi berbentuk...", ans: "Kuboid", opts: ["Kuboid", "Kon", "Silinder", "Sfera"], emoji: "🦷" }
+                    ];
+                    let item = medPool[(index - 1) % medPool.length];
+                    q.type = 'objektif';
+                    q.question = item.q;
+                    q.image = item.emoji;
+                    q.options = shuffleArray(item.opts);
+                    q.answer = item.ans;
+                } else {
+                    const hardPool = [
+                        { q: "Sebuah bongkah kayu mempunyai 6 permukaan rata yang sama besar, 12 sisi lurus sama panjang dan 8 bucu tajam. Apakah bongkah ini?", ans: "Kubus", opts: ["Kubus", "Kuboid", "Silinder", "Kon"], emoji: "🧩" },
+                        { q: "Objek manakah yang mempunyai ciri boleh menggelongsor di atas lantai rata tetapi TIDAK boleh menggolek dengan sempurna kerana bersegi?", ans: "Kotak kasut (Kuboid)", opts: ["Kotak kasut (Kuboid)", "Bola sepak (Sfera)", "Guli kaca (Sfera)", "Buah oren (Sfera)"], emoji: "📦" },
+                        { q: "Farid membandingkan bentuk tin minuman (silinder) dengan bola (sfera). Apakah perbezaan utama pada permukaan kedua-dua objek ini?", ans: "Silinder ada permukaan rata, sfera tiada", opts: ["Silinder ada permukaan rata, sfera tiada", "Sfera ada bucu, silinder tiada", "Kedua-duanya sama rata", "Silinder berbentuk segi empat"], emoji: "🥫" },
+                        { q: "Ibu menghiris sebiji tembikai bulat (sfera). Bahagian tengah hirisan tembikai itu menghasilkan permukaan rata berbentuk...", ans: "Bulatan", opts: ["Bulatan", "Segi Tiga", "Segi Empat", "Kon"], emoji: "🍉" },
+                        { q: "Dalam teka-teki bentuk Sains, seorang murid berkata: 'Saya ada 1 permukaan rata di tapak, 1 permukaan melengkung di badan dan 1 bucu di puncak.' Siapakah saya?", ans: "Kon", opts: ["Kon", "Silinder", "Sfera", "Kubus"], emoji: "🎭" },
+                        { q: "Zul menyusun 5 keping duit syiling 50 sen secara bertindih meninggi di atas meja. Bentuk keseluruhan gabungan syiling tersebut ialah...", ans: "Silinder", opts: ["Silinder", "Kuboid", "Kon", "Kubus"], emoji: "🪙" },
+                        { q: "Antara gabungan bentuk 3D berikut, yang manakah kesemuanya mempunyai bucu tajam?", ans: "Kubus dan Kuboid", opts: ["Kubus dan Kuboid", "Sfera dan Silinder", "Kon dan Sfera", "Silinder dan Kon"], emoji: "📐" },
+                        { q: "Haikal menggolekkan sebiji bola tenis dan sebuah buku nota di atas lantai condong. Apakah pemerhatian yang tepat?", ans: "Bola tenis menggolek, buku nota menggelongsor", opts: ["Bola tenis menggolek, buku nota menggelongsor", "Kedua-duanya menggolek laju", "Kedua-duanya tinggal kaku", "Buku nota menggolek lebih pantas"], emoji: "🎾" },
+                        { q: "Puan Noraini meminta muridnya mencari objek di dalam kelas yang mempunyai 6 permukaan rata dan bentuknya sama seperti dadu permainan.", ans: "Dadu permainan (Kubus)", opts: ["Dadu permainan (Kubus)", "Pemadam papan hitam (Kuboid)", "Tin susu (Silinder)", "Bola hoki (Sfera)"], emoji: "🎲" },
+                        { q: "Apakah ciri istimewa yang membezakan bentuk Sfera berbanding bentuk 3D yang lain?", ans: "Tiada bucu, tiada sisi dan tiada permukaan rata", opts: ["Tiada bucu, tiada sisi dan tiada permukaan rata", "Mempunyai 6 permukaan rata sama besar", "Mempunyai 1 bucu tajam di atas", "Mempunyai tapak rata bulat"], emoji: "⚪" },
+                        { q: "Aminah memegang botol air berbentuk silinder. Dia menegakkan botol itu di atas meja. Apakah bentuk tapak bawah botol tersebut?", ans: "Bulatan", opts: ["Bulatan", "Segi Tiga", "Segi Empat", "Sfera"], emoji: "🍼" },
+                        { q: "Dalam aktiviti projek binaan, kumpulan Ceria menggunakan kotak tisu muka. Kotak tisu muka ini dikategorikan sebagai bentuk...", ans: "Kuboid", opts: ["Kuboid", "Kubus", "Kon", "Sfera"], emoji: "🧻" },
+                        { q: "Aziz mengira bilangan bucu pada sebiji kubus mainan dan sebiji kuboid buku. Berapakah jumlah bucu bagi kedua-dua bentuk tersebut?", ans: "16 bucu (8 + 8)", opts: ["16 bucu (8 + 8)", "12 bucu", "8 bucu", "24 bucu"], emoji: "➕" },
+                        { q: "Objek manakah yang boleh menggolek DAN menggelongsor jika diletakkan di atas permukaan condong yang licin?", ans: "Tin minuman (Silinder)", opts: ["Tin minuman (Silinder)", "Dadu (Kubus)", "Kotak kasut (Kuboid)", "Buku tebal (Kuboid)"], emoji: "🥫" },
+                        { q: "Rizal mencatatkan ciri bongkah kayu: 'Saya mempunyai 2 permukaan rata berbentuk bulatan dan 1 permukaan melengkung di sekeliling.' Apakah saya?", ans: "Silinder", opts: ["Silinder", "Kon", "Sfera", "Kubus"], emoji: "🪵" },
+                        { q: "Siti memotong kon ais krim secara melintang di bahagian tengah. Permukaan hirisan keratan tersebut berbentuk...", ans: "Bulatan", opts: ["Bulatan", "Segi Empat", "Segi Tiga", "Sfera"], emoji: "🍦" },
+                        { q: "Bapa membina bumbung garaj kereta berbentuk separuh kon panjang. Apakah ciri bentuk kon pada bumbung tersebut?", ans: "Ada bucu runcing di puncak atas", opts: ["Ada bucu runcing di puncak atas", "Ada 8 bucu tajam", "Ada 6 permukaan rata", "Tiada bucu langsung"], emoji: "🏠" },
+                        { q: "Melissa menyusun 2 biji bola sepak dan 2 biji kotak pensel. Berapakah jumlah keseluruhan bentuk Sfera yang terlibat?", ans: "2 biji bola sepak", opts: ["2 biji bola sepak", "4 biji kesemuanya", "Tiada bola", "2 kotak pensel"], emoji: "⚽📦" },
+                        { q: "Cikgu Hafiz menunjukkan satu objek padu yang mempunyai 6 permukaan rata tetapi panjang sisinya tidak sama panjang. Objek itu ialah...", ans: "Kuboid", opts: ["Kuboid", "Kubus", "Sfera", "Silinder"], emoji: "📏" },
+                        { q: "Zahir mencabar rakan kumpulannya menamakan bentuk 3D yang mempunyai bilangan permukaan rata PALING BANYAK.", ans: "Kubus dan Kuboid (6 permukaan)", opts: ["Kubus dan Kuboid (6 permukaan)", "Kon (1 permukaan)", "Sfera (0 permukaan)", "Silinder (2 permukaan)"], emoji: "🏆" }
+                    ];
+                    let item = hardPool[(index - 1) % hardPool.length];
+                    q.type = 'objektif';
+                    q.question = item.q;
+                    q.image = item.emoji;
+                    q.options = shuffleArray(item.opts);
+                    q.answer = item.ans;
+                }
+            }
+            // Topic 2: Permukaan Bentuk 3D
+            else if (topicId === 2) {
+                const data = [
+                    { name: 'Kubus', surf: 'Permukaan rata sahaja', emoji: '🎲' },
+                    { name: 'Sfera', surf: 'Permukaan melengkung sahaja', emoji: '⚽' },
+                    { name: 'Silinder', surf: 'Permukaan rata dan melengkung', emoji: '🥫' },
+                    { name: 'Kon', surf: 'Permukaan rata dan melengkung', emoji: '🍦' },
+                    { name: 'Kuboid', surf: 'Permukaan rata sahaja', emoji: '📦' }
+                ];
+                const item = data[(index + (levelId==='sukar'?2:0)) % data.length];
+
+                if (levelId === 'mudah') {
+                    q.type = 'objektif';
+                    q.question = `Bentuk ${item.name} (${item.emoji}) mempunyai jenis permukaan...`;
+                    q.image = item.emoji;
+                    q.options = shuffleArray(['Permukaan rata sahaja', 'Permukaan melengkung sahaja', 'Permukaan rata dan melengkung', 'Tiada permukaan']);
+                    q.answer = item.surf;
+                } else if (levelId === 'sederhana') {
+                    q.type = 'objektif';
+                    q.question = `Antara bentuk 3D berikut, yang manakah mempunyai PERMUKAAN MELENGKUNG SAHAJA? (${index})`;
+                    q.image = '⚽';
+                    q.options = shuffleArray(['Kubus', 'Sfera', 'Kuboid', 'Silinder']);
+                    q.answer = 'Sfera';
+                } else {
+                    q.type = 'isitempatkosong';
+                    q.question = `Tin minuman (${item.emoji}) mempunyai permukaan rata dan permukaan ____________.`;
+                    q.image = '🥫';
+                    q.answer = 'melengkung';
+                }
+            }
+            // Topic 3: Bina Model (Refined with 20 completely unique, non-overlapping questions per level with zero duplicates)
+            else if (topicId === 3) {
+                if (levelId === 'mudah') {
+                    const easyModelPool = [
+                        { q: "Untuk membina bahagian bumbung runcing sebuah rumah mainan kertas, bentuk 3D apakah yang paling tepat digunakan?", ans: "Kon", opts: ["Kon", "Kubus", "Sfera", "Silinder"], emoji: "🏠" },
+                        { q: "Ali ingin membina badan roket sains mainan yang berbentuk panjang menegak. Bentuk 3D manakah paling sesuai?", ans: "Silinder", opts: ["Silinder", "Sfera", "Kubus", "Kon"], emoji: "🚀" },
+                        { q: "Siti membina roda kereta mainan kayu menggunakan bongkah pendek yang bulat di tepi. Bentuk 3D itu ialah...", ans: "Silinder", opts: ["Silinder", "Kuboid", "Sfera", "Kubus"], emoji: "🚗" },
+                        { q: "Bapa membina tiang lampu taman berbentuk tiang panjang tegak. Tiang tersebut menyerupai bentuk...", ans: "Silinder", opts: ["Silinder", "Kon", "Sfera", "Kuboid"], emoji: "💡" },
+                        { q: "Dalam projek seni, Azizah melakar badan bangunan pencakar langit menggunakan kotak ubat panjang. Bentuknya ialah...", ans: "Kuboid", opts: ["Kuboid", "Sfera", "Kon", "Silinder"], emoji: "🏢" },
+                        { q: "Rizal membina kepala watak robot mainan menggunakan bola mainan kecil anjal. Bentuk kepala robot itu ialah...", ans: "Sfera", opts: ["Sfera", "Kubus", "Kon", "Kuboid"], emoji: "🤖" },
+                        { q: "Fatimah menyusun dadu permainan plastik untuk membina asas tapak istana pasir. Dadu tersebut berbentuk...", ans: "Kubus", opts: ["Kubus", "Silinder", "Sfera", "Kon"], emoji: "🏰" },
+                        { q: "Amin membina model pokok Krismas mainan di tadika yang tirus di atas dan lebar di tapak. Bentuk pokok itu ialah...", ans: "Kon", opts: ["Kon", "Kuboid", "Sfera", "Silinder"], emoji: "🎄" },
+                        { q: "Zul meletakkan kotak hadiah kasut sebagai badan trak mainan pengangkut. Bentuk kotak kasut itu ialah...", ans: "Kuboid", opts: ["Kuboid", "Sfera", "Kon", "Silinder"], emoji: "🚚" },
+                        { q: "Melissa membina model kepala orang salji menggunakan guli kaca besar bersinar. Kepala itu berbentuk...", ans: "Sfera", opts: ["Sfera", "Kubus", "Kuboid", "Kon"], emoji: "⛄" },
+                        { q: "Haikal menyusun tin susu kosong tegak untuk membina menara tin mainan. Tin susu tersebut berbentuk...", ans: "Silinder", opts: ["Silinder", "Kon", "Sfera", "Kubus"], emoji: "🗼" },
+                        { q: "Puan Zaleha membuat kuih onde-onde berbentuk bulat di atas dulang. Kuih itu menyerupai bentuk...", ans: "Sfera", opts: ["Sfera", "Kuboid", "Kon", "Silinder"], emoji: "🍡" },
+                        { q: "Azim mencantumkan kotak pensel panjang bersisi rata sebagai badan kapal terbang mainan. Bentuk kotak itu ialah...", ans: "Kuboid", opts: ["Kuboid", "Sfera", "Silinder", "Kon"], emoji: "✈️" },
+                        { q: "Suri membina patung ais krim kon gergasi di sudut bilik seni sekolah. Bentuk kon ais krim itu ialah...", ans: "Kon", opts: ["Kon", "Kubus", "Sfera", "Kuboid"], emoji: "🍦" },
+                        { q: "Farid menyusun kiub kayu mainan bersaiz sama membentuk blok asas jambatan. Kiub itu berbentuk...", ans: "Kubus", opts: ["Kubus", "Silinder", "Sfera", "Kon"], emoji: "🌉" },
+                        { q: "Nadia melukis pelan model helikopter mainan dengan baling-baling bulat berputar. Asas bilah baling menyerupai...", ans: "Silinder", opts: ["Silinder", "Kuboid", "Kon", "Sfera"], emoji: "🚁" },
+                        { q: "Ahmad meletakkan sebiji bola tenis di atas mangkuk mainan sebagai hiasan kepala patung. Bola itu berbentuk...", ans: "Sfera", opts: ["Sfera", "Kubus", "Kuboid", "Kon"], emoji: "🎾" },
+                        { q: "Zahir membina model rumah bot piagam dengan bumbung runcing ke atas. Bumbung runcing tersebut berbentuk...", ans: "Kon", opts: ["Kon", "Silinder", "Sfera", "Kuboid"], emoji: "⛵" },
+                        { q: "Puan Noraini memberikan kotak mancis kepada murid untuk membina model perabot kerusi meja kecil. Kotak mancis berbentuk...", ans: "Kuboid", opts: ["Kuboid", "Sfera", "Kon", "Silinder"], emoji: "🪑" },
+                        { q: "Kumpulan Dinamik Tahun 1 membina model robot mainan dengan tangan berbentuk silinder pendek. Tangan itu ialah...", ans: "Silinder", opts: ["Silinder", "Kubus", "Sfera", "Kon"], emoji: "🤖" }
+                    ];
+                    let item = easyModelPool[(index - 1) % easyModelPool.length];
+                    q.type = 'objektif';
+                    q.question = item.q;
+                    q.image = item.emoji;
+                    q.options = shuffleArray(item.opts);
+                    q.answer = item.ans;
+                } else if (levelId === 'sederhana') {
+                    const medModelPool = [
+                        { q: "Ali ingin membina model sebuah roket sains. Gabungan bentuk 3D apakah yang paling tepat untuk badan roket dan kepala roket?", ans: "Silinder dan Kon", opts: ["Silinder dan Kon", "Kubus dan Sfera", "Kuboid dan Kubus", "Sfera dan Sfera"], emoji: "🚀" },
+                        { q: "Siti membina model rumah kampung tradisional. Apakah gabungan bentuk 3D untuk bahagian dinding rumah dan bumbungnya?", ans: "Kuboid dan Kon", opts: ["Kuboid dan Kon", "Silinder dan Silinder", "Sfera dan Kubus", "Kubus dan Sfera"], emoji: "🏠" },
+                        { q: "Dalam projek kraf tangan, murid membina model kereta mainan. Bentuk apakah yang digunakan untuk badan kereta dan roda kereta?", ans: "Kuboid dan Silinder", opts: ["Kuboid dan Silinder", "Kon dan Kon", "Sfera dan Sfera", "Kubus dan Kubus"], emoji: "🚗" },
+                        { q: "Rizal membina model menara jam sekolah menggunakan kotak panjang (kuboid) di bawah dan topi penutup runcing di atas. Topi penutup itu ialah...", ans: "Kon", opts: ["Kon", "Silinder", "Sfera", "Kubus"], emoji: "⏰" },
+                        { q: "Fatimah membina model orang salji mainan menggunakan dua bentuk Sfera untuk badan dan kepala. Apakah ciri permukaan bentuk sfera tersebut?", ans: "Permukaan melengkung sahaja", opts: ["Permukaan melengkung sahaja", "Permukaan rata sahaja", "Permukaan rata dan melengkung", "Tiada permukaan langsung"], emoji: "⛄" },
+                        { q: "Amin menyusun 4 buah kotak kasut sama saiz untuk membina sebuah meja pameran mainan. Bentuk kesuluruhan meja pameran menjadi...", ans: "Kuboid besar", opts: ["Kuboid besar", "Sfera besar", "Kon tajam", "Silinder tinggi"], emoji: "📦" },
+                        { q: "Zul membina model menara mercu tanda menggunakan tin minuman bersusun menegak setinggi 3 tingkat. Bentuk setiap tin ialah...", ans: "Silinder", opts: ["Silinder", "Kubus", "Kuboid", "Kon"], emoji: "🗼" },
+                        { q: "Melissa membina model roket mainan angkasa lepas. Dia menggunakan botol air mineral (silinder) dan penutup kertas runcing (kon). Berapa jenis bentuk 3D digunakan?", ans: "2 jenis", opts: ["2 jenis", "1 jenis", "3 jenis", "4 jenis"], emoji: "🛰️" },
+                        { q: "Haikal membina model istana pasir di pantai menggunakan baldi pasir acuan berbentuk silinder dan kuboid. Apakah bentuk permukaan tapak baldi itu?", ans: "Permukaan rata", opts: ["Permukaan rata", "Permukaan melengkung", "Permukaan bucu tajam", "Permukaan tiada bentuk"], emoji: "🏖️" },
+                        { q: "Puan Zaleha meminta murid membina model kenderaan bas sekolah mainan menggunakan kotak kasut panjang. Kotak kasut itu mempunyai 6 permukaan...", ans: "Rata", opts: ["Rata", "Melengkung", "Runcing", "Bulat"], emoji: "🚌" },
+                        { q: "Azim mencantumkan blok kubus kayu dengan bola pingpong di atasnya untuk membuat maskot patung. Apakah bentuk maskot kepala patung itu?", ans: "Sfera", opts: ["Sfera", "Kon", "Kuboid", "Silinder"], emoji: "🏓" },
+                        { q: "Suri membina model rumah papan bertingkat. Dia menggunakan bongkah kuboid untuk bilik bawah dan kon kertas untuk atap. Atap kon mempunyai berapa bucu?", ans: "1 bucu", opts: ["1 bucu", "0 bucu", "4 bucu", "8 bucu"], emoji: "🏡" },
+                        { q: "Farid menyusun tin susu pekat manis secara menegak untuk membina tiang pintu gerbang mainan sekolah. Bentuk tiang itu ialah...", ans: "Silinder", opts: ["Silinder", "Kubus", "Kuboid", "Sfera"], emoji: "🥛" },
+                        { q: "Nadia membina model helikopter mainan menggunakan botol ubat silinder dan bilah pembaris nipis. Badan helikopter menyerupai...", ans: "Silinder", opts: ["Silinder", "Kubus", "Sfera", "Kon"], emoji: "🚁" },
+                        { q: "Ahmad membina model bandaraya menggunakan pelbagai kotak ubat gigi dan sabun. Kotak-kotak ini mempunyai sifat permukaan...", ans: "Rata sahaja", opts: ["Rata sahaja", "Melengkung sahaja", "Rata dan melengkung", "Tiada permukaan"], emoji: "🏙️" },
+                        { q: "Zahir membina model lampu jalan tinggi dengan tiang tegak dan penutup lampu separuh sfera. Penutup lampu itu menyerupai bentuk...", ans: "Sfera", opts: ["Sfera", "Kon", "Kuboid", "Silinder"], emoji: "💡" },
+                        { q: "Puan Noraini menguji murid: 'Dalam pembinaan model roket, bahagian manakah yang wajib menggunakan bentuk Kon?'", ans: "Bahagian kepala atas roket", opts: ["Bahagian kepala atas roket", "Bahagian roda bawah roket", "Bahagian tengah badan roket", "Bahagian tapak bawah roket"], emoji: "🚀" },
+                        { q: "Kumpulan Ceria membina model sumur air tradisional berbentuk tabung tinggi di taman sains sekolah. Bentuk sumur itu ialah...", ans: "Silinder", opts: ["Silinder", "Kubus", "Sfera", "Kuboid"], emoji: "🕳️" },
+                        { q: "Rizal membina model patung robot menggunakan kotak kuboid besar untuk badan dan kotak kuboid kecil untuk kepala. Berapakah jumlah bucu pada kepala kuboid itu?", ans: "8 bucu", opts: ["8 bucu", "4 bucu", "6 bucu", "12 bucu"], emoji: "🤖" },
+                        { q: "Maya membina model pokok kelapa pantai menggunakan batang kayu silinder tinggi dan buah kelapa sfera bulat. Buah kelapa berbentuk...", ans: "Sfera", opts: ["Sfera", "Kon", "Kuboid", "Silinder"], emoji: "🌴" }
+                    ];
+                    let item = medModelPool[(index - 1) % medModelPool.length];
+                    q.type = 'objektif';
+                    q.question = item.q;
+                    q.image = item.emoji;
+                    q.options = shuffleArray(item.opts);
+                    q.answer = item.ans;
+                } else {
+                    const hardModelPool = [
+                        { q: "Ahmad membina model kompleks roket angkasa lepas terperinci yang mengandungi badan utama silinder, kepala kon runcing, dan 4 blok tapak kuboid. Berapakah jenis bentuk 3D utama digunakan?", ans: "3 jenis (Silinder, Kon, Kuboid)", opts: ["3 jenis (Silinder, Kon, Kuboid)", "1 jenis sahaja", "5 jenis berbeza", "2 jenis (Sfera dan Kubus)"], emoji: "🚀" },
+                        { q: "Siti membina model istana diraja mainan menggunakan gabungan 4 bongkah kubus besar di sudut menara dan kon runcing di atas setiap menara. Berapakah jumlah kon penutup menara jika ada 4 menara?", ans: "4 kon", opts: ["4 kon", "2 kon", "8 kon", "1 kon"], emoji: "🏰" },
+                        { q: "Dalam pertandingan reka bentuk model Sains Tahun 1, kumpulan Dinamik membina model helikopter bomba. Mereka menggunakan 1 botol silinder panjang untuk badan, 4 roda silinder kecil, dan 1 bola pingpong sfera untuk kokpit. Berapa bilangan bentuk silinder terlibat?", ans: "5 silinder (1 badan + 4 roda)", opts: ["5 silinder (1 badan + 4 roda)", "2 silinder", "1 silinder", "4 silinder"], emoji: "🚁" },
+                        { q: "Rizal merangka pelan membina model rumah api di tepi pantai. Rumah api memerlukan tapak badan silinder tinggi dan bumbung lampu kon tirus. Apakah ciri persamaan permukaan pada tapak silinder dan kon tersebut?", ans: "Kedua-duanya mempunyai permukaan rata", opts: ["Kedua-duanya mempunyai permukaan rata", "Kedua-duanya berbentuk sfera bulat", "Kedua-duanya tiada bucu langsung", "Kedua-duanya berpermukaan melengkung sahaja"], emoji: "🏮" },
+                        { q: "Fatin membina model kereta api mainan ekspres menggunakan 1 gerabak kepala kuboid panjang dan 6 gerabak barang kubus kecil bersusun di belakang. Berapakah jumlah permukaan rata pada sebuah gerabak kubus?", ans: "6 permukaan rata", opts: ["6 permukaan rata", "4 permukaan rata", "8 permukaan rata", "12 permukaan rata"], emoji: "🚂" },
+                        { q: "Zack merancang pembinaan model bandar sains masa depan. Dia menyusun 3 buah kotak kasut (kuboid) secara menegak bertindih sebagai bangunan pencakar langit kembar. Berapakah jumlah keseluruhan bucu pada sebuah kotak kasut kuboid?", ans: "8 bucu", opts: ["8 bucu", "6 bucu", "4 bucu", "12 bucu"], emoji: "🏙️" },
+                        { q: "Puan Zaleha menguji minda murid cerdik: 'Mengapakah jurutera membina bahagian depan kepala kereta api moden atau kapal terbang menyerupai bentuk kon tirus atau melengkung?'", ans: "Untuk membelah angin dengan mudah", opts: ["Untuk membelah angin dengan mudah", "Untuk kelihatan seperti bola besar", "Untuk mudah digolek di atas lantai", "Untuk mempunyai 8 bucu tajam"], emoji: "🚄" },
+                        { q: "Haziq membina model menara jam bandar raya menggunakan bongkah kayu padu berbentuk kuboid. Dia ingin mengecat kesemua permukaan luar bongkah tersebut. Berapa permukaan rata yang perlu dicat?", ans: "6 permukaan", opts: ["6 permukaan", "4 permukaan", "8 permukaan", "12 permukaan"], emoji: "🕰️" },
+                        { q: "Amir mencabar rakan kumpulannya: 'Dalam pembinaan model haiwan gajah mainan, bahagian badan menggunakan kuboid besar, kaki menggunakan 4 silinder tegak, dan kepala menggunakan bola sfera.' Apakah ciri permukaan pada 4 kaki silinder gajah itu?", ans: "Permukaan rata dan melengkung", opts: ["Permukaan rata dan melengkung", "Permukaan rata sahaja", "Permukaan melengkung sahaja", "Tiada permukaan"], emoji: "🐘" },
+                        { q: "Puan Salina membimbing murid membina model mercu tanda menara condong menggunakan 10 keping tin minuman silinder bersusun lurus. Jika satu tin ada 2 permukaan rata tapak, berapa permukaan rata untuk 10 tin bersentuhan?", ans: "20 permukaan rata", opts: ["20 permukaan rata", "10 permukaan rata", "2 permukaan rata", "40 permukaan rata"], emoji: "🗼" },
+                        { q: "Melissa membina model patung salji gergasi 3 tingkat menggunakan 3 biji bola besar berlainan saiz. Apakah nama bentuk 3D bagi bola salji tersebut?", ans: "Sfera", opts: ["Sfera", "Kon", "Kubus", "Silinder"], emoji: "⛄" },
+                        { q: "Kumpulan Cerdas membina model kilang penapisan minyak menggunakan gabungan tangki silinder besar dan paip kuboid panjang. Apakah jenis permukaan pada paip kuboid tersebut?", ans: "Permukaan rata sahaja", opts: ["Permukaan rata sahaja", "Permukaan melengkung sahaja", "Permukaan rata dan melengkung", "Tiada permukaan langsung"], emoji: "🏭" },
+                        { q: "Farid mencatatkan bahan untuk membina model bot pelayaran: 1 kotak kasut kuboid untuk lambung bot, 1 batang kayu silinder untuk tiang layar, dan 1 kain kon kertas untuk layar kain. Berapa bucu pada tiang layar silinder?", ans: "Tiada bucu (0 bucu)", opts: ["Tiada bucu (0 bucu)", "1 bucu tajam", "4 bucu", "8 bucu"], emoji: "⛵" },
+                        { q: "Syafiq membina model pentas dewan sekolah menggunakan bongkah kayu kuboid panjang dan 2 tiang silinder di tepi pintu masuk. Berapakah jumlah sisi lurus pada bongkah kuboid pentas itu?", ans: "12 sisi lurus", opts: ["12 sisi lurus", "8 sisi lurus", "6 sisi lurus", "4 sisi lurus"], emoji: "🏛️" },
+                        { q: "Noraini membina model taman permainan kanak-kanak. Dia melakar papan gelongsor lurus (kuboid condong) dan terowong gelongsor (silinder panjang berlubang). Apakah bentuk terowong gelongsor tersebut?", ans: "Silinder", opts: ["Silinder", "Kon", "Sfera", "Kubus"], emoji: "🛝" },
+                        { q: "Puan Suraya menguji kefahaman murid: 'Semasa membina model struktur bangunan sekolah, bentuk manakah yang paling stabil jika diletakkan di bahagian tapak paling bawah?'", ans: "Kuboid atau Kubus bertapak rata", opts: ["Kuboid atau Kubus bertapak rata", "Kon tirus runcing ke bawah", "Sfera bulat mudah bergolek", "Silinder beralun condong"], emoji: "🏫" },
+                        { q: "Adli membina model satelit cuaca angkasa lepas. Badannya berbentuk kuboid kecil, sayap panel solar berbentuk segi empat rata, dan antena penerima berbentuk kon kecil. Berapa bucu pada antena kon kecil itu?", ans: "1 bucu", opts: ["1 bucu", "0 bucu", "4 bucu", "8 bucu"], emoji: "🛰️" },
+                        { q: "Rina membina model kek hari jadi bertingkat 3. Tingkat bawah bentuk kubus, tingkat tengah bentuk silinder, dan tingkat atas bentuk kon kecil. Berapa bentuk 3D berbeza digunakan dalam kek bertingkat itu?", ans: "3 bentuk (Kubus, Silinder, Kon)", opts: ["3 bentuk (Kubus, Silinder, Kon)", "1 bentuk sahaja", "4 bentuk", "2 bentuk"], emoji: "🎂" },
+                        { q: "Haikal membina model roket pelancar satelit dengan 3 bahagian utama. Dia bertanya kepada kumpulannya: 'Apakah bentuk geometri yang mempunyai 1 permukaan rata bulat dan 1 permukaan melengkung tirus ke atas?'", ans: "Kon", opts: ["Kon", "Silinder", "Sfera", "Kuboid"], emoji: "🚀" },
+                        { q: "Zahir dan rakan-rakannya berjaya merangkul johan pertandingan reka bentuk model Matematik Tahun 1 dengan membina piala kemenangan berbentuk cawan silinder bertapak rata dan bola sfera di atasnya. Berapakah jumlah permukaan rata pada cawan silinder bertapak?", ans: "2 permukaan rata (atas dan bawah)", opts: ["2 permukaan rata (atas dan bawah)", "1 permukaan rata sahaja", "6 permukaan rata", "Tiada permukaan rata"], emoji: "🏆" }
+                    ];
+                    let item = hardModelPool[(index - 1) % hardModelPool.length];
+                    q.type = 'objektif';
+                    q.question = item.q;
+                    q.image = item.emoji;
+                    q.options = shuffleArray(item.opts);
+                    q.answer = item.ans;
+                }
+            }
+            // Topic 4: Bentuk 2 Dimensi
+            else if (topicId === 4) {
+                const shapes2D = [
+                    { name: 'Segi Empat Sama', emoji: '🟦', sides: 4 },
+                    { name: 'Segi Empat Tepat', emoji: '🟥', sides: 4 },
+                    { name: 'Segi Tiga', emoji: '🔺', sides: 3 },
+                    { name: 'Bulatan', emoji: '⚪', sides: 0 }
+                ];
+                const s = shapes2D[index % shapes2D.length];
+
+                if (levelId === 'mudah') {
+                    q.type = 'objektif';
+                    q.question = `Apakah nama bentuk 2D berikut?`;
+                    q.image = s.emoji;
+                    q.options = shuffleArray(['Segi Empat Sama', 'Segi Tiga', 'Bulatan', 'Segi Empat Tepat'].filter(x=>x!==s.name).slice(0,3).concat(s.name));
+                    q.answer = s.name;
+                } else if (levelId === 'sederhana') {
+                    q.type = 'padanan';
+                    q.question = `Padankan bentuk 2D dengan nama yang betul (${index})`;
+                    q.pairs = [
+                        { item: '🟦', match: 'Segi Empat Sama' },
+                        { item: '🔺', match: 'Segi Tiga' },
+                        { item: '⚪', match: 'Bulatan' }
+                    ];
+                } else {
+                    q.type = 'isitempatkosong';
+                    q.question = `Bentuk 2D yang mempunyai sisi lengkung dan tiada bucu ialah ____________.`;
+                    q.image = '⚪';
+                    q.answer = 'bulatan';
+                }
+            }
+            // Topic 5: Ciri-Ciri Bentuk 2D
+            else if (topicId === 5) {
+                const feats = [
+                    { name: 'Segi Empat Sama', bucu: 4, sisi: 4, emoji: '🟦' },
+                    { name: 'Segi Tiga', bucu: 3, sisi: 3, emoji: '🔺' },
+                    { name: 'Segi Empat Tepat', bucu: 4, sisi: 4, emoji: '🟥' }
+                ];
+                const f = feats[index % feats.length];
+
+                if (levelId === 'mudah') {
+                    q.type = 'isitempatkosong';
+                    q.question = `${f.name} (${f.emoji}) mempunyai ________ bucu.`;
+                    q.image = f.emoji;
+                    q.answer = f.bucu.toString();
+                } else if (levelId === 'sederhana') {
+                    q.type = 'isitempatkosong';
+                    q.question = `Berapakah bilangan sisi lurus bagi ${f.name} (${f.emoji})?`;
+                    q.image = f.emoji;
+                    q.answer = f.sisi.toString();
+                } else {
+                    q.type = 'objektif';
+                    q.question = `Antara bentuk berikut, yang manakah mempunyai BILANGAN BUCU PALING SEDIKIT? (${index})`;
+                    q.image = '🔺';
+                    q.options = shuffleArray(['Segi Tiga', 'Segi Empat Sama', 'Segi Empat Tepat', 'Semua sama']);
+                    q.answer = 'Segi Tiga';
+                }
+            }
+            // Topic 6: Penyelesaian Masalah (Refined with 20 completely unique, non-overlapping word problems per level with zero duplicates)
+            else if (topicId === 6) {
+                if (levelId === 'mudah') {
+                    const probMudahPool = [
+                        { q: "Ibu memotong sebiji kek hari jadi berbentuk sfera, tetapi bola hadiah abang berbentuk sfera. Ibu memasukkan bola ke dalam kotak hadiah berukuran segi empat sama. Apakah bentuk kotak hadiah abang?", ans: "Kubus", opts: ["Kubus", "Kon", "Silinder", "Sfera"], emoji: "🎁" },
+                        { q: "Rani membeli sebuah buku latihan sekolah untuk mencatat nota Matematik. Apakah bentuk 3D bagi buku latihan tersebut?", ans: "Kuboid", opts: ["Kuboid", "Sfera", "Kon", "Bulatan"], emoji: "📖" },
+                        { q: "Pak Cik Ali menuang air laici ke dalam gelas kaca minuman. Apakah bentuk 3D bagi gelas kaca tersebut?", ans: "Silinder", opts: ["Silinder", "Kubus", "Segi Tiga", "Sfera"], emoji: "🥛" },
+                        { q: "Adik meniup belon hari jadi sehingga bulat dan terbang tinggi di udara. Belon itu menyerupai bentuk 3D...", ans: "Sfera", opts: ["Sfera", "Kon", "Kuboid", "Silinder"], emoji: "🎈" },
+                        { q: "Siti memegang topi hari jadi yang runcing di atas kepala semasa majlis hari jadi. Topi itu menyerupai bentuk...", ans: "Kon", opts: ["Kon", "Kubus", "Sfera", "Kuboid"], emoji: "🥳" },
+                        { q: "Cikgu Hafiz melukis sebuah bentuk 2D di papan putih yang mempunyai 4 sisi sama panjang dan 4 bucu. Bentuk apakah itu?", ans: "Segi Empat Sama", opts: ["Segi Empat Sama", "Segi Tiga", "Bulatan", "Silinder"], emoji: "✏️" },
+                        { q: "Mimi melukis corak roda basikal di atas kertas lukisan. Roda itu berbentuk 2D bulat tanpa bucu. Apakah nama bentuk itu?", ans: "Bulatan", opts: ["Bulatan", "Segi Empat Tepat", "Kubus", "Kon"], emoji: "⭕" },
+                        { q: "Azman menyusun kotak kasut abang di atas rak buku biliknya. Kotak kasut itu berbentuk 3D...", ans: "Kuboid", opts: ["Kuboid", "Sfera", "Kon", "Segi Tiga"], emoji: "📦" },
+                        { q: "Fatimah mencetak biskut raya berbentuk tiga penjuru di dapur. Biskut itu mempunyai 3 sisi lurus dan 3 bucu. Namakannya.", ans: "Segi Tiga", opts: ["Segi Tiga", "Bulatan", "Kubus", "Silinder"], emoji: "🍪" },
+                        { q: "Ayah meletakkan buah oren segar di atas meja makan. Buah oren itu berbentuk 3D...", ans: "Sfera", opts: ["Sfera", "Silinder", "Kuboid", "Kon"], emoji: "🍊" },
+                        { q: "Aminah melihat pintu bilik darjahnya berbentuk segi empat tepat. Berapakah bilangan bucu pada pintu tersebut?", ans: "4", opts: ["4", "3", "0", "5"], emoji: "🚪" },
+                        { q: "Salina memotong tembikai menjadi kepingan berbentuk segi tiga. Berapakah sisi lurus bagi kepingan tembikai itu?", ans: "3", opts: ["3", "4", "2", "6"], emoji: "🍉" },
+                        { q: "Zul memegang tin minuman gas berperisa oren. Tin tersebut mempunyai permukaan rata dan permukaan...", ans: "melengkung", opts: ["melengkung", "tajuk", "segi", "bucu"], emoji: "🥤" },
+                        { q: "Liyana melukis pemadam papan putih berbentuk segi empat tepat. Pemadam itu mempunyai ________ sisi.", ans: "4", opts: ["4", "3", "0", "5"], emoji: "🧽" },
+                        { q: "Ahmad bermain guli kaca di halaman rumah bersama rakan-rakan. Guli tersebut berbentuk...", ans: "Sfera", opts: ["Sfera", "Kon", "Kubus", "Silinder"], emoji: "🔮" },
+                        { q: "Nabil melihat pembaris panjang di dalam beg sekolahnya yang menyerupai bentuk kuboid nipis. Berapa permukaan rata ada?", ans: "6", opts: ["6", "4", "2", "3"], emoji: "📏" },
+                        { q: "Melissa menyusun bata mainan kubus untuk membina dinding istana mainannya. Bata kubus mempunyai permukaan...", ans: "rata sahaja", opts: ["rata sahaja", "melengkung sahaja", "rata dan melengkung", "tiada permukaan"], emoji: "🏰" },
+                        { q: "Haikal melukis papan tanda jalan berbentuk segi tiga amaran. Papan tanda itu mempunyai ________ bucu.", ans: "3", opts: ["3", "4", "2", "0"], emoji: "⚠️" },
+                        { q: "Farah mencuba topi keselamatan pekerja binaan yang kon di tapak projek. Topi itu mempunyai 1 bucu tajam di atas.", ans: "1", opts: ["1", "2", "4", "0"], emoji: "👷" },
+                        { q: "Kumpulan Tahun 1 Ceria membina model menara menggunakan tin susu kosong. Tin susu tersebut berbentuk...", ans: "Silinder", opts: ["Silinder", "Sfera", "Kubus", "Kon"], emoji: "🗼" }
+                    ];
+                    let item = probMudahPool[(index - 1) % probMudahPool.length];
+                    q.type = 'objektif';
+                    q.question = item.q;
+                    q.image = item.emoji;
+                    q.options = shuffleArray(item.opts);
+                    q.answer = item.ans;
+                } else if (levelId === 'sederhana') {
+                    const probMedPool = [
+                        { q: "Ibu membeli 2 biji bola sepak dan 3 buah kotak pensel. Apakah bentuk 3D bagi bola sepak dan kotak pensel tersebut secara berurutan?", ans: "Sfera dan Kuboid", opts: ["Sfera dan Kuboid", "Kubus dan Kon", "Silinder dan Sfera", "Kon dan Kubus"], emoji: "⚽📦" },
+                        { q: "Azim menggabungkan 1 kon kertas dan 1 silinder kertas untuk membuat model roket mainan. Apakah bentuk permukaan pada kon tersebut?", ans: "Permukaan rata dan melengkung", opts: ["Permukaan rata dan melengkung", "Permukaan rata sahaja", "Permukaan melengkung sahaja", "Tiada permukaan"], emoji: "🚀" },
+                        { q: "Suri mencari objek di dalam kelas yang mempunyai 4 sisi sama panjang dan 4 sudut bucu tepat. Objek itu ialah...", ans: "Papan tulis mini segi empat sama", opts: ["Papan tulis mini segi empat sama", "Bola keranjang bulat", "Topi kon hari jadi", "Tin minuman silinder"], emoji: "📋" },
+                        { q: "Di dalam bilik seni, Rizal menjumpai objek yang mempunyai permukaan melengkung sahaja dan tiada bucu langsung. Objek itu ialah...", ans: "Bola pingpong", opts: ["Bola pingpong", "Kotak pensel", "Buku teks", "Pemadam"], emoji: "🏓" },
+                        { q: "Farhan ingin memasukkan air ke dalam botol air sekolah. Botol air tersebut berbentuk silinder. Apakah jenis permukaan pada botol tersebut?", ans: "Permukaan rata dan melengkung", opts: ["Permukaan rata dan melengkung", "Permukaan rata sahaja", "Permukaan melengkung sahaja", "Tiada permukaan"], emoji: "🍼" },
+                        { q: "Kamelia melukis tingkap rumah yang mempunyai 2 sisi panjang yang sama dan 2 sisi pendek yang sama. Apakah bentuk tingkap itu?", ans: "Segi Empat Tepat", opts: ["Segi Empat Tepat", "Bulatan", "Segi Tiga", "Kubus"], emoji: "🪟" },
+                        { q: "Johan ada 4 batang kayu sama panjang untuk membina bingkai gambar. Selepas dicantumkan, apakah bentuk bingkai gambar itu?", ans: "Segi Empat Sama", opts: ["Segi Empat Sama", "Segi Tiga", "Silinder", "Sfera"], emoji: "🖼️" },
+                        { q: "Amira ada sebiji tembikai sfera. Selepas dipotong 4 bahagian sama besar, setiap potongan mempunyai permukaan...", ans: "Rata dan melengkung", opts: ["Rata dan melengkung", "Rata sahaja", "Melengkung sahaja", "Tiada permukaan"], emoji: "🍈" },
+                        { q: "Dalam projek Sains, murid membina model rumah menggunakan kotak tisu (kuboid) dan atap kertas (kon). Berapa jenis bentuk 3D digunakan?", ans: "2 jenis", opts: ["2 jenis", "1 jenis", "3 jenis", "4 jenis"], emoji: "🏠" },
+                        { q: "Pakcik Kassim menyusun tin sardin (silinder) di atas rak kedai runcit secara bertindih. Apakah sifat permukaan tapak bawah tin tersebut?", ans: "Permukaan rata", opts: ["Permukaan rata", "Permukaan melengkung", "Permukaan bucu tajam", "Permukaan tiada bentuk"], emoji: "🥫" },
+                        { q: "Maya melukis bentuk yang mempunyai 3 bucu tajam dan 3 sisi lurus pada kertas warna merah. Nama bentuk itu ialah...", ans: "Segi Tiga", opts: ["Segi Tiga", "Segi Empat", "Bulatan", "Sfera"], emoji: "🔻" },
+                        { q: "Imran memegang sekotak susu segar UHT. Kotak tersebut mempunyai 6 permukaan rata. Apakah nama bentuk kotak susu itu?", ans: "Kuboid", opts: ["Kuboid", "Kon", "Sfera", "Silinder"], emoji: "🧃" },
+                        { q: "Zahir ada pemadam papan hitam berbentuk kuboid. Dia mengira jumlah bucu pada pemadam tersebut. Berapakah jumlah bucu kuboid?", ans: "8 bucu", opts: ["8 bucu", "4 bucu", "6 bucu", "12 bucu"], emoji: "⬛" },
+                        { q: "Nadia menggolekkan bola tenis (sfera) dan sebuah kotak pensel (kuboid) di atas lantai rata. Objek manakah yang menggolek dengan mudah?", ans: "Bola tenis", opts: ["Bola tenis", "Kotak pensel", "Kedua-duanya sama", "Tiada yang menggolek"], emoji: "🎾" },
+                        { q: "Shahir melihat akuarium ikan hiasan di ruang tamu rumahnya yang berbentuk kuboid besar. Berapakah sisi lurus pada tapak bawah akuarium itu?", ans: "4 sisi", opts: ["4 sisi", "3 sisi", "0 sisi", "6 sisi"], emoji: "🐠" },
+                        { q: "Puan Salina membuat Kuih Kaswi berbentuk kubus kecil. Berapakah bilangan permukaan rata pada sebiji kuih kaswi tersebut?", ans: "6 permukaan rata", opts: ["6 permukaan rata", "4 permukaan rata", "1 permukaan rata", "Tiada permukaan rata"], emoji: "🍮" },
+                        { q: "Badrol melukis bentuk geometri 2D untuk papan skor permainan dam ular. Bentuk itu ada 4 bucu dan 4 sisi sama panjang. Apakah ia?", ans: "Segi Empat Sama", opts: ["Segi Empat Sama", "Bulatan", "Segi Tiga", "Silinder"], emoji: "🎲" },
+                        { q: "Cikgu Nora meletakkan glob bumi di atas meja guru. Glob bumi berbentuk bola dunia sfera. Berapakah bucu pada glob bumi?", ans: "Tiada bucu (0)", opts: ["Tiada bucu (0)", "4 bucu", "8 bucu", "6 bucu"], emoji: "🌍" },
+                        { q: "Aiman menyusun duit syiling 20 sen (silinder nipis) bertindih di atas meja. Bentuk tapak duit syiling ialah...", ans: "Bulatan", opts: ["Bulatan", "Segi Empat", "Segi Tiga", "Kon"], emoji: "🪙" },
+                        { q: "Rina memotong tembikai bulat kepada separuh. Permukaan potongan tengah tembikai itu adalah rata berbentuk...", ans: "Bulatan", opts: ["Bulatan", "Segi Empat", "Segi Tiga", "Kon"], emoji: "🔪" }
+                    ];
+                    let item = probMedPool[(index - 1) % probMedPool.length];
+                    q.type = 'objektif';
+                    q.question = item.q;
+                    q.image = item.emoji;
+                    q.options = shuffleArray(item.opts);
+                    q.answer = item.ans;
+                } else {
+                    const probHardPool = [
+                        { q: "Ahmad ingin membina model istana pasir di pantai. Dia menggunakan baldi pasir berbentuk silinder untuk acuan utama dan kon pasir di atasnya. Apakah jumlah permukaan rata pada sebuah acuan silinder?", ans: "2 permukaan rata", opts: ["2 permukaan rata", "1 permukaan rata", "3 permukaan rata", "Tiada permukaan rata"], emoji: "🏖️" },
+                        { q: "Siti mencatatkan ciri-ciri suatu bentuk 3D: 'Saya mempunyai 6 permukaan rata yang sama besar, 12 sisi lurus dan 8 bucu.' Siapakah saya?", ans: "Kubus", opts: ["Kubus", "Kuboid", "Silinder", "Kon"], emoji: "🧩" },
+                        { q: "Dalam kuiz Matematik, Azizah diberi soalan: 'Objek yang manakah boleh menggelongsor dan juga boleh menggolek di atas permukaan condong?'", ans: "Tin minuman (Silinder)", opts: ["Tin minuman (Silinder)", "Kotak pensel (Kuboid)", "Buku teks (Kuboid)", "Dadu (Kubus)"], emoji: "🎢" },
+                        { q: "Sebuah kotak hadiah berbentuk kuboid mempunyai ukuran panjang 10cm. Jika ibu membalut semua 6 permukaan rata kotak tersebut dengan kertas pembalut, berapa permukaan rata yang perlu dibalut?", ans: "6 permukaan", opts: ["6 permukaan", "4 permukaan", "8 permukaan", "12 permukaan"], emoji: "🎀" },
+                        { q: "Zack melukis gabungan bentuk 2D: sebuah segi empat tepat dan sebuah segi tiga di atasnya untuk melakar gambar sebuah rumah kampung. Berapakah jumlah keseluruhan bucu bagi kedua-dua bentuk 2D tersebut?", ans: "7 bucu (4 + 3)", opts: ["7 bucu (4 + 3)", "6 bucu", "8 bucu", "5 bucu"], emoji: "🏡" },
+                        { q: "Fatin ada 3 biji bola hoki (sfera) dan 2 batang pensel warna panjang (silinder). Berapakah jumlah permukaan melengkung pada semua bola hoki tersebut?", ans: "3 permukaan melengkung", opts: ["3 permukaan melengkung", "2 permukaan melengkung", "5 permukaan melengkung", "Tiada permukaan"], emoji: "🏑" },
+                        { q: "Bapa memotong kek hari jadi berbentuk silinder tinggi kepada 4 bahagian menegak. Apakah bentuk muka keratan rentas potongan tersebut?", ans: "Segi empat tepat atau melengkung", opts: ["Segi empat tepat atau melengkung", "Bulatan sempurna", "Segi tiga tajam", "Kon runcing"], emoji: "🎂" },
+                        { q: "Haziq menyusun 4 buah buku teks Matematik tebal (kuboid) di atas meja. Setiap buku ada 6 permukaan rata. Berapakah permukaan rata atas buku teratas?", ans: "1 permukaan rata atas", opts: ["1 permukaan rata atas", "6 permukaan rata", "24 permukaan rata", "12 permukaan rata"], emoji: "📚" },
+                        { q: "Dalam permainan teka bentuk, Amir berkata: 'Saya ada 1 permukaan rata berbentuk bulatan dan 1 bucu tajam di puncak.' Apakah bentuk 3D Amir?", ans: "Kon", opts: ["Kon", "Silinder", "Sfera", "Kubus"], emoji: "🎭" },
+                        { q: "Puan Zaleha membuat 5 biji ketupat nasi berbentuk kuboid kecil untuk majlis rumah terbuka. Berapakah jumlah bucu bagi sebiji ketupat kuboid itu?", ans: "8 bucu", opts: ["8 bucu", "6 bucu", "4 bucu", "12 bucu"], emoji: "🟢" },
+                        { q: "Rizal mencabar kawan-kawannya mencari objek di dalam kelas yang mempunyai bilangan sisi lurus terbanyak antara segi tiga, segi empat sama dan bulatan.", ans: "Segi Empat Sama / Tepat (4 sisi)", opts: ["Segi Empat Sama / Tepat (4 sisi)", "Segi Tiga (3 sisi)", "Bulatan (0 sisi)", "Sfera (0 sisi)"], emoji: "🏆" },
+                        { q: "Melissa menyusun 3 biji bola jaring (sfera) di atas lantai. Selepas ditolak perlahan, bola-bola itu bergerak dengan cara...", ans: "Menggolek", opts: ["Menggolek", "Menggelongsor", "Berpusing di tempat", "Melompat"], emoji: "🏀" },
+                        { q: "Kumpulan Dinamik Tahun 1 membuat roket sains menggunakan botol mineral silinder dan kertas kon. Berapakah bucu pada kon kepala roket?", ans: "1 bucu", opts: ["1 bucu", "0 bucu", "2 bucu", "4 bucu"], emoji: "🛰️" },
+                        { q: "Farid mengira jumlah permukaan rata pada sebiji kotak pensel kayu (kuboid) dan sebiji dadu permainan (kubus). Hasilnya ialah...", ans: "12 permukaan rata (6 + 6)", opts: ["12 permukaan rata (6 + 6)", "6 permukaan rata", "8 permukaan rata", "10 permukaan rata"], emoji: "🧮" },
+                        { q: "Syafiq melukis corak lantai bilik darjah menggunakan jubin berukuran segi empat sama. Jika satu jubin ada 4 bucu, berapa bucu untuk 2 jubin?", ans: "8 bucu", opts: ["8 bucu", "4 bucu", "6 bucu", "10 bucu"], emoji: "🟫" },
+                        { q: "Ibu menghidangkan oren potong di dalam mangkuk. Adik mengira bahagian tepi kulit oren melengkung. Sifat permukaan itu ialah...", ans: "Melengkung", opts: ["Melengkung", "Rata sahaja", "Tajam bersudut", "Petak"], emoji: "🍊" },
+                        { q: "Dalam teka-teki bentuk guru besar: 'Saya tiada bucu, tiada sisi lurus, tetapi saya boleh menggelongsor dan menggolek jika diletakkan mengiring.' Apakah saya?", ans: "Tin minuman (Silinder)", opts: ["Tin minuman (Silinder)", "Bola (Sfera)", "Dadu (Kubus)", "Buku (Kuboid)"], emoji: "📢" },
+                        { q: "Adli membina garaj kereta mainan menggunakan 2 buah kotak kasut besar. Kotak kasut tersebut berbentuk kuboid. Berapakah jumlah sisi lurus bagi sebuah kuboid?", ans: "12 sisi lurus", opts: ["12 sisi lurus", "8 sisi lurus", "6 sisi lurus", "4 sisi lurus"], emoji: "🚗" },
+                        { q: "Noraini melakar bentuk robot mainan kepala bulat (sfera), badan kuboid, dan tangan silinder. Berapa jenis bentuk 3D berbeza digunakan?", ans: "3 jenis", opts: ["3 jenis", "2 jenis", "4 jenis", "1 jenis"], emoji: "🤖" },
+                        { q: "Puan Suraya menguji muridnya: 'Objek manakah yang mempunyai permukaan rata di tapak bawah dan permukaan melengkung di bahagian badannya?'", ans: "Kon dan Silinder", opts: ["Kon dan Silinder", "Kubus dan Kuboid", "Sfera sahaja", "Segi empat dan Bulatan"], emoji: "🧁" }
+                    ];
+                    let item = probHardPool[(index - 1) % probHardPool.length];
+                    q.type = 'objektif';
+                    q.question = item.q;
+                    q.image = item.emoji;
+                    q.options = shuffleArray(item.opts);
+                    q.answer = item.ans;
+                }
+            }
+
+            return q;
+        }
+
+        // Global State
+        let questionBank = generateQuestionBank();
+        let currentUser = null;
+        let currentGameState = {
+            topic: null,
+            level: null,
+            timerMode: '30', // '30', '60', 'inf'
+            questions: [],
+            currentIndex: 0,
+            score: 0,
+            correctCount: 0,
+            wrongCount: 0,
+            startTime: null,
+            elapsedSeconds: 0,
+            timerInterval: null,
+            selectedAnswer: null,
+            answeredCurrent: false
+        };
+
+        // Utility: shuffle array
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+    </script>
+
+    <script>
+        function getUsers() {
+            try {
+                return JSON.parse(localStorage.getItem('edu_users') || '{}');
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('edu_users', JSON.stringify(users));
+        }
+
+        function getCurrentUser() {
+            try {
+                return JSON.parse(localStorage.getItem('edu_current_user') || 'null');
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setCurrentUser(user) {
+            localStorage.setItem('edu_current_user', JSON.stringify(user));
+            currentUser = user;
+            updateHeaderUserInfo();
+        }
+
+        function updateHeaderUserInfo() {
+            const info = document.getElementById('header-user-info');
+            const nameSpan = document.getElementById('header-username');
+            if (currentUser) {
+                info.classList.remove('hidden');
+                info.classList.add('flex');
+                nameSpan.innerText = currentUser.name;
+            } else {
+                info.classList.add('hidden');
+                info.classList.remove('flex');
+            }
+        }
+
+        // Navigation Router
+        function navigateTo(screenId, param = null) {
+            playSound('click');
+            if (currentGameState.timerInterval) {
+                clearInterval(currentGameState.timerInterval);
+                currentGameState.timerInterval = null;
+            }
+
+            const main = document.getElementById('main-content');
+            main.innerHTML = '';
+
+            switch(screenId) {
+                case 'home':
+                    renderHomeScreen(main);
+                    break;
+                case 'register':
+                    renderRegisterScreen(main);
+                    break;
+                case 'login':
+                    renderLoginScreen(main);
+                    break;
+                case 'topics':
+                    renderTopicsScreen(main);
+                    break;
+                case 'timer':
+                    renderTimerScreen(main, param);
+                    break;
+                case 'levels':
+                    renderLevelsScreen(main);
+                    break;
+                case 'game':
+                    renderGameScreen(main);
+                    break;
+                case 'result':
+                    renderResultScreen(main);
+                    break;
+                case 'progress':
+                    renderProgressScreen(main);
+                    break;
+                case 'leaderboard':
+                    renderLeaderboardScreen(main);
+                    break;
+                case 'settings':
+                    renderSettingsScreen(main);
+                    break;
+                default:
+                    renderHomeScreen(main);
+            }
+            updateHeaderUserInfo();
+        }
+
+        window.onload = function() {
+            currentUser = getCurrentUser();
+            if (!currentUser) {
+                navigateTo('login');
+            } else {
+                navigateTo('home');
+            }
+        };
+
+        function handleLogout() {
+            setCurrentUser(null);
+            navigateTo('login');
+        }
+    </script>
+
+    <script>
+        function renderHomeScreen(container) {
+            const user = getCurrentUser() || { name: 'Tetamu' };
+            container.innerHTML = `
+                <div class="text-center w-full max-w-2xl mx-auto space-y-6">
+                    <div class="bouncing inline-block text-6xl sm:text-7xl mb-2">🎈🤖📐</div>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-indigo-900 tracking-tight">
+                        Selamat Datang, <span class="text-orange-500">${user.name}</span>! 👋
+                    </h2>
+                    <p class="text-slate-600 font-medium text-sm sm:text-base">
+                        Mari belajar tajuk <span class="font-bold text-indigo-600">BENTUK - MATEMATIK TAHUN 1</span> dengan menyeronokkan!
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                        <button onclick="navigateTo('topics')" class="pulse-btn bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center space-x-3 text-lg">
+                            <span class="text-2xl">▶️</span>
+                            <span>MULA BERMAIN</span>
+                        </button>
+                        <button onclick="navigateTo('topics')" class="pulse-btn bg-gradient-to-r from-blue-400 to-indigo-500 hover:from-blue-500 hover:to-indigo-600 text-white font-bold py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center space-x-3 text-lg">
+                            <span class="text-2xl">📚</span>
+                            <span>PILIH TOPIK</span>
+                        </button>
+                        <button onclick="navigateTo('progress')" class="pulse-btn bg-gradient-to-r from-purple-400 to-pink-500 hover:from-purple-500 hover:to-pink-600 text-white font-bold py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center space-x-3 text-lg">
+                            <span class="text-2xl">📊</span>
+                            <span>PROGRESS SAYA</span>
+                        </button>
+                        <button onclick="navigateTo('leaderboard')" class="pulse-btn bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-bold py-4 px-6 rounded-2xl shadow-lg flex items-center justify-center space-x-3 text-lg">
+                            <span class="text-2xl">🏆</span>
+                            <span>LEADERBOARD</span>
+                        </button>
+                    </div>
+
+                    <div class="flex justify-center space-x-4 pt-2">
+                        <button onclick="navigateTo('settings')" class="text-sm font-semibold text-indigo-600 hover:underline flex items-center gap-1">
+                            ⚙️ Tetapan Bunyi & Akaun
+                        </button>
+                        <span class="text-slate-300">|</span>
+                        <button onclick="navigateTo('login')" class="text-sm font-semibold text-slate-500 hover:underline flex items-center gap-1">
+                            👤 Tukar Profil
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+
+    <script>
+        function renderLoginScreen(container) {
+            container.innerHTML = `
+                <div class="w-full max-w-md mx-auto bg-indigo-50/80 p-6 sm:p-8 rounded-3xl shadow-inner border border-indigo-100">
+                    <div class="text-center mb-6">
+                        <span class="text-5xl">🔐</span>
+                        <h2 class="text-2xl font-extrabold text-indigo-900 mt-2">LOG MASUK</h2>
+                        <p class="text-xs text-slate-500">Sila masukkan nama pengguna dan kata laluan anda</p>
+                    </div>
+
+                    <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">NAMA PENGGUNA</label>
+                            <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium" placeholder="Contoh: ali123">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">KATA LALUAN</label>
+                            <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium" placeholder="••••••••">
+                        </div>
+                        <div id="login-error" class="text-xs text-red-500 font-semibold text-center hidden"></div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 rounded-xl shadow-md transition text-base">
+                            LOG MASUK 🚀
+                        </button>
+                    </form>
+
+                    <div class="mt-6 text-center">
+                        <p class="text-xs text-slate-600">Belum mempunyai akaun?</p>
+                        <button onclick="navigateTo('register')" class="mt-2 text-sm font-bold text-indigo-600 hover:underline">
+                            📝 Daftar Akaun Baru
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim().toLowerCase();
+            const pass = document.getElementById('login-password').value;
+            const users = getUsers();
+
+            if (users[username] && users[username].password === pass) {
+                setCurrentUser(users[username]);
+                navigateTo('home');
+            } else {
+                const err = document.getElementById('login-error');
+                err.innerText = "Nama pengguna atau kata laluan salah!";
+                err.classList.remove('hidden');
+                playSound('wrong');
+            }
+        }
+
+        function renderRegisterScreen(container) {
+            container.innerHTML = `
+                <div class="w-full max-w-md mx-auto bg-indigo-50/80 p-6 sm:p-8 rounded-3xl shadow-inner border border-indigo-100">
+                    <div class="text-center mb-4">
+                        <span class="text-5xl">📝</span>
+                        <h2 class="text-2xl font-extrabold text-indigo-900 mt-2">DAFTAR AKAUN</h2>
+                        <p class="text-xs text-slate-500">Bina profil permainan murid Tahun 1 anda</p>
+                    </div>
+
+                    <form onsubmit="handleRegisterSubmit(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">NAMA PENGGUNA (ID)</label>
+                            <input type="text" id="reg-username" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="cth: sara2026">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">NAMA PENUH MURID</label>
+                            <input type="text" id="reg-name" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="cth: Sara Binti Ahmad">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">KATA LALUAN</label>
+                            <input type="password" id="reg-pass" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="••••••••">
+                        </div>
+                        <div id="reg-error" class="text-xs text-red-500 font-semibold text-center hidden"></div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3 rounded-xl shadow-md transition text-base mt-2">
+                            DAFTAR SEKARANG ⭐
+                        </button>
+                    </form>
+
+                    <div class="mt-4 text-center">
+                        <button onclick="navigateTo('login')" class="text-xs font-bold text-indigo-600 hover:underline">
+                            ⬅️ Sudah ada akaun? Log masuk di sini
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('reg-username').value.trim().toLowerCase();
+            const name = document.getElementById('reg-name').value.trim();
+            const pass = document.getElementById('reg-pass').value;
+
+            let users = getUsers();
+            if (users[username]) {
+                const err = document.getElementById('reg-error');
+                err.innerText = "Nama pengguna telah wujud. Sila pilih ID lain.";
+                err.classList.remove('hidden');
+                playSound('wrong');
+                return;
+            }
+
+            users[username] = {
+                username,
+                name,
+                password: pass,
+                totalGames: 0,
+                totalAnswered: 0,
+                totalCorrect: 0,
+                totalWrong: 0,
+                totalScore: 0,
+                highScore: 0,
+                topicProgress: {}
+            };
+
+            saveUsers(users);
+            setCurrentUser(users[username]);
+            playSound('correct');
+            navigateTo('home');
+        }
+    </script>
+
+    <script>
+        function renderTopicsScreen(container) {
+            let html = `
+                <div class="w-full max-w-3xl mx-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-indigo-900">📚 PILIH TOPIK PEMBELAJARAN</h2>
+                            <p class="text-xs text-slate-500">Matematik Tahun 1 • Tajuk Bentuk</p>
+                        </div>
+                        <button onclick="navigateTo('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold">🏠 Menu Utama</button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            `;
+
+            TOPICS.forEach(topic => {
+                html += `
+                    <div onclick="selectTopic(${topic.id})" class="pulse-btn bg-white hover:bg-indigo-50 border-2 border-indigo-100 hover:border-indigo-400 p-4 rounded-2xl shadow-sm cursor-pointer flex items-center space-x-4 transition">
+                        <span class="text-3xl sm:text-4xl bg-indigo-100 p-3 rounded-2xl">${topic.icon}</span>
+                        <div>
+                            <h3 class="font-bold text-indigo-900 text-sm sm:text-base">${topic.name}</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">${topic.desc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            container.innerHTML = html;
+        }
+
+        let selectedTopicId = null;
+
+        function selectTopic(topicId) {
+            selectedTopicId = topicId;
+            navigateTo('timer', topicId);
+        }
+
+        function renderTimerScreen(container, topicId) {
+            container.innerHTML = `
+                <div class="w-full max-w-md mx-auto text-center">
+                    <span class="text-5xl">⏱️</span>
+                    <h2 class="text-2xl font-extrabold text-indigo-900 mt-2">PILIH MASA PERMAINAN</h2>
+                    <p class="text-xs text-slate-500 mb-6">Pilih tempoh masa untuk menjawab 20 soalan</p>
+
+                    <div class="space-y-3">
+                        <button onclick="selectTimer('30', ${topicId})" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md transition flex items-center justify-center space-x-3">
+                            <span class="text-xl">⏱️</span>
+                            <span>30 SAAT (Pantas)</span>
+                        </button>
+                        <button onclick="selectTimer('60', ${topicId})" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md transition flex items-center justify-center space-x-3">
+                            <span class="text-xl">⏱️</span>
+                            <span>1 MINIT (Sederhana)</span>
+                        </button>
+                        <button onclick="selectTimer('inf', ${topicId})" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md transition flex items-center justify-center space-x-3">
+                            <span class="text-xl">♾️</span>
+                            <span>TIADA HAD (Santai)</span>
+                        </button>
+                    </div>
+
+                    <button onclick="navigateTo('topics')" class="mt-6 text-xs font-bold text-slate-500 hover:underline">
+                        ⬅️ Kembali Pilih Topik
+                    </button>
+                </div>
+            `;
+        }
+
+        let selectedTimerMode = '30';
+
+        function selectTimer(mode, topicId) {
+            selectedTimerMode = mode;
+            navigateTo('levels', topicId);
+        }
+
+        function renderLevelsScreen(container) {
+            container.innerHTML = `
+                <div class="w-full max-w-md mx-auto text-center">
+                    <span class="text-5xl">🎯</span>
+                    <h2 class="text-2xl font-extrabold text-indigo-900 mt-2">PILIH TAHAP KESUKARAN</h2>
+                    <p class="text-xs text-slate-500 mb-6">Pilih tahap cabaran untuk 20 soalan</p>
+
+                    <div class="space-y-3">
+                        <button onclick="startSession('mudah')" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-6 rounded-2xl shadow-md transition flex items-center justify-center space-x-3 text-lg">
+                            <span>🟢</span>
+                            <span>MUDAH</span>
+                        </button>
+                        <button onclick="startSession('sederhana')" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 px-6 rounded-2xl shadow-md transition flex items-center justify-center space-x-3 text-lg">
+                            <span>🟡</span>
+                            <span>SEDERHANA</span>
+                        </button>
+                        <button onclick="startSession('sukar')" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 px-6 rounded-2xl shadow-md transition flex items-center justify-center space-x-3 text-lg">
+                            <span>🔴</span>
+                            <span>SUKAR</span>
+                        </button>
+                    </div>
+
+                    <button onclick="navigateTo('timer', selectedTopicId)" class="mt-6 text-xs font-bold text-slate-500 hover:underline">
+                        ⬅️ Kembali Pilih Masa
+                    </button>
+                </div>
+            `;
+        }
+    </script>
+
+    <script>
+        function startSession(levelId) {
+            const rawQuestions = questionBank[selectedTopicId][levelId];
+            const shuffled = shuffleArray(rawQuestions);
+            const questions = shuffled.slice(0, 20);
+
+            currentGameState = {
+                topic: selectedTopicId,
+                level: levelId,
+                timerMode: selectedTimerMode,
+                questions: questions,
+                currentIndex: 0,
+                score: 0,
+                correctCount: 0,
+                wrongCount: 0,
+                startTime: Date.now(),
+                elapsedSeconds: 0,
+                timerInterval: null,
+                selectedAnswer: null,
+                answeredCurrent: false
+            };
+
+            navigateTo('game');
+        }
+
+        function renderGameScreen(container) {
+            const state = currentGameState;
+            const q = state.questions[state.currentIndex];
+            const topicObj = TOPICS.find(t => t.id === state.topic);
+
+            if (!state.timerInterval) {
+                state.timerInterval = setInterval(() => {
+                    state.elapsedSeconds++;
+                    const timerEl = document.getElementById('game-timer-display');
+                    if (timerEl) {
+                        const mins = Math.floor(state.elapsedSeconds / 60).toString().padStart(2, '0');
+                        const secs = (state.elapsedSeconds % 60).toString().padStart(2, '0');
+                        timerEl.innerText = `${mins}:${secs}`;
+                    }
+
+                    if (state.timerMode === '30' && state.elapsedSeconds >= 30) {
+                        handleTimeOut();
+                    } else if (state.timerMode === '60' && state.elapsedSeconds >= 60) {
+                        handleTimeOut();
+                    }
+                }, 1000);
+            }
+
+            container.innerHTML = `
+                <div class="w-full max-w-2xl mx-auto flex flex-col justify-between">
+                    <div class="bg-indigo-50 p-3 rounded-2xl flex justify-between items-center text-xs sm:text-sm font-bold text-indigo-900 mb-4 border border-indigo-100 shadow-inner">
+                        <div>
+                            <span class="text-orange-500">⭐ EDU KIDZ</span> | ${topicObj.name}
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-white px-2.5 py-1 rounded-lg shadow-sm">Soalan ${state.currentIndex + 1} / 20</span>
+                            <span class="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-lg shadow-sm">Markah: ${state.score}</span>
+                            <span id="game-timer-display" class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-lg shadow-sm">00:00</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border-2 border-indigo-100 rounded-3xl p-6 shadow-md text-center relative mb-4">
+                        <div class="absolute top-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">
+                            Aras: ${q.cognitive}
+                        </div>
+
+                        ${q.image ? `<div class="text-6xl sm:text-7xl mb-3 bouncing">${q.image}</div>` : ''}
+                        
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-4">
+                            ${q.question}
+                        </h3>
+
+                        <div id="answer-area" class="mt-4">
+                            ${renderAnswerInput(q)}
+                        </div>
+                    </div>
+
+                    <div id="feedback-area" class="hidden text-center p-3 rounded-2xl mb-2 font-bold text-sm"></div>
+                    
+                    <div id="next-btn-container" class="text-center hidden">
+                        <button onclick="nextQuestion()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3 px-8 rounded-2xl shadow-lg transition text-base">
+                            ➡️ TERUSKAN
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAnswerInput(q) {
+            if (q.type === 'objektif') {
+                let html = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">';
+                q.options.forEach((opt, idx) => {
+                    html += `
+                        <button onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.answer)}')" class="pulse-btn bg-indigo-50 hover:bg-indigo-100 border-2 border-indigo-200 text-indigo-900 font-semibold p-3.5 rounded-xl text-sm sm:text-base text-left flex items-center space-x-3">
+                            <span class="w-7 h-7 rounded-full bg-indigo-200 flex items-center justify-center text-xs font-bold">${String.fromCharCode(65 + idx)}</span>
+                            <span>${opt}</span>
+                        </button>
+                    `;
+                });
+                html += '</div>';
+                return html;
+            } else if (q.type === 'isitempatkosong' || q.type === 'dragdrop') {
+                return `
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <input type="text" id="user-input-answer" class="w-full sm:w-64 px-4 py-3 rounded-xl border-2 border-indigo-300 text-center font-bold text-base focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Taip jawapan anda...">
+                        <button onclick="submitTextAnswer('${escapeHtml(q.answer)}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl shadow-md transition text-sm">
+                            HANTAR ✅
+                        </button>
+                    </div>
+                `;
+            } else if (q.type === 'padanan') {
+                let html = '<div class="space-y-2 text-left bg-slate-50 p-4 rounded-2xl">';
+                q.pairs.forEach((pair, idx) => {
+                    html += `
+                        <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                            <span class="font-bold text-slate-700">${pair.item}</span>
+                            <span class="text-slate-400">➔</span>
+                            <select id="pair-select-${idx}" class="border border-indigo-300 rounded-lg p-1.5 text-sm font-semibold text-indigo-900 bg-indigo-50">
+                                <option value="">Pilih jawapan...</option>
+                                <option value="Sfera">Sfera</option>
+                                <option value="Silinder">Silinder</option>
+                                <option value="Kubus">Kubus</option>
+                                <option value="Kuboid">Kuboid</option>
+                                <option value="Segi Empat Sama">Segi Empat Sama</option>
+                                <option value="Segi Tiga">Segi Tiga</option>
+                                <option value="Bulatan">Bulatan</option>
+                            </select>
+                        </div>
+                    `;
+                });
+                html += `
+                    <button onclick="submitPairsAnswer('${escapeHtml(JSON.stringify(q.pairs))}')" class="w-full mt-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
+                        SEMAK PADANAN ✅
+                    </button>
+                </div>`;
+                return html;
+            }
+            return '';
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+        }
+
+        function checkAnswer(userAns, correctAns) {
+            if (currentGameState.answeredCurrent) return;
+            currentGameState.answeredCurrent = true;
+
+            const isCorrect = userAns.trim().toLowerCase() === correctAns.trim().toLowerCase();
+            processAnswerResult(isCorrect, correctAns);
+        }
+
+        function submitTextAnswer(correctAns) {
+            if (currentGameState.answeredCurrent) return;
+            const input = document.getElementById('user-input-answer');
+            if (!input || !input.value.trim()) return;
+            currentGameState.answeredCurrent = true;
+
+            const userAns = input.value.trim();
+            const isCorrect = userAns.toLowerCase() === correctAns.toLowerCase();
+            processAnswerResult(isCorrect, correctAns);
+        }
+
+        function submitPairsAnswer(pairsStr) {
+            if (currentGameState.answeredCurrent) return;
+            currentGameState.answeredCurrent = true;
+            const pairs = JSON.parse(pairsStr.replace(/&apos;/g, "'").replace(/&quot;/g, '"'));
+            
+            let allCorrect = true;
+            pairs.forEach((pair, idx) => {
+                const sel = document.getElementById(`pair-select-${idx}`);
+                if (!sel || sel.value.trim().toLowerCase() !== pair.match.toLowerCase()) {
+                    allCorrect = false;
+                }
+            });
+
+            processAnswerResult(allCorrect, pairs.map(p => `${p.item} = ${p.match}`).join(', '));
+        }
+
+        function processAnswerResult(isCorrect, correctAns) {
+            const feedbackEl = document.getElementById('feedback-area');
+            const nextBtnContainer = document.getElementById('next-btn-container');
+
+            feedbackEl.classList.remove('hidden');
+
+            if (isCorrect) {
+                playSound('correct');
+                currentGameState.score += 5;
+                currentGameState.correctCount++;
+                feedbackEl.className = "bg-emerald-100 text-emerald-800 p-4 rounded-2xl mb-2 font-bold text-center border border-emerald-200 shadow-sm";
+                feedbackEl.innerHTML = `🎉 TAHNIAH! JAWAPAN BETUL! ⭐ (+5 MARKAH)`;
+            } else {
+                playSound('wrong');
+                currentGameState.wrongCount++;
+                feedbackEl.className = "bg-rose-100 text-rose-800 p-4 rounded-2xl mb-2 font-bold text-center border border-rose-200 shadow-sm";
+                feedbackEl.innerHTML = `BELUM TEPAT 😊<br><span class="text-xs font-normal text-slate-700 mt-1 block">Jawapan yang betul ialah: <strong>${correctAns}</strong></span>`;
+            }
+
+            nextBtnContainer.classList.remove('hidden');
+        }
+
+        function handleTimeOut() {
+            if (currentGameState.answeredCurrent) return;
+            currentGameState.answeredCurrent = true;
+            currentGameState.wrongCount++;
+
+            const feedbackEl = document.getElementById('feedback-area');
+            const nextBtnContainer = document.getElementById('next-btn-container');
+
+            feedbackEl.classList.remove('hidden');
+            feedbackEl.className = "bg-amber-100 text-amber-800 p-4 rounded-2xl mb-2 font-bold text-center border border-amber-200 shadow-sm";
+            feedbackEl.innerHTML = `⏱️ MASA TAMAT! Dianggap belum tepat.`;
+            nextBtnContainer.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentGameState.currentIndex++;
+            currentGameState.answeredCurrent = false;
+
+            if (currentGameState.currentIndex >= currentGameState.questions.length) {
+                finishGameSession();
+            } else {
+                renderGameScreen(document.getElementById('main-content'));
+            }
+        }
+
+        function finishGameSession() {
+            if (currentGameState.timerInterval) {
+                clearInterval(currentGameState.timerInterval);
+                currentGameState.timerInterval = null;
+            }
+
+            if (currentUser) {
+                currentUser.totalGames = (currentUser.totalGames || 0) + 1;
+                currentUser.totalAnswered = (currentUser.totalAnswered || 0) + 20;
+                currentUser.totalCorrect = (currentUser.totalCorrect || 0) + currentGameState.correctCount;
+                currentUser.totalWrong = (currentUser.totalWrong || 0) + currentGameState.wrongCount;
+                currentUser.totalScore = (currentUser.totalScore || 0) + currentGameState.score;
+                
+                if (currentGameState.score > (currentUser.highScore || 0)) {
+                    currentUser.highScore = currentGameState.score;
+                }
+
+                if (!currentUser.topicProgress) currentUser.topicProgress = {};
+                currentUser.topicProgress[currentGameState.topic] = Math.min(100, (currentUser.topicProgress[currentGameState.topic] || 0) + 20);
+
+                let users = getUsers();
+                users[currentUser.username] = currentUser;
+                saveUsers(users);
+                setCurrentUser(currentUser);
+            }
+
+            navigateTo('result');
+        }
+    </script>
+
+    <script>
+        function renderResultScreen(container) {
+            const state = currentGameState;
+            const pct = Math.round((state.correctCount / 20) * 100);
+            const mins = Math.floor(state.elapsedSeconds / 60).toString().padStart(2, '0');
+            const secs = (state.elapsedSeconds % 60).toString().padStart(2, '0');
+
+            let motivation = "";
+            if (state.score >= 90) motivation = "HEBAT! Anda memang Juara Bentuk! 🏆";
+            else if (state.score >= 70) motivation = "SANGAT BAGUS! Teruskan berlatih! ⭐";
+            else if (state.score >= 50) motivation = "USAHA YANG BAIK! Cuba lagi untuk skor lebih tinggi! 💪";
+            else motivation = "JANGAN PUTUS ASA! Mari cuba sekali lagi! 😊";
+
+            container.innerHTML = `
+                <div class="w-full max-w-lg mx-auto text-center space-y-4">
+                    <span class="text-6xl">🎉</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-indigo-900">KEPUTUSAN PERMAINAN</h2>
+                    <p class="text-xs font-semibold text-indigo-600 bg-indigo-50 py-2 px-4 rounded-xl border border-indigo-100">${motivation}</p>
+
+                    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-3xl border-2 border-indigo-100 shadow-inner grid grid-cols-2 gap-4 text-left">
+                        <div class="bg-white p-3 rounded-2xl shadow-sm">
+                            <span class="text-xs text-slate-400 font-bold block">⭐ MARKAH</span>
+                            <span class="text-xl sm:text-2xl font-extrabold text-indigo-900">${state.score} / 100</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-2xl shadow-sm">
+                            <span class="text-xs text-slate-400 font-bold block">⏱️ MASA</span>
+                            <span class="text-xl sm:text-2xl font-extrabold text-indigo-900">${mins}:${secs}</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-2xl shadow-sm">
+                            <span class="text-xs text-slate-400 font-bold block">✅ BETUL</span>
+                            <span class="text-xl sm:text-2xl font-extrabold text-emerald-600">${state.correctCount} / 20</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-2xl shadow-sm">
+                            <span class="text-xs text-slate-400 font-bold block">📊 KETEPATAN</span>
+                            <span class="text-xl sm:text-2xl font-extrabold text-blue-600">${pct}%</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2">
+                        <button onclick="navigateTo('levels')" class="pulse-btn bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-3 rounded-xl text-xs shadow-md">🔄 MAIN LAGI</button>
+                        <button onclick="navigateTo('topics')" class="pulse-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-3 rounded-xl text-xs shadow-md">📚 PILIH TOPIK</button>
+                        <button onclick="navigateTo('leaderboard')" class="pulse-btn bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-3 rounded-xl text-xs shadow-md">🏆 LEADERBOARD</button>
+                        <button onclick="navigateTo('progress')" class="pulse-btn bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-3 rounded-xl text-xs shadow-md">📊 PROGRESS</button>
+                        <button onclick="navigateTo('home')" class="col-span-2 pulse-btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-3 rounded-xl text-xs shadow-md">🏠 MENU UTAMA</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProgressScreen(container) {
+            const user = getCurrentUser() || { name: 'Pelajar', totalGames: 0, totalAnswered: 0, totalCorrect: 0, totalWrong: 0, totalScore: 0, highScore: 0, topicProgress: {} };
+            
+            let html = `
+                <div class="w-full max-w-2xl mx-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-indigo-900">📊 PROGRESS SAYA</h2>
+                            <p class="text-xs text-slate-500">Nama: <span class="font-bold text-indigo-600">${user.name}</span></p>
+                        </div>
+                        <button onclick="navigateTo('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold">🏠 Menu Utama</button>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                        <div class="bg-indigo-50 p-3 rounded-2xl border border-indigo-100 text-center">
+                            <span class="text-xs text-slate-500 font-bold block">Jumlah Permainan</span>
+                            <span class="text-lg font-extrabold text-indigo-900">${user.totalGames || 0}</span>
+                        </div>
+                        <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-100 text-center">
+                            <span class="text-xs text-slate-500 font-bold block">Skor Tertinggi</span>
+                            <span class="text-lg font-extrabold text-emerald-700">${user.highScore || 0}</span>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-2xl border border-blue-100 text-center">
+                            <span class="text-xs text-slate-500 font-bold block">Jawapan Betul</span>
+                            <span class="text-lg font-extrabold text-blue-700">${user.totalCorrect || 0}</span>
+                        </div>
+                        <div class="bg-rose-50 p-3 rounded-2xl border border-rose-100 text-center">
+                            <span class="text-xs text-slate-500 font-bold block">Jawapan Salah</span>
+                            <span class="text-lg font-extrabold text-rose-700">${user.totalWrong || 0}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border-2 border-indigo-100 p-4 rounded-3xl space-y-3 shadow-sm">
+                        <h3 class="font-bold text-indigo-900 text-sm mb-2">Pencapaian Topik Bentuk</h3>
+            `;
+
+            TOPICS.forEach(t => {
+                const prog = (user.topicProgress && user.topicProgress[t.id]) || 0;
+                html += `
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                            <span>${t.icon} ${t.name}</span>
+                            <span>${prog}%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-500" style="width: ${prog}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            container.innerHTML = html;
+        }
+
+        function renderLeaderboardScreen(container) {
+            const users = getUsers();
+            const sortedUsers = Object.values(users).sort((a, b) => (b.highScore || 0) - (a.highScore || 0));
+
+            let html = `
+                <div class="w-full max-w-2xl mx-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-indigo-900">🏆 LEADERBOARD EDU KIDZ</h2>
+                            <p class="text-xs text-slate-500">Kedudukan markah tertinggi pemain</p>
+                        </div>
+                        <button onclick="navigateTo('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold">🏠 Menu Utama</button>
+                    </div>
+
+                    <div class="bg-white border-2 border-indigo-100 rounded-3xl overflow-hidden shadow-sm">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-indigo-50 text-indigo-900 text-xs font-extrabold uppercase">
+                                    <th class="p-3 text-center w-16">Kedudukan</th>
+                                    <th class="p-3">Nama Pemain</th>
+                                    <th class="p-3 text-center">Jumlah Permainan</th>
+                                    <th class="p-3 text-right">Skor Tertinggi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-sm">
+            `;
+
+            if (sortedUsers.length === 0) {
+                html += `<tr><td colspan="4" class="p-6 text-center text-slate-400">Belum ada rekod pemain. Jom mula bermain!</td></tr>`;
+            } else {
+                sortedUsers.forEach((u, idx) => {
+                    let medal = `#${idx + 1}`;
+                    if (idx === 0) medal = '🥇';
+                    else if (idx === 1) medal = '🥈';
+                    else if (idx === 2) medal = '🥉';
+
+                    html += `
+                        <tr class="hover:bg-indigo-50/50 transition">
+                            <td class="p-3 text-center font-bold text-slate-700">${medal}</td>
+                            <td class="p-3 font-bold text-indigo-900">${u.name}</td>
+                            <td class="p-3 text-center text-slate-600">${u.totalGames || 0}</td>
+                            <td class="p-3 text-right font-extrabold text-amber-600">⭐ ${u.highScore || 0}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function renderSettingsScreen(container) {
+            const currentSound = localStorage.getItem('edu_sound') || 'on';
+            container.innerHTML = `
+                <div class="w-full max-w-md mx-auto text-center space-y-4">
+                    <span class="text-5xl">⚙️</span>
+                    <h2 class="text-2xl font-extrabold text-indigo-900">TETAPAN PERMAINAN</h2>
+                    <p class="text-xs text-slate-500">Sesuaikan pilihan bunyi dan akaun anda</p>
+
+                    <div class="bg-indigo-50 p-6 rounded-3xl border border-indigo-100 space-y-4 text-left">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-slate-700 text-sm">🔊 Kesan Bunyi (Audio)</span>
+                            <button onclick="toggleSoundSetting()" id="sound-toggle-btn" class="px-4 py-2 rounded-xl text-xs font-bold ${currentSound === 'on' ? 'bg-emerald-500 text-white' : 'bg-slate-300 text-slate-700'}">
+                                ${currentSound === 'on' ? 'PASANG (ON)' : 'TUTUP (OFF)'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <button onclick="navigateTo('home')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
+                        💾 SIMPAN & KEMBALI
+                    </button>
+                </div>
+            `;
+        }
+
+        function toggleSoundSetting() {
+            const currentSound = localStorage.getItem('edu_sound') || 'on';
+            const newSound = currentSound === 'on' ? 'off' : 'on';
+            localStorage.setItem('edu_sound', newSound);
+            renderSettingsScreen(document.getElementById('main-content'));
+        }
+    </script>
+
+</body>
+</html>

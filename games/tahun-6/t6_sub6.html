@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="ms" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Math Kids Bernama Edu Kidz – Tahun 6: RUANG</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(99, 102, 241, 0.8); }
+        }
+        .pulse-glow { animation: pulseGlow 2s infinite; }
+
+        @keyframes fireworkPop {
+            0% { transform: scale(0.2); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.9; }
+        }
+        .firework-fx { animation: fireworkPop 0.8s ease-out infinite alternate; }
+
+        /* Custom scrollbar for game panels */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #818cf8; border-radius: 4px; }
+    </style>
+</head>
+<body class="h-full bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 font-sans text-gray-800 antialiased overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+
+    <div id="app" class="min-h-full flex flex-col justify-between">
+        
+        <!-- HEADER / NAVBAR -->
+        <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 px-4 py-3 border-b border-indigo-100">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="app.showScreen('home')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                        <i class="fa-solid fa-shapes text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600 text-base md:text-lg leading-tight">Math Kids Bernama Edu Kidz</h1>
+                        <p class="text-xs text-gray-500 font-medium">Tahun 6 • Bidang Ruang KPM (Pakar Geometri Rasmi)</p>
+                    </div>
+                </div>
+
+                <!-- Orientation & Controls / User info -->
+                <div class="flex items-center space-x-2 md:space-x-4">
+                    <button onclick="app.toggleOrientation()" title="Tukar Mod Paparan" class="hidden sm:flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-semibold hover:bg-indigo-100 transition">
+                        <i class="fa-solid fa-rotate"></i>
+                        <span id="orientation-label">Landscape/Portrait</span>
+                    </button>
+                    <div id="user-pill" class="hidden items-center space-x-2 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-full">
+                        <div class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold" id="user-avatar-initial">M</div>
+                        <span class="text-xs font-bold text-indigo-900 truncate max-w-[100px] md:max-w-[150px]" id="nav-username">Pemain</span>
+                        <button onclick="app.logout()" class="text-gray-400 hover:text-red-500 transition ml-1" title="Log Keluar">
+                            <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+            
+            <!-- 1. AUTH SCREEN (LOGIN / REGISTER) -->
+            <div id="screen-auth" class="view-screen max-w-md mx-auto w-full bg-white rounded-3xl shadow-xl p-8 border border-indigo-50 animate-float">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-3xl mb-4 shadow-inner">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h2 class="text-2xl font-black text-gray-900">Selamat Datang!</h2>
+                    <p class="text-sm text-gray-500 mt-1">Sila log masuk atau daftar akaun baru untuk mula meneroka Ruang Tahun 6.</p>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex bg-gray-100 p-1 rounded-xl mb-6">
+                    <button id="tab-login-btn" onclick="app.switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-600 shadow-sm">Log Masuk</button>
+                    <button id="tab-register-btn" onclick="app.switchAuthTab('register')" class="flex-1 py-2 text-xs font-bold rounded-lg transition text-gray-500 hover:text-gray-800">Daftar Akaun</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="form-login" onsubmit="app.handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Nama Pengguna (Username)</label>
+                        <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Contoh: amir_tahun6">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Kata Laluan</label>
+                        <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition transform active:scale-98">
+                        MASUK SEKARANG <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="form-register" onsubmit="app.handleRegister(event)" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Nama Penuh Murid</label>
+                        <input type="text" id="reg-fullname" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Contoh: Amirul Hakim bin Zulkifli">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Nama Pengguna Pilihan</label>
+                        <input type="text" id="reg-username" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Contoh: amirul6">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Kata Laluan</label>
+                        <input type="password" id="reg-password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition transform active:scale-98">
+                        DAFTAR & MULA <i class="fa-solid fa-user-plus ml-2"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- 2. HOME SCREEN -->
+            <div id="screen-home" class="view-screen hidden max-w-4xl mx-auto w-full text-center py-6">
+                <div class="mb-8">
+                    <span class="px-4 py-1.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-extrabold tracking-wide uppercase inline-block mb-3">KPM Sukatan Pelajaran Tahun 6</span>
+                    <h2 class="text-3xl md:text-5xl font-black text-gray-900 tracking-tight mb-2">Math Kids Bernama Edu Kidz</h2>
+                    <p class="text-indigo-600 font-bold text-lg">Bidang: RUANG (Rujukan Pakar Geometri)</p>
+                </div>
+
+                <!-- Mascot & Banner card -->
+                <div class="bg-gradient-to-r from-indigo-500 via-violet-600 to-purple-600 rounded-3xl p-6 md:p-8 text-white shadow-xl mb-8 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
+                        <i class="fa-solid fa-shapes"></i>
+                    </div>
+                    <div class="text-left mb-4 md:mb-0 z-10">
+                        <h3 class="text-xl md:text-2xl font-black mb-2" id="welcome-player-msg">Hai, Ceria Murid!</h3>
+                        <p class="text-indigo-100 text-xs md:text-sm max-w-md">Jom kuasai sudut berskala tepat pakar geometri, poligon sekata, bulatan dan penyelesaian masalah ruang!</p>
+                    </div>
+                    <button onclick="app.showScreen('topics')" class="z-10 px-8 py-4 bg-white text-indigo-700 hover:bg-indigo-50 font-black rounded-2xl shadow-lg transition transform hover:-translate-y-1 active:translate-y-0 text-sm md:text-base flex items-center space-x-2">
+                        <i class="fa-solid fa-play text-indigo-600"></i>
+                        <span>MULA BERMAIN</span>
+                    </button>
+                </div>
+
+                <!-- Menu Grid Buttons -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button onclick="app.showScreen('topics')" class="bg-white hover:bg-indigo-50 p-5 rounded-2xl shadow-sm border border-indigo-100 flex flex-col items-center transition group">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <span class="font-bold text-gray-800 text-sm">Pilih Topik</span>
+                    </button>
+                    <button onclick="app.showScreen('progress')" class="bg-white hover:bg-indigo-50 p-5 rounded-2xl shadow-sm border border-indigo-100 flex flex-col items-center transition group">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <span class="font-bold text-gray-800 text-sm">Progress Saya</span>
+                    </button>
+                    <button onclick="app.showScreen('leaderboard')" class="bg-white hover:bg-indigo-50 p-5 rounded-2xl shadow-sm border border-indigo-100 flex flex-col items-center transition group">
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <span class="font-bold text-gray-800 text-sm">Leaderboard</span>
+                    </button>
+                    <button onclick="app.showScreen('profile')" class="bg-white hover:bg-indigo-50 p-5 rounded-2xl shadow-sm border border-indigo-100 flex flex-col items-center transition group">
+                        <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl mb-3 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <span class="font-bold text-gray-800 text-sm">Profil</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. TOPICS SELECTION SCREEN -->
+            <div id="screen-topics" class="view-screen hidden max-w-5xl mx-auto w-full py-4">
+                <div class="flex items-center justify-between mb-6">
+                    <button onclick="app.showScreen('home')" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold hover:bg-gray-50 flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-left"></i><span>Menu Utama</span>
+                    </button>
+                    <h2 class="text-xl md:text-2xl font-black text-gray-900">Pilih Topik Pembelajaran</h2>
+                    <div class="w-20"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="topics-grid">
+                    <!-- Topics dynamically rendered -->
+                </div>
+            </div>
+
+            <!-- 4. CONFIG SCREEN (DIFFICULTY & TIMER) -->
+            <div id="screen-config" class="view-screen hidden max-w-xl mx-auto w-full py-4 bg-white rounded-3xl shadow-xl p-6 md:p-8 border border-indigo-50">
+                <button onclick="app.showScreen('topics')" class="text-xs font-bold text-indigo-600 hover:underline mb-4 inline-flex items-center space-x-1">
+                    <i class="fa-solid fa-arrow-left"></i><span>Kembali ke Topik</span>
+                </button>
+                <div class="text-center mb-6">
+                    <span id="config-topic-badge" class="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-extrabold rounded-full">Topik</span>
+                    <h3 id="config-topic-title" class="text-xl md:text-2xl font-black text-gray-900 mt-2">Nama Topik</h3>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Difficulty Selection -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">Pilih Tahap Kesukaran</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button onclick="app.setDifficulty('Senang')" id="btn-diff-senang" class="diff-btn p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition">
+                                <i class="fa-solid fa-seedling text-base"></i>
+                                <span>Senang</span>
+                            </button>
+                            <button onclick="app.setDifficulty('Sederhana')" id="btn-diff-sederhana" class="diff-btn p-3 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition hover:border-amber-300">
+                                <i class="fa-solid fa-bolt text-base"></i>
+                                <span>Sederhana</span>
+                            </button>
+                            <button onclick="app.setDifficulty('Susah')" id="btn-diff-susah" class="diff-btn p-3 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition hover:border-red-300">
+                                <i class="fa-solid fa-fire text-base"></i>
+                                <span>Susah</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Timer Selection -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">Pilih Had Masa Setiap Soalan</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button onclick="app.setTimerMode(30)" id="btn-timer-30" class="timer-btn p-3 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-800 font-bold text-xs flex items-center justify-center space-x-2 transition">
+                                <i class="fa-solid fa-stopwatch"></i>
+                                <span>30 Saat</span>
+                            </button>
+                            <button onclick="app.setTimerMode(60)" id="btn-timer-60" class="timer-btn p-3 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-bold text-xs flex items-center justify-center space-x-2 transition hover:border-indigo-300">
+                                <i class="fa-solid fa-stopwatch"></i>
+                                <span>1 Minit</span>
+                            </button>
+                            <button onclick="app.setTimerMode(0)" id="btn-timer-0" class="timer-btn p-3 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-bold text-xs flex items-center justify-center space-x-2 transition hover:border-indigo-300">
+                                <i class="fa-solid fa-infinity"></i>
+                                <span>Tiada Had</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button onclick="app.startQuizSession()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-extrabold rounded-2xl shadow-lg shadow-indigo-500/30 transition transform active:scale-98 text-sm md:text-base flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-play"></i>
+                        <span>MULA JAWAB SOALAN</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5. GAMEPLAY SCREEN -->
+            <div id="screen-game" class="view-screen hidden max-w-3xl mx-auto w-full py-2">
+                <!-- Status bar -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-indigo-100 mb-4 flex flex-wrap items-center justify-between gap-3 text-xs md:text-sm font-bold">
+                    <div class="flex items-center space-x-3">
+                        <span class="px-3 py-1 rounded-lg bg-indigo-100 text-indigo-700" id="game-topic-tag">Topik</span>
+                        <span class="px-3 py-1 rounded-lg bg-purple-100 text-purple-700" id="game-diff-tag">Tahap</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-gray-600">Soalan: <span id="game-q-num" class="text-indigo-600 font-extrabold">1</span>/20</div>
+                        <div class="text-gray-600">Markah: <span id="game-score" class="text-emerald-600 font-extrabold">0</span>/100</div>
+                        <div id="timer-box" class="flex items-center space-x-1 px-3 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200">
+                            <i class="fa-solid fa-clock"></i>
+                            <span id="game-timer">30</span>s
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="bg-white rounded-3xl shadow-xl p-6 md:p-8 border border-indigo-50 relative overflow-hidden mb-4">
+                    <div class="mb-4 flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full" id="game-cog-tag">Mengingat</span>
+                        <span class="text-xs font-bold text-gray-400" id="game-qid-tag">R1-SENANG-001</span>
+                    </div>
+
+                    <h3 id="question-text" class="text-base md:text-xl font-extrabold text-gray-900 mb-6 leading-relaxed">
+                        Soalan akan dipaparkan di sini...
+                    </h3>
+
+                    <!-- Diagram Container (Expert Trigonometric SVG Generator) -->
+                    <div id="diagram-container" class="mb-6 bg-indigo-50/50 border border-indigo-100 rounded-2xl p-4 flex items-center justify-center min-h-[160px]">
+                        <!-- Rendered precise expert SVG -->
+                    </div>
+
+                    <!-- Answer Options / Input Area -->
+                    <div id="answers-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                        <!-- Options generated dynamically -->
+                    </div>
+
+                    <!-- Answer Submit / Next Action Button -->
+                    <div id="action-btn-container">
+                        <button onclick="app.submitAnswer()" id="btn-jawab" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl shadow-lg shadow-indigo-500/30 transition text-sm md:text-base">
+                            JAWAB SEKARANG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Feedback Modal/Box inside game -->
+                <div id="feedback-box" class="hidden rounded-2xl p-5 shadow-lg border animate-fadeIn">
+                    <div class="flex items-start space-x-3">
+                        <div id="feedback-icon" class="text-2xl">🎉</div>
+                        <div class="flex-1">
+                            <h4 id="feedback-title" class="font-black text-base md:text-lg mb-1">TAHNIAH! JAWAPAN BETUL!</h4>
+                            <p id="feedback-desc" class="text-xs md:text-sm text-gray-700 mb-3">Penerangan ringkas...</p>
+                            <button onclick="app.nextQuestion()" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs md:text-sm shadow-md transition">
+                                SOALAN SETERUSNYA <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. GAME OVER / SESSION SUMMARY SCREEN -->
+            <div id="screen-summary" class="view-screen hidden max-w-xl mx-auto w-full py-4 bg-white rounded-3xl shadow-xl p-6 md:p-8 text-center border border-indigo-50">
+                <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-3xl mx-auto flex items-center justify-center text-3xl mb-4 shadow-inner firework-fx">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h3 class="text-2xl md:text-3xl font-black text-gray-900 mb-1">🎉 TAHNIAH! PERMAINAN SELESAI!</h3>
+                <p class="text-xs text-gray-500 mb-6">Anda telah berjaya menjawab 20 soalan dalam sesi ini.</p>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
+                        <span class="text-xs text-gray-500 font-bold block mb-1">MARKAH DIPEROLEHI</span>
+                        <span id="sum-score" class="text-2xl md:text-3xl font-black text-indigo-600">85 / 100</span>
+                    </div>
+                    <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                        <span class="text-xs text-gray-500 font-bold block mb-1">PERATUS PENCAPAIAN</span>
+                        <span id="sum-percent" class="text-2xl md:text-3xl font-black text-emerald-600">85%</span>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-2xl text-left text-xs space-y-2 mb-6 border border-gray-100 font-medium">
+                    <div class="flex justify-between"><span>Jumlah Soalan:</span> <span class="font-bold">20</span></div>
+                    <div class="flex justify-between"><span>Jawapan Betul:</span> <span class="font-bold text-emerald-600" id="sum-correct">17</span></div>
+                    <div class="flex justify-between"><span>Jawapan Salah:</span> <span class="font-bold text-red-500" id="sum-wrong">3</span></div>
+                    <div class="flex justify-between"><span>Tahap Permainan:</span> <span class="font-bold text-indigo-600" id="sum-diff">Sederhana</span></div>
+                    <div class="flex justify-between"><span>Pencapaian Dirangkul:</span> <span class="font-bold text-purple-600" id="sum-badge">MASTER SUDUT</span></div>
+                </div>
+
+                <!-- Navigation buttons after game -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <button onclick="app.restartSession()" class="py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs md:text-sm shadow-md transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-rotate-right"></i><span>MAIN SEMULA</span>
+                    </button>
+                    <button onclick="app.showScreen('topics')" class="py-3 bg-white hover:bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold rounded-xl text-xs md:text-sm transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-book"></i><span>PILIH TOPIK LAIN</span>
+                    </button>
+                    <button onclick="app.showScreen('progress')" class="py-3 bg-white hover:bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold rounded-xl text-xs md:text-sm transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-chart-line"></i><span>LIHAT PROGRESS</span>
+                    </button>
+                    <button onclick="app.showScreen('home')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs md:text-sm transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-house"></i><span>MENU UTAMA</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 7. PROGRESS SCREEN -->
+            <div id="screen-progress" class="view-screen hidden max-w-3xl mx-auto w-full py-4">
+                <div class="flex items-center justify-between mb-6">
+                    <button onclick="app.showScreen('home')" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold hover:bg-gray-50 flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-left"></i><span>Menu Utama</span>
+                    </button>
+                    <h2 class="text-xl md:text-2xl font-black text-gray-900">Progress Saya</h2>
+                    <div class="w-20"></div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-xl p-6 md:p-8 border border-indigo-50 space-y-6">
+                    <div class="flex items-center space-x-4 pb-4 border-b border-gray-100">
+                        <div class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-2xl font-bold" id="prog-avatar">M</div>
+                        <div>
+                            <h3 class="font-extrabold text-lg text-gray-900" id="prog-name">Pemain</h3>
+                            <p class="text-xs text-gray-500">Statistik Pencapaian Bidang Ruang Tahun 6</p>
+                        </div>
+                    </div>
+
+                    <!-- Topic Progress Bars -->
+                    <div class="space-y-4" id="progress-bars-container">
+                        <!-- Dynamically populated progress bars -->
+                    </div>
+
+                    <!-- Statistics Summary Grid -->
+                    <div class="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100 text-center">
+                        <div class="bg-indigo-50 p-3 rounded-2xl">
+                            <span class="text-xs text-gray-500 font-bold block mb-1">Jumlah Soalan</span>
+                            <span id="stat-total-q" class="text-lg md:text-xl font-black text-indigo-600">0</span>
+                        </div>
+                        <div class="bg-emerald-50 p-3 rounded-2xl">
+                            <span class="text-xs text-gray-500 font-bold block mb-1">Betul</span>
+                            <span id="stat-correct-q" class="text-lg md:text-xl font-black text-emerald-600">0</span>
+                        </div>
+                        <div class="bg-purple-50 p-3 rounded-2xl">
+                            <span class="text-xs text-gray-500 font-bold block mb-1">Markah Tertinggi</span>
+                            <span id="stat-high-score" class="text-lg md:text-xl font-black text-purple-600">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. LEADERBOARD SCREEN -->
+            <div id="screen-leaderboard" class="view-screen hidden max-w-3xl mx-auto w-full py-4">
+                <div class="flex items-center justify-between mb-6">
+                    <button onclick="app.showScreen('home')" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold hover:bg-gray-50 flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-left"></i><span>Menu Utama</span>
+                    </button>
+                    <h2 class="text-xl md:text-2xl font-black text-gray-900">Leaderboard Murid</h2>
+                    <div class="w-20"></div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-xl p-6 md:p-8 border border-indigo-50">
+                    <p class="text-xs text-gray-500 mb-6 text-center">Senarai pemain terbaik dalam penguasaan bidang Ruang Tahun 6.</p>
+                    <div class="space-y-3" id="leaderboard-list">
+                        <!-- Leaderboard items rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. PROFILE SCREEN -->
+            <div id="screen-profile" class="view-screen hidden max-w-md mx-auto w-full py-4">
+                <div class="flex items-center justify-between mb-6">
+                    <button onclick="app.showScreen('home')" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold hover:bg-gray-50 flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-left"></i><span>Menu Utama</span>
+                    </button>
+                    <h2 class="text-xl md:text-2xl font-black text-gray-900">Profil Saya</h2>
+                    <div class="w-20"></div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-xl p-6 md:p-8 border border-indigo-50 text-center">
+                    <div class="w-20 h-20 bg-gradient-to-tr from-indigo-600 to-violet-500 text-white rounded-3xl mx-auto flex items-center justify-center text-3xl font-black mb-4 shadow-lg shadow-indigo-500/30" id="profile-avatar-big">M</div>
+                    <h3 id="profile-fullname" class="font-extrabold text-xl text-gray-900 mb-1">Nama Murid</h3>
+                    <p id="profile-username" class="text-xs text-indigo-600 font-bold mb-6">@username</p>
+
+                    <div class="bg-indigo-50 p-4 rounded-2xl mb-6 text-left border border-indigo-100 text-xs space-y-2">
+                        <div class="flex justify-between"><span>Jumlah Sesi Dimainkan:</span> <span class="font-bold text-indigo-700" id="profile-sessions">0</span></div>
+                        <div class="flex justify-between"><span>Bidang Pengajian:</span> <span class="font-bold text-indigo-700">Tahun 6 Ruang KPM</span></div>
+                    </div>
+
+                    <button onclick="app.logout()" class="w-full py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-xl text-xs transition flex items-center justify-center space-x-2 border border-red-200">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>LOG KELUAR AKAUN</span>
+                    </button>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="text-center py-4 text-xs text-gray-400 border-t border-indigo-100 bg-white/50">
+            Math Kids Bernama Edu Kidz • Kurikulum Standard Sekolah Rendah (KSSR) Semakan Tahun 6 Ruang
+        </footer>
+    </div>
+
+    <script>
+        // TOPICS DATA
+        const TOPICS_DATA = [
+            {
+                id: 1,
+                name: "Jom Hasilkan Sudut",
+                desc: "Kuasai kemahiran mengukur sudut tirus, cakah, tegak, lurus dan refleks menggunakan protraktor berskala tepat pakar geometri.",
+                icon: "fa-compass-drafting",
+                color: "from-blue-500 to-indigo-600"
+            },
+            {
+                id: 2,
+                name: "Lukis dan Ukur Sudut Pedalaman Poligon Sekata",
+                desc: "Kaji bilangan sisi, sudut pedalaman, sudut peluaran dan ciri-ciri poligon sekata KPM.",
+                icon: "fa-draw-polygon",
+                color: "from-violet-500 to-purple-600"
+            },
+            {
+                id: 3,
+                name: "Kenali Bulatan",
+                desc: "Kaji jejari, diameter dan lilitan bulatan.",
+                icon: "fa-circle-notch",
+                color: "from-emerald-500 to-teal-600"
+            },
+            {
+                id: 4,
+                name: "Soalan Penyelesaian Masalah",
+                desc: "Selesaikan masalah harian melibatkan sudut, poligon dan bulatan.",
+                icon: "fa-puzzle-piece",
+                color: "from-amber-500 to-orange-600"
+            }
+        ];
+
+        // Generator for Unique Questions with expert trigonometric angle mapping & fully refined Topic 1 & Topic 2 variety
+        function generateQuestionsBank() {
+            let bank = {};
+            
+            TOPICS_DATA.forEach(topic => {
+                bank[topic.id] = { Senang: [], Sederhana: [], Susah: [] };
+                
+                // TOPIC 1: JOM HASILKAN SUDUT
+                if (topic.id === 1) {
+                    const senangItems = [
+                        { deg: 45, type: "Sudut Tirus", desc: "Sudut tirus kerana nilainya kurang daripada 90°." },
+                        { deg: 90, type: "Sudut Tegak", desc: "Sudut tegak kerana nilainya tepat 90°." },
+                        { deg: 120, type: "Sudut Cakah", desc: "Sudut cakah kerana nilainya lebih besar daripada 90° tetapi kurang daripada 180°." },
+                        { deg: 30, type: "Sudut Tirus", desc: "Sudut tirus kerana nilainya kurang daripada 90°." },
+                        { deg: 135, type: "Sudut Cakah", desc: "Sudut cakah kerana nilainya antara 90° dan 180°." },
+                        { deg: 60, type: "Sudut Tirus", desc: "Sudut tirus berskala 60°." },
+                        { deg: 150, type: "Sudut Cakah", desc: "Sudut cakah berskala 150°." },
+                        { deg: 75, type: "Sudut Tirus", desc: "Sudut tirus berskala 75°." },
+                        { deg: 105, type: "Sudut Cakah", desc: "Sudut cakah berskala 105°." },
+                        { deg: 15, type: "Sudut Tirus", desc: "Sudut tirus kecil berskala 15°." },
+                        { deg: 165, type: "Sudut Cakah", desc: "Sudut cakah besar berskala 165°." },
+                        { deg: 85, type: "Sudut Tirus", desc: "Sudut tirus hampir tegak berskala 85°." },
+                        { deg: 95, type: "Sudut Cakah", desc: "Sudut cakah melebihi tegak berskala 95°." },
+                        { deg: 40, type: "Sudut Tirus", desc: "Sudut tirus berskala 40°." },
+                        { deg: 140, type: "Sudut Cakah", desc: "Sudut cakah berskala 140°." },
+                        { deg: 25, type: "Sudut Tirus", desc: "Sudut tirus berskala 25°." },
+                        { deg: 115, type: "Sudut Cakah", desc: "Sudut cakah berskala 115°." },
+                        { deg: 55, type: "Sudut Tirus", desc: "Sudut tirus berskala 55°." },
+                        { deg: 125, type: "Sudut Cakah", desc: "Sudut cakah berskala 125°." },
+                        { deg: 70, type: "Sudut Tirus", desc: "Sudut tirus berskala 70°." }
+                    ];
+
+                    senangItems.forEach((item, index) => {
+                        let i = index + 1;
+                        let w1 = (item.deg + 25) % 180 || 35;
+                        let w2 = (item.deg + 50) % 180 || 70;
+                        let w3 = (item.deg + 80) % 180 || 110;
+                        bank[1].Senang.push({
+                            id: `R1-SENANG-${String(i).padStart(3, '0')}`,
+                            topik: "Jom Hasilkan Sudut",
+                            tahap: "Senang",
+                            aras_kognitif: i % 2 === 0 ? "Mengingat" : "Memahami",
+                            jenis_game: "Objektif",
+                            soalan: `Perhatikan protraktor berskala tepat di bawah. Apakah nilai ukuran sudut ${item.type} yang dipaparkan?`,
+                            pilihan_jawapan: shuffleArray([`${item.deg}°`, `${w1}°`, `${w2}°`, `${w3}°`]),
+                            jawapan_betul: `${item.deg}°`,
+                            markah: 5,
+                            penerangan: `Berdasarkan bacaan skala protraktor geometri, sudut tersebut ialah ${item.deg}° (${item.desc}).`,
+                            gambarajah: { type: 'expert_angle', val: item.deg }
+                        });
+                    });
+
+                    for (let i = 1; i <= 20; i++) {
+                        let base = 20 + i * 2;
+                        let complement = 90 - base;
+                        bank[1].Sederhana.push({
+                            id: `R1-SEDERHANA-${String(i).padStart(3, '0')}`,
+                            topik: "Jom Hasilkan Sudut",
+                            tahap: "Sederhana",
+                            aras_kognitif: "Memahami",
+                            jenis_game: "Objektif",
+                            soalan: `Sudut tegak (90°) dibahagikan kepada dua bahagian. Jika satu bahagian bernilai ${base}°, berapakah nilai bagi bahagian sudut x° yang bersampingan?`,
+                            pilihan_jawapan: shuffleArray([`${complement}°`, `${complement + 10}°`, `${complement - 5}°`, `${90 + base}°`]),
+                            jawapan_betul: `${complement}°`,
+                            markah: 5,
+                            penerangan: `Jumlah sudut tegak ialah 90°. Maka nilai x° = 90° - ${base}° = ${complement}°.`,
+                            gambarajah: { type: 'expert_complement', a1: base, a2: complement }
+                        });
+                    }
+
+                    for (let i = 1; i <= 20; i++) {
+                        let p1 = 30 + i;
+                        let p2 = 45 + (i % 5);
+                        let remainder = 180 - (p1 + p2);
+                        bank[1].Susah.push({
+                            id: `R1-SUSAH-${String(i).padStart(3, '0')}`,
+                            topik: "Jom Hasilkan Sudut",
+                            tahap: "Susah",
+                            aras_kognitif: "Mengaplikasi",
+                            jenis_game: "Subjektif",
+                            soalan: `Garis lurus 180° dikongsi oleh tiga sudut bersebelahan iaitu ${p1}°, ${p2}° dan k°. Berapakah nilai sudut k° yang tertinggal?`,
+                            pilihan_jawapan: shuffleArray([`${remainder}°`, `${remainder + 12}°`, `${remainder - 10}°`, `${180 - p1}°`]),
+                            jawapan_betul: `${remainder}°`,
+                            markah: 5,
+                            penerangan: `Jumlah sudut pada garis lurus ialah 180°. Maka k° = 180° - (${p1}° + ${p2}°) = ${remainder}°.`,
+                            gambarajah: { type: 'expert_straight_line_angles', a1: p1, a2: p2, a3: remainder }
+                        });
+                    }
+                }
+
+                // TOPIC 2: LUKIS DAN UKUR SUDUT PEDALAMAN POLIGON SEKATA
+                if (topic.id === 2) {
+                    const t2SenangItems = [
+                        { name: "Segi tiga sama sisi", sides: 3, angle: "60°", qType: "Sudut Pedalaman" },
+                        { name: "Segi empat sama", sides: 4, angle: "90°", qType: "Sudut Pedalaman" },
+                        { name: "Pentagon sekata", sides: 5, angle: "108°", qType: "Sudut Pedalaman" },
+                        { name: "Heksagon sekata", sides: 6, angle: "120°", qType: "Sudut Pedalaman" },
+                        { name: "Heptagon sekata", sides: 7, angle: "128.6°", qType: "Sudut Pedalaman" },
+                        { name: "Oktagon sekata", sides: 8, angle: "135°", qType: "Sudut Pedalaman" },
+                        { name: "Nonagon sekata", sides: 9, angle: "140°", qType: "Sudut Pedalaman" },
+                        { name: "Dekagon sekata", sides: 10, angle: "144°", qType: "Sudut Pedalaman" },
+                        { name: "Segi tiga sama sisi", sides: 3, angle: "3", qType: "Bilangan Sisi" },
+                        { name: "Segi empat sama", sides: 4, angle: "4", qType: "Bilangan Sisi" },
+                        { name: "Pentagon sekata", sides: 5, angle: "5", qType: "Bilangan Sisi" },
+                        { name: "Heksagon sekata", sides: 6, angle: "6", qType: "Bilangan Sisi" },
+                        { name: "Oktagon sekata", sides: 8, angle: "8", qType: "Bilangan Sisi" },
+                        { name: "Dekagon sekata", sides: 10, angle: "10", qType: "Bilangan Sisi" },
+                        { name: "Heksagon sekata", sides: 6, angle: "60°", qType: "Sudut Peluaran" },
+                        { name: "Pentagon sekata", sides: 5, angle: "72°", qType: "Sudut Peluaran" },
+                        { name: "Oktagon sekata", sides: 8, angle: "45°", qType: "Sudut Peluaran" },
+                        { name: "Segi empat sama", sides: 4, angle: "90°", qType: "Sudut Peluaran" },
+                        { name: "Dekagon sekata", sides: 10, angle: "36°", qType: "Sudut Peluaran" },
+                        { name: "Nonagon sekata", sides: 9, angle: "40°", qType: "Sudut Peluaran" }
+                    ];
+
+                    t2SenangItems.forEach((item, index) => {
+                        let i = index + 1;
+                        let qText = "";
+                        let ans = "";
+                        let wOpts = [];
+
+                        if (item.qType === "Sudut Pedalaman") {
+                            qText = `Berapakah nilai ukuran satu sudut pedalaman bagi sebuah ${item.name} yang ditunjukkan pada rajah?`;
+                            ans = item.angle;
+                            wOpts = item.sides === 3 ? ["90°", "120°", "45°"] : item.sides === 4 ? ["60°", "120°", "108°"] : ["90°", "135°", "120°"];
+                        } else if (item.qType === "Bilangan Sisi") {
+                            qText = `Apakah nama atau bilangan sisi bagi poligon sekata yang mempunyai sudut pedalaman seperti pada rajah?`;
+                            ans = `${item.sides} sisi (${item.name})`;
+                            wOpts = [`${item.sides + 1} sisi`, `${item.sides - 1} sisi`, `${item.sides + 2} sisi`];
+                        } else {
+                            qText = `Hitung nilai ukuran satu sudut peluaran bagi sebuah ${item.name} pada rajah geometri ini.`;
+                            ans = item.angle;
+                            wOpts = ["60°", "90°", "45°", "30°"].filter(x => x !== item.angle).slice(0, 3);
+                        }
+
+                        bank[2].Senang.push({
+                            id: `R2-SENANG-${String(i).padStart(3, '0')}`,
+                            topik: "Lukis dan Ukur Sudut Pedalaman Poligon Sekata",
+                            tahap: "Senang",
+                            aras_kognitif: i % 2 === 0 ? "Mengingat" : "Memahami",
+                            jenis_game: "Objektif",
+                            soalan: qText,
+                            pilihan_jawapan: shuffleArray([ans, ...wOpts]),
+                            jawapan_betul: ans,
+                            markah: 5,
+                            penerangan: `Ciri-ciri geometri ${item.name}: ${item.qType} bernilai ${ans}.`,
+                            gambarajah: { type: 'polygon_angle', sides: item.sides, name: item.name, angle: item.angle }
+                        });
+                    });
+
+                    for (let i = 1; i <= 20; i++) {
+                        let sides = 4 + i;
+                        let sumAngles = (sides - 2) * 180;
+                        let w1 = sumAngles + 180;
+                        let w2 = sumAngles - 180;
+                        let w3 = sumAngles + 360;
+
+                        bank[2].Sederhana.push({
+                            id: `R2-SEDERHANA-${String(i).padStart(3, '0')}`,
+                            topik: "Lukis dan Ukur Sudut Pedalaman Poligon Sekata",
+                            tahap: "Sederhana",
+                            aras_kognitif: "Memahami",
+                            jenis_game: "Objektif",
+                            soalan: `Hitung jumlah keseluruhan sudut pedalaman bagi sebuah poligon sekata yang mempunyai bilangan sisi n = ${sides} pada rajah.`,
+                            pilihan_jawapan: shuffleArray([`${sumAngles}°`, `${w1}°`, `${w2}°`, `${w3}°`]),
+                            jawapan_betul: `${sumAngles}°`,
+                            markah: 5,
+                            penerangan: `Formula jumlah sudut pedalaman poligon = (n - 2) × 180° = (${sides} - 2) × 180° = ${sumAngles}°.`,
+                            gambarajah: { type: 'polygon', sides: sides > 12 ? 10 : sides, name: `Poligon ${sides} Sisi` }
+                        });
+                    }
+
+                    const susahPolygons = [
+                        { sides: 5, ext: "72°", int: "108°" },
+                        { sides: 6, ext: "60°", int: "120°" },
+                        { sides: 8, ext: "45°", int: "135°" },
+                        { sides: 9, ext: "40°", int: "140°" },
+                        { sides: 10, ext: "36°", int: "144°" },
+                        { sides: 12, ext: "30°", int: "150°" },
+                        { sides: 15, ext: "24°", int: "156°" },
+                        { sides: 18, ext: "20°", int: "160°" },
+                        { sides: 20, ext: "18°", int: "162°" }
+                    ];
+
+                    for (let i = 1; i <= 20; i++) {
+                        let poly = susahPolygons[(i - 1) % susahPolygons.length];
+                        let isExtQuery = i % 2 === 0;
+                        let qText = "";
+                        let ans = `${poly.sides}`;
+                        let wOpts = [`${poly.sides + 2}`, `${poly.sides - 1}`, `${poly.sides + 3}`];
+
+                        if (isExtQuery) {
+                            qText = `Jika sudut peluaran bagi sebuah poligon sekata ialah ${poly.ext} pada rajah, berapakah bilangan sisi poligon tersebut?`;
+                        } else {
+                            qText = `Jika setiap sudut pedalaman bagi sebuah poligon sekata bernilai ${poly.int} pada rajah, cari bilangan sisinya.`;
+                        }
+
+                        bank[2].Susah.push({
+                            id: `R2-SUSAH-${String(i).padStart(3, '0')}`,
+                            topik: "Lukis dan Ukur Sudut Pedalaman Poligon Sekata",
+                            tahap: "Susah",
+                            aras_kognitif: "Mengaplikasi",
+                            jenis_game: "Objektif",
+                            soalan: qText,
+                            pilihan_jawapan: shuffleArray([ans, ...wOpts]),
+                            jawapan_betul: ans,
+                            markah: 5,
+                            penerangan: isExtQuery ? `Bilangan sisi = 360° ÷ sudut peluaran (${poly.ext}) = ${poly.sides} sisi.` : `Sudut peluaran = 180° - ${poly.int} = ${poly.ext}. Bilangan sisi = 360° ÷ ${poly.ext} = ${poly.sides} sisi.`,
+                            gambarajah: { type: 'polygon_ext', sides: poly.sides > 8 ? 8 : poly.sides, extAngle: poly.ext }
+                        });
+                    }
+                }
+
+                // TOPIC 3: KENALI BULATAN
+                if (topic.id === 3) {
+                    for (let i = 1; i <= 20; i++) {
+                        let r = 3 + (i % 7);
+                        let d = r * 2;
+                        bank[3].Senang.push({
+                            id: `R3-SENANG-${String(i).padStart(3, '0')}`,
+                            topik: "Kenali Bulatan",
+                            tahap: "Senang",
+                            aras_kognitif: "Mengingat",
+                            jenis_game: "Objektif",
+                            soalan: `Berdasarkan rajah bulatan dengan jejari r = ${r} cm, berapakah panjang diameter d?`,
+                            pilihan_jawapan: shuffleArray([`${d} cm`, `${r + 2} cm`, `${d + 4} cm`, `${r} cm`]),
+                            jawapan_betul: `${d} cm`,
+                            markah: 5,
+                            penerangan: `Diameter adalah dua kali ganda jejari. Maka d = 2 × ${r} cm = ${d} cm.`,
+                            gambarajah: { type: 'circle', r: r, show: 'radius' }
+                        });
+                    }
+                    for (let i = 1; i <= 20; i++) {
+                        let d = 10 + (i * 2);
+                        let r = d / 2;
+                        bank[3].Sederhana.push({
+                            id: `R3-SEDERHANA-${String(i).padStart(3, '0')}`,
+                            topik: "Kenali Bulatan",
+                            tahap: "Sederhana",
+                            aras_kognitif: "Memahami",
+                            jenis_game: "Objektif",
+                            soalan: `Diberi diameter bulatan d = ${d} cm pada rajah. Hitung nilai jejari r dalam cm.`,
+                            pilihan_jawapan: shuffleArray([`${r} cm`, `${d} cm`, `${r + 2} cm`, `${d - 2} cm`]),
+                            jawapan_betul: `${r} cm`,
+                            markah: 5,
+                            penerangan: `Jejari = Diameter ÷ 2 = ${d} cm ÷ 2 = ${r} cm.`,
+                            gambarajah: { type: 'circle', d: d, show: 'diameter' }
+                        });
+                    }
+                    for (let i = 1; i <= 20; i++) {
+                        let r = 7 + (i % 7);
+                        let kelilingApprox = Math.round(2 * (22/7) * r);
+                        bank[3].Susah.push({
+                            id: `R3-SUSAH-${String(i).padStart(3, '0')}`,
+                            topik: "Kenali Bulatan",
+                            tahap: "Susah",
+                            aras_kognitif: "Mengaplikasi",
+                            jenis_game: "Objektif",
+                            soalan: `Hitung lilitan bulatan yang mempunyai jejari ${r} cm seperti yang ditunjukkan pada rajah (guna π = 22/7).`,
+                            pilihan_jawapan: shuffleArray([`${kelilingApprox} cm`, `${kelilingApprox + 10} cm`, `${kelilingApprox - 5} cm`, `${r * 4} cm`]),
+                            jawapan_betul: `${kelilingApprox} cm`,
+                            markah: 5,
+                            penerangan: `Lilitan = 2πr = 2 × (22/7) × ${r} = ${kelilingApprox} cm.`,
+                            gambarajah: { type: 'circle', r: r, show: 'circumference' }
+                        });
+                    }
+                }
+
+                // TOPIC 4: PENYELESAIAN MASALAH (Diubah suai soalan harian baru)
+                if (topic.id === 4) {
+                    const t4SenangItems = [
+                        { q: "Ali melukis sebuah taman rekreasi berbentuk segi empat sama. Jika panjang satu sisi ialah 12 m, berapakah perimeter taman tersebut?", ans: "48 m", w: ["36 m", "60 m", "24 m"], diag: { type: 'polygon', sides: 4, sideLen: '12m' } },
+                        { q: "Sebuah papan tanda berbentuk heksagon sekata mempunyai ukuran sisi 7 cm. Hitung perimeter papan tanda itu.", ans: "42 cm", w: ["35 cm", "49 cm", "28 cm"], diag: { type: 'polygon', sides: 6, sideLen: '7m' } },
+                        { q: "Jam dinding menunjukkan pukul 4:00 petang. Berapakah nilai sudut pada jarum jam dan jarum minit?", ans: "120°", w: ["90°", "150°", "60°"], diag: { type: 'clock', hour: 4, angleVal: "120°" } },
+                        { q: "Siti memotong sehelai kain berbentuk segi tiga sama sisi dengan panjang sisi 15 cm setiap satu. Cari perimeter kain tersebut.", ans: "45 cm", w: ["30 cm", "60 cm", "25 cm"], diag: { type: 'polygon', sides: 3, sideLen: '15cm' } },
+                        { q: "Jam dinding menunjukkan pukul 2:00 petang. Cari sudut antara jarum jam dengan jarum minit.", ans: "60°", w: ["90°", "30°", "120°"], diag: { type: 'clock', hour: 2, angleVal: "60°" } },
+                        { q: "Sebuah gelanggang mainan berbentuk oktagon sekata mempunyai sisi 8 cm. Hitung perimeter gelanggang.", ans: "64 cm", w: ["56 cm", "72 cm", "48 cm"], diag: { type: 'polygon', sides: 8, sideLen: '8cm' } },
+                        { q: "Sebuah kolam renang berbentuk pentagon sekata mempunyai panjang sisi 10 m setiap satu. Hitung perimeter kolam.", ans: "50 m", w: ["40 m", "60 m", "30 m"], diag: { type: 'polygon', sides: 5, sideLen: '10m' } },
+                        { q: "Jam dinding menunjukkan pukul 5:00 petang. Berapakah nilai sudut pada jarum jam dan minit?", ans: "150°", w: ["120°", "180°", "90°"], diag: { type: 'clock', hour: 5, angleVal: "150°" } },
+                        { q: "Sebuah bingkai gambar berbentuk segi empat sama mempunyai perimeter 36 cm. Berapakah panjang satu sisinya?", ans: "9 cm", w: ["6 cm", "8 cm", "12 cm"], diag: { type: 'polygon', sides: 4, sideLen: 'P=36cm' } },
+                        { q: "Sebuah meja berbentuk heptagon sekata mempunyai panjang setiap sisi 6 cm. Cari perimeter meja itu.", ans: "42 cm", w: ["36 cm", "48 cm", "30 cm"], diag: { type: 'polygon', sides: 7, sideLen: '6cm' } },
+                        { q: "Jam dinding menunjukkan pukul 1:00 petang. Cari sudut antara jarum jam dan minit.", ans: "30°", w: ["60°", "45°", "90°"], diag: { type: 'clock', hour: 1, angleVal: "30°" } },
+                        { q: "Emak membeli permaidani berbentuk oktagon sekata dengan sisi 9 cm. Cari perimeter permaidani.", ans: "72 cm", w: ["64 cm", "81 cm", "54 cm"], diag: { type: 'polygon', sides: 8, sideLen: '9cm' } },
+                        { q: "Sebuah taman permainan berbentuk nonagon sekata mempunyai sisi 5 m. Berapakah perimeternya?", ans: "45 m", w: ["40 m", "50 m", "35 m"], diag: { type: 'polygon', sides: 9, sideLen: '5m' } },
+                        { q: "Jam dinding menunjukkan pukul 6:00 petang. Cari sudut bertanda pada jarum jam dan minit.", ans: "180°", w: ["150°", "90°", "360°"], diag: { type: 'clock', hour: 6, angleVal: "180°" } },
+                        { q: "Sebuah papan kenyataan berbentuk dekagon sekata mempunyai panjang sisi 4 cm. Hitung perimeter.", ans: "40 cm", w: ["36 cm", "44 cm", "48 cm"], diag: { type: 'polygon', sides: 10, sideLen: '4cm' } },
+                        { q: "Rajah menunjukkan bilik darjah berbentuk segi empat sama dengan panjang sisi 8 m. Berapakah perimeternya?", ans: "32 m", w: ["24 m", "16 m", "64 m"], diag: { type: 'polygon', sides: 4, sideLen: '8m' } },
+                        { q: "Jam dinding menunjukkan pukul 10:00 pagi. Cari nilai sudut jarum jam dan minit.", ans: "60°", w: ["90°", "30°", "120°"], diag: { type: 'clock', hour: 10, angleVal: "60°" } },
+                        { q: "Sebuah tapak perkhemahan berbentuk heksagon sekata mempunyai sisi 11 m. Cari perimeter tapak tersebut.", ans: "66 m", w: ["55 m", "77 m", "44 m"], diag: { type: 'polygon', sides: 6, sideLen: '11m' } },
+                        { q: "Sebuah taman bunga berbentuk pentagon sekata mempunyai panjang sisi 14 m. Berapakah perimeter taman?", ans: "70 m", w: ["56 m", "84 m", "42 m"], diag: { type: 'polygon', sides: 5, sideLen: '14m' } },
+                        { q: "Jam dinding menunjukkan pukul 8:00 pagi. Berapakah sudut antara jarum jam dan minit?", ans: "120°", w: ["90°", "150°", "60°"], diag: { type: 'clock', hour: 8, angleVal: "120°" } }
+                    ];
+
+                    t4SenangItems.forEach((item, index) => {
+                        let i = index + 1;
+                        bank[4].Senang.push({
+                            id: `R4-SENANG-${String(i).padStart(3, '0')}`,
+                            topik: "Soalan Penyelesaian Masalah",
+                            tahap: "Senang",
+                            aras_kognitif: "Mengaplikasi",
+                            jenis_game: "Objektif",
+                            soalan: item.q,
+                            pilihan_jawapan: shuffleArray([item.ans, ...item.w]),
+                            jawapan_betul: item.ans,
+                            markah: 5,
+                            penerangan: `Penyelesaian: Menggunakan konsep asas perimeter poligon atau bacaan sudut jam. Jawapan yang tepat ialah ${item.ans}.`,
+                            gambarajah: item.diag
+                        });
+                    });
+
+                    const t4SederhanaItems = [
+                        { q: "Sebuah roda basikal berdiameter 28 cm berputar 1 kali. Hitung jarak yang dilalui (guna π = 22/7).", ans: "88 cm", w: ["44 cm", "176 cm", "56 cm"], diag: { type: 'circle', d: 28, show: 'diameter' } },
+                        { q: "Sebuah bulatan mempunyai jejari 14 cm. Hitung lilitan bulatan tersebut (guna π = 22/7).", ans: "88 cm", w: ["44 cm", "154 cm", "616 cm"], diag: { type: 'circle', r: 14, show: 'circumference' } },
+                        { q: "Luas sebuah jubin segi empat sama ialah 64 cm². Cari perimeter jubin tersebut.", ans: "32 cm", w: ["16 cm", "24 cm", "48 cm"], diag: { type: 'polygon', sides: 4, sideLen: 'Luas 64' } },
+                        { q: "Sebuah taman berbentuk bulatan berjejari 7 m. Hitung lilitan taman itu (guna π = 22/7).", ans: "44 m", w: ["22 m", "154 m", "88 m"], diag: { type: 'circle', r: 7, show: 'circumference' } },
+                        { q: "Sebuah bulatan mempunyai diameter 42 cm. Berapakah lilitannya (guna π = 22/7)?", ans: "132 cm", w: ["66 cm", "264 cm", "84 cm"], diag: { type: 'circle', d: 42, show: 'diameter' } },
+                        { q: "Sebuah kolam ikan berbentuk bulatan mempunyai jejari 21 m. Hitung lilitan kolam (guna π = 22/7).", ans: "132 m", w: ["66 m", "264 m", "44 m"], diag: { type: 'circle', r: 21, show: 'circumference' } },
+                        { q: "Sebuah piring hitam berdiameter 14 cm. Berapakah lilitan piring tersebut (guna π = 22/7)?", ans: "44 cm", w: ["22 cm", "88 cm", "154 cm"], diag: { type: 'circle', d: 14, show: 'diameter' } },
+                        { q: "Perimeter sebuah segi tiga sama sisi ialah 60 cm. Cari panjang satu sisinya.", ans: "20 cm", w: ["15 cm", "30 cm", "12 cm"], diag: { type: 'polygon', sides: 3, sideLen: 'P=60cm' } },
+                        { q: "Sebuah jam dinding istimewa mempunyai lilitan 132 cm (π = 22/7). Berapakah jejari jam tersebut?", ans: "21 cm", w: ["14 cm", "42 cm", "7 cm"], diag: { type: 'circle', r: 21, show: 'circumference' } },
+                        { q: "Sebuah gelung rotan berjejari 35 cm. Cari lilitan gelung tersebut (guna π = 22/7).", ans: "220 cm", w: ["110 cm", "440 cm", "70 cm"], diag: { type: 'circle', r: 35, show: 'circumference' } },
+                        { q: "Sebuah padang berbentuk segi empat sama mempunyai perimeter 100 m. Berapakah panjang sisinya?", ans: "25 m", w: ["20 m", "50 m", "10 m"], diag: { type: 'polygon', sides: 4, sideLen: 'P=100' } },
+                        { q: "Sebuah bulatan mempunyai diameter 56 cm. Cari lilitannya (guna π = 22/7).", ans: "176 cm", w: ["88 cm", "352 cm", "112 cm"], diag: { type: 'circle', d: 56, show: 'diameter' } },
+                        { q: "Perimeter sebuah pentagon sekata ialah 75 cm. Cari panjang satu sisinya.", ans: "15 cm", w: ["10 cm", "20 cm", "25 cm"], diag: { type: 'polygon', sides: 5, sideLen: 'P=75' } },
+                        { q: "Sebuah roda mainan berjejari 10.5 cm berputar sekali. Hitung lilitannya (guna π = 22/7).", ans: "66 cm", w: ["33 cm", "132 cm", "21 cm"], diag: { type: 'circle', r: 10.5, show: 'circumference' } },
+                        { q: "Sebuah bulatan mempunyai jejari 3.5 cm. Berapakah lilitannya (guna π = 22/7)?", ans: "22 cm", w: ["11 cm", "44 cm", "14 cm"], diag: { type: 'circle', r: 3.5, show: 'circumference' } },
+                        { q: "Perimeter sebuah heksagon sekata ialah 96 cm. Berapakah panjang satu sisinya?", ans: "16 cm", w: ["12 cm", "18 cm", "20 cm"], diag: { type: 'polygon', sides: 6, sideLen: 'P=96' } },
+                        { q: "Sebuah meja bulat berjejari 28 cm dihiasi renda di sekelilingnya. Berapa panjang renda (π = 22/7)?", ans: "176 cm", w: ["88 cm", "352 cm", "56 cm"], diag: { type: 'circle', r: 28, show: 'circumference' } },
+                        { q: "Sebuah bulatan mempunyai diameter 70 cm. Hitung lilitannya (guna π = 22/7).", ans: "220 cm", w: ["110 cm", "440 cm", "140 cm"], diag: { type: 'circle', d: 70, show: 'diameter' } },
+                        { q: "Perimeter sebuah oktagon sekata ialah 120 cm. Cari panjang satu sisinya.", ans: "15 cm", w: ["12 cm", "10 cm", "18 cm"], diag: { type: 'polygon', sides: 8, sideLen: 'P=120' } },
+                        { q: "Sebuah gelang mainan berjejari 14 cm berputar sekali. Cari jarak lilitannya (π = 22/7).", ans: "88 cm", w: ["44 cm", "176 cm", "28 cm"], diag: { type: 'circle', r: 14, show: 'circumference' } }
+                    ];
+
+                    t4SederhanaItems.forEach((item, index) => {
+                        let i = index + 1;
+                        bank[4].Sederhana.push({
+                            id: `R4-SEDERHANA-${String(i).padStart(3, '0')}`,
+                            topik: "Soalan Penyelesaian Masalah",
+                            tahap: "Sederhana",
+                            aras_kognitif: "Mengaplikasi",
+                            jenis_game: "Objektif",
+                            soalan: item.q,
+                            pilihan_jawapan: shuffleArray([item.ans, ...item.w]),
+                            jawapan_betul: item.ans,
+                            markah: 5,
+                            penerangan: `Penyelesaian: Formula lilitan C = 2πr atau C = πd digunakan dengan tepat. Jawapan akhir ialah ${item.ans}.`,
+                            gambarajah: item.diag
+                        });
+                    });
+
+                    const t4SusahItems = [
+                        { q: "Sebuah roda basikal berjejari 21 cm berputar sebanyak 50 kali. Cari jumlah jarak perjalanan dalam cm (guna π = 22/7).", ans: "6600 cm", w: ["1320 cm", "3300 cm", "13200 cm"], diag: { type: 'bike_wheel', r: 21 } },
+                        { q: "Sebuah roda kereta mainan berjejari 7 cm berputar sebanyak 100 kali. Berapakah jumlah jarak dalam cm (guna π = 22/7)?", ans: "4400 cm", w: ["2200 cm", "8800 cm", "1540 cm"], diag: { type: 'bike_wheel', r: 7 } },
+                        { q: "Sebuah roda pengorek berjejari 35 cm berputar sebanyak 20 kali. Hitung jumlah jarak dalam cm (guna π = 22/7).", ans: "4400 cm", w: ["2200 cm", "8800 cm", "1100 cm"], diag: { type: 'bike_wheel', r: 35 } },
+                        { q: "Sebuah roda basikal berdiameter 56 cm membuat 50 putaran lengkap. Hitung jumlah jarak dalam cm (guna π = 22/7).", ans: "8800 cm", w: ["4400 cm", "17600 cm", "2200 cm"], diag: { type: 'bike_wheel', r: 28 } },
+                        { q: "Sebuah roda lori berjejari 42 cm berputar sebanyak 10 kali. Cari jumlah jarak dalam cm (guna π = 22/7).", ans: "2640 cm", w: ["1320 cm", "5280 cm", "880 cm"], diag: { type: 'bike_wheel', r: 42 } },
+                        { q: "Sebuah roda pengisar berjejari 14 cm berputar sebanyak 100 kali. Hitung jumlah jarak putaran dalam cm (guna π = 22/7).", ans: "8800 cm", w: ["4400 cm", "17600 cm", "2200 cm"], diag: { type: 'bike_wheel', r: 14 } },
+                        { q: "Sebuah penggelek jalan berjejari 70 cm berputar sebanyak 10 kali. Hitung jarak dalam cm (guna π = 22/7).", ans: "4400 cm", w: ["2200 cm", "8800 cm", "1540 cm"], diag: { type: 'bike_wheel', r: 70 } },
+                        { q: "Roda basikal berjejari 28 cm berputar sebanyak 25 kali. Cari jumlah jarak dalam cm (guna π = 22/7).", ans: "4400 cm", w: ["2200 cm", "8800 cm", "1100 cm"], diag: { type: 'bike_wheel', r: 28 } },
+                        { q: "Sebuah roda traktor berdiameter 140 cm berputar sebanyak 10 kali. Hitung jarak dalam cm (guna π = 22/7).", ans: "4400 cm", w: ["2200 cm", "8800 cm", "1540 cm"], diag: { type: 'bike_wheel', r: 70 } },
+                        { q: "Sebuah roda basikal berjejari 10.5 cm berputar 100 kali. Cari jumlah jarak dalam cm (guna π = 22/7).", ans: "6600 cm", w: ["3300 cm", "13200 cm", "2200 cm"], diag: { type: 'bike_wheel', r: 10.5 } },
+                        { q: "Roda basikal berjejari 35 cm berputar 50 kali. Cari jumlah jarak dalam cm (guna π = 22/7).", ans: "11000 cm", w: ["5500 cm", "22000 cm", "3300 cm"], diag: { type: 'bike_wheel', r: 35 } },
+                        { q: "Sebuah roda mainan berdiameter 28 cm berputar 200 kali. Cari jumlah jarak dalam cm (guna π = 22/7).", ans: "17600 cm", w: ["8800 cm", "35200 cm", "4400 cm"], diag: { type: 'bike_wheel', r: 14 } },
+                        { q: "Sebuah roda lori berjejari 49 cm berputar 10 kali. Hitung jumlah jarak dalam cm (guna π = 22/7).", ans: "3080 cm", w: ["1540 cm", "6160 cm", "770 cm"], diag: { type: 'bike_wheel', r: 49 } },
+                        { q: "Roda basikal berjejari 21 cm berputar 200 kali. Cari jumlah jarak dalam cm (guna π = 22/7).", ans: "26400 cm", w: ["13200 cm", "52800 cm", "6600 cm"], diag: { type: 'bike_wheel', r: 21 } },
+                        { q: "Sebuah roda basikal berdiameter 70 cm berputar 50 kali. Cari jumlah jarak dalam cm (guna π = 22/7).", ans: "11000 cm", w: ["5500 cm", "22000 cm", "7700 cm"], diag: { type: 'bike_wheel', r: 35 } },
+                        { q: "Roda basikal berjejari 7 cm berputar 500 kali. Cari jumlah jarak dalam cm (guna π = 22/7).", ans: "22000 cm", w: ["11000 cm", "44000 cm", "5500 cm"], diag: { type: 'bike_wheel', r: 7 } },
+                        { q: "Sebuah roda basikal berjejari 42 cm berputar 50 kali. Cari jumlah jarak dalam cm (guna π = 22/7).", ans: "13200 cm", w: ["6600 cm", "26400 cm", "3300 cm"], diag: { type: 'bike_wheel', r: 42 } },
+                        { q: "Sebuah roda pengisar berdiameter 28 cm berputar 50 kali. Cari jumlah jarak dalam cm (guna π = 22/7).", ans: "4400 cm", w: ["2200 cm", "8800 cm", "1100 cm"], diag: { type: 'bike_wheel', r: 14 } },
+                        { q: "Roda basikal berjejari 56 cm berputar 10 kali. Cari jumlah jarak dalam cm (guna π = 22/7).", ans: "3520 cm", w: ["1760 cm", "7040 cm", "880 cm"], diag: { type: 'bike_wheel', r: 56 } },
+                        { q: "Sebuah roda kereta berjejari 35 cm berputar 100 kali. Cari jumlah jarak dalam cm (guna π = 22/7).", ans: "22000 cm", w: ["11000 cm", "44000 cm", "5500 cm"], diag: { type: 'bike_wheel', r: 35 } }
+                    ];
+
+                    t4SusahItems.forEach((item, index) => {
+                        let i = index + 1;
+                        bank[4].Susah.push({
+                            id: `R4-SUSAH-${String(i).padStart(3, '0')}`,
+                            topik: "Soalan Penyelesaian Masalah",
+                            tahap: "Susah",
+                            aras_kognitif: "Mengaplikasi",
+                            jenis_game: "Objektif",
+                            soalan: item.q,
+                            pilihan_jawapan: shuffleArray([item.ans, ...item.w]),
+                            jawapan_betul: item.ans,
+                            markah: 5,
+                            penerangan: `Penerangan: Jarak = Lilitan (2πr) × Bilangan Putaran. Jawapan akhir ialah ${item.ans}.`,
+                            gambarajah: item.diag
+                        });
+                    });
+                }
+            });
+
+            return bank;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // --- APPLICATION STATE MANAGER ---
+        class MathKidsApp {
+            constructor() {
+                this.currentUser = null;
+                this.questionsBank = generateQuestionsBank();
+                this.currentTopicId = 1;
+                this.currentDifficulty = 'Senang';
+                this.timerSecondsMode = 30;
+                
+                // Active session variables
+                this.activeQuestions = [];
+                this.currentIndex = 0;
+                this.score = 0;
+                this.correctCount = 0;
+                this.wrongCount = 0;
+                this.timerInterval = null;
+                this.timeLeft = 30;
+                this.selectedAnswer = null;
+                this.hasAnswered = false;
+
+                // Load users from localStorage
+                this.usersDb = JSON.parse(localStorage.getItem('math_kids_users_v2') || '{}');
+            }
+
+            init() {
+                this.renderTopics();
+                this.checkExistingSession();
+            }
+
+            checkExistingSession() {
+                const savedUser = localStorage.getItem('math_kids_current_user_v2');
+                if (savedUser && this.usersDb[savedUser]) {
+                    this.currentUser = this.usersDb[savedUser];
+                    this.showScreen('home');
+                    this.updateUserUI();
+                } else {
+                    this.showScreen('auth');
+                }
+            }
+
+            updateUserUI() {
+                if (!this.currentUser) return;
+                document.getElementById('user-pill').classList.remove('hidden');
+                document.getElementById('user-pill').classList.add('flex');
+                document.getElementById('nav-username').innerText = this.currentUser.username;
+                document.getElementById('user-avatar-initial').innerText = this.currentUser.username.charAt(0).toUpperCase();
+                document.getElementById('welcome-player-msg').innerText = `Hai, ${this.currentUser.fullname || this.currentUser.username}!`;
+            }
+
+            showScreen(screenId) {
+                document.querySelectorAll('.view-screen').forEach(el => el.classList.add('hidden'));
+                const target = document.getElementById(`screen-${screenId}`);
+                if (target) {
+                    target.classList.remove('hidden');
+                    window.scrollTo(0, 0);
+                }
+
+                if (screenId === 'progress') this.renderProgressScreen();
+                if (screenId === 'leaderboard') this.renderLeaderboardScreen();
+                if (screenId === 'profile') this.renderProfileScreen();
+            }
+
+            switchAuthTab(tab) {
+                const loginBtn = document.getElementById('tab-login-btn');
+                const regBtn = document.getElementById('tab-register-btn');
+                const loginForm = document.getElementById('form-login');
+                const regForm = document.getElementById('form-register');
+
+                if (tab === 'login') {
+                    loginBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-600 shadow-sm";
+                    regBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-gray-500 hover:text-gray-800";
+                    loginForm.classList.remove('hidden');
+                    regForm.classList.add('hidden');
+                } else {
+                    regBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-600 shadow-sm";
+                    loginBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-gray-500 hover:text-gray-800";
+                    regForm.classList.remove('hidden');
+                    loginForm.classList.add('hidden');
+                }
+            }
+
+            handleLogin(e) {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value.trim();
+                const pass = document.getElementById('login-password').value;
+
+                if (!this.usersDb[username]) {
+                    this.showCustomModal("Ralat Log Masuk", "Nama pengguna tidak ditemui. Sila daftar akaun baru.");
+                    return;
+                }
+                if (this.usersDb[username].password !== pass) {
+                    this.showCustomModal("Ralat Log Masuk", "Kata laluan salah. Sila cuba lagi.");
+                    return;
+                }
+
+                this.currentUser = this.usersDb[username];
+                localStorage.setItem('math_kids_current_user_v2', username);
+                this.updateUserUI();
+                this.showScreen('home');
+            }
+
+            handleRegister(e) {
+                e.preventDefault();
+                const fullname = document.getElementById('reg-fullname').value.trim();
+                const username = document.getElementById('reg-username').value.trim();
+                const pass = document.getElementById('reg-password').value;
+
+                if (this.usersDb[username]) {
+                    this.showCustomModal("Ralat Pendaftaran", "Nama pengguna telah wujud. Sila pilih nama lain.");
+                    return;
+                }
+
+                this.usersDb[username] = {
+                    username: username,
+                    fullname: fullname,
+                    password: pass,
+                    sessions: 0,
+                    history: [],
+                    highScores: { 1: 0, 2: 0, 3: 0, 4: 0 },
+                    totalQAnswered: 0,
+                    totalCorrect: 0
+                };
+
+                localStorage.setItem('math_kids_users_v2', JSON.stringify(this.usersDb));
+                this.currentUser = this.usersDb[username];
+                localStorage.setItem('math_kids_current_user_v2', username);
+                this.updateUserUI();
+                this.showScreen('home');
+            }
+
+            logout() {
+                this.currentUser = null;
+                localStorage.removeItem('math_kids_current_user_v2');
+                document.getElementById('user-pill').classList.remove('flex');
+                document.getElementById('user-pill').classList.add('hidden');
+                this.showScreen('auth');
+            }
+
+            renderTopics() {
+                const container = document.getElementById('topics-grid');
+                container.innerHTML = TOPICS_DATA.map(t => `
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-indigo-100 flex flex-col justify-between hover:shadow-lg transition group">
+                        <div>
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr ${t.color} text-white flex items-center justify-center text-2xl mb-4 shadow-md group-hover:scale-105 transition">
+                                <i class="fa-solid ${t.icon}"></i>
+                            </div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Topik ${t.id}</span>
+                            <h3 class="font-extrabold text-lg text-gray-900 mt-2 mb-2">${t.name}</h3>
+                            <p class="text-xs text-gray-500 mb-6">${t.desc}</p>
+                        </div>
+                        <button onclick="app.selectTopic(${t.id})" class="w-full py-3 bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white font-bold rounded-2xl text-xs transition flex items-center justify-center space-x-2">
+                            <span>PILIH TOPIK INI</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            selectTopic(topicId) {
+                this.currentTopicId = topicId;
+                const topic = TOPICS_DATA.find(t => t.id === topicId);
+                document.getElementById('config-topic-badge').innerText = `Topik ${topicId}`;
+                document.getElementById('config-topic-title').innerText = topic.name;
+                this.showScreen('config');
+            }
+
+            setDifficulty(diff) {
+                this.currentDifficulty = diff;
+                document.querySelectorAll('.diff-btn').forEach(btn => {
+                    btn.className = "diff-btn p-3 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition hover:border-indigo-300";
+                });
+                const activeBtn = document.getElementById(`btn-diff-${diff.toLowerCase()}`);
+                if (diff === 'Senang') activeBtn.className = "diff-btn p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition";
+                if (diff === 'Sederhana') activeBtn.className = "diff-btn p-3 rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-800 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition";
+                if (diff === 'Susah') activeBtn.className = "diff-btn p-3 rounded-xl border-2 border-red-500 bg-red-50 text-red-800 font-bold text-xs flex flex-col items-center justify-center space-y-1 transition";
+            }
+
+            setTimerMode(sec) {
+                this.timerSecondsMode = sec;
+                document.querySelectorAll('.timer-btn').forEach(btn => {
+                    btn.className = "timer-btn p-3 rounded-xl border-2 border-gray-200 bg-white text-gray-700 font-bold text-xs flex items-center justify-center space-x-2 transition hover:border-indigo-300";
+                });
+                const activeBtn = document.getElementById(`btn-timer-${sec}`);
+                activeBtn.className = "timer-btn p-3 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-800 font-bold text-xs flex items-center justify-center space-x-2 transition";
+            }
+
+            startQuizSession() {
+                const topicBank = this.questionsBank[this.currentTopicId][this.currentDifficulty];
+                this.activeQuestions = shuffleArray([...topicBank]).slice(0, 20);
+                this.currentIndex = 0;
+                this.score = 0;
+                this.correctCount = 0;
+                this.wrongCount = 0;
+
+                this.showScreen('game');
+                this.loadQuestion();
+            }
+
+            loadQuestion() {
+                if (this.currentIndex >= this.activeQuestions.length) {
+                    this.endSession();
+                    return;
+                }
+
+                this.hasAnswered = false;
+                this.selectedAnswer = null;
+                const q = this.activeQuestions[this.currentIndex];
+
+                document.getElementById('game-topic-tag').innerText = `Topik ${this.currentTopicId}`;
+                document.getElementById('game-diff-tag').innerText = this.currentDifficulty;
+                document.getElementById('game-q-num').innerText = this.currentIndex + 1;
+                document.getElementById('game-score').innerText = this.score;
+                document.getElementById('game-cog-tag').innerText = q.aras_kognitif;
+                document.getElementById('game-qid-tag').innerText = q.id;
+                document.getElementById('question-text').innerText = q.soalan;
+
+                this.renderExpertPreciseSvgDiagram(q.gambarajah);
+
+                const ansContainer = document.getElementById('answers-container');
+                ansContainer.innerHTML = q.pilihan_jawapan.map((opt, idx) => `
+                    <button onclick="app.selectOption('${opt.replace(/'/g, "\\'")}')" id="opt-btn-${idx}" class="option-btn p-4 rounded-2xl border-2 border-gray-200 bg-white text-gray-800 font-bold text-sm md:text-base text-left hover:border-indigo-500 hover:bg-indigo-50/50 transition flex items-center justify-between">
+                        <span>${opt}</span>
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs opt-radio"></div>
+                    </button>
+                `).join('');
+
+                document.getElementById('action-btn-container').classList.remove('hidden');
+                document.getElementById('feedback-box').classList.add('hidden');
+
+                if (this.timerSecondsMode > 0) {
+                    document.getElementById('timer-box').classList.remove('hidden');
+                    this.timeLeft = this.timerSecondsMode;
+                    document.getElementById('game-timer').innerText = this.timeLeft;
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = setInterval(() => {
+                        this.timeLeft--;
+                        document.getElementById('game-timer').innerText = this.timeLeft;
+                        if (this.timeLeft <= 0) {
+                            clearInterval(this.timerInterval);
+                            this.handleTimeout();
+                        }
+                    }, 1000);
+                } else {
+                    document.getElementById('timer-box').classList.add('hidden');
+                }
+            }
+
+            renderExpertPreciseSvgDiagram(diag) {
+                const container = document.getElementById('diagram-container');
+                if (!diag) {
+                    container.innerHTML = `<span class="text-xs text-gray-400 font-medium">Soalan Teori & Konsep Matematik</span>`;
+                    return;
+                }
+
+                let svgHtml = '';
+
+                if (diag.type === 'expert_angle') {
+                    let deg = diag.val;
+                    let vx = 70, vy = 100;
+                    let len = 90;
+                    let rad = (deg * Math.PI) / 180;
+                    
+                    let bx = vx + len * Math.cos(-rad);
+                    let by = vy + len * Math.sin(-rad);
+                    
+                    let arcR = 32;
+                    let arcX = vx + arcR * Math.cos(-rad);
+                    let arcY = vy + arcR * Math.sin(-rad);
+                    let largeArc = deg > 180 ? 1 : 0;
+                    let sweepFlag = 0;
+
+                    let labelRad = rad / 2;
+                    let labelDist = 48;
+                    let labelX = vx + labelDist * Math.cos(-labelRad);
+                    let labelY = vy + labelDist * Math.sin(-labelRad);
+
+                    svgHtml = `
+                        <svg width="240" height="140" viewBox="0 0 240 140" class="mx-auto">
+                            <line x1="20" y1="100" x2="220" y2="100" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4,4"/>
+                            <line x1="${vx}" y1="${vy}" x2="190" y2="${vy}" stroke="#4f46e5" stroke-width="3.5" stroke-linecap="round"/>
+                            <text x="185" y="118" font-size="11" font-weight="bold" fill="#4f46e5">A (0°)</text>
+                            <line x1="${vx}" y1="${vy}" x2="${bx}" y2="${by}" stroke="#6366f1" stroke-width="3.5" stroke-linecap="round"/>
+                            <text x="${bx + 8}" y="${by + 4}" font-size="11" font-weight="bold" fill="#6366f1">B</text>
+                            <circle cx="${vx}" cy="${vy}" r="5" fill="#312e81"/>
+                            <text x="${vx - 12}" y="${vy + 18}" font-size="11" font-weight="extrabold" fill="#312e81">O</text>
+                            <path d="M ${vx + arcR} ${vy} A ${arcR} ${arcR} 0 ${largeArc} ${sweepFlag} ${arcX} ${arcY}" fill="none" stroke="#ec4899" stroke-width="3"/>
+                            <text x="${labelX - 10}" y="${labelY - 5}" font-size="13" font-weight="black" fill="#ec4899">${deg}°</text>
+                        </svg>
+                    `;
+                } else if (diag.type === 'expert_complement') {
+                    svgHtml = `
+                        <svg width="240" height="140" viewBox="0 0 240 140" class="mx-auto">
+                            <rect x="70" y="40" width="40" height="40" fill="none" stroke="#6366f1" stroke-width="2"/>
+                            <polyline points="70,80 110,80 110,40" fill="none" stroke="#4f46e5" stroke-width="3"/>
+                            <line x1="70" y1="80" x2="135" y2="35" stroke="#ec4899" stroke-width="3"/>
+                            <text x="115" y="65" font-size="11" font-weight="bold" fill="#ec4899">${diag.a1}°</text>
+                            <text x="80" y="70" font-size="11" font-weight="bold" fill="#4f46e5">x°</text>
+                            <text x="65" y="105" font-size="11" font-weight="bold" fill="#3730a3">Sudut Tegak 90°</text>
+                        </svg>
+                    `;
+                } else if (diag.type === 'expert_straight_line_angles') {
+                    svgHtml = `
+                        <svg width="300" height="120" viewBox="0 0 300 120" class="mx-auto">
+                            <line x1="20" y1="80" x2="280" y2="80" stroke="#3730a3" stroke-width="3.5"/>
+                            <circle cx="110" cy="80" r="4" fill="#3730a3"/>
+                            <circle cx="200" cy="80" r="4" fill="#3730a3"/>
+                            <line x1="110" y1="80" x2="${110 + 60 * Math.cos(-diag.a1 * Math.PI / 180)}" y2="${80 + 60 * Math.sin(-diag.a1 * Math.PI / 180)}" stroke="#4f46e5" stroke-width="3"/>
+                            <line x1="200" y1="80" x2="200" y2="20" stroke="#4f46e5" stroke-width="3"/>
+                            <text x="70" y="70" font-size="11" font-weight="bold" fill="#4f46e5">${diag.a1}°</text>
+                            <text x="140" y="65" font-size="11" font-weight="bold" fill="#f59e0b">${diag.a2}°</text>
+                            <text x="220" y="70" font-size="11" font-weight="bold" fill="#10b981">k°</text>
+                        </svg>
+                    `;
+                } else if (diag.type === 'polygon_angle') {
+                    let sides = diag.sides;
+                    let R = 55;
+                    let cx = 80, cy = 75;
+                    let pts = [];
+                    for (let s = 0; s < sides; s++) {
+                        let angle = (s * 2 * Math.PI) / sides - Math.PI / 2;
+                        pts.push(`${cx + R * Math.cos(angle)},${cy + R * Math.sin(angle)}`);
+                    }
+                    svgHtml = `
+                        <svg width="160" height="150" viewBox="0 0 160 150" class="mx-auto">
+                            <polygon points="${pts.join(' ')}" fill="#e0e7ff" stroke="#4f46e5" stroke-width="3"/>
+                            <circle cx="${cx}" cy="${cy}" r="3" fill="#3730a3"/>
+                            <text x="20" y="140" font-size="11" font-weight="bold" fill="#3730a3">${diag.name} (${diag.angle})</text>
+                        </svg>
+                    `;
+                } else if (diag.type === 'polygon_ext') {
+                    svgHtml = `
+                        <svg width="160" height="150" viewBox="0 0 160 150" class="mx-auto">
+                            <polygon points="80,20 130,45 130,105 80,130 30,105 30,45" fill="#ede9fe" stroke="#7c3aed" stroke-width="3"/>
+                            <line x1="130" y1="45" x2="155" y2="30" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="3,3"/>
+                            <text x="95" y="18" font-size="10" font-weight="bold" fill="#ef4444">Peluaran: ${diag.extAngle}</text>
+                            <text x="28" y="142" font-size="10" font-weight="bold" fill="#5b21b6">Heksagon Sekata</text>
+                        </svg>
+                    `;
+                } else if (diag.type === 'polygon') {
+                    let sides = diag.sides;
+                    let R = 55;
+                    let cx = 80, cy = 75;
+                    let pts = [];
+                    for (let s = 0; s < sides; s++) {
+                        let angle = (s * 2 * Math.PI) / sides - Math.PI / 2;
+                        pts.push(`${cx + R * Math.cos(angle)},${cy + R * Math.sin(angle)}`);
+                    }
+                    svgHtml = `
+                        <svg width="160" height="150" viewBox="0 0 160 150" class="mx-auto">
+                            <polygon points="${pts.join(' ')}" fill="#e0e7ff" stroke="#4f46e5" stroke-width="3"/>
+                            <circle cx="${cx}" cy="${cy}" r="3" fill="#3730a3"/>
+                            <text x="20" y="140" font-size="11" font-weight="bold" fill="#3730a3">${diag.name} ${diag.sideLen ? '('+diag.sideLen+')' : ''}</text>
+                        </svg>
+                    `;
+                } else if (diag.type === 'circle') {
+                    let textInfo = diag.show === 'radius' ? `Jejari r = ${diag.r} cm` : diag.show === 'diameter' ? `Diameter d = ${diag.d} cm` : `Jejari r = ${diag.r} cm`;
+                    let lineSvg = diag.show === 'diameter' 
+                        ? `<line x1="15" y1="70" x2="125" y2="70" stroke="#ef4444" stroke-width="2.5"/><circle cx="15" cy="70" r="3" fill="#ef4444"/><circle cx="125" cy="70" r="3" fill="#ef4444"/>`
+                        : `<line x1="70" y1="70" x2="125" y2="70" stroke="#ef4444" stroke-width="2.5"/><circle cx="125" cy="70" r="3" fill="#ef4444"/>`;
+                    svgHtml = `
+                        <svg width="140" height="140" viewBox="0 0 140 140" class="mx-auto">
+                            <circle cx="70" cy="70" r="52" fill="none" stroke="#10b981" stroke-width="3"/>
+                            <circle cx="70" cy="70" r="4" fill="#047857"/>
+                            ${lineSvg}
+                            <text x="18" y="132" font-size="10" font-weight="bold" fill="#047857">${textInfo}</text>
+                        </svg>
+                    `;
+                } else if (diag.type === 'clock') {
+                    let hourDeg = diag.hour * 30;
+                    let rad = (hourDeg * Math.PI) / 180;
+                    let hx = 70 + 35 * Math.sin(rad);
+                    let hy = 70 - 35 * Math.cos(rad);
+                    svgHtml = `
+                        <svg width="140" height="140" viewBox="0 0 140 140" class="mx-auto">
+                            <circle cx="70" cy="70" r="55" fill="#fff" stroke="#4f46e5" stroke-width="3"/>
+                            <circle cx="70" cy="70" r="3" fill="#3730a3"/>
+                            <line x1="70" y1="70" x2="70" y2="25" stroke="#3730a3" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="70" y1="70" x2="${hx}" y2="${hy}" stroke="#ec4899" stroke-width="3.5" stroke-linecap="round"/>
+                            <text x="30" y="128" font-size="10" font-weight="bold" fill="#3730a3">Pukul ${diag.hour}:00 (${diag.angleVal})</text>
+                        </svg>
+                    `;
+                } else if (diag.type === 'bike_wheel') {
+                    svgHtml = `
+                        <svg width="140" height="140" viewBox="0 0 140 140" class="mx-auto">
+                            <circle cx="70" cy="70" r="55" fill="none" stroke="#f59e0b" stroke-width="4"/>
+                            <circle cx="70" cy="70" r="8" fill="#d97706"/>
+                            <line x1="70" y1="70" x2="125" y2="70" stroke="#d97706" stroke-width="2.5"/>
+                            <text x="18" y="130" font-size="10" font-weight="bold" fill="#f59e0b">Roda Basikal (r = ${diag.r}cm)</text>
+                        </svg>
+                    `;
+                }
+
+                container.innerHTML = svgHtml;
+            }
+
+            selectOption(opt) {
+                if (this.hasAnswered) return;
+                this.selectedAnswer = opt;
+                
+                const q = this.activeQuestions[this.currentIndex];
+                q.pilihan_jawapan.forEach((ans, idx) => {
+                    const btn = document.getElementById(`opt-btn-${idx}`);
+                    if (ans === opt) {
+                        btn.className = "option-btn p-4 rounded-2xl border-2 border-indigo-600 bg-indigo-50 text-indigo-900 font-bold text-sm md:text-base text-left transition flex items-center justify-between shadow-sm";
+                        btn.querySelector('.opt-radio').className = "w-6 h-6 rounded-full border-2 border-indigo-600 bg-indigo-600 text-white flex items-center justify-center text-xs opt-radio fa-solid fa-check";
+                    } else {
+                        btn.className = "option-btn p-4 rounded-2xl border-2 border-gray-200 bg-white text-gray-800 font-bold text-sm md:text-base text-left hover:border-indigo-500 hover:bg-indigo-50/50 transition flex items-center justify-between";
+                        btn.querySelector('.opt-radio').className = "w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs opt-radio";
+                    }
+                });
+            }
+
+            submitAnswer() {
+                if (this.hasAnswered) return;
+                if (!this.selectedAnswer) {
+                    this.showCustomModal("Sila Pilih Jawapan", "Sila pilih salah satu pilihan jawapan sebelum menekan butang Jawab.");
+                    return;
+                }
+
+                this.hasAnswered = true;
+                clearInterval(this.timerInterval);
+
+                const q = this.activeQuestions[this.currentIndex];
+                const isCorrect = (this.selectedAnswer === q.jawapan_betul);
+
+                const feedbackBox = document.getElementById('feedback-box');
+                feedbackBox.classList.remove('hidden');
+                document.getElementById('action-btn-container').classList.add('hidden');
+
+                if (isCorrect) {
+                    this.score += 5;
+                    this.correctCount++;
+                    document.getElementById('game-score').innerText = this.score;
+                    feedbackBox.className = "rounded-2xl p-5 shadow-lg border bg-emerald-50 border-emerald-200 animate-fadeIn";
+                    document.getElementById('feedback-icon').innerHTML = "🎉";
+                    document.getElementById('feedback-title').className = "font-black text-base md:text-lg mb-1 text-emerald-800";
+                    document.getElementById('feedback-title').innerText = "TAHNIAH! JAWAPAN BETUL! (+5 Markah)";
+                    document.getElementById('feedback-desc').innerText = q.penerangan;
+                } else {
+                    this.wrongCount++;
+                    feedbackBox.className = "rounded-2xl p-5 shadow-lg border bg-red-50 border-red-200 animate-fadeIn";
+                    document.getElementById('feedback-icon').innerHTML = "❌";
+                    document.getElementById('feedback-title').className = "font-black text-base md:text-lg mb-1 text-red-800";
+                    document.getElementById('feedback-title').innerText = "CUBA LAGI! JAWAPAN KURANG TEPAT";
+                    document.getElementById('feedback-desc').innerHTML = `Jawapan betul ialah: <strong class="text-indigo-700">${q.jawapan_betul}</strong><br>${q.penerangan}`;
+                }
+
+                q.pilihan_jawapan.forEach((ans, idx) => {
+                    const btn = document.getElementById(`opt-btn-${idx}`);
+                    if (ans === q.jawapan_betul) {
+                        btn.className = "option-btn p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-100 text-emerald-900 font-bold text-sm md:text-base text-left flex items-center justify-between";
+                    } else if (ans === this.selectedAnswer && !isCorrect) {
+                        btn.className = "option-btn p-4 rounded-2xl border-2 border-red-500 bg-red-100 text-red-900 font-bold text-sm md:text-base text-left flex items-center justify-between";
+                    }
+                });
+            }
+
+            handleTimeout() {
+                if (this.hasAnswered) return;
+                this.selectedAnswer = "__TIMEOUT__";
+                this.submitAnswer();
+            }
+
+            nextQuestion() {
+                this.currentIndex++;
+                this.loadQuestion();
+            }
+
+            endSession() {
+                if (this.currentUser) {
+                    this.currentUser.sessions = (this.currentUser.sessions || 0) + 1;
+                    this.currentUser.totalQAnswered = (this.currentUser.totalQAnswered || 0) + 20;
+                    this.currentUser.totalCorrect = (this.currentUser.totalCorrect || 0) + this.correctCount;
+                    
+                    if (this.score > (this.currentUser.highScores[this.currentTopicId] || 0)) {
+                        this.currentUser.highScores[this.currentTopicId] = this.score;
+                    }
+
+                    this.usersDb[this.currentUser.username] = this.currentUser;
+                    localStorage.setItem('math_kids_users_v2', JSON.stringify(this.usersDb));
+                    localStorage.setItem('math_kids_current_user_v2', this.currentUser.username);
+                }
+
+                document.getElementById('sum-score').innerText = `${this.score} / 100`;
+                document.getElementById('sum-percent').innerText = `${this.score}%`;
+                document.getElementById('sum-correct').innerText = this.correctCount;
+                document.getElementById('sum-wrong').innerText = this.wrongCount;
+                document.getElementById('sum-diff').innerText = this.currentDifficulty;
+
+                let badge = "MASTER RUANG";
+                if (this.currentTopicId === 1) badge = "🏆 MASTER SUDUT";
+                if (this.currentTopicId === 2) badge = "🏆 MASTER POLIGON";
+                if (this.currentTopicId === 3) badge = "🏆 MASTER BULATAN";
+                if (this.currentTopicId === 4) badge = "🏆 MASTER PENYELESAIAN MASALAH";
+                document.getElementById('sum-badge').innerText = badge;
+
+                this.showScreen('summary');
+            }
+
+            restartSession() {
+                this.startQuizSession();
+            }
+
+            renderProgressScreen() {
+                if (!this.currentUser) return;
+                document.getElementById('prog-name').innerText = this.currentUser.fullname || this.currentUser.username;
+                document.getElementById('prog-avatar').innerText = (this.currentUser.fullname || this.currentUser.username).charAt(0).toUpperCase();
+
+                document.getElementById('stat-total-q').innerText = this.currentUser.totalQAnswered || 0;
+                document.getElementById('stat-correct-q').innerText = this.currentUser.totalCorrect || 0;
+                
+                let maxHighScore = Math.max(...Object.values(this.currentUser.highScores || {0:0}));
+                document.getElementById('stat-high-score').innerText = maxHighScore;
+
+                const container = document.getElementById('progress-bars-container');
+                container.innerHTML = TOPICS_DATA.map(t => {
+                    let score = (this.currentUser.highScores && this.currentUser.highScores[t.id]) || 0;
+                    let percent = score; 
+                    let filledBlocks = Math.round(percent / 10);
+                    let emptyBlocks = 10 - filledBlocks;
+                    let blockStr = '█'.repeat(filledBlocks) + '░'.repeat(emptyBlocks);
+
+                    return `
+                        <div class="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100">
+                            <div class="flex justify-between items-center mb-1 text-xs font-bold text-gray-800">
+                                <span>${t.name}</span>
+                                <span class="text-indigo-600">${percent}%</span>
+                            </div>
+                            <div class="text-xs font-mono text-indigo-500 mb-2">${blockStr}</div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-indigo-600 h-2.5 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderLeaderboardScreen() {
+                const listContainer = document.getElementById('leaderboard-list');
+                let usersArr = Object.values(this.usersDb);
+
+                usersArr.sort((a, b) => {
+                    let maxA = Math.max(...Object.values(a.highScores || {0:0}));
+                    let maxB = Math.max(...Object.values(b.highScores || {0:0}));
+                    return maxB - maxA;
+                });
+
+                if (usersArr.length === 0) {
+                    listContainer.innerHTML = `<p class="text-center text-xs text-gray-400 py-6">Belum ada rekod pemain dalam sistem.</p>`;
+                    return;
+                }
+
+                listContainer.innerHTML = usersArr.map((u, idx) => {
+                    let maxScore = Math.max(...Object.values(u.highScores || {0:0}));
+                    let medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+                    return `
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-indigo-50/50 transition">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-base font-black w-8 text-center">${medal}</span>
+                                <div>
+                                    <h4 class="font-extrabold text-sm text-gray-900">${u.fullname || u.username}</h4>
+                                    <p class="text-xs text-gray-500">@${u.username} • Sesi dimainkan: ${u.sessions || 0}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-black text-indigo-600">${maxScore} markah</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderProfileScreen() {
+                if (!this.currentUser) return;
+                document.getElementById('profile-fullname').innerText = this.currentUser.fullname || this.currentUser.username;
+                document.getElementById('profile-username').innerText = `@${this.currentUser.username}`;
+                document.getElementById('profile-avatar-big').innerText = (this.currentUser.fullname || this.currentUser.username).charAt(0).toUpperCase();
+                document.getElementById('profile-sessions').innerText = this.currentUser.sessions || 0;
+            }
+
+            toggleOrientation() {
+                const label = document.getElementById('orientation-label');
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                    if (label) label.innerText = "Landscape/Portrait";
+                } else {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                    if (label) label.innerText = "Skrin Penuh (Aktif)";
+                }
+            }
+
+            showCustomModal(title, message) {
+                const modalId = 'custom-modal-alert';
+                let existing = document.getElementById(modalId);
+                if (existing) existing.remove();
+
+                const modalHTML = `
+                    <div id="${modalId}" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+                        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl text-center border border-indigo-50">
+                            <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-xl mb-3">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </div>
+                            <h3 class="font-black text-base text-gray-900 mb-2">${title}</h3>
+                            <p class="text-xs text-gray-600 mb-6 leading-relaxed">${message}</p>
+                            <button onclick="document.getElementById('${modalId}').remove()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-md transition">
+                                OK, FAHAM
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+            }
+        }
+
+        const app = new MathKidsApp();
+        window.onload = function() {
+            app.init();
+        };
+    </script>
+</body>
+</html>

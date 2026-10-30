@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Kids Bernama Edu Kidz — Tahun 4: Nombor dan Operasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #fef3c7 50%, #dcfce7 100%);
+            min-height: 100vh;
+            user-select: none;
+        }
+        .font-game {
+            font-family: 'Fredoka One', cursive;
+        }
+        .card-bounce {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .card-bounce:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+        .btn-game {
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+            transition: all 0.1s ease;
+        }
+        .btn-game:active {
+            box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+            transform: translateY(4px);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body class="p-2 md:p-6 text-slate-800">
+
+    <div id="app" class="max-w-6xl mx-auto">
+        <!-- Main Top Header -->
+        <header class="glass-panel rounded-3xl p-4 mb-6 shadow-xl flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="renderView('HOME')">
+                <div class="bg-gradient-to-tr from-blue-600 to-indigo-500 text-white p-3 rounded-2xl shadow-md text-2xl flex items-center justify-center">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-game text-xl sm:text-2xl text-blue-900 tracking-wide">MATH KIDS <span class="text-amber-500">BERNAMA EDU KIDZ</span></h1>
+                    <p class="text-xs font-semibold text-slate-500"><i class="fa-solid fa-book-open text-emerald-500 mr-1"></i> Standard DSKP KPM Tahun 4: Nombor Hingga 100 000</p>
+                </div>
+            </div>
+
+            <!-- User Info Widget Header -->
+            <div id="userHeaderWidget" class="flex items-center gap-3 bg-white/80 p-2 px-4 rounded-2xl border border-slate-200 cursor-pointer" onclick="renderView('PROGRESS')">
+                <div class="w-10 h-10 rounded-full bg-amber-400 text-amber-900 flex items-center justify-center font-bold text-lg border-2 border-white shadow">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-500">Pemain:</div>
+                    <div id="headerUserName" class="font-bold text-slate-800 text-sm">Tetamu</div>
+                </div>
+                <div class="border-l border-slate-300 pl-3 ml-2 flex gap-3 text-xs">
+                    <div>
+                        <span class="block text-slate-400">Markah</span>
+                        <span id="headerTotalScore" class="font-game text-emerald-600 text-sm">0</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main id="mainContainer" class="relative">
+            <!-- Dynamic Views render here -->
+        </main>
+    </div>
+
+    <script>
+        const state = {
+            currentUser: null,
+            users: JSON.parse(localStorage.getItem('mke_users')) || {},
+            currentSession: {
+                topic: 1,
+                difficulty: 'SENANG', // SENANG, SEDERHANA, SUSAH
+                gameType: 'OBJEKTIF',
+                timeLimit: 60, // 30, 60, 0 (Unlimited)
+                currentQuestionIndex: 0,
+                score: 0,
+                correctCount: 0,
+                wrongCount: 0,
+                questions: [],
+                userAnswers: [],
+                timer: null,
+                timeLeft: 60,
+                startTime: null
+            }
+        };
+
+        // Topics Database aligned with DSKP KPM Year 4 Mathematics
+        const TOPICS = [
+            { id: 1, title: 'Nilai Tempat & Nilai Digit', icon: 'fa-cubes', color: 'bg-blue-500' },
+            { id: 2, title: 'Banding & Susun Nombor', icon: 'fa-arrow-up-1-9', color: 'bg-emerald-500' },
+            { id: 3, title: 'Nombor Genap & Nombor Ganjil', icon: 'fa-list-ol', color: 'bg-purple-500' },
+            { id: 4, title: 'Anggaran & Pembundaran', icon: 'fa-bullseye', color: 'bg-amber-500' },
+            { id: 5, title: 'Tambah & Anu Dalam Tambah', icon: 'fa-plus-circle', color: 'bg-rose-500' },
+            { id: 6, title: 'Tolak & Anu Dalam Tolak', icon: 'fa-minus-circle', color: 'bg-indigo-500' },
+            { id: 7, title: 'Operasi Darab', icon: 'fa-xmark', color: 'bg-teal-500' },
+            { id: 8, title: 'Operasi Bahagi', icon: 'fa-divide', color: 'bg-orange-500' },
+            { id: 9, title: 'Penyelesaian Masalah Harian', icon: 'fa-brain', color: 'bg-pink-500' }
+        ];
+
+        // Utility: Shuffle array elements
+        function shuffleArray(arr) {
+            const array = [...arr];
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Helper: Generate array of unique digits to prevent duplicate digits in Topic 1 questions
+        function generateUniqueDigits(seed) {
+            let pool = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            pool = shuffleArray(pool);
+            let digits = pool.slice(0, 5);
+            digits[0] = (digits[0] + seed) % 9 + 1;
+            let uniqueSet = Array.from(new Set(digits));
+            while (uniqueSet.length < 5) {
+                let extra = Math.floor(Math.random() * 9) + 1;
+                if (!uniqueSet.includes(extra)) {
+                    uniqueSet.push(extra);
+                }
+            }
+            return uniqueSet.slice(0, 5);
+        }
+
+        function generateQuestionBank() {
+            const bank = {};
+            const fmt = num => num.toLocaleString('ms-MY');
+
+            TOPICS.forEach(top => {
+                bank[top.id] = { SENANG: [], SEDERHANA: [], SUSAH: [] };
+
+                for (let difficulty of ['SENANG', 'SEDERHANA', 'SUSAH']) {
+                    for (let i = 1; i <= 20; i++) {
+                        let q = {};
+                        const qId = `KPM_T4_${top.id}_${difficulty.substring(0,3)}_${String(i).padStart(3, '0')}`;
+                        
+                        switch(top.id) {
+                            case 1: // Nilai Tempat & Nilai Digit
+                                if (difficulty === 'SENANG') {
+                                    const places = ['Sa', 'Puluh', 'Ratus', 'Ribu', 'Puluh ribu'];
+                                    const digits = generateUniqueDigits(i);
+                                    const idx = (i % 3) + 2;
+                                    const val = digits[4]*10000 + digits[3]*1000 + digits[2]*100 + digits[1]*10 + digits[0];
+                                    const targetDigit = digits[idx];
+                                    const correctPlace = places[idx];
+
+                                    q = {
+                                        id: qId, topik: top.title, subtopik: 'Nilai Tempat', tahap: difficulty,
+                                        aras_kognitif: 'Mengingat', jenis: 'objektif',
+                                        soalan: `Apakah <b>nilai tempat</b> bagi digit <u class="text-blue-600 font-bold">${targetDigit}</u> dalam nombor <b>${fmt(val)}</b>?`,
+                                        pilihan: shuffleArray(['Puluh ribu', 'Ribu', 'Ratus', 'Puluh', 'Sa']),
+                                        jawapan: correctPlace, markah: 5,
+                                        penerangan: `Dalam nombor ${fmt(val)}, kedudukan digit ${targetDigit} berada pada nilai tempat ${correctPlace}.`
+                                    };
+                                } else if (difficulty === 'SEDERHANA') {
+                                    const digits = generateUniqueDigits(i + 5);
+                                    const val = digits[4]*10000 + digits[3]*1000 + digits[2]*100 + digits[1]*10 + digits[0];
+                                    const idx = (i % 3) + 1;
+                                    const targetDigit = digits[idx];
+                                    const correctVal = targetDigit * Math.pow(10, idx);
+                                    
+                                    q = {
+                                        id: qId, topik: top.title, subtopik: 'Nilai Digit', tahap: difficulty,
+                                        aras_kognitif: 'Memahami', jenis: 'objektif',
+                                        soalan: `Apakah <b>nilai digit</b> bagi digit <b>${targetDigit}</b> dalam nombor <b>${fmt(val)}</b>?`,
+                                        pilihan: shuffleArray([fmt(correctVal), fmt(targetDigit * 100), fmt(targetDigit * 10000), fmt(targetDigit * 10), fmt(targetDigit)]),
+                                        jawapan: fmt(correctVal), markah: 5,
+                                        penerangan: `Digit ${targetDigit} berada di kedudukannya, maka nilai digitnya ialah ${fmt(correctVal)}.`
+                                    };
+                                } else {
+                                    const digits = generateUniqueDigits(i + 10);
+                                    const d4 = digits[4] * 10000;
+                                    const d3 = digits[3] * 1000;
+                                    const d2 = digits[2] * 100;
+                                    const d1 = digits[1] * 10;
+                                    const d0 = digits[0];
+                                    const val = d4 + d3 + d2 + d1 + d0;
+
+                                    const correct = `${fmt(d4)} + ${fmt(d3)} + ${fmt(d2)} + ${fmt(d1)} + ${d0}`;
+                                    const wrong1 = `${fmt(d4)} + ${fmt(d3/10)} + ${fmt(d2)} + ${fmt(d1)} + ${d0}`;
+                                    const wrong2 = `${fmt(d4/10)} + ${fmt(d3)} + ${fmt(d2)} + ${fmt(d1)} + ${d0}`;
+                                    const wrong3 = `${fmt(d4)} + ${fmt(d3)} + ${fmt(d2*10)} + ${fmt(d1)} + ${d0}`;
+
+                                    q = {
+                                        id: qId, topik: top.title, subtopik: 'Cerakinan Nilai Digit', tahap: difficulty,
+                                        aras_kognitif: 'Mengaplikasi', jenis: 'objektif',
+                                        soalan: `Pilih cerakinan mengikut <b>nilai digit</b> yang betul bagi nombor <b>${fmt(val)}</b>:`,
+                                        pilihan: shuffleArray([correct, wrong1, wrong2, wrong3]),
+                                        jawapan: correct, markah: 5,
+                                        penerangan: `Mencerakin mengikut nilai digit: ${correct}.`
+                                    };
+                                }
+                                break;
+
+                            case 2: // Banding & Susun Nombor
+                                if (difficulty === 'SENANG') {
+                                    const num1 = 45000 + i * 850;
+                                    const num2 = num1 + 420;
+                                    q = {
+                                        id: qId, topik: top.title, subtopik: 'Membanding Nombor', tahap: difficulty,
+                                        aras_kognitif: 'Memahami', jenis: 'objektif',
+                                        soalan: `Pilih hubungan yang betul antara dua nombor berikut:<br><b>${fmt(num1)}</b> _____ <b>${fmt(num2)}</b>`,
+                                        pilihan: ['Lebih kecil daripada', 'Lebih besar daripada', 'Sama dengan', 'Lebih separuh daripada'],
+                                        jawapan: 'Lebih kecil daripada', markah: 5,
+                                        penerangan: `Nombor ${fmt(num1)} mempunyai nilai yang lebih kecil berbanding ${fmt(num2)}.`
+                                    };
+                                } else if (difficulty === 'SEDERHANA') {
+                                    const base = 21000 + i * 530;
+                                    const a = base;
+                                    const b = base + 180;
+                                    const c = base + 450;
+                                    q = {
+                                        id: qId, topik: top.title, subtopik: 'Tertib Menaik', tahap: difficulty,
+                                        aras_kognitif: 'Mengaplikasi', jenis: 'objektif',
+                                        soalan: `Susun kumpulan nombor berikut mengikut <b>TERTIB MENAIK</b>:<br>${fmt(c)}, ${fmt(a)}, ${fmt(b)}`,
+                                        pilihan: shuffleArray([
+                                            `${fmt(a)}, ${fmt(b)}, ${fmt(c)}`,
+                                            `${fmt(c)}, ${fmt(b)}, ${fmt(a)}`,
+                                            `${fmt(b)}, ${fmt(a)}, ${fmt(c)}`,
+                                            `${fmt(a)}, ${fmt(c)}, ${fmt(b)}`
+                                        ]),
+                                        jawapan: `${fmt(a)}, ${fmt(b)}, ${fmt(c)}`, markah: 5,
+                                        penerangan: 'Tertib menaik bermula daripada nombor bernilai paling kecil hingga nombor paling besar.'
+                                    };
+                                } else {
+                                    const start = 80000 - i * 400;
+                                    const step = 350;
+                                    q = {
+                                        id: qId, topik: top.title, subtopik: 'Pola Nombor', tahap: difficulty,
+                                        aras_kognitif: 'Mengaplikasi', jenis: 'objektif',
+                                        soalan: `Apakah nombor yang tertinggal dalam pola nombor tertib menurun ini?<br><b>${fmt(start)}, ${fmt(start - step)}, [ ___ ], ${fmt(start - step*3)}</b>`,
+                                        pilihan: shuffleArray([fmt(start - step*2), fmt(start - step*2 - 100), fmt(start - step*2 + 100), fmt(start - step*3)]),
+                                        jawapan: fmt(start - step*2), markah: 5,
+                                        penerangan: `Pola ini berkurang sebanyak ${step} secara konsisten.`
+                                    };
+                                }
+                                break;
+
+                            case 3: // Nombor Genap & Nombor Ganjil
+                                {
+                                    const val = 12340 + i * 317;
+                                    const isEven = val % 2 === 0;
+                                    q = {
+                                        id: qId, topik: top.title, subtopik: 'Nombor Genap & Ganjil', tahap: difficulty,
+                                        aras_kognitif: 'Memahami', jenis: 'objektif',
+                                        soalan: `Adakah nombor <b>${fmt(val)}</b> merupakan Nombor Genap atau Nombor Ganjil?`,
+                                        pilihan: shuffleArray(['Nombor Genap', 'Nombor Ganjil', 'Nombor Perdana', 'Bukan Nombor Bulat']),
+                                        jawapan: isEven ? 'Nombor Genap' : 'Nombor Ganjil', markah: 5,
+                                        penerangan: `Digit sa bagi ${fmt(val)} ialah ${val % 10}. Nombor berakhir dengan 0,2,4,6,8 ialah Nombor Genap.`
+                                    };
+                                }
+                                break;
+
+                            case 4: // Anggaran & Pembundaran
+                                {
+                                    const rawVal = 34120 + i * 243;
+                                    const roundedRatus = Math.round(rawVal / 100) * 100;
+                                    const roundedRibu = Math.round(rawVal / 1000) * 1000;
+                                    
+                                    if (difficulty === 'SENANG') {
+                                        q = {
+                                            id: qId, topik: top.title, subtopik: 'Pembundaran Ratus', tahap: difficulty,
+                                            aras_kognitif: 'Mengaplikasi', jenis: 'objektif',
+                                            soalan: `Bundarkan nombor <b>${fmt(rawVal)}</b> kepada <b>ratus terdekat</b>.`,
+                                            pilihan: shuffleArray([fmt(roundedRatus), fmt(roundedRatus + 100), fmt(roundedRatus - 100), fmt(roundedRibu)]),
+                                            jawapan: fmt(roundedRatus), markah: 5,
+                                            penerangan: `Pembundaran ratus terdekat menghasilkan ${fmt(roundedRatus)}.`
+                                        };
+                                    } else {
+                                        q = {
+                                            id: qId, topik: top.title, subtopik: 'Pembundaran Ribu', tahap: difficulty,
+                                            aras_kognitif: 'Mengaplikasi', jenis: 'objektif',
+                                            soalan: `Bundarkan nombor <b>${fmt(rawVal)}</b> kepada <b>ribu terdekat</b>.`,
+                                            pilihan: shuffleArray([fmt(roundedRibu), fmt(roundedRibu + 1000), fmt(roundedRibu - 1000), fmt(roundedRatus)]),
+                                            jawapan: fmt(roundedRibu), markah: 5,
+                                            penerangan: `Pembundaran ribu terdekat menghasilkan ${fmt(roundedRibu)}.`
+                                        };
+                                    }
+                                }
+                                break;
+
+                            case 5: // Tambah & Anu Dalam Tambah
+                                {
+                                    const a = 24150 + i * 410;
+                                    const b = 13240 + i * 180;
+                                    const sum = a + b;
+                                    if (difficulty === 'SENANG') {
+                                        q = {
+                                            id: qId, topik: top.title, subtopik: 'Penambahan', tahap: difficulty,
+                                            aras_kognitif: 'Mengingat', jenis: 'objektif',
+                                            soalan: `Hitung pengiraan berikut:<br><b>${fmt(a)} + ${fmt(b)} = _____</b>`,
+                                            pilihan: shuffleArray([fmt(sum), fmt(sum + 100), fmt(sum - 100), fmt(sum + 1000)]),
+                                            jawapan: fmt(sum), markah: 5,
+                                            penerangan: `${fmt(a)} + ${fmt(b)} = ${fmt(sum)}.`
+                                        };
+                                    } else {
+                                        q = {
+                                            id: qId, topik: top.title, subtopik: 'Anu Dalam Tambah', tahap: difficulty,
+                                            aras_kognitif: 'Mengaplikasi', jenis: 'objektif',
+                                            soalan: `Cari nilai anu [ <i>k</i> ] dalam ayat matematik berikut:<br><b><i>k</i> + ${fmt(b)} = ${fmt(sum)}</b>`,
+                                            pilihan: shuffleArray([fmt(a), fmt(a + 500), fmt(sum + b), fmt(a - 200)]),
+                                            jawapan: fmt(a), markah: 5,
+                                            penerangan: `Nilai anu <i>k</i> = ${fmt(sum)} − ${fmt(b)} = ${fmt(a)}.`
+                                        };
+                                    }
+                                }
+                                break;
+
+                            case 6: // Tolak & Anu Dalam Tolak
+                                {
+                                    const total = 68900 + i * 550;
+                                    const sub = 24300 + i * 220;
+                                    const diff = total - sub;
+                                    if (difficulty === 'SENANG') {
+                                        q = {
+                                            id: qId, topik: top.title, subtopik: 'Penolakan', tahap: difficulty,
+                                            aras_kognitif: 'Memahami', jenis: 'objektif',
+                                            soalan: `Hitung hasil tolak berikut:<br><b>${fmt(total)} − ${fmt(sub)} = _____</b>`,
+                                            pilihan: shuffleArray([fmt(diff), fmt(diff + 1000), fmt(diff - 100), fmt(total + sub)]),
+                                            jawapan: fmt(diff), markah: 5,
+                                            penerangan: `${fmt(total)} − ${fmt(sub)} = ${fmt(diff)}.`
+                                        };
+                                    } else {
+                                        q = {
+                                            id: qId, topik: top.title, subtopik: 'Anu Dalam Tolak', tahap: difficulty,
+                                            aras_kognitif: 'Mengaplikasi', jenis: 'objektif',
+                                            soalan: `Cari nilai anu [ <i>y</i> ] dalam ayat matematik berikut:<br><b>${fmt(total)} − <i>y</i> = ${fmt(diff)}</b>`,
+                                            pilihan: shuffleArray([fmt(sub), fmt(sub + 300), fmt(total + diff), fmt(sub - 100)]),
+                                            jawapan: fmt(sub), markah: 5,
+                                            penerangan: `Nilai anu <i>y</i> = ${fmt(total)} − ${fmt(diff)} = ${fmt(sub)}.`
+                                        };
+                                    }
+                                }
+                                break;
+
+                            case 7: // Operasi Darab
+                                {
+                                    const m1 = 1234 + i * 85;
+                                    const m2 = (i % 8) + 2;
+                                    const prod = m1 * m2;
+                                    q = {
+                                        id: qId, topik: top.title, subtopik: 'Pendaraban', tahap: difficulty,
+                                        aras_kognitif: 'Mengaplikasi', jenis: 'objektif',
+                                        soalan: `Hitung hasil darab berikut:<br><b>${fmt(m1)} × ${m2} = _____</b>`,
+                                        pilihan: shuffleArray([fmt(prod), fmt(prod + m2), fmt(prod - m1), fmt(prod + 100)]),
+                                        jawapan: fmt(prod), markah: 5,
+                                        penerangan: `${fmt(m1)} × ${m2} = ${fmt(prod)}.`
+                                    };
+                                }
+                                break;
+
+                            case 8: // Operasi Bahagi
+                                {
+                                    const divisor = (i % 7) + 3;
+                                    const quotient = 1200 + i * 65;
+                                    const dividend = quotient * divisor;
+                                    q = {
+                                        id: qId, topik: top.title, subtopik: 'Pembahagian', tahap: difficulty,
+                                        aras_kognitif: 'Mengaplikasi', jenis: 'objektif',
+                                        soalan: `Selesaikan operasi bahagi berikut:<br><b>${fmt(dividend)} ÷ ${divisor} = _____</b>`,
+                                        pilihan: shuffleArray([fmt(quotient), fmt(quotient + 10), fmt(quotient - 5), fmt(dividend - divisor)]),
+                                        jawapan: fmt(quotient), markah: 5,
+                                        penerangan: `${fmt(dividend)} ÷ ${divisor} = ${fmt(quotient)}.`
+                                    };
+                                }
+                                break;
+
+                            case 9: // Penyelesaian Masalah Harian
+                                {
+                                    const itemPrice = 120 + i * 15;
+                                    const count = 8;
+                                    const total = itemPrice * count;
+                                    q = {
+                                        id: qId, topik: top.title, subtopik: 'Penyelesaian Masalah', tahap: difficulty,
+                                        aras_kognitif: 'Mengaplikasi', jenis: 'objektif',
+                                        soalan: `Sebuah sekolah membeli <b>${count} buah</b> komputer ribuan berharga <b>RM${fmt(itemPrice)}</b> setiap satu. Berapakah jumlah keseluruhan bayaran?`,
+                                        pilihan: shuffleArray([`RM${fmt(total)}`, `RM${fmt(itemPrice + count)}`, `RM${fmt(total - 50)}`, `RM${fmt(total + 100)}`]),
+                                        jawapan: `RM${fmt(total)}`, markah: 5,
+                                        penerangan: `RM${fmt(itemPrice)} × ${count} = RM${fmt(total)}.`
+                                    };
+                                }
+                                break;
+                        }
+                        bank[top.id][difficulty].push(q);
+                    }
+                }
+            });
+
+            return bank;
+        }
+
+        const QUESTION_BANK = generateQuestionBank();
+
+        function renderView(viewName, data = {}) {
+            const container = document.getElementById('mainContainer');
+            updateHeaderWidget();
+
+            switch(viewName) {
+                case 'HOME':
+                    container.innerHTML = `
+                        <div class="glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl text-center relative overflow-hidden">
+                            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-amber-300/30 rounded-full blur-2xl"></div>
+                            <div class="inline-block p-4 bg-amber-100 text-amber-600 rounded-full mb-4 animate-bounce">
+                                <i class="fa-solid fa-gamepad text-4xl"></i>
+                            </div>
+                            <h2 class="font-game text-3xl sm:text-5xl text-blue-950 mb-3">Selamat Datang Wira Matematik!</h2>
+                            <p class="text-slate-600 max-w-2xl mx-auto mb-8 text-base sm:text-lg">
+                                Terokai dunia nombor dan operasi Tahun 4 mengikut Silibus KPM secara interaktif! Kumpul mata, tingkatkan kemahiran dan capai kedudukan tertinggi di Leaderboard.
+                            </p>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+                                <button onclick="renderView('GAME_SETUP')" class="btn-game bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-game text-xl p-5 rounded-2xl flex items-center justify-center gap-3 cursor-pointer">
+                                    <i class="fa-solid fa-play text-2xl"></i> Mula Bermain
+                                </button>
+                                <button onclick="renderView('AUTH')" class="btn-game bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-game text-xl p-5 rounded-2xl flex items-center justify-center gap-3 cursor-pointer">
+                                    <i class="fa-solid fa-user-plus text-2xl"></i> Daftar / Log Masuk
+                                </button>
+                                <button onclick="renderView('PROGRESS')" class="btn-game bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-game text-xl p-5 rounded-2xl flex items-center justify-center gap-3 cursor-pointer">
+                                    <i class="fa-solid fa-chart-line text-2xl"></i> Kemajuan Saya
+                                </button>
+                                <button onclick="renderView('LEADERBOARD')" class="btn-game bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-game text-xl p-5 rounded-2xl flex items-center justify-center gap-3 cursor-pointer">
+                                    <i class="fa-solid fa-trophy text-2xl"></i> Leaderboard
+                                </button>
+                                <button onclick="renderView('GUIDE')" class="btn-game bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-game text-xl p-5 rounded-2xl flex items-center justify-center gap-3 cursor-pointer">
+                                    <i class="fa-solid fa-book text-2xl"></i> Panduan Permainan
+                                </button>
+                                ${state.currentUser ? `
+                                    <button onclick="logoutUser()" class="btn-game bg-slate-600 hover:bg-slate-700 text-white font-game text-xl p-5 rounded-2xl flex items-center justify-center gap-3 cursor-pointer">
+                                        <i class="fa-solid fa-right-from-bracket text-2xl"></i> Log Keluar
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'GAME_SETUP':
+                    container.innerHTML = `
+                        <div class="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl">
+                            <h2 class="font-game text-3xl text-blue-900 mb-6 text-center"><i class="fa-solid fa-sliders text-amber-500"></i> Tetapan Permainan</h2>
+                            
+                            <!-- Topic Selection -->
+                            <div class="mb-6">
+                                <label class="block font-game text-slate-700 mb-3 text-lg"><i class="fa-solid fa-list text-blue-500"></i> 1. Pilih Topik DSKP KPM:</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    ${TOPICS.map(t => `
+                                        <div onclick="selectTopic(${t.id})" id="topicCard_${t.id}" class="card-bounce cursor-pointer p-4 rounded-2xl border-2 border-slate-200 bg-white flex items-center gap-3 shadow-sm ${state.currentSession.topic === t.id ? 'border-amber-400 bg-amber-50 ring-2 ring-amber-300' : ''}">
+                                            <div class="${t.color} text-white w-10 h-10 rounded-xl flex items-center justify-center text-lg">
+                                                <i class="fa-solid ${t.icon}"></i>
+                                            </div>
+                                            <div class="text-sm font-bold text-slate-800">T${t.id}: ${t.title}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <!-- Difficulty & Options -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                <div>
+                                    <label class="block font-game text-slate-700 mb-2"><i class="fa-solid fa-gauge text-emerald-500"></i> 2. Tahap Kesukaran:</label>
+                                    <select id="diffSelect" onchange="state.currentSession.difficulty = this.value" class="w-full p-3 rounded-xl border-2 border-slate-200 font-bold bg-white text-slate-700 cursor-pointer">
+                                        <option value="SENANG" ${state.currentSession.difficulty === 'SENANG' ? 'selected' : ''}>🌱 SENANG (Asas & Mengingat)</option>
+                                        <option value="SEDERHANA" ${state.currentSession.difficulty === 'SEDERHANA' ? 'selected' : ''}>⚡ SEDERHANA (Aplikasi & Memahami)</option>
+                                        <option value="SUSAH" ${state.currentSession.difficulty === 'SUSAH' ? 'selected' : ''}>🔥 SUSAH (Penaakulan & Anu)</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block font-game text-slate-700 mb-2"><i class="fa-solid fa-gamepad text-purple-500"></i> 3. Mod Permainan:</label>
+                                    <select id="modeSelect" onchange="state.currentSession.gameType = this.value" class="w-full p-3 rounded-xl border-2 border-slate-200 font-bold bg-white text-slate-700 cursor-pointer">
+                                        <option value="OBJEKTIF">🎯 Pilihan Berganda (Objektif)</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block font-game text-slate-700 mb-2"><i class="fa-solid fa-clock text-rose-500"></i> 4. Masa Menjawab:</label>
+                                    <select id="timeSelect" onchange="state.currentSession.timeLimit = parseInt(this.value)" class="w-full p-3 rounded-xl border-2 border-slate-200 font-bold bg-white text-slate-700 cursor-pointer">
+                                        <option value="30" ${state.currentSession.timeLimit === 30 ? 'selected' : ''}>⏱️ 30 Saat / Soalan</option>
+                                        <option value="60" ${state.currentSession.timeLimit === 60 ? 'selected' : ''}>⏱️ 1 Minit / Soalan</option>
+                                        <option value="0" ${state.currentSession.timeLimit === 0 ? 'selected' : ''}>♾️ Tiada Had Masa</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between items-center pt-4 border-t border-slate-200">
+                                <button onclick="renderView('HOME')" class="btn-game bg-slate-200 hover:bg-slate-300 text-slate-700 font-game px-6 py-3 rounded-xl cursor-pointer">
+                                    <i class="fa-solid fa-arrow-left"></i> Kembali
+                                </button>
+                                <button onclick="startQuizSession()" class="btn-game bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-game text-xl px-10 py-4 rounded-2xl shadow-lg cursor-pointer">
+                                    Mula Bermain Sekarang <i class="fa-solid fa-rocket ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'QUIZ':
+                    renderQuizView();
+                    break;
+
+                case 'RESULT':
+                    renderResultView();
+                    break;
+
+                case 'PROGRESS':
+                    renderProgressView();
+                    break;
+
+                case 'LEADERBOARD':
+                    renderLeaderboardView();
+                    break;
+
+                case 'AUTH':
+                    renderAuthView();
+                    break;
+
+                case 'GUIDE':
+                    renderGuideView();
+                    break;
+            }
+        }
+
+        function selectTopic(id) {
+            state.currentSession.topic = id;
+            for(let i=1; i<=9; i++) {
+                const el = document.getElementById(`topicCard_${i}`);
+                if(el) {
+                    if(i === id) {
+                        el.className = 'card-bounce cursor-pointer p-4 rounded-2xl border-2 border-amber-400 bg-amber-50 ring-2 ring-amber-300 flex items-center gap-3 shadow-sm';
+                    } else {
+                        el.className = 'card-bounce cursor-pointer p-4 rounded-2xl border-2 border-slate-200 bg-white flex items-center gap-3 shadow-sm';
+                    }
+                }
+            }
+        }
+
+        function startQuizSession() {
+            const topId = state.currentSession.topic;
+            const diff = state.currentSession.difficulty;
+            
+            let qList = [...QUESTION_BANK[topId][diff]];
+            qList = shuffleArray(qList);
+
+            state.currentSession.questions = qList;
+            state.currentSession.currentQuestionIndex = 0;
+            state.currentSession.score = 0;
+            state.currentSession.correctCount = 0;
+            state.currentSession.wrongCount = 0;
+            state.currentSession.userAnswers = [];
+            state.currentSession.startTime = new Date();
+
+            renderView('QUIZ');
+        }
+
+        function renderQuizView() {
+            const container = document.getElementById('mainContainer');
+            const session = state.currentSession;
+            const q = session.questions[session.currentQuestionIndex];
+
+            if (session.timer) clearInterval(session.timer);
+            session.timeLeft = session.timeLimit > 0 ? session.timeLimit : 0;
+
+            container.innerHTML = `
+                <div class="glass-panel rounded-3xl p-4 sm:p-8 shadow-2xl relative">
+                    <!-- Top Status Bar -->
+                    <div class="flex flex-wrap justify-between items-center gap-3 bg-white/80 p-4 rounded-2xl border border-slate-200 mb-6">
+                        <div class="flex items-center gap-2">
+                            <span class="font-game text-slate-500">Soalan:</span>
+                            <span class="font-game text-xl text-blue-600">${session.currentQuestionIndex + 1} / ${session.questions.length}</span>
+                        </div>
+
+                        <!-- Timer Widget -->
+                        <div id="quizTimerWidget" class="flex items-center gap-2 px-4 py-1.5 rounded-full ${session.timeLimit > 0 ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-600'}">
+                            <i class="fa-solid fa-clock text-lg"></i>
+                            <span id="timerDisplay" class="font-game text-lg">${session.timeLimit > 0 ? session.timeLeft + 's' : 'Tanpa Had'}</span>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <div>
+                                <span class="font-game text-slate-500 text-xs block">Markah:</span>
+                                <span id="currentQuizScore" class="font-game text-xl text-emerald-600">${session.score}</span>
+                            </div>
+                            <button onclick="confirmExitQuiz()" class="btn-game bg-slate-200 hover:bg-slate-300 text-slate-700 font-game px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 ml-2 cursor-pointer">
+                                <i class="fa-solid fa-house"></i> Menu Utama
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Question Card -->
+                    <div class="bg-white rounded-2xl p-6 shadow-md border-2 border-slate-100 mb-6">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-400 mb-2">
+                            <span>KOD KPM: ${q.id}</span>
+                            <span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">Aras Kognitif: ${q.aras_kognitif}</span>
+                        </div>
+                        <h3 class="font-game text-xl sm:text-2xl text-slate-800 mb-4 leading-relaxed">${q.soalan}</h3>
+                    </div>
+
+                    <!-- Options View -->
+                    <div id="optionsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        ${q.pilihan.map((opt, idx) => `
+                            <button onclick="submitAnswer('${opt.replace(/'/g, "\\'")}')" class="btn-game bg-white hover:bg-amber-50 border-2 border-slate-200 hover:border-amber-400 text-slate-800 font-bold p-4 rounded-2xl text-left text-lg flex items-center gap-3 transition-all cursor-pointer">
+                                <span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center font-game text-sm border border-slate-300">${String.fromCharCode(65 + idx)}</span>
+                                <span>${opt}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <!-- Feedback Overlay Area -->
+                    <div id="feedbackContainer" class="hidden p-5 rounded-2xl mb-6"></div>
+
+                    <!-- Action Control Footer -->
+                    <div class="flex justify-between items-center border-t border-slate-200 pt-4">
+                        <button onclick="confirmExitQuiz()" class="btn-game bg-rose-100 hover:bg-rose-200 text-rose-700 font-game px-4 py-2 rounded-xl text-sm cursor-pointer">
+                            <i class="fa-solid fa-xmark"></i> Tamatkan Permainan
+                        </button>
+                        <button id="nextBtn" onclick="nextQuestion()" class="hidden btn-game bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-game px-8 py-3 rounded-xl text-lg cursor-pointer">
+                            Soalan Seterusnya <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            if (session.timeLimit > 0) {
+                session.timer = setInterval(() => {
+                    session.timeLeft--;
+                    const timerDisplay = document.getElementById('timerDisplay');
+                    if (timerDisplay) timerDisplay.innerText = `${session.timeLeft}s`;
+
+                    if (session.timeLeft <= 0) {
+                        clearInterval(session.timer);
+                        submitAnswer(null, true);
+                    }
+                }, 1000);
+            }
+        }
+
+        function submitAnswer(userChoice, isTimeout = false) {
+            const session = state.currentSession;
+            if (session.timer) clearInterval(session.timer);
+
+            const q = session.questions[session.currentQuestionIndex];
+            const isCorrect = !isTimeout && userChoice === q.jawapan;
+
+            const buttons = document.querySelectorAll('#optionsContainer button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            session.userAnswers.push({
+                question: q,
+                userAnswer: userChoice || 'Masa Tamat',
+                isCorrect: isCorrect
+            });
+
+            const feedbackEl = document.getElementById('feedbackContainer');
+            feedbackEl.classList.remove('hidden');
+
+            if (isCorrect) {
+                session.score += q.markah;
+                session.correctCount++;
+                document.getElementById('currentQuizScore').innerText = session.score;
+
+                feedbackEl.className = 'p-5 rounded-2xl mb-6 bg-emerald-100 border-2 border-emerald-400 text-emerald-900';
+                feedbackEl.innerHTML = `
+                    <div class="flex items-center gap-3 font-game text-xl text-emerald-800 mb-2">
+                        <i class="fa-solid fa-circle-check text-2xl text-emerald-600"></i> Syabas! Jawapan Kamu Betul (+5 Markah)
+                    </div>
+                    <p class="text-sm font-semibold text-emerald-700">${q.penerangan}</p>
+                `;
+
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+                }
+            } else {
+                session.wrongCount++;
+                feedbackEl.className = 'p-5 rounded-2xl mb-6 bg-rose-100 border-2 border-rose-400 text-rose-900';
+                feedbackEl.innerHTML = `
+                    <div class="flex items-center gap-3 font-game text-xl text-rose-800 mb-2">
+                        <i class="fa-solid fa-circle-xmark text-2xl text-rose-600"></i> ${isTimeout ? 'Masa Tamat!' : 'Jawapan Kurang Tepat! Teruskan Usaha'}
+                    </div>
+                    <p class="text-sm font-bold text-slate-800 mb-1">Jawapan Betul: <span class="text-emerald-700 font-extrabold">${q.jawapan}</span></p>
+                    <p class="text-sm text-slate-700">${q.penerangan}</p>
+                `;
+            }
+
+            document.getElementById('nextBtn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            const session = state.currentSession;
+            session.currentQuestionIndex++;
+
+            if (session.currentQuestionIndex < session.questions.length) {
+                renderQuizView();
+            } else {
+                saveSessionResult();
+                renderView('RESULT');
+            }
+        }
+
+        function confirmExitQuiz() {
+            if (state.currentSession.timer) clearInterval(state.currentSession.timer);
+            if (window.confirm ? window.confirm('Adakah anda pasti mahu menamatkan permainan ini?') : true) {
+                renderView('HOME');
+            }
+        }
+
+        function saveSessionResult() {
+            if (!state.currentUser) return;
+
+            const username = state.currentUser;
+            const userData = state.users[username];
+            const session = state.currentSession;
+
+            userData.totalScore += session.score;
+            userData.gamesPlayed += 1;
+            userData.totalCorrect += session.correctCount;
+            userData.totalQuestions += session.questions.length;
+
+            userData.history.unshift({
+                date: new Date().toLocaleDateString('ms-MY'),
+                topicId: session.topic,
+                score: session.score,
+                correct: session.correctCount,
+                total: session.questions.length
+            });
+
+            localStorage.setItem('mke_users', JSON.stringify(state.users));
+        }
+
+        function renderResultView() {
+            const container = document.getElementById('mainContainer');
+            const session = state.currentSession;
+            const accuracy = session.questions.length > 0 ? Math.round((session.correctCount / session.questions.length) * 100) : 0;
+
+            container.innerHTML = `
+                <div class="glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl text-center">
+                    <div class="inline-block p-4 bg-amber-100 text-amber-500 rounded-full mb-3">
+                        <i class="fa-solid fa-trophy text-5xl"></i>
+                    </div>
+                    <h2 class="font-game text-4xl text-blue-950 mb-2">Keputusan Permainan!</h2>
+                    <p class="text-slate-600 font-semibold mb-6">Tahniah atas usaha anda menyelesaikan latihan standard KPM ini!</p>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto mb-8">
+                        <div class="bg-white p-4 rounded-2xl border-2 border-slate-100 shadow-sm">
+                            <span class="block text-xs font-bold text-slate-400">JUMLAH MARKAH</span>
+                            <span class="font-game text-3xl text-emerald-600">${session.score}</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border-2 border-slate-100 shadow-sm">
+                            <span class="block text-xs font-bold text-slate-400">BETUL</span>
+                            <span class="font-game text-3xl text-blue-600">${session.correctCount} / ${session.questions.length}</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border-2 border-slate-100 shadow-sm">
+                            <span class="block text-xs font-bold text-slate-400">SALAH</span>
+                            <span class="font-game text-3xl text-rose-500">${session.wrongCount}</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border-2 border-slate-100 shadow-sm">
+                            <span class="block text-xs font-bold text-slate-400">KETEPATAN</span>
+                            <span class="font-game text-3xl text-amber-500">${accuracy}%</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button onclick="startQuizSession()" class="btn-game bg-emerald-500 hover:bg-emerald-600 text-white font-game text-lg px-8 py-3 rounded-2xl cursor-pointer">
+                            <i class="fa-solid fa-rotate-right"></i> Main Semula
+                        </button>
+                        <button onclick="renderView('GAME_SETUP')" class="btn-game bg-blue-500 hover:bg-blue-600 text-white font-game text-lg px-8 py-3 rounded-2xl cursor-pointer">
+                            <i class="fa-solid fa-list-check"></i> Pilih Topik Lain
+                        </button>
+                        <button onclick="renderView('HOME')" class="btn-game bg-slate-700 hover:bg-slate-800 text-white font-game text-lg px-8 py-3 rounded-2xl cursor-pointer">
+                            <i class="fa-solid fa-house"></i> Menu Utama
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProgressView() {
+            const container = document.getElementById('mainContainer');
+
+            if (!state.currentUser) {
+                container.innerHTML = `
+                    <div class="glass-panel rounded-3xl p-8 text-center max-w-md mx-auto">
+                        <i class="fa-solid fa-lock text-5xl text-amber-500 mb-4"></i>
+                        <h2 class="font-game text-3xl text-slate-800 mb-2">Log Masuk Diperlukan</h2>
+                        <p class="text-slate-600 mb-6">Sila log masuk atau daftar akaun untuk melihat rekod kemajuan pembelajaran anda.</p>
+                        <button onclick="renderView('AUTH')" class="btn-game bg-blue-600 text-white font-game px-8 py-3 rounded-2xl cursor-pointer">Log Masuk / Daftar</button>
+                        <div class="mt-4">
+                            <button onclick="renderView('HOME')" class="text-slate-500 text-sm font-bold hover:underline cursor-pointer">Kembali ke Utama</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const user = state.users[state.currentUser];
+            const accuracy = user.totalQuestions > 0 ? Math.round((user.totalCorrect / user.totalQuestions) * 100) : 0;
+
+            container.innerHTML = `
+                <div class="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl">
+                    <h2 class="font-game text-3xl text-blue-900 mb-6 text-center"><i class="fa-solid fa-chart-line text-purple-500"></i> Kemajuan Pembelajaran Saya</h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center shadow-sm">
+                            <i class="fa-solid fa-star text-3xl text-amber-400 mb-2"></i>
+                            <div class="text-xs font-bold text-slate-400">MARKAH TERKUMPUL</div>
+                            <div class="font-game text-3xl text-slate-800">${user.totalScore}</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center shadow-sm">
+                            <i class="fa-solid fa-gamepad text-3xl text-blue-500 mb-2"></i>
+                            <div class="text-xs font-bold text-slate-400">PERMAINAN DISELESAIKAN</div>
+                            <div class="font-game text-3xl text-slate-800">${user.gamesPlayed}</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center shadow-sm">
+                            <i class="fa-solid fa-bullseye text-3xl text-emerald-500 mb-2"></i>
+                            <div class="text-xs font-bold text-slate-400">PURATA KETEPATAN</div>
+                            <div class="font-game text-3xl text-slate-800">${accuracy}%</div>
+                        </div>
+                    </div>
+
+                    <h3 class="font-game text-xl text-slate-800 mb-4"><i class="fa-solid fa-clock-rotate-left"></i> Sejarah Permainan Terdahulu</h3>
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden mb-6">
+                        ${user.history.length === 0 ? `
+                            <div class="p-6 text-center text-slate-400">Tiada rekod permainan lagi. Belajar sekarang!</div>
+                        ` : `
+                            <div class="divide-y divide-slate-100">
+                                ${user.history.map(h => `
+                                    <div class="p-4 flex justify-between items-center text-sm">
+                                        <div>
+                                            <span class="font-bold text-slate-800">Topik ${h.topicId}: ${TOPICS.find(t=>t.id===h.topicId)?.title || ''}</span>
+                                            <span class="block text-xs text-slate-400">${h.date}</span>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="font-game text-emerald-600 text-base">+${h.score} Mata</span>
+                                            <span class="block text-xs text-slate-500">${h.correct}/${h.total} Betul</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `}
+                    </div>
+
+                    <button onclick="renderView('HOME')" class="btn-game bg-slate-200 text-slate-700 font-game px-6 py-3 rounded-xl cursor-pointer">
+                        <i class="fa-solid fa-arrow-left"></i> Kembali ke Menu Utama
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderLeaderboardView() {
+            const container = document.getElementById('mainContainer');
+            const userList = Object.values(state.users).sort((a,b) => b.totalScore - a.totalScore);
+
+            container.innerHTML = `
+                <div class="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl">
+                    <h2 class="font-game text-3xl text-blue-900 mb-6 text-center"><i class="fa-solid fa-trophy text-amber-500"></i> Kedudukan Teratas (Leaderboard)</h2>
+
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm mb-6">
+                        ${userList.length === 0 ? `
+                            <div class="p-8 text-center text-slate-400">Belum ada pemain dalam senarai. Jadilah yang pertama!</div>
+                        ` : `
+                            <div class="divide-y divide-slate-100">
+                                ${userList.map((u, idx) => `
+                                    <div class="p-4 flex items-center justify-between ${idx === 0 ? 'bg-amber-50/60' : ''}">
+                                        <div class="flex items-center gap-4">
+                                            <span class="font-game text-xl w-8 text-center ${idx === 0 ? 'text-amber-500' : idx === 1 ? 'text-slate-400' : idx === 2 ? 'text-amber-700' : 'text-slate-400'}">
+                                                #${idx + 1}
+                                            </span>
+                                            <div>
+                                                <span class="font-bold text-slate-800 text-base">${u.displayName}</span>
+                                                <span class="block text-xs text-slate-400">${u.gamesPlayed} Sesi Dimainkan</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="font-game text-emerald-600 text-lg">${u.totalScore} Mata</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `}
+                    </div>
+
+                    <button onclick="renderView('HOME')" class="btn-game bg-slate-200 text-slate-700 font-game px-6 py-3 rounded-xl cursor-pointer">
+                        <i class="fa-solid fa-arrow-left"></i> Kembali ke Menu Utama
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderAuthView() {
+            const container = document.getElementById('mainContainer');
+
+            container.innerHTML = `
+                <div class="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl max-w-md mx-auto">
+                    <h2 class="font-game text-3xl text-blue-900 mb-6 text-center"><i class="fa-solid fa-user-lock text-indigo-500"></i> Log Masuk / Daftar Akaun</h2>
+
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Pengguna (Username)</label>
+                            <input type="text" id="authUsername" placeholder="Contoh: ali123" class="w-full p-3 rounded-xl border border-slate-300 font-semibold focus:outline-blue-500 bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Paparan (Display Name)</label>
+                            <input type="text" id="authDisplayName" placeholder="Contoh: Wira Ali" class="w-full p-3 rounded-xl border border-slate-300 font-semibold focus:outline-blue-500 bg-white">
+                        </div>
+                    </div>
+
+                    <div id="authError" class="hidden p-3 bg-rose-100 text-rose-700 text-xs font-bold rounded-xl mb-4"></div>
+
+                    <div class="flex gap-3">
+                        <button onclick="handleLogin()" class="btn-game w-full bg-blue-600 hover:bg-blue-700 text-white font-game p-3 rounded-xl cursor-pointer">
+                            Log Masuk / Daftar
+                        </button>
+                    </div>
+
+                    <div class="mt-4 text-center">
+                        <button onclick="renderView('HOME')" class="text-sm font-bold text-slate-500 hover:underline cursor-pointer">
+                            Bermain Sebagai Tetamu
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleLogin() {
+            const usernameInput = document.getElementById('authUsername');
+            const displayNameInput = document.getElementById('authDisplayName');
+            const errEl = document.getElementById('authError');
+
+            if (!usernameInput || !displayNameInput) return;
+
+            const username = usernameInput.value.trim().toLowerCase();
+            const displayName = displayNameInput.value.trim();
+
+            if (!username) {
+                errEl.innerText = 'Sila masukkan Nama Pengguna!';
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            if (!state.users[username]) {
+                state.users[username] = {
+                    username: username,
+                    displayName: displayName || username,
+                    totalScore: 0,
+                    gamesPlayed: 0,
+                    totalCorrect: 0,
+                    totalQuestions: 0,
+                    history: []
+                };
+                localStorage.setItem('mke_users', JSON.stringify(state.users));
+            }
+
+            state.currentUser = username;
+            renderView('HOME');
+        }
+
+        function logoutUser() {
+            state.currentUser = null;
+            renderView('HOME');
+        }
+
+        function renderGuideView() {
+            const container = document.getElementById('mainContainer');
+
+            container.innerHTML = `
+                <div class="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl">
+                    <h2 class="font-game text-3xl text-blue-900 mb-6 text-center"><i class="fa-solid fa-book-open text-amber-500"></i> Panduan Permainan</h2>
+
+                    <div class="space-y-4 text-slate-700 mb-6 text-sm sm:text-base">
+                        <div class="p-4 bg-white rounded-2xl border border-slate-200">
+                            <h3 class="font-game text-lg text-emerald-600 mb-1"><i class="fa-solid fa-star"></i> Sistem Pemarkahan</h3>
+                            <p>Setiap soalan yang dijawab dengan betul memberi anda <strong>5 markah</strong>. Tiada penalti markah bagi jawapan yang kurang tepat.</p>
+                        </div>
+                        <div class="p-4 bg-white rounded-2xl border border-slate-200">
+                            <h3 class="font-game text-lg text-blue-600 mb-1"><i class="fa-solid fa-layer-group"></i> 9 Topik Utama DSKP KPM Tahun 4</h3>
+                            <p>Soalan merangkumi Nombor hingga 100 000, Nilai Tempat & Digit, Pola Nombor, Anggaran, Pembundaran, Operasi Tambah/Tolak/Darab/Bahagi, Anu, serta Penyelesaian Masalah Harian.</p>
+                        </div>
+                    </div>
+
+                    <button onclick="renderView('HOME')" class="btn-game bg-slate-200 text-slate-700 font-game px-6 py-3 rounded-xl cursor-pointer">
+                        <i class="fa-solid fa-arrow-left"></i> Kembali ke Menu Utama
+                    </button>
+                </div>
+            `;
+        }
+
+        function updateHeaderWidget() {
+            const nameEl = document.getElementById('headerUserName');
+            const scoreEl = document.getElementById('headerTotalScore');
+
+            if (!nameEl || !scoreEl) return;
+
+            if (state.currentUser && state.users[state.currentUser]) {
+                const u = state.users[state.currentUser];
+                nameEl.innerText = u.displayName;
+                scoreEl.innerText = u.totalScore;
+            } else {
+                nameEl.innerText = 'Tetamu';
+                scoreEl.innerText = '0';
+            }
+        }
+
+        window.onload = function() {
+            renderView('HOME');
+        };
+    </script>
+</body>
+</html>

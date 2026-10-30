@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Kids Bernama Edu Kidz - Matematik Tahun 1</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#0284C7',
+                            lightBlue: '#38BDF8',
+                            yellow: '#F59E0B',
+                            green: '#10B981',
+                            pink: '#EC4899',
+                            purple: '#8B5CF6',
+                            bg: '#F0F9FF'
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        quicksand: ['Quicksand', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #E0F2FE;
+            background-image: radial-gradient(#BAE6FD 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+        h1, h2, h3, .font-heading {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .btn-bounce:hover {
+            transform: translateY(-3px) scale(1.02);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-bounce:active {
+            transform: translateY(1px);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 4px solid #7DD3FC;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between selection:bg-yellow-300">
+
+    <header class="bg-white border-b-4 border-sky-400 shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-2">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.app && window.app.navTo('main-menu')">
+                <div class="w-12 h-12 bg-amber-400 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg transform -rotate-6">
+                    <i class="fa-solid fa-shapes"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black text-sky-600 tracking-wide">MATH KIDS</h1>
+                    <p class="text-xs font-bold text-amber-500 uppercase tracking-widest">Bernama Edu Kidz • Tahun 1</p>
+                </div>
+            </div>
+
+            <!-- Player Status Bar -->
+            <div id="nav-player-info" class="hidden items-center gap-3 bg-sky-50 px-4 py-1.5 rounded-full border-2 border-sky-200">
+                <div class="w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold text-sm">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="text-sm">
+                    <span class="block font-bold text-sky-900 leading-none" id="player-display-name">Tetamu</span>
+                    <span class="text-xs text-amber-600 font-semibold" id="player-display-score">0 Markah</span>
+                </div>
+                <button onclick="window.app && window.app.logout()" class="text-red-500 hover:text-red-700 ml-2 text-sm font-bold cursor-pointer" title="Log Keluar">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto w-full p-4 flex-grow flex flex-col justify-center my-4">
+        
+        <!-- View 1: Main Menu -->
+        <section id="view-main-menu" class="view-section space-y-6">
+            <div class="text-center space-y-2">
+                <span class="bg-amber-100 text-amber-800 text-sm font-extrabold px-4 py-1.5 rounded-full border border-amber-300 inline-block shadow-sm">
+                    <i class="fa-solid fa-star text-amber-500 mr-1"></i> Modul KSSR Matematik Tahun 1
+                </span>
+                <h2 class="text-3xl md:text-5xl font-black text-sky-700 tracking-tight">Panjang, Jisim & Isipadu Cecair</h2>
+                <p class="text-slate-600 font-medium max-w-lg mx-auto">Belajar matematik dengan mudah, seronok dan interaktif!</p>
+            </div>
+
+            <!-- Quick Action Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+                <button onclick="window.app && window.app.startSetup()" class="btn-bounce glass-card p-6 rounded-3xl text-center space-y-3 border-amber-400 bg-gradient-to-b from-amber-50 to-white shadow-xl hover:border-amber-500 cursor-pointer">
+                    <div class="w-16 h-16 bg-amber-400 text-white rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-md">
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-amber-900">Mula Bermain</h3>
+                    <p class="text-xs text-slate-500">Pilih topik, tahap & jenis permainan untuk mengumpul markah!</p>
+                </button>
+
+                <button onclick="window.app && window.app.navTo('topic-select')" class="btn-bounce glass-card p-6 rounded-3xl text-center space-y-3 border-sky-400 bg-gradient-to-b from-sky-50 to-white shadow-xl hover:border-sky-500 cursor-pointer">
+                    <div class="w-16 h-16 bg-sky-500 text-white rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-md">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-sky-900">Pilih Topik</h3>
+                    <p class="text-xs text-slate-500">Lihat 7 topik pembelajaran asas panjang, jisim & cecair.</p>
+                </button>
+
+                <button onclick="window.app && window.app.navTo('leaderboard')" class="btn-bounce glass-card p-6 rounded-3xl text-center space-y-3 border-purple-400 bg-gradient-to-b from-purple-50 to-white shadow-xl hover:border-purple-500 cursor-pointer">
+                    <div class="w-16 h-16 bg-purple-500 text-white rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-md">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-purple-900">Leaderboard</h3>
+                    <p class="text-xs text-slate-500">Lihat kedudukan pemain terbanyak markah sekolah.</p>
+                </button>
+            </div>
+
+            <!-- Extended Navigation Menu Bar -->
+            <div class="bg-white p-6 rounded-3xl shadow-lg border-2 border-sky-200 max-w-3xl mx-auto">
+                <h4 class="font-bold text-slate-700 mb-4 text-center text-sm uppercase tracking-wider">
+                    <i class="fa-solid fa-bars mr-1 text-sky-500"></i> Menu Pengguna & Rekod
+                </h4>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm font-bold">
+                    <button onclick="window.app && window.app.navTo('login')" class="p-3 bg-slate-100 hover:bg-sky-100 rounded-xl text-slate-700 flex flex-col items-center gap-1 transition cursor-pointer">
+                        <i class="fa-solid fa-user-check text-sky-600 text-lg"></i>
+                        <span>Daftar / Login</span>
+                    </button>
+                    <button onclick="window.app && window.app.navTo('progress')" class="p-3 bg-slate-100 hover:bg-emerald-100 rounded-xl text-slate-700 flex flex-col items-center gap-1 transition cursor-pointer">
+                        <i class="fa-solid fa-chart-line text-emerald-600 text-lg"></i>
+                        <span>Kemajuan Saya</span>
+                    </button>
+                    <button onclick="window.app && window.app.navTo('scores')" class="p-3 bg-slate-100 hover:bg-amber-100 rounded-xl text-slate-700 flex flex-col items-center gap-1 transition cursor-pointer">
+                        <i class="fa-solid fa-clock-rotate-left text-amber-600 text-lg"></i>
+                        <span>Rekod Markah</span>
+                    </button>
+                    <button onclick="window.app && window.app.navTo('guide')" class="p-3 bg-slate-100 hover:bg-indigo-100 rounded-xl text-slate-700 flex flex-col items-center gap-1 transition cursor-pointer">
+                        <i class="fa-solid fa-circle-info text-indigo-600 text-lg"></i>
+                        <span>Panduan</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- View 2: Login & Registration -->
+        <section id="view-login" class="view-section hidden max-w-md mx-auto w-full">
+            <div class="bg-white p-8 rounded-3xl shadow-2xl border-4 border-sky-300">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-sky-800" id="auth-title">Login Pemain</h2>
+                    <button onclick="window.app && window.app.toggleAuthMode()" id="auth-toggle-btn" class="text-xs text-sky-600 underline font-bold cursor-pointer">
+                        Belum ada akaun? Daftar sekarang
+                    </button>
+                </div>
+
+                <form id="auth-form" onsubmit="window.app && window.app.handleAuth(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Nama Panggilan / Pemain</label>
+                        <input type="text" id="auth-name" required placeholder="Contoh: Adam" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">ID Pengguna (Unik)</label>
+                        <input type="text" id="auth-username" required placeholder="Contoh: adam2026" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Kata Laluan</label>
+                        <input type="password" id="auth-password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:outline-none font-bold">
+                    </div>
+
+                    <div id="auth-error" class="hidden text-xs text-red-500 font-bold bg-red-50 p-2 rounded-lg border border-red-200"></div>
+
+                    <button type="submit" class="w-full py-3.5 bg-amber-400 hover:bg-amber-500 text-amber-950 font-black rounded-xl text-lg shadow-lg btn-bounce cursor-pointer">
+                        <i class="fa-solid fa-right-to-bracket mr-1"></i> Teruskan
+                    </button>
+                </form>
+
+                <div class="mt-4 text-center">
+                    <button onclick="window.app && window.app.navTo('main-menu')" class="text-xs text-slate-500 font-bold hover:underline cursor-pointer">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Menu Utama
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- View 3: Game Setup / Topic Selector -->
+        <section id="view-topic-select" class="view-section hidden space-y-6">
+            <div class="text-center">
+                <h2 class="text-3xl font-black text-sky-800">Pilih Parameter Permainan</h2>
+                <p class="text-sm text-slate-600">Tetapkan topik, kesukaran, dan masa sebelum bermula.</p>
+            </div>
+
+            <!-- Topic Selector Cards -->
+            <div class="space-y-3">
+                <h3 class="font-bold text-slate-700 text-sm uppercase tracking-wider"><i class="fa-solid fa-list-check text-sky-500 mr-1"></i> 1. Pilih Topik Pembelajaran:</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="topic-grid"></div>
+            </div>
+
+            <!-- Configuration Options -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-6 rounded-3xl shadow-md border-2 border-sky-100">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-2"><i class="fa-solid fa-gamepad text-amber-500 mr-1"></i> Mod Permainan</label>
+                    <select id="setup-mode" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl p-3 font-bold text-slate-700 focus:outline-none focus:border-sky-500">
+                        <option value="Objektif">1. Objektif Pilih Jawapan</option>
+                        <option value="Padanan">2. Padanan Gambar & Perkataan</option>
+                        <option value="DragDrop">3. Drag & Drop Interaktif</option>
+                        <option value="IsiTempatKosong">4. Isi Tempat Kosong</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-2"><i class="fa-solid fa-layer-group text-purple-500 mr-1"></i> Tahap Kesukaran</label>
+                    <select id="setup-difficulty" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl p-3 font-bold text-slate-700 focus:outline-none focus:border-sky-500">
+                        <option value="Senang">Senang (20 Soalan Basik)</option>
+                        <option value="Sederhana" selected>Sederhana (20 Soalan Aplikasi)</option>
+                        <option value="Susah">Susah (20 Soalan KBAT)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-2"><i class="fa-solid fa-stopwatch text-red-500 mr-1"></i> Masa Menjawab</label>
+                    <select id="setup-timer" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl p-3 font-bold text-slate-700 focus:outline-none focus:border-sky-500">
+                        <option value="30">30 Saat / Soalan</option>
+                        <option value="60" selected>1 Minit / Soalan</option>
+                        <option value="0">Tiada Had Masa</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Start Button -->
+            <div class="flex justify-between items-center pt-2">
+                <button onclick="window.app && window.app.navTo('main-menu')" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 rounded-xl text-slate-700 font-bold cursor-pointer">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+                </button>
+                <button onclick="window.app && window.app.launchGame()" class="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl text-lg shadow-lg btn-bounce cursor-pointer">
+                    <i class="fa-solid fa-play mr-2"></i> Mulakan Permainan!
+                </button>
+            </div>
+        </section>
+
+        <!-- View 4: Gameplay Arena -->
+        <section id="view-gameplay" class="view-section hidden space-y-4">
+            <div class="bg-white p-4 rounded-2xl shadow-md border-2 border-sky-200 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <span id="game-topic-badge" class="bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full border border-sky-300">Topik A</span>
+                    <span id="game-diff-badge" class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full border border-purple-300">Sederhana</span>
+                    <span id="game-cog-badge" class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-300">Mengaplikasi</span>
+                </div>
+
+                <div class="flex items-center space-x-6">
+                    <div class="text-right">
+                        <span class="text-xs font-bold text-slate-400 uppercase block">Markah</span>
+                        <span id="game-score-val" class="text-2xl font-black text-amber-500">0</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-bold text-slate-400 uppercase block">Masa</span>
+                        <span id="game-timer-val" class="text-2xl font-black text-red-500">60s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Meter Bar -->
+            <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                <div id="game-progress-bar" class="bg-amber-400 h-full transition-all duration-300" style="width: 5%;"></div>
+            </div>
+
+            <!-- Question Card Workspace -->
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-sky-300 space-y-6">
+                <div class="flex justify-between items-center border-b pb-3">
+                    <span class="text-xs font-black text-slate-400 uppercase tracking-wider" id="game-question-counter">Soalan 1 / 20</span>
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg" id="game-mode-display">Mod: Objektif</span>
+                </div>
+
+                <!-- SVG Visual Diagram Display -->
+                <div id="diagram-container" class="bg-sky-50/50 rounded-2xl p-4 border-2 border-dashed border-sky-200 flex justify-center items-center min-h-[160px]"></div>
+
+                <!-- Question Text -->
+                <h3 id="question-text" class="text-xl md:text-2xl font-bold text-slate-800 text-center">Loading soalan...</h3>
+
+                <!-- Interactive Answer Area -->
+                <div id="answer-interactive-area" class="pt-2"></div>
+
+                <!-- Explanation Feedback Modal Block -->
+                <div id="feedback-box" class="hidden p-4 rounded-2xl border-2 space-y-2">
+                    <div class="flex items-center space-x-2 font-bold text-lg" id="feedback-title"></div>
+                    <p id="feedback-explanation" class="text-sm font-medium"></p>
+                    <div class="pt-2 flex justify-end">
+                        <button id="next-question-btn" class="px-6 py-2 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow btn-bounce cursor-pointer">
+                            Soalan Seterusnya <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View 5: Results & Score Summary -->
+        <section id="view-results" class="view-section hidden space-y-6 text-center">
+            <div class="bg-white rounded-3xl p-8 shadow-2xl border-4 border-amber-300 max-w-xl mx-auto space-y-6">
+                <div class="w-20 h-20 bg-amber-400 text-white rounded-full flex items-center justify-center text-4xl mx-auto shadow-lg transform rotate-6">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+
+                <div>
+                    <h2 class="text-3xl font-black text-slate-800">Sesi Selesai!</h2>
+                    <p class="text-sm text-slate-500 font-bold" id="result-message">Syabas, kamu telah mencuba yang terbaik!</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 bg-sky-50 p-4 rounded-2xl border border-sky-200 text-left">
+                    <div>
+                        <span class="text-xs text-slate-500 font-bold block">Jumlah Markah</span>
+                        <span id="res-score" class="text-3xl font-black text-amber-500">0 / 100</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 font-bold block">Peratusan</span>
+                        <span id="res-percent" class="text-3xl font-black text-sky-600">0%</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 font-bold block">Jawapan Betul</span>
+                        <span id="res-correct" class="text-xl font-bold text-emerald-600">0</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 font-bold block">Jawapan Salah</span>
+                        <span id="res-wrong" class="text-xl font-bold text-red-500">0</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button onclick="window.app && window.app.launchGame()" class="py-3 bg-amber-400 hover:bg-amber-500 font-bold rounded-xl text-amber-950 btn-bounce cursor-pointer">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Main Lagi
+                    </button>
+                    <button onclick="window.app && window.app.navTo('topic-select')" class="py-3 bg-sky-500 hover:bg-sky-600 font-bold rounded-xl text-white btn-bounce cursor-pointer">
+                        <i class="fa-solid fa-list mr-1"></i> Topik Lain
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- View 6: Progress Dashboard -->
+        <section id="view-progress" class="view-section hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-3xl font-black text-sky-800">Kemajuan Pembelajaran Saya</h2>
+                <button onclick="window.app && window.app.navTo('main-menu')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 font-bold rounded-xl text-xs cursor-pointer">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+                </button>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-lg border-2 border-sky-200 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                    <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200">
+                        <span class="text-xs text-amber-700 font-bold">Jumlah Sesi Bermain</span>
+                        <h4 id="prog-total-sessions" class="text-2xl font-black text-amber-900">0</h4>
+                    </div>
+                    <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200">
+                        <span class="text-xs text-emerald-700 font-bold">Purata Peratusan</span>
+                        <h4 id="prog-avg-acc" class="text-2xl font-black text-emerald-900">0%</h4>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-2xl border border-purple-200">
+                        <span class="text-xs text-purple-700 font-bold">Soalan Dijawab</span>
+                        <h4 id="prog-total-q" class="text-2xl font-black text-purple-900">0</h4>
+                    </div>
+                </div>
+
+                <h3 class="font-bold text-slate-700 pt-2">Prestasi Mengikut Topik:</h3>
+                <div id="topic-progress-list" class="space-y-3"></div>
+            </div>
+        </section>
+
+        <!-- View 7: Leaderboard -->
+        <section id="view-leaderboard" class="view-section hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-3xl font-black text-purple-800"><i class="fa-solid fa-trophy text-amber-400 mr-2"></i> Leaderboard Pemain</h2>
+                <button onclick="window.app && window.app.navTo('main-menu')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 font-bold rounded-xl text-xs cursor-pointer">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+                </button>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-2 border-purple-200 space-y-4">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b-2 border-slate-100 text-xs text-slate-400 uppercase">
+                                <th class="py-3 px-2">Kedudukan</th>
+                                <th class="py-3 px-2">Pemain</th>
+                                <th class="py-3 px-2">Topik</th>
+                                <th class="py-3 px-2">Tahap</th>
+                                <th class="py-3 px-2 text-right">Markah</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body" class="font-bold text-sm divide-y"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- View 8: User Manual / Guide -->
+        <section id="view-guide" class="view-section hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-3xl font-black text-indigo-800">Panduan Permainan</h2>
+                <button onclick="window.app && window.app.navTo('main-menu')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 font-bold rounded-xl text-xs cursor-pointer">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+                </button>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 shadow-lg border-2 border-indigo-200 space-y-4 text-sm leading-relaxed text-slate-600">
+                <h3 class="text-lg font-bold text-indigo-900">Cara Bermain Math Kids Bernama Edu Kidz:</h3>
+                <ul class="list-disc pl-5 space-y-2 font-medium">
+                    <li>Daftar akaun atau gunakan akaun tetamu untuk mula bermain.</li>
+                    <li>Pilih satu daripada 7 Topik utama Matematik KSSR Tahun 1.</li>
+                    <li>Setiap sesi mengandungi 20 soalan unik bernilai 5 markah setiap soalan (Jumlah maksimum = 100).</li>
+                    <li>Sistem memastikan tiada soalan berulang dalam sesi yang sama.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- View 9: History Scores View -->
+        <section id="view-scores" class="view-section hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-3xl font-black text-amber-800">Rekod Markah Saya</h2>
+                <button onclick="window.app && window.app.navTo('main-menu')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 font-bold rounded-xl text-xs cursor-pointer">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+                </button>
+            </div>
+            <div class="bg-white rounded-3xl p-6 shadow-lg border-2 border-amber-200">
+                <div id="scores-history-list" class="space-y-3"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs font-bold text-slate-400">
+        Math Kids Bernama Edu Kidz &copy; 2026 • Kurikulum Standard Sekolah Rendah (KSSR) Tahun 1
+    </footer>
+
+    <script>
+        const TOPICS = [
+            { id: "A", title: "Kenali Panjang Objek", icon: "fa-ruler-horizontal", color: "sky" },
+            { id: "B", title: "Ukur & Banding Panjang", icon: "fa-tape", color: "amber" },
+            { id: "C", title: "Kenali Jisim Objek", icon: "fa-weight-hanging", color: "emerald" },
+            { id: "D", title: "Timbang & Banding Jisim", icon: "fa-scale-balanced", color: "purple" },
+            { id: "E", title: "Sukat & Banding Isipadu", icon: "fa-wine-bottle", color: "pink" },
+            { id: "F", title: "Lengkapkan Ayat Matematik", icon: "fa-pen-to-square", color: "indigo" },
+            { id: "G", title: "Penyelesaian Masalah", icon: "fa-puzzle-piece", color: "red" }
+        ];
+
+        function generateQuestionBank() {
+            const bank = [];
+            const levels = ["Senang", "Sederhana", "Susah"];
+            const modes = ["Objektif", "Padanan", "DragDrop", "IsiTempatKosong"];
+
+            TOPICS.forEach((topic) => {
+                levels.forEach((level) => {
+                    for (let i = 1; i <= 20; i++) {
+                        const qNum = String(i).padStart(3, '0');
+                        const id = `${topic.id}_${level.toUpperCase()}_${qNum}`;
+                        const cog = level === "Senang" ? "Mengingat" : level === "Sederhana" ? "Memahami" : "Mengaplikasi";
+                        const mode = modes[(i - 1) % modes.length];
+
+                        let questionData = buildUniqueQuestionDetails(topic.id, level, i, mode);
+                        
+                        bank.push({
+                            id: id,
+                            topikId: topic.id,
+                            topik: topic.title,
+                            tahap: level,
+                            aras_kognitif: cog,
+                            jenis: mode,
+                            ...questionData,
+                            markah: 5,
+                            unik_key: `KEY_${topic.id}_${level}_${i}_${mode}`,
+                            status_aktif: true
+                        });
+                    }
+                });
+            });
+
+            return bank;
+        }
+
+        function buildUniqueQuestionDetails(topicId, level, index, mode) {
+            let qText = "";
+            let options = [];
+            let answer = "";
+            let diagram = "";
+            let explanation = "";
+
+            const svgPencil = (len1, len2, label1="Objek A", label2="Objek B") => `
+                <svg width="220" height="80" viewBox="0 0 220 80">
+                    <rect x="10" y="15" width="${len1}" height="18" rx="4" fill="#F59E0B" />
+                    <polygon points="${10 + len1},15 ${20 + len1},24 ${10 + len1},33" fill="#D97706" />
+                    <text x="${Math.min(15 + len1 + 5, 170)}" y="28" font-size="11" font-weight="bold">${label1}</text>
+                    
+                    <rect x="10" y="45" width="${len2}" height="18" rx="4" fill="#38BDF8" />
+                    <polygon points="${10 + len2},45 ${20 + len2},54 ${10 + len2},63" fill="#0284C7" />
+                    <text x="${Math.min(15 + len2 + 5, 170)}" y="58" font-size="11" font-weight="bold">${label2}</text>
+                    <line x1="10" y1="5" x2="10" y2="75" stroke="#94A3B8" stroke-dasharray="3,3" stroke-width="2"/>
+                </svg>`;
+
+            const svgScale = (leftWeight, rightWeight, leftLabel="A", rightLabel="B", tilt=0) => `
+                <svg width="220" height="100" viewBox="0 0 220 100">
+                    <polygon points="110,60 95,95 125,95" fill="#64748B" />
+                    <rect x="106" y="35" width="8" height="30" fill="#475569" />
+                    <line x1="30" y1="${50 + tilt}" x2="190" y2="${50 - tilt}" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="110" cy="50" r="6" fill="#0F172A" />
+                    <line x1="30" y1="${50 + tilt}" x2="30" y2="${65 + tilt}" stroke="#94A3B8" stroke-width="2"/>
+                    <rect x="15" y="${65 + tilt}" width="30" height="8" rx="2" fill="#CBD5E1"/>
+                    <circle cx="30" cy="${55 + tilt}" r="16" fill="#10B981" />
+                    <text x="22" y="${58 + tilt}" fill="white" font-size="10" font-weight="bold">${leftLabel.substring(0, 5)}</text>
+                    <line x1="190" y1="${50 - tilt}" x2="190" y2="${65 - tilt}" stroke="#94A3B8" stroke-width="2"/>
+                    <rect x="175" y="${65 - tilt}" width="30" height="8" rx="2" fill="#CBD5E1"/>
+                    <circle cx="190" cy="${55 - tilt}" r="16" fill="#EC4899" />
+                    <text x="182" y="${58 - tilt}" fill="white" font-size="10" font-weight="bold">${rightLabel.substring(0, 5)}</text>
+                </svg>`;
+
+            const svgLiquid = (fill1, fill2, label1="Bekas A", label2="Bekas B") => `
+                <svg width="200" height="95" viewBox="0 0 200 95">
+                    <rect x="30" y="20" width="38" height="55" rx="3" fill="none" stroke="#0284C7" stroke-width="3"/>
+                    <rect x="32" y="${73 - fill1}" width="34" height="${fill1}" fill="#38BDF8"/>
+                    <text x="26" y="90" font-size="11" font-weight="bold" fill="#0369A1">${label1}</text>
+                    <rect x="120" y="20" width="38" height="55" rx="3" fill="none" stroke="#0284C7" stroke-width="3"/>
+                    <rect x="122" y="${73 - fill2}" width="34" height="${fill2}" fill="#38BDF8"/>
+                    <text x="116" y="90" font-size="11" font-weight="bold" fill="#0369A1">${label2}</text>
+                </svg>`;
+
+            switch(topicId) {
+                case "A": // TOPIK A: KENALI PANJANG OBJEK
+                    if (level === "Senang") {
+                        const items = ["Pensel", "Pembaris", "Tali", "Riben", "Kayu", "Krayon", "Paku", "Berus", "Kunci", "Straw"];
+                        const item = items[(index - 1) % items.length];
+                        const lenA = 110 + (index % 10);
+                        const lenB = 60 + (index % 10);
+                        qText = `Perhatikan rajah ${item.toLowerCase()} A dan B di atas dari titik mula yang sama. Objek manakah yang lebih PANJANG?`;
+                        diagram = svgPencil(lenA, lenB, "Objek A", "Objek B");
+                        options = ["Objek A", "Objek B", "Sama panjang", "Tidak pasti"];
+                        answer = "Objek A";
+                        explanation = `Objek A lebih panjang kerana garisan tamatnya merentasi jarak yang lebih jauh dari titik permulaan yang sama.`;
+                    } else if (level === "Sederhana") {
+                        const items = ["Pita", "Kabel", "Hos", "Kertas", "Pemadam", "Paku", "Lidi", "Ranting", "Benang", "Selendang"];
+                        const item = items[(index - 1) % items.length];
+                        const lenA = 50 + (index % 5);
+                        const lenB = 130 + (index % 5);
+                        qText = `Antara dua ${item.toLowerCase()} berikut dari garisan permulaan yang sama, yang manakah lebih PENDEK?`;
+                        diagram = svgPencil(lenA, lenB, "Pita X", "Pita Y");
+                        options = ["Pita X", "Pita Y", "Sama panjang", "Tiada perbezaan"];
+                        answer = "Pita X";
+                        explanation = `Pita X lebih pendek kerana saiz ukurannya lebih kecil dan tamat lebih awal berbanding Pita Y.`;
+                    } else { // Susah
+                        const l1 = 55 + (index % 7);
+                        const l2 = 130;
+                        const l3 = 90;
+                        qText = `Tiga objek P (${l1}cm), Q (${l2}cm), dan R (${l3}cm) diletakkan bermula dari titik yang sama. Apakah urutan objek dari PALING PANJANG ke PALING PENDEK?`;
+                        diagram = svgPencil(l2, l1, "Q", "P");
+                        options = ["Q, R, P", "P, R, Q", "R, Q, P", "P, Q, R"];
+                        answer = "Q, R, P";
+                        explanation = `Susunan menurun daripada nilai terpanjang kepada terpendek ialah Q (${l2}cm) > R (${l3}cm) > P (${l1}cm).`;
+                    }
+                    break;
+
+                case "B": // TOPIK B: UKUR & BANDING PANJANG
+                    if (level === "Senang") {
+                        const units = ["klip kertas", "batang aiskrim", "blok", "penutup botol"];
+                        const unit = units[(index - 1) % units.length];
+                        const valA = 12 + (index % 5);
+                        const valB = 5;
+                        qText = `Panjang buku ialah ${valA} ${unit}. Panjang pemadam ialah ${valB} ${unit}. Berapakah beza ukuran antara kedua-duanya?`;
+                        diagram = svgPencil(valA * 7, valB * 7, "Buku", "Pemadam");
+                        const diff = valA - valB;
+                        options = [`${diff} ${unit}`, `${valA + valB} ${unit}`, `${valB} ${unit}`, `2 ${unit}`];
+                        answer = `${diff} ${unit}`;
+                        explanation = `Beza ukuran dikira dengan menolak: ${valA} - ${valB} = ${diff} ${unit}.`;
+                    } else if (level === "Sederhana") {
+                        const initLen = 15 + (index % 4);
+                        const cutLen = 4;
+                        const remain = initLen - cutLen;
+                        qText = `Seutas tali panjangnya ${initLen} klip kertas. Dipotong sepanjang ${cutLen} klip kertas. Berapakah baki panjang tali?`;
+                        diagram = svgPencil(initLen * 6, remain * 6, "Asal", "Baki");
+                        options = [`${remain} klip kertas`, `${initLen} klip kertas`, `${cutLen} klip kertas`, `10 klip kertas`];
+                        answer = `${remain} klip kertas`;
+                        explanation = `Baki tali: ${initLen} - ${cutLen} = ${remain} klip kertas.`;
+                    } else { // Susah
+                        const lA = 6 + (index % 4);
+                        const lB = 8 + (index % 3);
+                        const total = lA + lB;
+                        qText = `Pita P panjangnya ${lA} batang aiskrim. Pita Q panjangnya ${lB} batang aiskrim. Berapakah jumlah panjang kedua-dua pita?`;
+                        diagram = svgPencil(lA * 8, lB * 8, "Pita P", "Pita Q");
+                        options = [`${total} batang aiskrim`, `${Math.abs(lA - lB)} batang aiskrim`, `${lA} batang aiskrim`, `15 batang aiskrim`];
+                        answer = `${total} batang aiskrim`;
+                        explanation = `Jumlah panjang: ${lA} + ${lB} = ${total} batang aiskrim.`;
+                    }
+                    break;
+
+                case "C": // TOPIK C: KENALI JISIM OBJEK
+                    if (level === "Senang") {
+                        const pairsC = [
+                            { heavy: "Buku Teks", light: "Bulu Ayam", tilt: 12 },
+                            { heavy: "Semangka", light: "Epal", tilt: 12 },
+                            { heavy: "Batu Bata", light: "Kapas", tilt: 12 },
+                            { heavy: "Beg Sekolah", light: "Pemadam", tilt: 12 },
+                            { heavy: "Bola Sepak", light: "Belon", tilt: 12 }
+                        ];
+                        const p = pairsC[(index - 1) % pairsC.length];
+                        qText = `Perhatikan neraca penimbang di atas (${p.heavy} di kiri, ${p.light} di kanan). Objek manakah yang lebih BERAT?`;
+                        diagram = svgScale(14, 4, p.heavy, p.light, p.tilt);
+                        options = [p.heavy, p.light, "Sama berat", "Tidak pasti"];
+                        answer = p.heavy;
+                        explanation = `Sebelah neraca yang mendap ke bawah (${p.heavy}) menunjukkan objek tersebut lebih berat berbanding ${p.light}.`;
+                    } else if (level === "Sederhana") {
+                        const itemsList = ["Buku Nota", "Kotak Pensel", "Botol Air", "Kamus", "Kasut Sukan"];
+                        const item = itemsList[(index - 1) % itemsList.length];
+                        qText = `Neraca berada dalam keadaan SEIMBANG (mendatar sama rata). Apakah kesimpulan tentang jisim ${item} di sebelah kiri dan kanan?`;
+                        diagram = svgScale(10, 10, `${item} A`, `${item} B`, 0);
+                        options = ["Sama berat", "Tidak sama berat", "Sebelah lebih berat", "Paling ringan"];
+                        answer = "Sama berat";
+                        explanation = `Apabila palang neraca lurus mendatar, kedua-dua objek mempunyai jisim yang sama berat.`;
+                    } else { // Susah
+                        const scC = [
+                            { desc: "Epal lebih berat daripada Strawberi. Strawberi lebih berat daripada Anggur.", ans: "Epal", opts: ["Epal", "Strawberi", "Anggur", "Tidak pasti"] },
+                            { desc: "Kotak A lebih berat daripada Kotak B. Kotak B lebih berat daripada Kotak C.", ans: "Kotak A", opts: ["Kotak C", "Kotak B", "Kotak A", "Sama berat"] },
+                            { desc: "Buku 1 sama berat dengan Buku 2. Buku 2 lebih berat daripada Buku 3.", ans: "Buku 3", opts: ["Buku 3", "Buku 1", "Buku 2", "Semua sama"] },
+                            { desc: "Bola Tenis lebih ringan daripada Bola Sepak. Bola Sepak lebih ringan daripada Bola Baling.", ans: "Bola Tenis", opts: ["Bola Tenis", "Bola Sepak", "Bola Baling", "Tidak dapat ditentukan"] }
+                        ];
+                        const sc = scC[(index - 1) % scC.length];
+                        qText = `Penyataan jisim: ${sc.desc} Apakah objek yang PALING BERAT dalam situasi ini?`;
+                        diagram = svgScale(12, 6, "Objek X", "Objek Y", 10);
+                        options = sc.opts;
+                        answer = sc.ans;
+                        explanation = `Melalui analisis perbandingan bertingkat, objek yang berada di kedudukan paling atas/berat ialah ${sc.ans}.`;
+                    }
+                    break;
+
+                case "D": // TOPIK D: TIMBANG & BANDING JISIM
+                    if (level === "Senang") {
+                        const pairsD = [
+                            { left: "Kobis", right: "Lobak", tilt: 12, ans: "Kobis lebih berat daripada Lobak" },
+                            { left: "Susu", right: "Biskut", tilt: 10, ans: "Susu lebih berat daripada Biskut" },
+                            { left: "Labu", right: "Epal", tilt: -12, ans: "Epal lebih berat daripada Labu" },
+                            { left: "Kek", right: "Gula-gula", tilt: 10, ans: "Kek lebih berat daripada Gula-gula" },
+                            { left: "Batu", right: "Daun", tilt: 14, ans: "Batu lebih berat daripada Daun" }
+                        ];
+                        const itemD = pairsD[(index - 1) % pairsD.length];
+                        qText = `Perhatikan penimbang di atas. Antara pernyataan berikut, manakah yang BETUL tentang jisim ${itemD.left} dan ${itemD.right}?`;
+                        diagram = svgScale(12, 6, itemD.left, itemD.right, itemD.tilt);
+                        const correctAns = itemD.tilt > 0 ? `${itemD.left} lebih berat daripada ${itemD.right}` : `${itemD.right} lebih berat daripada ${itemD.left}`;
+                        const wrongAns = itemD.tilt > 0 ? `${itemD.right} lebih berat daripada ${itemD.left}` : `${itemD.left} lebih berat daripada ${itemD.right}`;
+                        options = [
+                            correctAns,
+                            wrongAns,
+                            `Kedua-dua objek sama berat`,
+                            `Tidak boleh ditentukan`
+                        ];
+                        answer = correctAns;
+                        explanation = `Sebelah neraca yang condong ke bawah menunjukkan objek di sebelah tersebut lebih berat.`;
+                    } else if (level === "Sederhana") {
+                        const count = 4 + (index % 5);
+                        const itemName = ["Nanas", "Betik", "Melon", "Buku Teks"][(index - 1) % 4];
+                        qText = `Jisim 1 buah ${itemName} adalah sama berat dengan ${count} biji guli pada neraca seimbang. Berapakah jumlah jisim untuk 2 buah ${itemName}?`;
+                        diagram = svgScale(10, 10, itemName, `${count} Guli`, 0);
+                        const totalGuli = count * 2;
+                        options = [`${totalGuli} biji guli`, `${count} biji guli`, `${count + 2} biji guli`, `${totalGuli + 2} biji guli`];
+                        answer = `${totalGuli} biji guli`;
+                        explanation = `Jika 1 ${itemName} = ${count} guli, maka 2 ${itemName} = ${count} + ${count} = ${totalGuli} biji guli.`;
+                    } else { // Susah
+                        const kbatD = [
+                            { t: "Kotak X seimbang dengan 3 Kotak Y. Jika 1 Kotak Y = 2 kg, berapakah jisim Kotak X?", o: ["6 kg", "3 kg", "5 kg", "8 kg"], a: "6 kg", e: "Jisim Kotak X = 3 × 2 kg = 6 kg." },
+                            { t: "2 Epal seimbang dengan 4 Ciku. Berapa Ciku diperlukan untuk menyeimbangkan 1 Epal?", o: ["2 biji Ciku", "1 biji Ciku", "3 biji Ciku", "4 biji Ciku"], a: "2 biji Ciku", e: "1 Epal = 4 ÷ 2 = 2 biji Ciku." },
+                            { t: "Beg A (5kg) dan Beg B (3kg) di kiri. Berapa bongkah 2kg di kanan untuk seimbang?", o: ["4 bongkah", "3 bongkah", "5 bongkah", "8 bongkah"], a: "4 bongkah", e: "Jumlah kiri = 8 kg. Bilangan bongkah 2kg = 8 ÷ 2 = 4 bongkah." },
+                            { t: "Bekas P = 2 Bekas Q. Bekas Q = 3 Guli. Berapa Guli sama berat dengan 1 Bekas P?", o: ["6 biji guli", "5 biji guli", "3 biji guli", "9 biji guli"], a: "6 biji guli", e: "1 Bekas P = 2 × 3 guli = 6 biji guli." }
+                        ];
+                        const k = kbatD[(index - 1) % kbatD.length];
+                        qText = k.t;
+                        diagram = svgScale(10, 10, "Objek P", "Objek Q", 0);
+                        options = [...k.o];
+                        answer = k.a;
+                        explanation = k.e;
+                    }
+                    break;
+
+                case "E": // TOPIK E: SUKAT & BANDING ISIPADU CECAIR
+                    if (level === "Senang") {
+                        // TAHAP SENANG: Perbandingan visual asas paras cecair (Sama saiz bekas, paras berbeza)
+                        const liquids = ["Jus Epal", "Susu Sehat", "Air Sirap", "Air Mineral", "Jus Oren", "Teh O", "Minyak", "Air Coklat"];
+                        const liquidName = liquids[(index - 1) % liquids.length];
+                        const fillA = 48 + ((index * 3) % 12); // ~48..60px
+                        const fillB = 18 + ((index * 2) % 10); // ~18..28px
+                        
+                        if (index % 2 === 1) {
+                            qText = `Perhatikan ${liquidName.toLowerCase()} dalam Bekas A dan Bekas B. Bekas manakah yang mengandungi cecair LEBIH BANYAK?`;
+                            diagram = svgLiquid(fillA, fillB, "Bekas A", "Bekas B");
+                            options = ["Bekas A", "Bekas B", "Sama banyak", "Kedua-duanya kosong"];
+                            answer = "Bekas A";
+                            explanation = `Bekas A mengandungi lebih banyak cecair kerana paras ketinggian cecair dalam Bekas A lebih tinggi daripada Bekas B.`;
+                        } else {
+                            qText = `Perhatikan ${liquidName.toLowerCase()} dalam Bekas X dan Bekas Y. Bekas manakah yang mengandungi cecair LEBIH SEDIKIT?`;
+                            diagram = svgLiquid(fillB, fillA, "Bekas X", "Bekas Y");
+                            options = ["Bekas X", "Bekas Y", "Sama banyak", "Tiada cecair"];
+                            answer = "Bekas X";
+                            explanation = `Bekas X mengandungi lebih sedikit cecair kerana aras cecair di Bekas X lebih rendah berbanding Bekas Y.`;
+                        }
+                    } else if (level === "Sederhana") {
+                        // TAHAP SEDERHANA: Sukatan menggunakan unit bukan piawai (Cawan / Gelas / Mangkuk)
+                        const drinks = ["Air Anggur", "Jus Mangga", "Air Kelapa", "Susu Lembu", "Air Bandung"];
+                        const drink = drinks[(index - 1) % drinks.length];
+                        const cawanPerJag = 3 + (index % 5); // 3 hingga 7 cawan
+                        const bilJag = 2 + (index % 3);       // 2 hingga 4 jag
+                        const totalCawan = cawanPerJag * bilJag;
+
+                        qText = `1 botol ${drink.toLowerCase()} boleh mengisi penuh ${cawanPerJag} cawan. Jika Ibu membeli ${bilJag} botol yang sama, berapakah jumlah cawan yang boleh diisi penuh?`;
+                        diagram = svgLiquid(45, 45, "1 Botol", `${cawanPerJag} Cawan`);
+                        options = [`${totalCawan} cawan`, `${cawanPerJag + bilJag} cawan`, `${cawanPerJag} cawan`, `${totalCawan + 2} cawan`];
+                        answer = `${totalCawan} cawan`;
+                        explanation = `Jumlah cawan = ${bilJag} botol × ${cawanPerJag} cawan = ${totalCawan} cawan air.`;
+                    } else { 
+                        // TAHAP SUSAH: Operasi penambahan/penolakan & penyelesaian masalah isipadu cecair
+                        const kbatE = [
+                            {
+                                text: "Sebuah jag berisi 12 cawan air sirap. Syamil dan rakan-rakannya telah meminum 5 cawan. Berapakah baki cawan air sirap yang tinggal dalam jag?",
+                                f1: 50, f2: 25, l1: "Asal: 12", l2: "Baki",
+                                opts: ["7 cawan", "17 cawan", "5 cawan", "8 cawan"],
+                                ans: "7 cawan",
+                                exp: "Baki air sirap = 12 cawan - 5 cawan = 7 cawan."
+                            },
+                            {
+                                text: "Bekas A mengandungi 8 liter air manakala Bekas B mengandungi 14 liter air. Berapakah beza isipadu air antara Bekas B dan Bekas A?",
+                                f1: 30, f2: 55, l1: "Bekas A (8L)", l2: "Bekas B (14L)",
+                                opts: ["6 liter", "22 liter", "8 liter", "14 liter"],
+                                ans: "6 liter",
+                                exp: "Beza isipadu cecair = 14 liter - 8 liter = 6 liter."
+                            },
+                            {
+                                text: "Dalam sebuah tempayan terdapat 9 liter air. Ibu menambah 6 liter air lagi ke dalam tempayan megenai isipadu. Berapakah jumlah isipadu air sekarang?",
+                                f1: 35, f2: 60, l1: "Asal (9L)", l2: "Jumlah Baru",
+                                opts: ["15 liter", "3 liter", "9 liter", "18 liter"],
+                                ans: "15 liter",
+                                exp: "Jumlah isipadu air = 9 liter + 6 liter = 15 liter."
+                            },
+                            {
+                                text: "Tangki P memuatkan 20 liter air. Tangki Q memuatkan 7 liter kurang daripada Tangki P. Berapakah isipadu air dalam Tangki Q?",
+                                f1: 60, f2: 38, l1: "Tangki P", l2: "Tangki Q",
+                                opts: ["13 liter", "27 liter", "7 liter", "14 liter"],
+                                ans: "13 liter",
+                                exp: "Isipadu Tangki Q = 20 liter - 7 liter = 13 liter."
+                            }
+                        ];
+                        const prob = kbatE[(index - 1) % kbatE.length];
+                        qText = prob.text;
+                        diagram = svgLiquid(prob.f1, prob.f2, prob.l1, prob.l2);
+                        options = [...prob.opts];
+                        answer = prob.ans;
+                        explanation = prob.exp;
+                    }
+                    break;
+
+                case "F": // TOPIK F: LENGKAPKAN AYAT MATEMATIK (DIKEMAS KINI DENGAN SOALAN JELAS & UNIK)
+                    const unitList = ["cm", "kg", "l", "m", "g"];
+                    const currUnit = unitList[(index - 1) % unitList.length];
+
+                    if (level === "Senang") {
+                        // TAHAP SENANG: Penambahan atau Penolakan direct hasil jawapan di hujung (1 hingga 20)
+                        const isAddition = index % 2 === 1;
+                        if (isAddition) {
+                            const val1 = 2 + (index % 8);
+                            const val2 = 3 + ((index * 2) % 7);
+                            const res = val1 + val2;
+                            qText = `Lengkapkan ayat matematik penambahan unit berikut: ${val1} ${currUnit} + ${val2} ${currUnit} = ______ ${currUnit}`;
+                            diagram = svgPencil(val1 * 8, val2 * 8, `${val1}${currUnit}`, `${val2}${currUnit}`);
+                            answer = `${res} ${currUnit}`;
+                            options = [`${res} ${currUnit}`, `${res + 2} ${currUnit}`, `${Math.max(1, res - 3)} ${currUnit}`, `${val1}${val2} ${currUnit}`];
+                            explanation = `Operasi Tambah: ${val1} + ${val2} = ${res} ${currUnit}.`;
+                        } else {
+                            const val1 = 10 + (index % 9);
+                            const val2 = 2 + (index % 6);
+                            const res = val1 - val2;
+                            qText = `Lengkapkan ayat matematik penolakan unit berikut: ${val1} ${currUnit} - ${val2} ${currUnit} = ______ ${currUnit}`;
+                            diagram = svgScale(val1 * 5, res * 5, `${val1}${currUnit}`, `Baki`, 0);
+                            answer = `${res} ${currUnit}`;
+                            options = [`${res} ${currUnit}`, `${res + 3} ${currUnit}`, `${val1 + val2} ${currUnit}`, `${Math.max(1, res - 2)} ${currUnit}`];
+                            explanation = `Operasi Tolak: ${val1} - ${val2} = ${res} ${currUnit}.`;
+                        }
+                    } else if (level === "Sederhana") {
+                        // TAHAP SEDERHANA: Mencari ANU di Tengah atau di Awal ayat matematik
+                        const modeAnu = index % 3;
+                        if (modeAnu === 0) { //  A + [ ] = C
+                            const numA = 4 + (index % 7);
+                            const numC = numA + 3 + (index % 6);
+                            const missing = numC - numA;
+                            qText = `Cari nilai tempat kosong bagi ayat matematik: ${numA} ${currUnit} + ______ ${currUnit} = ${numC} ${currUnit}`;
+                            diagram = svgPencil(numA * 8, numC * 6, `${numA}${currUnit}`, `Jumlah: ${numC}${currUnit}`);
+                            answer = `${missing} ${currUnit}`;
+                            options = [`${missing} ${currUnit}`, `${numC + numA} ${currUnit}`, `${Math.max(1, missing - 1)} ${currUnit}`, `${missing + 3} ${currUnit}`];
+                            explanation = `Untuk mencari tempat kosong (anu), tolakkan nilai jumlah dengan nilai awal: ${numC} - ${numA} = ${missing} ${currUnit}.`;
+                        } else if (modeAnu === 1) { // A - [ ] = C
+                            const numA = 12 + (index % 8);
+                            const numC = 4 + (index % 5);
+                            const missing = numA - numC;
+                            qText = `Isikan tempat kosong yang betul: ${numA} ${currUnit} - ______ ${currUnit} = ${numC} ${currUnit}`;
+                            diagram = svgScale(12, 6, `${numA}${currUnit}`, `${numC}${currUnit}`, 0);
+                            answer = `${missing} ${currUnit}`;
+                            options = [`${missing} ${currUnit}`, `${numA + numC} ${currUnit}`, `${Math.max(1, missing - 2)} ${currUnit}`, `${missing + 4} ${currUnit}`];
+                            explanation = `Cari nombor yang ditolak: ${numA} - ${numC} = ${missing} ${currUnit}.`;
+                        } else { // [ ] + B = C
+                            const numB = 3 + (index % 6);
+                            const numC = numB + 5 + (index % 7);
+                            const missing = numC - numB;
+                            qText = `Lengkapkan nombor di dalam petak kosong: ______ ${currUnit} + ${numB} ${currUnit} = ${numC} ${currUnit}`;
+                            diagram = svgLiquid(numB * 5, numC * 4, `${numB}${currUnit}`, `Sasaran: ${numC}${currUnit}`);
+                            answer = `${missing} ${currUnit}`;
+                            options = [`${missing} ${currUnit}`, `${numC + numB} ${currUnit}`, `${missing + 2} ${currUnit}`, `${Math.max(1, missing - 2)} ${currUnit}`];
+                            explanation = `Cari nombor awal: ${numC} - ${numB} = ${missing} ${currUnit}.`;
+                        }
+                    } else { 
+                        // TAHAP SUSAH: Operasi Gabungan 3 nombor / KBAT pembolehubah dua langkah
+                        const scenarioKBAT = [
+                            {
+                                text: `Lengkapkan ayat matematik tiga sebutan: 5 ${currUnit} + 4 ${currUnit} + ______ ${currUnit} = 15 ${currUnit}`,
+                                ans: `6 ${currUnit}`,
+                                opts: [`6 ${currUnit}`, `9 ${currUnit}`, `10 ${currUnit}`, `4 ${currUnit}`],
+                                exp: `Jumlah awal = 5 + 4 = 9. Petak kosong = 15 - 9 = 6 ${currUnit}.`
+                            },
+                            {
+                                text: `Lengkapkan ayat matematik gabungan: 18 ${currUnit} - 6 ${currUnit} + ______ ${currUnit} = 20 ${currUnit}`,
+                                ans: `8 ${currUnit}`,
+                                opts: [`8 ${currUnit}`, `12 ${currUnit}`, `2 ${currUnit}`, `14 ${currUnit}`],
+                                exp: `Selesaikan dahulu 18 - 6 = 12. Tempat kosong = 20 - 12 = 8 ${currUnit}.`
+                            },
+                            {
+                                text: `Isikan tempat kosong bagi persamaan: ______ ${currUnit} - 5 ${currUnit} = 7 ${currUnit} + 2 ${currUnit}`,
+                                ans: `14 ${currUnit}`,
+                                opts: [`14 ${currUnit}`, `4 ${currUnit}`, `9 ${currUnit}`, `12 ${currUnit}`],
+                                exp: `Kanan = 7 + 2 = 9. Sebelah kiri: Nombor - 5 = 9. Oleh itu, nombor = 9 + 5 = 14 ${currUnit}.`
+                            },
+                            {
+                                text: `Lengkapkan ayat matematik seimbang: 10 ${currUnit} + 6 ${currUnit} = ______ ${currUnit} + 8 ${currUnit}`,
+                                ans: `8 ${currUnit}`,
+                                opts: [`8 ${currUnit}`, `16 ${currUnit}`, `24 ${currUnit}`, `10 ${currUnit}`],
+                                exp: `Sebelah kiri = 10 + 6 = 16. Petak kosong = 16 - 8 = 8 ${currUnit}.`
+                            }
+                        ];
+                        const kbatF = scenarioKBAT[(index - 1) % scenarioKBAT.length];
+                        qText = kbatF.text;
+                        diagram = svgPencil(120, 80, "Kiri", "Kanan");
+                        answer = kbatF.ans;
+                        options = kbatF.opts;
+                        explanation = kbatF.exp;
+                    }
+                    break;
+
+                case "G": // TOPIK G: PENYELESAIAN MASALAH
+                    const gItems = [
+                        { obj: "pita", unit: "cm", val1: 10 + (index % 12), val2: 2 + (index % 5), op: "sub" },
+                        { obj: "tali", unit: "cm", val1: 15 + (index % 10), val2: 4 + (index % 6), op: "sub" },
+                        { obj: "mangga", unit: "kg", val1: 3 + (index % 7), val2: 2 + (index % 4), op: "add" },
+                        { obj: "tepung", unit: "kg", val1: 5 + (index % 8), val2: 3 + (index % 3), op: "add" },
+                        { obj: "air sirap", unit: "liter", val1: 10 + (index % 6), val2: 3 + (index % 4), op: "sub" },
+                        { obj: "jus oren", unit: "liter", val1: 6 + (index % 7), val2: 4 + (index % 3), op: "add" },
+                        { obj: "riben", unit: "cm", val1: 14 + (index % 9), val2: 5 + (index % 4), op: "sub" },
+                        { obj: "buku", unit: "kg", val1: 4 + (index % 6), val2: 1 + (index % 3), op: "add" }
+                    ];
+                    const gItem = gItems[(index - 1) % gItems.length];
+                    
+                    if (level === "Senang") {
+                        if (gItem.op === "sub") {
+                            const res = gItem.val1 - gItem.val2;
+                            qText = `Ali mempunyai sehelai ${gItem.obj} sepanjang ${gItem.val1} ${gItem.unit}. Dia memotong dan memberikan ${gItem.val2} ${gItem.unit} kepada adiknya. Berapakah panjang ${gItem.obj} Ali sekarang?`;
+                            diagram = svgPencil(gItem.val1 * 8, res * 8, "Asal", "Baki");
+                            answer = `${res} ${gItem.unit}`;
+                            options = [`${res} ${gItem.unit}`, `${gItem.val1 + gItem.val2} ${gItem.unit}`, `${gItem.val2} ${gItem.unit}`, `${res + 2} ${gItem.unit}`];
+                            explanation = `Panjang baki ${gItem.obj} = ${gItem.val1} ${gItem.unit} - ${gItem.val2} ${gItem.unit} = ${res} ${gItem.unit}.`;
+                        } else {
+                            const res = gItem.val1 + gItem.val2;
+                            qText = `Siti membeli ${gItem.val1} ${gItem.unit} ${gItem.obj}. Ibu memberikannya lagi ${gItem.val2} ${gItem.unit} ${gItem.obj} yang sama. Berapakah jumlah ${gItem.obj} Siti?`;
+                            diagram = svgScale(gItem.val1 * 5, gItem.val2 * 5, "Asal", "Tambah", 0);
+                            answer = `${res} ${gItem.unit}`;
+                            options = [`${res} ${gItem.unit}`, `${Math.abs(gItem.val1 - gItem.val2)} ${gItem.unit}`, `${gItem.val1} ${gItem.unit}`, `${res + 3} ${gItem.unit}`];
+                            explanation = `Jumlah keseluruhan ${gItem.obj} = ${gItem.val1} + ${gItem.val2} = ${res} ${gItem.unit}.`;
+                        }
+                    } else if (level === "Sederhana") {
+                        const mult = 2 + (index % 4);
+                        const resMult = gItem.val1 * mult;
+                        qText = `Sebuah bekas boleh memuatkan ${gItem.val1} ${gItem.unit} ${gItem.obj}. Berapakah jumlah muatan untuk ${mult} buah bekas yang sama?`;
+                        diagram = svgLiquid(gItem.val1 * 5, resMult * 3, "1 Bekas", `${mult} Bekas`);
+                        answer = `${resMult} ${gItem.unit}`;
+                        options = [`${resMult} ${gItem.unit}`, `${gItem.val1 + mult} ${gItem.unit}`, `${Math.max(1, resMult - 2)} ${gItem.unit}`, `${resMult + 4} ${gItem.unit}`];
+                        explanation = `Jumlah muatan = ${mult} bekas × ${gItem.val1} ${gItem.unit} = ${resMult} ${gItem.unit}.`;
+                    } else { // Susah
+                        const initial = 12 + (index % 8);
+                        const drank = 3 + (index % 3);
+                        const added = 2 + (index % 4);
+                        const finalVal = initial - drank + added;
+                        qText = `Sebuah tong mengandungi ${initial} liter air. Sebanyak ${drank} liter air telah digunakan dan kemudian ${added} liter air ditambah ke dalam tong tersebut. Berapakah isipadu air di dalam tong sekarang?`;
+                        diagram = svgLiquid(50, 40, "Asal", "Akhir");
+                        answer = `${finalVal} liter`;
+                        options = [`${finalVal} liter`, `${initial - drank} liter`, `${initial + added} liter`, `${finalVal + 3} liter`];
+                        explanation = `Kira langkah demi langkah: ${initial} - ${drank} = ${initial - drank} liter, kemudian tambah ${added} liter menjadi ${initial - drank} + ${added} = ${finalVal} liter.`;
+                    }
+                    break;
+            }
+
+            // Pastikan pilihan jawapan sentiasa tersedia mengikut mod permainan
+            if (mode === "Padanan") {
+                if (!options || options.length === 0) {
+                    options = [answer, "Sama", "Berbeza", "Tiada"];
+                } else if (!options.includes(answer)) {
+                    options[0] = answer;
+                }
+            } else if (mode === "IsiTempatKosong") {
+                // Untuk mod isi tempat kosong, kekalkan tatasusunan kosong tetapi jawapan tetap wujud
+                options = [];
+            } else {
+                if (!options || options.length === 0) {
+                    options = [answer, "Pilihan B", "Pilihan C", "Pilihan D"];
+                }
+            }
+
+            return { soalan: qText, pilihan: options, jawapan: answer, gambarajah: diagram, penerangan: explanation };
+        }
+
+        class MathKidsApp {
+            constructor() {
+                this.currentUser = null;
+                this.currentView = 'view-main-menu';
+                this.questionBank = generateQuestionBank();
+                this.activeSession = {
+                    topicId: 'A',
+                    difficulty: 'Senang',
+                    mode: 'Objektif',
+                    timerSec: 60,
+                    questions: [],
+                    currentIndex: 0,
+                    score: 0,
+                    correctCount: 0,
+                    wrongCount: 0,
+                    startTime: null,
+                    timerInterval: null,
+                    timeLeft: 60
+                };
+                this.initApp();
+            }
+
+            initApp() {
+                this.loadUserData();
+                this.renderTopicGrid();
+                this.navTo('view-main-menu');
+            }
+
+            navTo(viewId) {
+                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+                const target = viewId.startsWith('view-') ? document.getElementById(viewId) : document.getElementById(`view-${viewId}`);
+                if (target) {
+                    target.classList.remove('hidden');
+                    this.currentView = viewId;
+                    if (viewId === 'progress') this.renderProgress();
+                    if (viewId === 'leaderboard') this.renderLeaderboard();
+                    if (viewId === 'scores') this.renderScoresHistory();
+                }
+            }
+
+            loadUserData() {
+                const saved = localStorage.getItem('mk_current_user');
+                if (saved) {
+                    this.currentUser = JSON.parse(saved);
+                    document.getElementById('nav-player-info').classList.remove('hidden');
+                    document.getElementById('nav-player-info').classList.add('flex');
+                    document.getElementById('player-display-name').textContent = this.currentUser.name;
+                    document.getElementById('player-display-score').textContent = `${this.currentUser.totalScore || 0} Markah`;
+                } else {
+                    document.getElementById('nav-player-info').classList.remove('flex');
+                    document.getElementById('nav-player-info').classList.add('hidden');
+                }
+            }
+
+            logout() {
+                localStorage.removeItem('mk_current_user');
+                this.currentUser = null;
+                this.loadUserData();
+                this.navTo('main-menu');
+            }
+
+            toggleAuthMode() {
+                const title = document.getElementById('auth-title');
+                const btn = document.getElementById('auth-toggle-btn');
+                if (title.textContent.includes('Login')) {
+                    title.textContent = 'Daftar Akaun Baharu';
+                    btn.textContent = 'Sudah ada akaun? Log masuk di sini';
+                } else {
+                    title.textContent = 'Login Pemain';
+                    btn.textContent = 'Belum ada akaun? Daftar sekarang';
+                }
+            }
+
+            handleAuth(e) {
+                e.preventDefault();
+                const name = document.getElementById('auth-name').value.trim();
+                const username = document.getElementById('auth-username').value.trim();
+                const pass = document.getElementById('auth-password').value.trim();
+                
+                if (!name || !username || !pass) return;
+
+                let users = JSON.parse(localStorage.getItem('mk_users') || '[]');
+                const isRegistering = document.getElementById('auth-title').textContent.includes('Daftar');
+
+                if (isRegistering) {
+                    if (users.find(u => u.username === username)) {
+                        const err = document.getElementById('auth-error');
+                        err.textContent = 'ID Pengguna ini telah wujud. Sila pilih ID lain.';
+                        err.classList.remove('hidden');
+                        return;
+                    }
+                    const newUser = { name, username, pass, totalScore: 0, history: [] };
+                    users.push(newUser);
+                    localStorage.setItem('mk_users', JSON.stringify(users));
+                    this.currentUser = newUser;
+                } else {
+                    const found = users.find(u => u.username === username && u.pass === pass);
+                    if (!found) {
+                        const err = document.getElementById('auth-error');
+                        err.textContent = 'ID Pengguna atau Kata Laluan tidak sah.';
+                        err.classList.remove('hidden');
+                        return;
+                    }
+                    this.currentUser = found;
+                }
+
+                localStorage.setItem('mk_current_user', JSON.stringify(this.currentUser));
+                this.loadUserData();
+                this.navTo('main-menu');
+            }
+
+            renderTopicGrid() {
+                const grid = document.getElementById('topic-grid');
+                if (!grid) return;
+                grid.innerHTML = TOPICS.map(t => `
+                    <div onclick="window.app.selectTopicCard('${t.id}')" id="topic-card-${t.id}" class="topic-select-card p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-sky-500 cursor-pointer flex items-center space-x-3 transition">
+                        <div class="w-12 h-12 rounded-xl bg-${t.color}-100 text-${t.color}-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid ${t.icon}"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase">Topik ${t.id}</span>
+                            <h4 class="font-bold text-slate-800 text-sm leading-tight">${t.title}</h4>
+                        </div>
+                    </div>
+                `).join('');
+                this.selectTopicCard('A');
+            }
+
+            selectTopicCard(id) {
+                this.activeSession.topicId = id;
+                document.querySelectorAll('.topic-select-card').forEach(el => el.classList.remove('border-sky-500', 'bg-sky-50/50', 'ring-2', 'ring-sky-400'));
+                const sel = document.getElementById(`topic-card-${id}`);
+                if (sel) sel.classList.add('border-sky-500', 'bg-sky-50/50', 'ring-2', 'ring-sky-400');
+            }
+
+            startSetup() {
+                if (!this.currentUser) {
+                    this.navTo('login');
+                    return;
+                }
+                this.navTo('topic-select');
+            }
+
+            launchGame() {
+                const topicId = this.activeSession.topicId;
+                const difficulty = document.getElementById('setup-difficulty').value;
+                const mode = document.getElementById('setup-mode').value;
+                const timerSec = parseInt(document.getElementById('setup-timer').value);
+
+                const filtered = this.questionBank.filter(q => q.topikId === topicId && q.tahap === difficulty);
+                const shuffled = [...filtered].sort(() => 0.5 - Math.random()).slice(0, 20);
+
+                if (shuffled.length === 0) {
+                    alert('Tiada soalan dijumpai untuk tetapan ini.');
+                    return;
+                }
+
+                this.activeSession = {
+                    topicId,
+                    difficulty,
+                    mode,
+                    timerSec,
+                    questions: shuffled,
+                    currentIndex: 0,
+                    score: 0,
+                    correctCount: 0,
+                    wrongCount: 0,
+                    startTime: new Date(),
+                    timerInterval: null,
+                    timeLeft: timerSec
+                };
+
+                this.navTo('gameplay');
+                this.loadQuestion();
+            }
+
+            loadQuestion() {
+                clearInterval(this.activeSession.timerInterval);
+                const s = this.activeSession;
+                if (s.currentIndex >= s.questions.length) {
+                    this.endGame();
+                    return;
+                }
+
+                const q = s.questions[s.currentIndex];
+                const topicObj = TOPICS.find(t => t.id === s.topicId);
+
+                document.getElementById('game-topic-badge').textContent = `Topik ${s.topicId}: ${topicObj.title}`;
+                document.getElementById('game-diff-badge').textContent = s.difficulty;
+                document.getElementById('game-cog-badge').textContent = q.aras_kognitif;
+                document.getElementById('game-score-val').textContent = s.score;
+                document.getElementById('game-question-counter').textContent = `Soalan ${s.currentIndex + 1} / ${s.questions.length}`;
+                document.getElementById('game-mode-display').textContent = `Mod: ${s.mode}`;
+
+                const progressPct = ((s.currentIndex + 1) / s.questions.length) * 100;
+                document.getElementById('game-progress-bar').style.width = `${progressPct}%`;
+
+                document.getElementById('diagram-container').innerHTML = q.gambarajah || '<span class="text-slate-400 font-bold text-xs">Tiada rajah</span>';
+                document.getElementById('question-text').textContent = q.soalan;
+
+                document.getElementById('feedback-box').classList.add('hidden');
+                
+                const area = document.getElementById('answer-interactive-area');
+                area.innerHTML = '';
+
+                if (s.mode === 'Objektif' || s.mode === 'Padanan') {
+                    const optsToRender = (q.pilihan && q.pilihan.length > 0) ? q.pilihan : [q.jawapan, "Pilihan A", "Pilihan B", "Pilihan C"];
+                    const shuffledOpts = [...optsToRender].sort(() => 0.5 - Math.random());
+                    const grid = document.createElement('div');
+                    grid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3';
+                    shuffledOpts.forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.className = 'p-4 rounded-2xl bg-slate-50 hover:bg-sky-100 border-2 border-slate-200 hover:border-sky-400 text-slate-800 font-bold text-base transition text-left cursor-pointer shadow-sm';
+                        btn.textContent = opt;
+                        btn.onclick = () => window.app.submitAnswer(opt, q);
+                        grid.appendChild(btn);
+                    });
+                    area.appendChild(grid);
+                } else if (s.mode === 'DragDrop') {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'space-y-3 text-center';
+                    wrap.innerHTML = `<p class="text-xs font-bold text-slate-400">Pilih jawapan yang paling tepat:</p>`;
+                    const subGrid = document.createElement('div');
+                    subGrid.className = 'grid grid-cols-2 gap-3';
+                    const optsToRender = (q.pilihan && q.pilihan.length > 0) ? q.pilihan : [q.jawapan, "Jawapan Lain"];
+                    optsToRender.forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.className = 'p-3 rounded-xl bg-purple-50 hover:bg-purple-100 border-2 border-purple-200 text-purple-900 font-bold cursor-pointer';
+                        btn.textContent = opt;
+                        btn.onclick = () => window.app.submitAnswer(opt, q);
+                        subGrid.appendChild(btn);
+                    });
+                    wrap.appendChild(subGrid);
+                    area.appendChild(wrap);
+                } else if (s.mode === 'IsiTempatKosong') {
+                    const form = document.createElement('form');
+                    form.className = 'flex gap-2 max-w-md mx-auto';
+                    form.innerHTML = `
+                        <input type="text" id="blank-input" required placeholder="Taip jawapan..." class="flex-grow px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-sky-500 font-bold text-lg">
+                        <button type="submit" class="px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow cursor-pointer">Hantar</button>
+                    `;
+                    form.onsubmit = (e) => {
+                        e.preventDefault();
+                        const val = document.getElementById('blank-input').value.trim();
+                        window.app.submitAnswer(val, q);
+                    };
+                    area.appendChild(form);
+                }
+
+                if (s.timerSec > 0) {
+                    s.timeLeft = s.timerSec;
+                    document.getElementById('game-timer-val').textContent = `${s.timeLeft}s`;
+                    s.timerInterval = setInterval(() => {
+                        s.timeLeft--;
+                        document.getElementById('game-timer-val').textContent = `${s.timeLeft}s`;
+                        if (s.timeLeft <= 0) {
+                            clearInterval(s.timerInterval);
+                            window.app.submitAnswer('', q, true);
+                        }
+                    }, 1000);
+                } else {
+                    document.getElementById('game-timer-val').textContent = '∞';
+                }
+            }
+
+            submitAnswer(userAns, questionObj, isTimeout = false) {
+                clearInterval(this.activeSession.timerInterval);
+                const isCorrect = !isTimeout && String(userAns).trim().toLowerCase() === String(questionObj.jawapan).trim().toLowerCase();
+
+                if (isCorrect) {
+                    this.activeSession.score += 5;
+                    this.activeSession.correctCount++;
+                    if (typeof confetti === 'function') {
+                        confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 } });
+                    }
+                } else {
+                    this.activeSession.wrongCount++;
+                }
+
+                document.getElementById('game-score-val').textContent = this.activeSession.score;
+
+                const fb = document.getElementById('feedback-box');
+                fb.classList.remove('hidden');
+                fb.className = isCorrect ? 'p-4 rounded-2xl border-2 bg-emerald-50 border-emerald-300 space-y-2' : 'p-4 rounded-2xl border-2 bg-red-50 border-red-300 space-y-2';
+                
+                document.getElementById('feedback-title').innerHTML = isCorrect ? 
+                    '<i class="fa-solid fa-circle-check text-emerald-600 mr-2"></i><span class="text-emerald-900">Tahniah! Jawapan Kamu Betul! (+5 Markah)</span>' :
+                    '<i class="fa-solid fa-circle-xmark text-red-500 mr-2"></i><span class="text-red-900">' + (isTimeout ? 'Masa Tamat!' : 'Tidak mengapa, cuba lagi!') + '</span>';
+                
+                document.getElementById('feedback-explanation').innerHTML = `<strong>Jawapan Betul:</strong> ${questionObj.jawapan}<br><span class="text-slate-600">${questionObj.penerangan}</span>`;
+
+                const nextBtn = document.getElementById('next-question-btn');
+                nextBtn.onclick = () => {
+                    this.activeSession.currentIndex++;
+                    this.loadQuestion();
+                };
+            }
+
+            endGame() {
+                const s = this.activeSession;
+                const totalQ = s.questions.length;
+                const maxScore = totalQ * 5;
+                const percent = Math.round((s.score / maxScore) * 100);
+
+                document.getElementById('res-score').textContent = `${s.score} / ${maxScore}`;
+                document.getElementById('res-percent').textContent = `${percent}%`;
+                document.getElementById('res-correct').textContent = s.correctCount;
+                document.getElementById('res-wrong').textContent = s.wrongCount;
+                document.getElementById('result-message').textContent = percent >= 80 ? 'Hebat sekali! Cemerlang.' : percent >= 50 ? 'Bagus! Teruskan usaha.' : 'Cuba lagi untuk lebih kefahaman.';
+
+                if (this.currentUser) {
+                    this.currentUser.totalScore = (this.currentUser.totalScore || 0) + s.score;
+                    if (!this.currentUser.history) this.currentUser.history = [];
+                    this.currentUser.history.push({
+                        date: new Date().toLocaleDateString(),
+                        topic: TOPICS.find(t => t.id === s.topicId).title,
+                        difficulty: s.difficulty,
+                        score: s.score,
+                        maxScore: maxScore,
+                        percent: percent
+                    });
+                    
+                    let users = JSON.parse(localStorage.getItem('mk_users') || '[]');
+                    users = users.map(u => u.username === this.currentUser.username ? this.currentUser : u);
+                    localStorage.setItem('mk_users', JSON.stringify(users));
+                    localStorage.setItem('mk_current_user', JSON.stringify(this.currentUser));
+                    this.loadUserData();
+                }
+
+                this.navTo('view-results');
+            }
+
+            renderProgress() {
+                if (!this.currentUser || !this.currentUser.history) {
+                    document.getElementById('topic-progress-list').innerHTML = '<p class="text-xs text-slate-400 text-center py-4">Tiada rekod permainan lagi.</p>';
+                    document.getElementById('prog-total-sessions').textContent = '0';
+                    document.getElementById('prog-avg-acc').textContent = '0%';
+                    document.getElementById('prog-total-q').textContent = '0';
+                    return;
+                }
+                const hist = this.currentUser.history;
+                document.getElementById('prog-total-sessions').textContent = hist.length;
+                const avg = Math.round(hist.reduce((acc, h) => acc + h.percent, 0) / hist.length);
+                document.getElementById('prog-avg-acc').textContent = `${avg}%`;
+                document.getElementById('prog-total-q').textContent = hist.length * 20;
+
+                const list = document.getElementById('topic-progress-list');
+                list.innerHTML = hist.slice(-5).reverse().map(h => `
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-sm">
+                        <div>
+                            <span class="font-bold text-slate-800 block">${h.topic}</span>
+                            <span class="text-xs text-slate-400">${h.difficulty} • ${h.date}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-black text-amber-500">${h.score} Markah</span>
+                            <span class="text-xs font-bold text-sky-600 block">${h.percent}%</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderLeaderboard() {
+                let users = JSON.parse(localStorage.getItem('mk_users') || '[]');
+                users.sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0));
+                const tbody = document.getElementById('leaderboard-body');
+                if (users.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400 text-xs">Tiada rekod leaderboard buat masa ini.</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = users.slice(0, 10).map((u, idx) => `
+                    <tr class="hover:bg-purple-50/50">
+                        <td class="py-3 px-2 font-black text-purple-600">#${idx + 1}</td>
+                        <td class="py-3 px-2 font-bold text-slate-800">${u.name} (${u.username})</td>
+                        <td class="py-3 px-2 text-slate-500 text-xs">Semua Topik</td>
+                        <td class="py-3 px-2 text-slate-500 text-xs">KSSR Tahun 1</td>
+                        <td class="py-3 px-2 text-right font-black text-amber-500">${u.totalScore || 0}</td>
+                    </tr>
+                `).join('');
+            }
+
+            renderScoresHistory() {
+                const list = document.getElementById('scores-history-list');
+                if (!this.currentUser || !this.currentUser.history || this.currentUser.history.length === 0) {
+                    list.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">Tiada rekod markah dijumpai.</p>';
+                    return;
+                }
+                list.innerHTML = this.currentUser.history.map(h => `
+                    <div class="p-4 rounded-2xl bg-amber-50/50 border border-amber-200 flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-slate-800 block">${h.topic}</span>
+                            <span class="text-xs text-slate-500">Tahap: ${h.difficulty} • Tarikh: ${h.date}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-lg font-black text-amber-600">${h.score} / ${h.maxScore}</span>
+                            <span class="text-xs font-bold text-sky-600 block">${h.percent}%</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        window.onload = function() {
+            window.app = new MathKidsApp();
+        };
+    </script>
+</body>
+</html>

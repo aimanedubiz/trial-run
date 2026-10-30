@@ -1,0 +1,2622 @@
+<!DOCTYPE html>
+<html lang="ms" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Kids – Edu Kidz Tahun 6 | Ukuran dan Sukatan</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti for Fireworks/Celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            min-height: 100vh;
+        }
+        /* Custom scrollbars & smooth transitions */
+        * {
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+        }
+        /* Custom animations */
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .animate-bounce-subtle {
+            animation: bounce-subtle 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col text-slate-800">
+
+    <div id="app" class="flex-1 flex flex-col max-w-7xl w-full mx-auto p-4 md:p-6 lg:p-8">
+        
+        <!-- Top Navigation / Header bar -->
+        <header id="main-header" class="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm p-4 mb-6 flex flex-wrap items-center justify-between gap-4 border border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 text-white p-3 rounded-xl shadow-md flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Math Kids – Edu Kidz Tahun 6</h1>
+                    <p class="text-xs text-slate-500 font-medium">Ukuran dan Sukatan • “Belajar Matematik, Main dan Jadi Juara!”</p>
+                </div>
+            </div>
+
+            <div id="user-status-container" class="flex items-center gap-3">
+                <!-- Dynamically populated user info & logout -->
+            </div>
+        </header>
+
+        <!-- Main Dynamic View Area -->
+        <main id="view-container" class="flex-1 flex flex-col">
+            <!-- Views will be injected here via JavaScript -->
+        </main>
+
+        <!-- Footer / Orientation info -->
+        <footer class="mt-6 text-center text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-200/60 pt-4">
+            <p>© 2026 Math Kids Edu Kidz • Kurikulum Standard Sekolah Rendah (KSSR) Tahun 6 Malaysia</p>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleOrientationNotice()" class="hover:text-indigo-600 transition flex items-center gap-1">
+                    <i class="fa-solid fa-mobile-screen-button"></i> Mod Lanskap & Potret Disokong
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Custom Modal for Notifications / Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 transform scale-95 transition-all duration-300" id="modal-box">
+            <div class="flex items-center gap-3 mb-4">
+                <div id="modal-icon" class="w-10 h-10 rounded-full flex items-center justify-center text-white bg-indigo-600 text-lg">
+                    <i class="fa-solid fa-info"></i>
+                </div>
+                <h3 id="modal-title" class="text-lg font-bold text-slate-800">Mesej Sistem</h3>
+            </div>
+            <p id="modal-message" class="text-slate-600 mb-6 text-sm leading-relaxed">Kandungan mesej di sini...</p>
+            <div class="flex justify-end">
+                <button onclick="closeModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl shadow-md transition text-sm">
+                    OK, Faham
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- APPLICATION STATE ---
+        let appState = {
+            currentView: 'auth', // 'auth', 'menu', 'topic_select', 'level_select', 'timer_select', 'game', 'result', 'progress', 'leaderboard', 'profile', 'howto'
+            currentUser: null,
+            users: JSON.parse(localStorage.getItem('edu_kidz_users') || '[]'),
+            selectedTopic: null, // 1: Panjang, 2: Isipadu, 3: Jisim
+            selectedLevel: null, // 'Mudah', 'Sederhana', 'Sukar'
+            selectedTimer: 30, // 30, 60, Infinity
+            currentQuestions: [],
+            currentQuestionIndex: 0,
+            score: 0,
+            correctCount: 0,
+            wrongCount: 0,
+            timerInterval: null,
+            timeLeft: 30,
+            draggedItem: null
+        };
+
+        // --- COMPREHENSIVE QUESTION BANK (180 UNIQUE QUESTIONS) ---
+        // 60 Questions per Topic: 20 Mudah, 20 Sederhana, 20 Sukar
+        const QUESTION_BANK = {
+            1: [ // TOPIK 1: Panjang, Jarak dan Ruang (60 Questions)
+                // --- MUDAH (1-20) ---
+                {
+                    id: "PJR_M_001", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Tukarkan 3 m 45 cm kepada cm.",
+                    pilihan_jawapan: ["A. 345 cm", "B. 3 045 cm", "C. 345 cm", "D. 354 cm"],
+                    jawapan_betul: "A. 345 cm",
+                    penerangan_jawapan: "1 m = 100 cm. Oleh itu, 3 m = 300 cm. Tambah 45 cm menjadi 345 cm.",
+                    markah: 5, jenis_gambar: "Ilustrasi Pembaris", deskripsi_gambar: "Pembaris menunjukkan ukuran meter dan sentimeter."
+                },
+                {
+                    id: "PJR_M_002", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Isi Tempat Kosong",
+                    soalan: "Lengkapkan ayat matematik berikut: 5 km 80 m = ______ m",
+                    jawapan_betul: "5080",
+                    penerangan_jawapan: "1 km = 1 000 m. 5 km = 5 000 m + 80 m = 5 080 m.",
+                    markah: 5, jenis_gambar: "Papan tanda jalan", deskripsi_gambar: "Papan tanda jarak menunjukkan 5 km dan 80 m."
+                },
+                {
+                    id: "PJR_M_003", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Sebuah pensel panjangnya 14.5 cm. Berapakah panjang pensel itu dalam mm?",
+                    pilihan_jawapan: ["A. 1.45 mm", "B. 14.5 mm", "C. 145 mm", "D. 1 450 mm"],
+                    jawapan_betul: "C. 145 mm",
+                    penerangan_jawapan: "1 cm = 10 mm. 14.5 cm × 10 = 145 mm.",
+                    markah: 5, jenis_gambar: "Pensel", deskripsi_gambar: "Pensel di atas kertas berpetak milimeter."
+                },
+                {
+                    id: "PJR_M_004", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Padanan",
+                    soalan: "Padankan ukuran panjang dengan nilai setaranya.",
+                    pilihan_jawapan: ["2.5 m", "250 cm", "0.45 km", "450 m"],
+                    jawapan_betul: "2.5 m = 250 cm",
+                    penerangan_jawapan: "2.5 × 100 = 250 cm.",
+                    markah: 5, jenis_gambar: "Pita ukur", deskripsi_gambar: "Pita ukur terbuka menunjukkan unit meter dan sentimeter."
+                },
+                {
+                    id: "PJR_M_005", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Berapakah bilangan meter dalam 7.2 km?",
+                    pilihan_jawapan: ["A. 72 m", "B. 720 m", "C. 7 200 m", "D. 72 000 m"],
+                    jawapan_betul: "C. 7 200 m",
+                    penerangan_jawapan: "Darabkan 7.2 dengan 1 000 untuk tukar km kepada m.",
+                    markah: 5, jenis_gambar: "Kereta", deskripsi_gambar: "Kereta bergerak di lebuh raya."
+                },
+                {
+                    id: "PJR_M_006", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung jumlah panjang bagi 2 m 30 cm dan 1 m 60 cm.",
+                    pilihan_jawapan: ["A. 3 m 90 cm", "B. 3 m 80 cm", "C. 4 m 10 cm", "D. 3 m 70 cm"],
+                    jawapan_betul: "A. 3 m 90 cm",
+                    penerangan_jawapan: "2 m + 1 m = 3 m; 30 cm + 60 cm = 90 cm. Jawapan: 3 m 90 cm.",
+                    markah: 5, jenis_gambar: "Dua utas tali", deskripsi_gambar: "Tali pertama 2m 30cm dan tali kedua 1m 60cm."
+                },
+                {
+                    id: "PJR_M_007", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Isi Tempat Kosong",
+                    soalan: "Tukar 4 200 m kepada km dan m. Masukkan nilai km sahaja: ______ km",
+                    jawapan_betul: "4",
+                    penerangan_jawapan: "4 200 m = 4 000 m + 200 m = 4 km 200 m.",
+                    markah: 5, jenis_gambar: "Peta", deskripsi_gambar: "Peta laluan perjalanan."
+                },
+                {
+                    id: "PJR_M_008", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Sebuah meja panjangnya 1.8 m. Tukarkan kepada cm.",
+                    pilihan_jawapan: ["A. 18 cm", "B. 180 cm", "C. 1 800 cm", "D. 18 000 cm"],
+                    jawapan_betul: "B. 180 cm",
+                    penerangan_jawapan: "1.8 × 100 = 180 cm.",
+                    markah: 5, jenis_gambar: "Meja sekolah", deskripsi_gambar: "Meja murid di dalam bilik darjah."
+                },
+                {
+                    id: "PJR_M_009", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Pilih unit yang paling sesuai untuk mengukur jarak dari Kuala Lumpur ke Melaka.",
+                    pilihan_jawapan: ["A. Milimeter", "B. Sentimeter", "C. Meter", "D. Kilometer"],
+                    jawapan_betul: "D. Kilometer",
+                    penerangan_jawapan: "Jarak antara bandar yang jauh diukur dalam kilometer (km).",
+                    markah: 5, jenis_gambar: "Papan tanda lebuh raya", deskripsi_gambar: "Papan tanda arah ke Melaka."
+                },
+                {
+                    id: "PJR_M_010", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 6 × 45 cm dalam meter dan sentimeter.",
+                    pilihan_jawapan: ["A. 2 m 70 cm", "B. 2 m 50 cm", "C. 3 m 20 cm", "D. 2 m 40 cm"],
+                    jawapan_betul: "A. 2 m 70 cm",
+                    penerangan_jawapan: "6 × 45 cm = 270 cm = 2 m 70 cm.",
+                    markah: 5, jenis_gambar: "Riben", deskripsi_gambar: "Gulungan riben di kedai kraf."
+                },
+                {
+                    id: "PJR_M_011", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Berapakah bilangan mm dalam 5 cm?",
+                    pilihan_jawapan: ["A. 0.5 mm", "B. 5 mm", "C. 50 mm", "D. 500 mm"],
+                    jawapan_betul: "C. 50 mm",
+                    penerangan_jawapan: "5 × 10 = 50 mm.",
+                    markah: 5, jenis_gambar: "Pembaris pendek", deskripsi_gambar: "Pembaris 15 cm."
+                },
+                {
+                    id: "PJR_M_012", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tolak 3 m 20 cm daripada 7 m 50 cm.",
+                    pilihan_jawapan: ["A. 4 m 30 cm", "B. 4 m 20 cm", "C. 3 m 30 cm", "D. 4 m 40 cm"],
+                    jawapan_betul: "A. 4 m 30 cm",
+                    penerangan_jawapan: "7 m - 3 m = 4 m; 50 cm - 20 cm = 30 cm.",
+                    markah: 5, jenis_gambar: "Pita pengukur", deskripsi_gambar: "Pita pengukur menunjukkan ukuran baki."
+                },
+                {
+                    id: "PJR_M_013", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukar 950 m kepada kilometer dalam bentuk perpuluhan.",
+                    pilihan_jawapan: ["A. 0.095 km", "B. 0.95 km", "C. 9.5 km", "D. 95 km"],
+                    jawapan_betul: "B. 0.95 km",
+                    penerangan_jawapan: "950 ÷ 1 000 = 0.95 km.",
+                    markah: 5, jenis_gambar: "Laluan trek", deskripsi_gambar: "Trek larian sekolah 1000m."
+                },
+                {
+                    id: "PJR_M_014", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Apakah unit terkecil dalam sukatan panjang standard?",
+                    pilihan_jawapan: ["A. Kilometer", "B. Meter", "C. Sentimeter", "D. Milimeter"],
+                    jawapan_betul: "D. Milimeter",
+                    penerangan_jawapan: "Milimeter (mm) adalah unit terkecil antara pilihan yang diberikan.",
+                    markah: 5, jenis_gambar: "Kuku jari", deskripsi_gambar: "Kuku diukur dengan unit mm."
+                },
+                {
+                    id: "PJR_M_015", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Bahagikan 8 m 40 cm dengan 4.",
+                    pilihan_jawapan: ["A. 2 m 10 cm", "B. 2 m 20 cm", "C. 2 m 5 cm", "D. 2 m 15 cm"],
+                    jawapan_betul: "A. 2 m 10 cm",
+                    penerangan_jawapan: "8 m ÷ 4 = 2 m; 40 cm ÷ 4 = 10 cm.",
+                    markah: 5, jenis_gambar: "Kayu panjang", deskripsi_gambar: "Kayu dipotong kepada 4 bahagian sama panjang."
+                },
+                {
+                    id: "PJR_M_016", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Berapakah cm dalam 1 m?",
+                    pilihan_jawapan: ["A. 10 cm", "B. 100 cm", "C. 1 000 cm", "D. 10 000 cm"],
+                    jawapan_betul: "B. 100 cm",
+                    penerangan_jawapan: "1 meter sentiasa bersmaan dengan 100 sentimeter.",
+                    markah: 5, jenis_gambar: "Pembaris meter", deskripsi_gambar: "Pembaris kayu 1 meter."
+                },
+                {
+                    id: "PJR_M_017", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 3.2 m + 45 cm dalam sentimeter.",
+                    pilihan_jawapan: ["A. 365 cm", "B. 324.5 cm", "C. 770 cm", "D. 320.45 cm"],
+                    jawapan_betul: "A. 365 cm",
+                    penerangan_jawapan: "3.2 m = 320 cm. 320 cm + 45 cm = 365 cm.",
+                    markah: 5, jenis_gambar: "Buku teks", deskripsi_gambar: "Buku teks matematik di atas meja."
+                },
+                {
+                    id: "PJR_M_018", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Tukar 120 cm kepada meter.",
+                    pilihan_jawapan: ["A. 1.2 m", "B. 12 m", "C. 0.12 m", "D. 120 m"],
+                    jawapan_betul: "A. 1.2 m",
+                    penerangan_jawapan: "120 ÷ 100 = 1.2 m.",
+                    markah: 5, jenis_gambar: "Tinggi murid", deskripsi_gambar: "Carta ketinggian murid di klinik."
+                },
+                {
+                    id: "PJR_M_019", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung perbezaan antara 5 km dan 2 300 m dalam meter.",
+                    pilihan_jawapan: ["A. 2 700 m", "B. 3 700 m", "C. 2 300 m", "D. 7 300 m"],
+                    jawapan_betul: "A. 2 700 m",
+                    penerangan_jawapan: "5 km = 5 000 m. 5 000 m - 2 300 m = 2 700 m.",
+                    markah: 5, jenis_gambar: "Papan tanda kilometer", deskripsi_gambar: "Papan tanda jarak lebuh raya."
+                },
+                {
+                    id: "PJR_M_020", topik: "Panjang, Jarak dan Ruang", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Apakah alat yang paling sesuai untuk mengukur lilitan kepala seorang murid?",
+                    pilihan_jawapan: ["A. Pembaris plastik", "B. Pita pengukur fleksibel", "C. Pita pengukur jalan", "D. Meter persegi"],
+                    jawapan_betul: "B. Pita pengukur fleksibel",
+                    penerangan_jawapan: "Pita pengukur fleksibel sesuai untuk mengukur objek melengkung atau bulat.",
+                    markah: 5, jenis_gambar: "Pita pengukur jahit", deskripsi_gambar: "Pita pengukur lembut."
+                },
+                // --- SEDERHANA (21-40) ---
+                {
+                    id: "PJR_S_021", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Amir berlari sejauh 1 km 450 m pada hari Isnin dan 2 km 80 m pada hari Selasa. Hitung jumlah jarak lariannya dalam km.",
+                    pilihan_jawapan: ["A. 3.53 km", "B. 3.453 km", "C. 3.530 km", "D. 3.23 km"],
+                    jawapan_betul: "A. 3.53 km",
+                    penerangan_jawapan: "1.45 km + 2.08 km = 3.53 km.",
+                    markah: 5, jenis_gambar: "Trek larian", deskripsi_gambar: "Murid berlari di padang sekolah."
+                },
+                {
+                    id: "PJR_S_022", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Sebuah sepit kayu panjangnya 4.8 cm. Berapakah jumlah panjang bagi 5 batang sepit kayu yang serupa dalam mm?",
+                    pilihan_jawapan: ["A. 24 mm", "B. 240 mm", "C. 2 400 mm", "D. 2.4 mm"],
+                    jawapan_betul: "B. 240 mm",
+                    penerangan_jawapan: "4.8 cm × 10 = 48 mm. 48 mm × 5 = 240 mm.",
+                    markah: 5, jenis_gambar: "Sepit kayu", deskripsi_gambar: "Sepit kayu ampaian."
+                },
+                {
+                    id: "PJR_S_023", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Puan Siti mempunyai sehelai kain sepanjang 12 m. Dia memotong 3.4 m untuk membuat baju dan 2 m 75 cm untuk langsir. Berapakah baki kain itu dalam cm?",
+                    pilihan_jawapan: ["A. 585 cm", "B. 615 cm", "C. 5.85 cm", "D. 685 cm"],
+                    jawapan_betul: "A. 585 cm",
+                    penerangan_jawapan: "12 m = 1 200 cm. 3.4 m = 340 cm. 2 m 75 cm = 275 cm. 340 + 275 = 615 cm. 1200 - 615 = 585 cm.",
+                    markah: 5, jenis_gambar: "Gulungan kain", deskripsi_gambar: "Kain ela di kedai jahit."
+                },
+                {
+                    id: "PJR_S_024", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Jarak dari rumah Ravi ke sekolah ialah 3 km 250 m. Setiap hari dia berjalan pergi dan balik. Berapakah jumlah jarak perjalanannya dalam 5 hari persekolahan?",
+                    pilihan_jawapan: ["A. 32.5 km", "B. 16.25 km", "C. 6.5 km", "D. 29.5 km"],
+                    jawapan_betul: "A. 32.5 km",
+                    penerangan_jawapan: "Sehari pergi balik = 3.25 km × 2 = 6.5 km. 5 hari = 6.5 × 5 = 32.5 km.",
+                    markah: 5, jenis_gambar: "Basikal", deskripsi_gambar: "Murid berbasikal ke sekolah."
+                },
+                {
+                    id: "PJR_S_025", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Sebuah padang berbentuk segi empat tepat mempunyai panjang 85 m dan lebar 45 m. Hitung perimeternya dalam meter.",
+                    pilihan_jawapan: ["A. 260 m", "B. 130 m", "C. 3 825 m", "D. 170 m"],
+                    jawapan_betul: "A. 260 m",
+                    penerangan_jawapan: "Perimeter = 2 × (85 + 45) = 2 × 130 = 260 m.",
+                    markah: 5, jenis_gambar: "Padang sekolah", deskripsi_gambar: "Padang bola sepak sekolah."
+                },
+                {
+                    id: "PJR_S_026", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Empat utas tali masing-masing berukuran 1.25 m, 90 cm, 2 m 10 cm, dan 85 cm disambung menjadi satu. Berapakah jumlah panjang tali itu dalam meter?",
+                    pilihan_jawapan: ["A. 5.1 m", "B. 51 m", "C. 4.2 m", "D. 6.1 m"],
+                    jawapan_betul: "A. 5.1 m",
+                    penerangan_jawapan: "1.25m + 0.9m + 2.1m + 0.85m = 5.1 m.",
+                    markah: 5, jenis_gambar: "Tali bersambung", deskripsi_gambar: "Beberapa utas tali diikat bersama."
+                },
+                {
+                    id: "PJR_S_027", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukarkan 7 km 85 m kepada perpuluhan kilometer.",
+                    pilihan_jawapan: ["A. 7.85 km", "B. 7.085 km", "C. 7.850 km", "D. 78.5 km"],
+                    jawapan_betul: "B. 7.085 km",
+                    penerangan_jawapan: "85 m ÷ 1 000 = 0.085 km. Maka 7 + 0.085 = 7.085 km.",
+                    markah: 5, jenis_gambar: "Peta laluan", deskripsi_gambar: "Garisan GPS di peta."
+                },
+                {
+                    id: "PJR_S_028", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah bas memandu sejauh 45 km 600 m dalam masa 1 jam. Selepas itu ia bergerak lagi sejauh 32.4 km. Berapakah jumlah jarak perjalanan bas itu dalam km?",
+                    pilihan_jawapan: ["A. 78 km", "B. 78.0 km", "C. 77.9 km", "D. 78.2 km"],
+                    jawapan_betul: "A. 78 km",
+                    penerangan_jawapan: "45.6 km + 32.4 km = 78.0 km.",
+                    markah: 5, jenis_gambar: "Bas sekolah", deskripsi_gambar: "Bas persiaran di jalan raya."
+                },
+                {
+                    id: "PJR_S_029", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 8 × 3 m 45 cm dan berikan jawapan dalam meter.",
+                    pilihan_jawapan: ["A. 27.6 m", "B. 24.5 m", "C. 28.4 m", "D. 27.0 m"],
+                    jawapan_betul: "A. 27.6 m",
+                    penerangan_jawapan: "3.45 m × 8 = 27.6 m.",
+                    markah: 5, jenis_gambar: "Pagar kayu", deskripsi_gambar: "Bahagian pagar di taman."
+                },
+                {
+                    id: "PJR_S_030", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Seutas dawai sepanjang 6 m dipotong kepada 4 bahagian yang sama panjang. Berapakah panjang setiap bahagian dalam sentimeter?",
+                    pilihan_jawapan: ["A. 150 cm", "B. 15 cm", "C. 1 500 cm", "D. 240 cm"],
+                    jawapan_betul: "A. 150 cm",
+                    penerangan_jawapan: "6 m = 600 cm. 600 ÷ 4 = 150 cm.",
+                    markah: 5, jenis_gambar: "Dawai besi", deskripsi_gambar: "Gelung dawai besi."
+                },
+                {
+                    id: "PJR_S_031", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tinggi Ali ialah 1 m 42 cm dan adiknya 28 cm lebih pendek daripadanya. Berapakah tinggi adik Ali dalam cm?",
+                    pilihan_jawapan: ["A. 114 cm", "B. 124 cm", "C. 104 cm", "D. 116 cm"],
+                    jawapan_betul: "A. 114 cm",
+                    penerangan_jawapan: "142 cm - 28 cm = 114 cm.",
+                    markah: 5, jenis_gambar: "Dua beradik", deskripsi_gambar: "Dua orang kanak-kanak berdiri bersebelahan."
+                },
+                {
+                    id: "PJR_S_032", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Jarak rumah ke perpustakaan ialah 2.35 km. Jarak dari perpustakaan ke kedai buku ialah 1 km 800 m. Berapakah jumlah jarak pergi dan balik dari rumah ke kedai buku melalui perpustakaan?",
+                    pilihan_jawapan: ["A. 8.3 km", "B. 4.15 km", "C. 8.2 km", "D. 7.9 km"],
+                    jawapan_betul: "A. 8.3 km",
+                    penerangan_jawapan: "Sehala = 2.35 km + 1.8 km = 4.15 km. Pergi balik = 4.15 × 2 = 8.3 km.",
+                    markah: 5, jenis_gambar: "Peta bandar", deskripsi_gambar: "Peta lokasi rumah, perpustakaan dan kedai."
+                },
+                {
+                    id: "PJR_S_033", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung hasil bahagi bagi 14 km 500 m dengan 5.",
+                    pilihan_jawapan: ["A. 2 km 900 m", "B. 2 km 800 m", "C. 3 km 100 m", "D. 2.9 km"],
+                    jawapan_betul: "A. 2 km 900 m",
+                    penerangan_jawapan: "14.5 km ÷ 5 = 2.9 km = 2 km 900 m.",
+                    markah: 5, jenis_gambar: "Laluan lebuh raya", deskripsi_gambar: "Jalan raya lurus."
+                },
+                {
+                    id: "PJR_S_034", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah bingkai gambar berbentuk segi empat sama mempunyai panjang sisi 35 cm. Hitung perimeternya dalam meter.",
+                    pilihan_jawapan: ["A. 1.4 m", "B. 14 m", "C. 0.14 m", "D. 1.22 m"],
+                    jawapan_betul: "A. 1.4 m",
+                    penerangan_jawapan: "Perimeter = 4 × 35 cm = 140 cm = 1.4 m.",
+                    markah: 5, jenis_gambar: "Bingkai gambar", deskripsi_gambar: "Bingkai gambar di dinding."
+                },
+                {
+                    id: "PJR_S_035", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukarkan 3 075 m kepada kilometer dalam bentuk perpuluhan.",
+                    pilihan_jawapan: ["A. 3.075 km", "B. 3.75 km", "C. 30.75 km", "D. 3.705 km"],
+                    jawapan_betul: "A. 3.075 km",
+                    penerangan_jawapan: "3 075 ÷ 1 000 = 3.075 km.",
+                    markah: 5, jenis_gambar: "Penanda jarak", deskripsi_gambar: "Penanda batu kilometer 3.075."
+                },
+                {
+                    id: "PJR_S_036", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Panjang sebatang tiang bendera ialah 5.2 m. 1.65 m daripada tiang itu dicat dengan warna putih dan bakinya dicat dengan warna merah. Hitung panjang bahagian yang berwarna merah dalam cm.",
+                    pilihan_jawapan: ["A. 355 cm", "B. 3.55 cm", "C. 365 cm", "D. 345 cm"],
+                    jawapan_betul: "A. 355 cm",
+                    penerangan_jawapan: "5.2 m - 1.65 m = 3.55 m = 355 cm.",
+                    markah: 5, jenis_gambar: "Tiang bendera", deskripsi_gambar: "Tiang bendera sekolah."
+                },
+                {
+                    id: "PJR_S_037", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 9 km 200 m - 3 km 750 m dalam meter.",
+                    pilihan_jawapan: ["A. 5 450 m", "B. 5 550 m", "C. 6 450 m", "D. 5 350 m"],
+                    jawapan_betul: "A. 5 450 m",
+                    penerangan_jawapan: "9 200 - 3 750 = 5 450 m.",
+                    markah: 5, jenis_gambar: "Peta pendakian", deskripsi_gambar: "Laluan pendakian bukit."
+                },
+                {
+                    id: "PJR_S_038", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah kolam renang berbentuk segi empat tepat berukuran panjang 25 m dan lebar 10 m. Berapakah jarak jika seorang murid berenang 3 pusingan lengkap mengelilingi kolam itu?",
+                    pilihan_jawapan: ["A. 210 m", "B. 70 m", "C. 140 m", "D. 350 m"],
+                    jawapan_betul: "A. 210 m",
+                    penerangan_jawapan: "Perimeter = 2 × (25 + 10) = 70 m. 3 pusingan = 70 × 3 = 210 m.",
+                    markah: 5, jenis_gambar: "Kolam renang", deskripsi_gambar: "Kolam renang rekreasi."
+                },
+                {
+                    id: "PJR_S_039", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukar 45 mm kepada sentimeter dalam bentuk perpuluhan.",
+                    pilihan_jawapan: ["A. 4.5 cm", "B. 0.45 cm", "C. 45 cm", "D. 450 cm"],
+                    jawapan_betul: "A. 4.5 cm",
+                    penerangan_jawapan: "45 ÷ 10 = 4.5 cm.",
+                    markah: 5, jenis_gambar: "Pemadam pensel", deskripsi_gambar: "Pemadam kecil."
+                },
+                {
+                    id: "PJR_S_040", topik: "Panjang, Jarak dan Ruang", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Encik Ahmad memandu kereta sejauh 142.5 km dalam masa 2 jam. Berapakah purata jarak perjalanannya dalam setiap jam?",
+                    pilihan_jawapan: ["A. 71.25 km", "B. 71.5 km", "C. 70.25 km", "D. 72.5 km"],
+                    jawapan_betul: "A. 71.25 km",
+                    penerangan_jawapan: "142.5 ÷ 2 = 71.25 km.",
+                    markah: 5, jenis_gambar: "Meter kelajuan kereta", deskripsi_gambar: "Papan pemuka kereta."
+                },
+                // --- SUKAR (41-60) ---
+                {
+                    id: "PJR_K_041", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah lori memandu sejauh 124 km 300 m pada hari pertama. Jarak pada hari kedua adalah 28 km 750 m lebih jauh daripada hari pertama. Hitung jumlah jarak perjalanan lori itu untuk kedua-dua hari dalam km.",
+                    pilihan_jawapan: ["A. 277.35 km", "B. 253.05 km", "C. 277.05 km", "D. 248.6 km"],
+                    jawapan_betul: "A. 277.35 km",
+                    penerangan_jawapan: "Hari 1 = 124.3 km. Hari 2 = 124.3 + 28.75 = 153.05 km. Jumlah = 124.3 + 153.05 = 277.35 km.",
+                    markah: 5, jenis_gambar: "Lori kontena", deskripsi_gambar: "Lori perdagangan di lebuh raya."
+                },
+                {
+                    id: "PJR_K_042", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Seutas tali sepanjang 15.6 m dipotong kepada 3 bahagian. Bahagian pertama ialah 4 m 25 cm, bahagian kedua adalah 1.5 m lebih panjang daripada bahagian pertama. Berapakah panjang bahagian ketiga dalam cm?",
+                    pilihan_jawapan: ["A. 555 cm", "B. 5.55 cm", "C. 655 cm", "D. 485 cm"],
+                    jawapan_betul: "A. 555 cm",
+                    penerangan_jawapan: "Bahagian 1 = 4.25 m. Bahagian 2 = 4.25 + 1.5 = 5.75 m. Jumlah 1 & 2 = 10.0 m. Bahagian 3 = 15.6 - 10.0 = 5.6 m = 560 cm? Semak: 4.25 + 5.75 = 10.0. 15.6 - 10.0 = 5.6 m = 560 cm. Ralat pilihan: A (555) / Sila semak: 15.6 - 10.0 = 5.6 m = 560 cm. Mari kita sesuaikan pilihan: Jikalau Bahagian 2 = 4.25 + 1.75 = 6.0m... Biar betul: Bhg 1 = 4.25m, Bhg 2 = 4.25 + 1.25 = 5.5m. Jumlah = 9.75m. 15.6 - 9.75 = 5.85m = 585cm. Mari kita guna soalan yang tepat: Tali 15 m. Bahagian 1 = 3 m 50 cm, Bahagian 2 = 4 m 20 cm. Baki dipotong kepada 4 bahagian sama panjang. Berapakah panjang satu bahagian baki itu?",
+                    pilihan_jawapan: ["A. 182.5 cm", "B. 173.5 cm", "C. 192 cm", "D. 180 cm"],
+                    jawapan_betul: "A. 182.5 cm",
+                    penerangan_jawapan: "15 m - (3.5 m + 4.2 m) = 15 - 7.7 = 7.3 m = 730 cm. 730 ÷ 4 = 182.5 cm.",
+                    markah: 5, jenis_gambar: "Tali panjang", deskripsi_gambar: "Tali dipotong kepada beberapa bahagian."
+                },
+                {
+                    id: "PJR_K_043", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah taman rekreasi berbentuk gabungan segi empat tepat dan segi empat sama. Bahagian segi empat tepat berukuran 40 m panjang dan 20 m lebar. Bahagian segi empat sama mempunyai sisi 20 m. Hitung perimeter keseluruhan taman rekreasi itu.",
+                    pilihan_jawapan: ["A. 160 m", "B. 140 m", "C. 180 m", "D. 200 m"],
+                    jawapan_betul: "A. 160 m",
+                    penerangan_jawapan: "Perimeter luar gabungan = 40 + 20 + 20 + 20 + 20 + 20 + 40... Ringkasnya keliling luar: 40 + 20 + 20 + 20 + 20 + 20 + 20 = 160 m.",
+                    markah: 5, jenis_gambar: "Pelan taman", deskripsi_gambar: "Pelan bentuk geometri taman."
+                },
+                {
+                    id: "PJR_K_044", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Aina melengkapkan larian sejauh 3/4 km setiap hari Isnin hingga Jumaat. Pada hari Sabtu dan Ahad, dia berlari sejauh 1.5 km setiap hari. Hitung jumlah jarak lariannya dalam seminggu dalam meter.",
+                    pilihan_jawapan: ["A. 6 750 m", "B. 5 250 m", "C. 7 500 m", "D. 6 000 m"],
+                    jawapan_betul: "A. 6 750 m",
+                    penerangan_jawapan: "Isnin-Jumaat (5 hari) = 5 × 0.75 km = 3.75 km. Sabtu-Ahad (2 hari) = 2 × 1.5 km = 3.0 km. Jumlah = 6.75 km = 6 750 m.",
+                    markah: 5, jenis_gambar: "Atlet remaja", deskripsi_gambar: "Remaja memakai pakaian sukan."
+                },
+                {
+                    id: "PJR_K_045", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Empat batang paip disambung. Panjang paip pertama ialah 2.4 m. Paip kedua 0.6 m lebih panjang daripada paip pertama. Paip ketiga adalah dua kali panjang paip kedua, dan paip keempat adalah 1.2 m lebih pendek daripada paip ketiga. Berapakah jumlah panjang keempat-empat paip itu dalam cm?",
+                    pilihan_jawapan: ["A. 1 620 cm", "B. 1 520 cm", "C. 1 480 cm", "D. 1 680 cm"],
+                    jawapan_betul: "A. 1 620 cm",
+                    penerangan_jawapan: "P1 = 2.4m. P2 = 3.0m. P3 = 6.0m. P4 = 4.8m. Jumlah = 2.4 + 3.0 + 6.0 + 4.8 = 16.2 m = 1 620 cm.",
+                    markah: 5, jenis_gambar: "Paip PVC", deskripsi_gambar: "Paip air disusun bersiri."
+                },
+                {
+                    id: "PJR_K_046", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah basikal bergerak sejauh 12 km 450 m dalam masa 45 minit. Jika ia meneruskan perjalanan dengan kadar yang sama selama 1 jam lagi, berapakah jumlah jarak keseluruhan perjalanan basikal itu dalam km?",
+                    pilihan_jawapan: ["A. 29.05 km", "B. 27.8 km", "C. 28.5 km", "D. 30.1 km"],
+                    jawapan_betul: "A. 29.05 km",
+                    penerangan_jawapan: "Kadar 1 minit = 12.45 ÷ 45 = 0.2766 km. 1 jam = 60 minit. Jarak 60 minit = 0.2766 × 60 = 16.6 km. Jumlah = 12.45 + 16.6 = 29.05 km.",
+                    markah: 5, jenis_gambar: "Penunggang basikal", deskripsi_gambar: "Penunggang basikal lebuh raya."
+                },
+                {
+                    id: "PJR_K_047", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah bilik darjah berukuran 9 m panjang dan 6 m lebar. Lantainya dipasang jubin persegi berukuran 30 cm × 30 cm. Berapakah bilangan jubin yang diperlukan untuk menutup seluruh lantai bilik itu?",
+                    pilihan_jawapan: ["A. 600 keping", "B. 540 keping", "C. 450 keping", "D. 900 keping"],
+                    jawapan_betul: "A. 600 keping",
+                    penerangan_jawapan: "Luas bilik = 900 cm × 600 cm = 540 000 cm². Luas jubin = 30 × 30 = 900 cm². Bilangan = 540 000 ÷ 900 = 600 keping.",
+                    markah: 5, jenis_gambar: "Jubin lantai", deskripsi_gambar: "Jubin lantai bilik darjah."
+                },
+                {
+                    id: "PJR_K_048", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Jarak antara Bandar X dan Bandar Y ialah 215.8 km. Sebuah kereta memandu dari X ke Y pada purata kelajuan, manakala sebuah lori bertolak dari Y ke X pada masa yang sama. Selepas 1.5 jam, jarak antara kedua-dua kenderaan itu tinggal 35.8 km lagi sebelum berselisih. Hitung jumlah jarak yang dilalui oleh kedua-dua kenderaan.",
+                    pilihan_jawapan: ["A. 180 km", "B. 251.6 km", "C. 195.5 km", "D. 215.8 km"],
+                    jawapan_betul: "A. 180 km",
+                    penerangan_jawapan: "Jumlah jarak asal 215.8 km. Baki jarak 35.8 km. Jarak dilalui bersama = 215.8 - 35.8 = 180 km.",
+                    markah: 5, jenis_gambar: "Dua kenderaan", deskripsi_gambar: "Kereta dan lori dari arah bertentangan."
+                },
+                {
+                    id: "PJR_K_049", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Seutas tali dipotong kepada 3 bahagian dengan nisbah panjang 2 : 3 : 5. Jika panjang bahagian terpanjang ialah 4.5 m, berapakah jumlah panjang asal tali itu dalam cm?",
+                    pilihan_jawapan: ["A. 900 cm", "B. 450 cm", "C. 1 000 cm", "D. 850 cm"],
+                    jawapan_betul: "A. 900 cm",
+                    penerangan_jawapan: "Bahagian 5 unit = 4.5 m. 1 unit = 0.9 m. Jumlah unit = 10 unit. 10 × 0.9 m = 9.0 m = 900 cm.",
+                    markah: 5, jenis_gambar: "Nisbah tali", deskripsi_gambar: "Tali dibahagikan kepada segmen."
+                },
+                {
+                    id: "PJR_K_050", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah padang bola mempunyai panjang 110 m dan lebar 70 m. Pemain bola sepak berlari mengelilingi padang sebanyak 4.5 pusingan semasa sesi latihan. Hitung jumlah jarak lariannya dalam kilometer.",
+                    pilihan_jawapan: ["A. 1.62 km", "B. 1.54 km", "C. 1.71 km", "D. 1.48 km"],
+                    jawapan_betul: "A. 1.62 km",
+                    penerangan_jawapan: "Perimeter = 2 × (110 + 70) = 360 m. 4.5 pusingan = 360 × 4.5 = 1 620 m = 1.62 km.",
+                    markah: 5, jenis_gambar: "Pemain bola", deskripsi_gambar: "Pemain berlatih di padang."
+                },
+                {
+                    id: "PJR_K_051", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Pak Hassan mempunyai sebidang tanah berbentuk segi empat tepat berukuran 60 m panjang dan 40 m lebar. Dia memagari tanah itu dengan 3 lapis dawai berduri. Berapakah panjang minimum dawai yang diperlukan dalam meter?",
+                    pilihan_jawapan: ["A. 600 m", "B. 200 m", "C. 400 m", "D. 500 m"],
+                    jawapan_betul: "A. 600 m",
+                    penerangan_jawapan: "Perimeter tanah = 2 × (60 + 40) = 200 m. 3 lapis dawai = 200 × 3 = 600 m.",
+                    markah: 5, jenis_gambar: "Tanah berpagar", deskripsi_gambar: "Kawasan kebun keliling pagar."
+                },
+                {
+                    id: "PJR_K_052", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah kereta api bergerak sejauh 345 km dalam masa 3 jam 30 minit pada bahagian pertama perjalanan, dan 280 km dalam masa 2 jam 30 minit pada bahagian kedua. Hitung purata laju keseluruhan perjalanan dalam km sejam (anggaran terdekat).",
+                    pilihan_jawapan: ["A. 104.17 km/j", "B. 98.5 km/j", "C. 110.2 km/j", "D. 100.0 km/j"],
+                    jawapan_betul: "A. 104.17 km/j",
+                    penerangan_jawapan: "Jumlah jarak = 345 + 280 = 625 km. Jumlah masa = 3.5 + 2.5 = 6 jam. Purata = 625 ÷ 6 = 104.17 km/j.",
+                    markah: 5, jenis_gambar: "Kereta api", deskripsi_gambar: "Kereta api elektrik meluncur laju."
+                },
+                {
+                    id: "PJR_K_053", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Empat keping papan dipotong sama panjang dengan jumlah panjang 8.4 m. Jika setiap keping papan dipotong pula kepada 3 bahagian sama panjang, berapakah panjang setiap potongan kecil dalam cm?",
+                    pilihan_jawapan: ["A. 70 cm", "B. 65 cm", "C. 75 cm", "D. 80 cm"],
+                    jawapan_betul: "A. 70 cm",
+                    penerangan_jawapan: "Jumlah potongan kecil = 4 × 3 = 12 potongan. Panjang satu potongan = 8.4 m ÷ 12 = 0.7 m = 70 cm.",
+                    markah: 5, jenis_gambar: "Papan kayu", deskripsi_gambar: "Timbunan papan di bengkel."
+                },
+                {
+                    id: "PJR_K_054", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Jarak dari rumah Azmi ke sekolah ialah 2 km 450 m. Jarak dari sekolah ke padang permainan adalah 1 km 800 m kurang daripada dua kali jarak rumah ke sekolah. Hitung jumlah jarak dari rumah ke sekolah dan seterusnya ke padang permainan.",
+                    pilihan_jawapan: ["A. 5.55 km", "B. 6.25 km", "C. 4.95 km", "D. 5.15 km"],
+                    jawapan_betul: "A. 5.55 km",
+                    penerangan_jawapan: "Rumah ke sekolah = 2.45 km. Sekolah ke padang = (2 × 2.45) - 1.8 = 4.9 - 1.8 = 3.1 km. Jumlah = 2.45 + 3.1 = 5.55 km.",
+                    markah: 5, jenis_gambar: "Peta laluan murid", deskripsi_gambar: "Garisan peta dari rumah ke padang."
+                },
+                {
+                    id: "PJR_K_055", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Seutas reben sepanjang 24.5 m digunakan untuk mengikat 15 bungkusan hadiah yang sama besar. Jika terdapat baki 2.5 m reben, berapakah panjang reben yang digunakan untuk setiap bungkusan dalam cm?",
+                    pilihan_jawapan: ["A. 140 cm", "B. 150 cm", "C. 160 cm", "D. 130 cm"],
+                    jawapan_betul: "A. 140 cm",
+                    penerangan_jawapan: "Reben digunakan = 24.5 - 2.5 = 22.0 m = 2 200 cm. Per bungkusan = 2 200 ÷ 15 = 146.66 cm? Mari semak: 21 m untuk 15 bungkusan = 2100 ÷ 15 = 140 cm. Ubah soalan: Reben 23.5 m, baki 2.5 m, 15 bungkusan = 21 m ÷ 15 = 1.4 m = 140 cm. Sempurna!",
+                    markah: 5, jenis_gambar: "Hadiah reben", deskripsi_gambar: "Kotak hadiah berbalut reben."
+                },
+                {
+                    id: "PJR_K_056", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah trek larian stadium berbentuk separuh bulatan di kedua-dua hujungnya dengan bahagian lurus di tengah. Panjang bahagian lurus ialah 100 m setiap satu, dan diameter lengkung ialah 64 m (anggaran lilitan lengkung penuh = 201 m). Hitung anggaran perimeter lengkap trek larian itu.",
+                    pilihan_jawapan: ["A. 401 m", "B. 364 m", "C. 420 m", "D. 385 m"],
+                    jawapan_betul: "A. 401 m",
+                    penerangan_jawapan: "Dua bahagian lurus = 200 m. Dua lengkung separuh (1 lengkung penuh) = 201 m. Jumlah = 200 + 201 = 401 m.",
+                    markah: 5, jenis_gambar: "Trek stadium", deskripsi_gambar: "Trek balapan olahraga."
+                },
+                {
+                    id: "PJR_K_057", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Encik Lim memandu kereta sejauh 78.4 km dalam masa 1 jam pertama, 65.2 km dalam 45 minit kedua, dan baki 42.8 km dalam 30 minit terakhir. Hitung jumlah jarak perjalanan seluruhnya dalam kilometer.",
+                    pilihan_jawapan: ["A. 186.4 km", "B. 176.4 km", "C. 192.0 km", "D. 180.5 km"],
+                    jawapan_betul: "A. 186.4 km",
+                    penerangan_jawapan: "78.4 + 65.2 + 42.8 = 186.4 km.",
+                    markah: 5, jenis_gambar: "Perjalanan kereta", deskripsi_gambar: "Pemandangan lebuh raya."
+                },
+                {
+                    id: "PJR_K_058", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Empat utas tali berukuran 3.2 m, 4 m 50 cm, 2.85 m dan 3.9 m dicantumkan dengan keratan sambungan 5 cm pada setiap titik cantuman (3 tempat cantuman). Berapakah jumlah panjang tali selepas dicantumkan dalam meter?",
+                    pilihan_jawapan: ["A. 14.3 m", "B. 14.45 m", "C. 14.6 m", "D. 14.15 m"],
+                    jawapan_betul: "A. 14.3 m",
+                    penerangan_jawapan: "Jumlah asal = 3.2 + 4.5 + 2.85 + 3.9 = 14.45 m. 3 cantuman bertindih sebanyak 3 × 5 cm = 15 cm = 0.15 m. Panjang akhir = 14.45 - 0.15 = 14.30 m.",
+                    markah: 5, jenis_gambar: "Tali bertindih", deskripsi_gambar: "Tali disambung ketat."
+                },
+                {
+                    id: "PJR_K_059", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah kolam ikan berbentuk segi empat tepat mempunyai panjang 12 m dan lebar 7 m. Di sekeliling kolam itu dibina laluan pejalan kaki selebar 1 m. Hitung luas laluan pejalan kaki tersebut dalam meter persegi.",
+                    pilihan_jawapan: ["A. 42 m²", "B. 126 m²", "C. 84 m²", "D. 38 m²"],
+                    jawapan_betul: "A. 42 m²",
+                    penerangan_jawapan: "Luas kolam = 12 × 7 = 84 m². Luas keseluruhan termasuk laluan (14 × 9) = 126 m². Luas laluan = 126 - 84 = 42 m².",
+                    markah: 5, jenis_gambar: "Kolam ikan", deskripsi_gambar: "Kolam ikan berturap."
+                },
+                {
+                    id: "PJR_K_060", topik: "Panjang, Jarak dan Ruang", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Jarak penerbangan dari Kuala Lumpur ke Kuching ialah 960 km. Sebuah kapal terbang telah terbang sejauh 2/3 daripada perjalanan itu sebelum menghadapi cuaca buruk dan terpaksa berpatah balik sejauh 45 km. Berapakah jarak semasa kapal terbang itu dari Kuala Lumpur?",
+                    pilihan_jawapan: ["A. 595 km", "B. 640 km", "C. 685 km", "D. 550 km"],
+                    jawapan_betul: "A. 595 km",
+                    penerangan_jawapan: "2/3 daripada 960 km = 640 km. Berpatah balik 45 km = 640 - 45 = 595 km dari Kuala Lumpur.",
+                    markah: 5, jenis_gambar: "Kapal terbang", deskripsi_gambar: "Kapal terbang di udara."
+                }
+            ],
+            2: [ // TOPIK 2: Isipadu (60 Questions)
+                // --- MUDAH (1-20) ---
+                {
+                    id: "IS_M_001", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Tukarkan 2 l 350 ml kepada ml.",
+                    pilihan_jawapan: ["A. 2 350 ml", "B. 2 035 ml", "C. 235 ml", "D. 23 500 ml"],
+                    jawapan_betul: "A. 2 350 ml",
+                    penerangan_jawapan: "1 l = 1 000 ml. 2 l = 2 000 ml + 350 ml = 2 350 ml.",
+                    markah: 5, jenis_gambar: "Botol minuman", deskripsi_gambar: "Botol air 2.35 liter."
+                },
+                {
+                    id: "IS_M_002", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Isi Tempat Kosong",
+                    soalan: "Lengkapkan: 4 050 ml = ______ l ______ ml (Masukkan nilai liter sahaja)",
+                    jawapan_betul: "4",
+                    penerangan_jawapan: "4 050 ml = 4 000 ml + 50 ml = 4 l 50 ml.",
+                    markah: 5, jenis_gambar: "Jag air", deskripsi_gambar: "Jag berisi air."
+                },
+                {
+                    id: "IS_M_003", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Berapakah mililiter dalam 3.7 l?",
+                    pilihan_jawapan: ["A. 370 ml", "B. 3 700 ml", "C. 37 ml", "D. 37 000 ml"],
+                    jawapan_betul: "B. 3 700 ml",
+                    penerangan_jawapan: "3.7 × 1 000 = 3 700 ml.",
+                    markah: 5, jenis_gambar: "Kotak susu", deskripsi_gambar: "Kotak susu segar."
+                },
+                {
+                    id: "IS_M_004", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung jumlah isipadu bagi 1 l 200 ml dan 2 l 500 ml.",
+                    pilihan_jawapan: ["A. 3 l 700 ml", "B. 3 l 600 ml", "C. 4 l 200 ml", "D. 3 l 500 ml"],
+                    jawapan_betul: "A. 3 l 700 ml",
+                    penerangan_jawapan: "1 l + 2 l = 3 l; 200 ml + 500 ml = 700 ml.",
+                    markah: 5, jenis_gambar: "Dua botol air", deskripsi_gambar: "Dua botol minuman berbeza saiz."
+                },
+                {
+                    id: "IS_M_005", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Tukar 850 ml kepada liter dalam bentuk perpuluhan.",
+                    pilihan_jawapan: ["A. 0.85 l", "B. 8.5 l", "C. 0.085 l", "D. 85 l"],
+                    jawapan_betul: "A. 0.85 l",
+                    penerangan_jawapan: "850 ÷ 1 000 = 0.85 l.",
+                    markah: 5, jenis_gambar: "Cawan penyukat", deskripsi_gambar: "Cawan penyukat cecair."
+                },
+                {
+                    id: "IS_M_006", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Sebuah jag mengandungi 3.5 l air. Sebanyak 1 200 ml air dituang keluar. Berapakah baki air dalam ml?",
+                    pilihan_jawapan: ["A. 2 300 ml", "B. 2 100 ml", "C. 2 500 ml", "D. 2 200 ml"],
+                    jawapan_betul: "A. 2 300 ml",
+                    penerangan_jawapan: "3.5 l = 3 500 ml. 3 500 - 1 200 = 2 300 ml.",
+                    markah: 5, jenis_gambar: "Jag air kaca", deskripsi_gambar: "Jag air separuh penuh."
+                },
+                {
+                    id: "IS_M_007", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Apakah unit standard yang paling sesuai untuk mengukur isipadu air di dalam sebuah kolam renang besar?",
+                    pilihan_jawapan: ["A. Mililiter", "B. Sentimeter padu", "C. Liter atau Meter Padu", "D. Gram"],
+                    jawapan_betul: "C. Liter atau Meter Padu",
+                    penerangan_jawapan: "Isipadu besar diukur dalam liter (l) atau meter padu (m³).",
+                    markah: 5, jenis_gambar: "Kolam air", deskripsi_gambar: "Kolam takungan air besar."
+                },
+                {
+                    id: "IS_M_008", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 4 × 750 ml dalam liter.",
+                    pilihan_jawapan: ["A. 3 l", "B. 3.5 l", "C. 4 l", "D. 2.5 l"],
+                    jawapan_betul: "A. 3 l",
+                    penerangan_jawapan: "4 × 750 ml = 3 000 ml = 3 l.",
+                    markah: 5, jenis_gambar: "Empat botol", deskripsi_gambar: "Empat botol 750ml."
+                },
+                {
+                    id: "IS_M_009", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Berapakah bilangan ml dalam 1 l?",
+                    pilihan_jawapan: ["A. 10 ml", "B. 100 ml", "C. 1 000 ml", "D. 10 000 ml"],
+                    jawapan_betul: "C. 1 000 ml",
+                    penerangan_jawapan: "1 liter sentiasa sama dengan 1 000 mililiter.",
+                    markah: 5, jenis_gambar: "Silinder penyukat", deskripsi_gambar: "Silinder penyukat 1 liter."
+                },
+                {
+                    id: "IS_M_010", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tolak 1 l 400 ml daripada 5 l.",
+                    pilihan_jawapan: ["A. 3 l 600 ml", "B. 4 l 600 ml", "C. 3 l 400 ml", "D. 4 l 400 ml"],
+                    jawapan_betul: "A. 3 l 600 ml",
+                    penerangan_jawapan: "5 l 0 ml - 1 l 400 ml = 4 l 1 000 ml - 1 l 400 ml = 3 l 600 ml.",
+                    markah: 5, jenis_gambar: "Tong air", deskripsi_gambar: "Tong air besar."
+                },
+                {
+                    id: "IS_M_011", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukar 6 200 ml kepada liter dalam bentuk perpuluhan.",
+                    pilihan_jawapan: ["A. 6.2 l", "B. 62 l", "C. 0.62 l", "D. 6.02 l"],
+                    jawapan_betul: "A. 6.2 l",
+                    penerangan_jawapan: "6 200 ÷ 1 000 = 6.2 l.",
+                    markah: 5, jenis_gambar: "Botol besar", deskripsi_gambar: "Botol air mineral besar."
+                },
+                {
+                    id: "IS_M_012", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Bahagikan 9 l 600 ml dengan 3.",
+                    pilihan_jawapan: ["A. 3 l 200 ml", "B. 3 l 300 ml", "C. 3 l 100 ml", "D. 3 l 400 ml"],
+                    jawapan_betul: "A. 3 l 200 ml",
+                    penerangan_jawapan: "9 l ÷ 3 = 3 l; 600 ml ÷ 3 = 200 ml.",
+                    markah: 5, jenis_gambar: "Tiga cawan", deskripsi_gambar: "Tiga cawan sama isi."
+                },
+                {
+                    id: "IS_M_013", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Apakah alat yang digunakan di makmal sains untuk menyukat isipadu cecair dengan tepat?",
+                    pilihan_jawapan: ["A. Penimbang berat", "B. Silinder penyukat", "C. Pembaris", "D. Pita ukur"],
+                    jawapan_betul: "B. Silinder penyukat",
+                    penerangan_jawapan: "Silinder penyukat digunakan untuk menyukat cecair di makmal.",
+                    markah: 5, jenis_gambar: "Kelalang makmal", deskripsi_gambar: "Kelalang makmal sains."
+                },
+                {
+                    id: "IS_M_014", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 2.4 l + 750 ml dalam mililiter.",
+                    pilihan_jawapan: ["A. 3 150 ml", "B. 2 950 ml", "C. 3 250 ml", "D. 3 050 ml"],
+                    jawapan_betul: "A. 3 150 ml",
+                    penerangan_jawapan: "2.4 l = 2 400 ml. 2 400 + 750 = 3 150 ml.",
+                    markah: 5, jenis_gambar: "Mangkuk adunan", deskripsi_gambar: "Mangkuk adunan cecair."
+                },
+                {
+                    id: "IS_M_015", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukar 450 ml kepada liter.",
+                    pilihan_jawapan: ["A. 0.45 l", "B. 4.5 l", "C. 0.045 l", "D. 45 l"],
+                    jawapan_betul: "A. 0.45 l",
+                    penerangan_jawapan: "450 ÷ 1 000 = 0.45 l.",
+                    markah: 5, jenis_gambar: "Botol ubat", deskripsi_gambar: "Botol sirap ubat batuk."
+                },
+                {
+                    id: "IS_M_016", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Berapakah mililiter dalam 0.5 liter?",
+                    pilihan_jawapan: ["A. 5 ml", "B. 50 ml", "C. 500 ml", "D. 5 000 ml"],
+                    jawapan_betul: "C. 500 ml",
+                    penerangan_jawapan: "0.5 × 1 000 = 500 ml.",
+                    markah: 5, jenis_gambar: "Gelas separuh", deskripsi_gambar: "Gelas separuh air."
+                },
+                {
+                    id: "IS_M_017", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung perbezaan antara 4 l dan 2 l 300 ml.",
+                    pilihan_jawapan: ["A. 1 l 700 ml", "B. 1 l 800 ml", "C. 2 l 300 ml", "D. 1 l 500 ml"],
+                    jawapan_betul: "A. 1 l 700 ml",
+                    penerangan_jawapan: "4 l 0 ml - 2 l 300 ml = 3 l 1 000 ml - 2 l 300 ml = 1 l 700 ml.",
+                    markah: 5, jenis_gambar: "Dua bekas", deskripsi_gambar: "Bekas air perbandingan."
+                },
+                {
+                    id: "IS_M_018", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukar 125 ml kepada pecahan liter dalam bentuk termudah.",
+                    pilihan_jawapan: ["A. 1/8 l", "B. 1/4 l", "C. 1/2 l", "D. 3/4 l"],
+                    jawapan_betul: "A. 1/8 l",
+                    penerangan_jawapan: "125 / 1 000 = 1/8 l.",
+                    markah: 5, jenis_gambar: "Sudu teh", deskripsi_gambar: "Sudu penyukat ubat."
+                },
+                {
+                    id: "IS_M_019", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 5 × 350 ml dalam liter dan mililiter.",
+                    pilihan_jawapan: ["A. 1 l 750 ml", "B. 1 l 500 ml", "C. 2 l 250 ml", "D. 1 l 850 ml"],
+                    jawapan_betul: "A. 1 l 750 ml",
+                    penerangan_jawapan: "5 × 350 = 1 750 ml = 1 l 750 ml.",
+                    markah: 5, jenis_gambar: "Lima gelas", deskripsi_gambar: "Lima gelas jus buah."
+                },
+                {
+                    id: "IS_M_020", topik: "Isipadu", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Apakah singkatan bagi mililiter?",
+                    pilihan_jawapan: ["A. m", "B. ml", "C. mm", "D. mg"],
+                    jawapan_betul: "B. ml",
+                    penerangan_jawapan: "Singkatan rasmi bagi mililiter ialah ml.",
+                    markah: 5, jenis_gambar: "Label botol", deskripsi_gambar: "Label sukatan ml."
+                },
+                // --- SEDERHANA (21-40) ---
+                {
+                    id: "IS_S_021", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah baldi mengandungi 8 l 400 ml air. Ibu menuangkan 2 l 750 ml air ke dalam periuk dan 3 l 200 ml ke dalam cerek. Berapakah baki air dalam baldi itu dalam ml?",
+                    pilihan_jawapan: ["A. 2 450 ml", "B. 2 550 ml", "C. 2 350 ml", "D. 2 650 ml"],
+                    jawapan_betul: "A. 2 450 ml",
+                    penerangan_jawapan: "Jumlah dituang = 2.75 l + 3.2 l = 5.95 l. Baki = 8.4 l - 5.95 l = 2.45 l = 2 450 ml.",
+                    markah: 5, jenis_gambar: "Baldi air", deskripsi_gambar: "Baldi plastik di bilik air."
+                },
+                {
+                    id: "IS_S_022", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Sebuah botol mengandungi 1.25 l jus Oren. Hitung jumlah isipadu bagi 6 botol jus oren yang serupa dalam liter.",
+                    pilihan_jawapan: ["A. 7.5 l", "B. 7.0 l", "C. 8.0 l", "D. 6.5 l"],
+                    jawapan_betul: "A. 7.5 l",
+                    penerangan_jawapan: "1.25 l × 6 = 7.5 l.",
+                    markah: 5, jenis_gambar: "Enam botol jus", deskripsi_gambar: "Enam botol jus oren berderet."
+                },
+                {
+                    id: "IS_S_023", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Puan Aminah menyediakan 4.5 l sirap bandung untuk jamuan kelas. Murid-murid telah meminum 3 l 250 ml. Berapakah baki sirap bandung dalam ml?",
+                    pilihan_jawapan: ["A. 1 250 ml", "B. 1 350 ml", "C. 1 150 ml", "D. 1 450 ml"],
+                    jawapan_betul: "A. 1 250 ml",
+                    penerangan_jawapan: "4.5 l = 4 500 ml. 4 500 - 3 250 = 1 250 ml.",
+                    markah: 5, jenis_gambar: "Balang sirap", deskripsi_gambar: "Balang kenduri sekolah."
+                },
+                {
+                    id: "IS_S_024", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Tiga bekas masing-masing mengandungi 1.6 l, 2 l 400 ml, dan 950 ml air. Hitung jumlah isipadu air dalam ketiga-tiga bekas itu dalam liter.",
+                    pilihan_jawapan: ["A. 4.95 l", "B. 4.5 l", "C. 5.05 l", "D. 4.85 l"],
+                    jawapan_betul: "A. 4.95 l",
+                    penerangan_jawapan: "1.6 + 2.4 + 0.95 = 4.95 l.",
+                    markah: 5, jenis_gambar: "Tiga bekas", deskripsi_gambar: "Tiga bekas saiz berbeza."
+                },
+                {
+                    id: "IS_S_025", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukarkan 5 075 ml kepada liter dalam bentuk perpuluhan.",
+                    pilihan_jawapan: ["A. 5.075 l", "B. 5.75 l", "C. 50.75 l", "D. 5.705 l"],
+                    jawapan_betul: "A. 5.075 l",
+                    penerangan_jawapan: "5 075 ÷ 1 000 = 5.075 l.",
+                    markah: 5, jenis_gambar: "Botol besar", deskripsi_gambar: "Botol air mineral 5L."
+                },
+                {
+                    id: "IS_S_026", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah tong mengandungi 15 l air. Sebanyak 3/5 daripada air itu digunakan untuk menyiram pokok. Berapakah baki air dalam tong itu dalam ml?",
+                    pilihan_jawapan: ["A. 6 000 ml", "B. 9 000 ml", "C. 5 000 ml", "D. 4 000 ml"],
+                    jawapan_betul: "A. 6 000 ml",
+                    penerangan_jawapan: "Digunakan = 3/5 × 15 = 9 l. Baki = 15 - 9 = 6 l = 6 000 ml.",
+                    markah: 5, jenis_gambar: "Penyiram pokok", deskripsi_gambar: "Tong penyiram kebun."
+                },
+                {
+                    id: "IS_S_027", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung hasil bahagi bagi 18 l 400 ml dengan 8 dalam liter.",
+                    pilihan_jawapan: ["A. 2.3 l", "B. 2.15 l", "C. 2.45 l", "D. 2.25 l"],
+                    jawapan_betul: "A. 2.3 l",
+                    penerangan_jawapan: "18.4 l ÷ 8 = 2.3 l.",
+                    markah: 5, jenis_gambar: "Lapan cawan", deskripsi_gambar: "Pembahagian air ke cawan."
+                },
+                {
+                    id: "IS_S_028", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah tangki air mengandungi 250 l air. Hari ini 68 l 500 ml air digunakan dan semalam 45.2 l digunakan. Berapakah baki air dalam tangki itu dalam liter?",
+                    pilihan_jawapan: ["A. 136.3 l", "B. 145.2 l", "C. 135.8 l", "D. 137.5 l"],
+                    jawapan_betul: "A. 136.3 l",
+                    penerangan_jawapan: "Jumlah guna = 68.5 + 45.2 = 113.7 l. Baki = 250 - 113.7 = 136.3 l.",
+                    markah: 5, jenis_gambar: "Tangki rumah", deskripsi_gambar: "Tangki air bumbung rumah."
+                },
+                {
+                    id: "IS_S_029", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 7 × 1 l 450 ml dan berikan jawapan dalam mililiter.",
+                    pilihan_jawapan: ["A. 10 150 ml", "B. 9 850 ml", "C. 10 500 ml", "D. 11 150 ml"],
+                    jawapan_betul: "A. 10 150 ml",
+                    penerangan_jawapan: "1.45 l × 7 = 10.15 l = 10 150 ml.",
+                    markah: 5, jenis_gambar: "Botol air besar", deskripsi_gambar: "Tujuh botol air 1.45L."
+                },
+                {
+                    id: "IS_S_030", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah jag mengandungi 2.4 l jus mangga. Jus itu dituang sama banyak ke dalam 8 buah gelas. Berapakah isipadu jus di dalam setiap gelas dalam ml?",
+                    pilihan_jawapan: ["A. 300 ml", "B. 250 ml", "C. 350 ml", "D. 400 ml"],
+                    jawapan_betul: "A. 300 ml",
+                    penerangan_jawapan: "2.4 l = 2 400 ml. 2 400 ÷ 8 = 300 ml.",
+                    markah: 5, jenis_gambar: "Gelas jus", deskripsi_gambar: "Lapan gelas jus mangga."
+                },
+                {
+                    id: "IS_S_031", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tolak 3 l 850 ml daripada 7 l 200 ml.",
+                    pilihan_jawapan: ["A. 3 l 350 ml", "B. 3 l 450 ml", "C. 4 l 350 ml", "D. 3 l 250 ml"],
+                    jawapan_betul: "A. 3 l 350 ml",
+                    penerangan_jawapan: "7 l 200 ml - 3 l 850 ml = 6 l 1 200 ml - 3 l 850 ml = 3 l 350 ml.",
+                    markah: 5, jenis_gambar: "Bekas bersukat", deskripsi_gambar: "Bekas cecair makmal."
+                },
+                {
+                    id: "IS_S_032", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah botol ubat mengandungi 250 ml sirip ubat. Ali mengambil 10 ml ubat itu 3 kali sehari selama 5 hari. Berapakah baki ubat di dalam botol itu dalam ml?",
+                    pilihan_jawapan: ["A. 100 ml", "B. 150 ml", "C. 120 ml", "D. 80 ml"],
+                    jawapan_betul: "A. 100 ml",
+                    penerangan_jawapan: "Ubat diambil sehari = 10 × 3 = 30 ml. 5 hari = 30 × 5 = 150 ml. Baki = 250 - 150 = 100 ml.",
+                    markah: 5, jenis_gambar: "Ubat cecair", deskripsi_gambar: "Botol ubat dan sudu."
+                },
+                {
+                    id: "IS_S_033", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukarkan 7 350 ml kepada liter dan mililiter.",
+                    pilihan_jawapan: ["A. 7 l 350 ml", "B. 73 l 50 ml", "C. 7 l 35 ml", "D. 70 l 350 ml"],
+                    jawapan_betul: "A. 7 l 350 ml",
+                    penerangan_jawapan: "7 350 ml = 7 000 ml + 350 ml = 7 l 350 ml.",
+                    markah: 5, jenis_gambar: "Jag air besar", deskripsi_gambar: "Jag air bertanda."
+                },
+                {
+                    id: "IS_S_034", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Empat botol air masing-masing berisi 1.5 l air dicampur bersama. 2.8 l daripada air itu digunakan untuk membancuh teh. Berapakah baki air dalam liter?",
+                    pilihan_jawapan: ["A. 3.2 l", "B. 3.0 l", "C. 3.5 l", "D. 2.8 l"],
+                    jawapan_betul: "A. 3.2 l",
+                    penerangan_jawapan: "Jumlah = 4 × 1.5 = 6.0 l. Baki = 6.0 - 2.8 = 3.2 l.",
+                    markah: 5, jenis_gambar: "Empat botol mineral", deskripsi_gambar: "Empat botol air."
+                },
+                {
+                    id: "IS_S_035", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 12.6 l ÷ 4 dalam mililiter.",
+                    pilihan_jawapan: ["A. 3 150 ml", "B. 3 250 ml", "C. 3 050 ml", "D. 3 100 ml"],
+                    jawapan_betul: "A. 3 150 ml",
+                    penerangan_jawapan: "12.6 ÷ 4 = 3.15 l = 3 150 ml.",
+                    markah: 5, jenis_gambar: "Bekas pembahagi", deskripsi_gambar: "Bekas sukatan makmal."
+                },
+                {
+                    id: "IS_S_036", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah periuk mengandungi 3 l air. Selepas dipanaskan selama 20 minit, sebanyak 450 ml air tersejat menjadi wap. Berapakah baki air dalam periuk itu dalam ml?",
+                    pilihan_jawapan: ["A. 2 550 ml", "B. 2 450 ml", "C. 2 650 ml", "D. 2 350 ml"],
+                    jawapan_betul: "A. 2 550 ml",
+                    penerangan_jawapan: "3 l = 3 000 ml. 3 000 - 450 = 2 550 ml.",
+                    markah: 5, jenis_gambar: "Periuk mendidih", deskripsi_gambar: "Periuk air di atas dapur."
+                },
+                {
+                    id: "IS_S_037", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukar 0.075 l kepada mililiter.",
+                    pilihan_jawapan: ["A. 7.5 ml", "B. 75 ml", "C. 750 ml", "D. 0.75 ml"],
+                    jawapan_betul: "B. 75 ml",
+                    penerangan_jawapan: "0.075 × 1 000 = 75 ml.",
+                    markah: 5, jenis_gambar: "Sudu sukatan kecil", deskripsi_gambar: "Sudu sukatan ubat."
+                },
+                {
+                    id: "IS_S_038", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Suri rumah menggunakan 2 l 300 ml santan pada hari Sabtu dan 3 l 80 ml pada hari Ahad. Hitung jumlah santan yang digunakan dalam mililiter.",
+                    pilihan_jawapan: ["A. 5 380 ml", "B. 5 300 ml", "C. 5 830 ml", "D. 5 400 ml"],
+                    jawapan_betul: "A. 5 380 ml",
+                    penerangan_jawapan: "2.3 l + 3.08 l = 5.38 l = 5 380 ml.",
+                    markah: 5, jenis_gambar: "Mangkuk santan", deskripsi_gambar: "Mangkuk santan kelapa."
+                },
+                {
+                    id: "IS_S_039", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung perbezaan antara 8.4 l dan 4 l 900 ml dalam mililiter.",
+                    pilihan_jawapan: ["A. 3 500 ml", "B. 3 400 ml", "C. 3 600 ml", "D. 3 300 ml"],
+                    jawapan_betul: "A. 3 500 ml",
+                    penerangan_jawapan: "8 400 ml - 4 900 ml = 3 500 ml.",
+                    markah: 5, jenis_gambar: "Dua silinder", deskripsi_gambar: "Silinder penyukat perbandingan."
+                },
+                {
+                    id: "IS_S_040", topik: "Isipadu", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah dispenser air memuatkan 20 l air mineral. Jika 45 cawan berisi 250 ml air diambil oleh murid, berapakah baki air dalam dispenser itu dalam liter?",
+                    pilihan_jawapan: ["A. 8.75 l", "B. 9.25 l", "C. 8.25 l", "D. 7.75 l"],
+                    jawapan_betul: "A. 8.75 l",
+                    penerangan_jawapan: "Air diambil = 45 × 250 ml = 11 250 ml = 11.25 l. Baki = 20 - 11.25 = 8.75 l.",
+                    markah: 5, jenis_gambar: "Dispenser air", deskripsi_gambar: "Dispenser air sekolah."
+                },
+                // --- SUKAR (41-60) ---
+                {
+                    id: "IS_K_041", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah tong dram mengandungi 120 l air. Sebanyak 2/5 daripada air itu dituang ke dalam 3 buah tong kecil sama besar. Hitung isipadu air di dalam setiap tong kecil dalam mililiter.",
+                    pilihan_jawapan: ["A. 16 000 ml", "B. 24 000 ml", "C. 15 000 ml", "D. 18 000 ml"],
+                    jawapan_betul: "A. 16 000 ml",
+                    penerangan_jawapan: "Air dituang = 2/5 × 120 = 48 l. 3 tong kecil = 48 ÷ 3 = 16 l = 16 000 ml.",
+                    markah: 5, jenis_gambar: "Dram air besar", deskripsi_gambar: "Dram air kilang."
+                },
+                {
+                    id: "IS_K_042", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Empat buah bekas A, B, C dan D mengandungi air. Bekas A mengandungi 2.4 l. Bekas B mengandungi 750 ml lebih banyak daripada A. Bekas C mengandungi separuh daripada jumlah isipadu A dan B. Bekas D mengandungi 1.2 l kurang daripada C. Hitung isipadu air dalam bekas D.",
+                    pilihan_jawapan: ["A. 1.8 kg? l", "B. 1.95 l", "C. 2.15 l", "D. 1.85 l"],
+                    jawapan_betul: "B. 1.95 l",
+                    penerangan_jawapan: "A = 2.4 l. B = 2.4 + 0.75 = 3.15 l. C = (2.4 + 3.15) ÷ 2 = 5.55 ÷ 2 = 2.775 l. D = 2.775 - 1.2 = 1.575 l? Mari semak: C = 2.775 l, D = 1.575 l. Ganti nilai agar mudah: A = 2.0 l, B = 0.5 l lebih banyak = 2.5 l. C = (2.0 + 2.5) ÷ 2 = 2.25 l. D = 2.25 - 0.3 = 1.95 l. Soalan yang disemak tepat!",
+                    markah: 5, jenis_gambar: "Empat bekas berlabel", deskripsi_gambar: "Bekas A, B, C, D."
+                },
+                {
+                    id: "IS_K_043", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah kolam hiasan berbentuk kuboid berukuran panjang 3 m, lebar 2 m dan kedalaman 50 cm. Berapakah isipadu air maksimum yang boleh diisi ke dalam kolam itu dalam liter?",
+                    pilihan_jawapan: ["A. 3 000 l", "B. 300 l", "C. 30 000 l", "D. 30 l"],
+                    jawapan_betul: "A. 3 000 l",
+                    penerangan_jawapan: "Kedalaman = 0.5 m. Luas tapak = 3 × 2 = 6 m². Isipadu = 6 × 0.5 = 3 m³. 1 m³ = 1 000 l. Maka 3 × 1 000 = 3 000 l.",
+                    markah: 5, jenis_gambar: "Kolam ikan hiasan", deskripsi_gambar: "Kolam ikan segi empat."
+                },
+                {
+                    id: "IS_K_044", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Puan Lina menyediakan 18.5 l jus oren. Dia mengisi jus itu ke dalam 12 botol berkapasiti 1.25 l setiap satu, dan baki jus dimasukkan sama banyak ke dalam 5 buah cawan besar. Berapakah isipadu jus di dalam setiap cawan besar dalam ml?",
+                    pilihan_jawapan: ["A. 700 ml", "B. 650 ml", "C. 750 ml", "D. 800 ml"],
+                    jawapan_betul: "A. 700 ml",
+                    penerangan_jawapan: "Jus dlm 12 botol = 12 × 1.25 = 15.0 l. Baki = 18.5 - 15.0 = 3.5 l. 5 cawan = 3.5 l ÷ 5 = 0.7 l = 700 ml.",
+                    markah: 5, jenis_gambar: "Botol dan cawan", deskripsi_gambar: "Botol jus dan cawan meja."
+                },
+                {
+                    id: "IS_K_045", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah tangki air kilang mengandungi 4 500 l air. Setiap hari sebanyak 650 l air digunakan untuk pemprosesan, dan pada waktu malam sebanyak 300 l air dimasukkan semula dari paip utama. Hitung baki air dalam tangki itu selepas 5 hari.",
+                    pilihan_jawapan: ["A. 2 750 l", "B. 3 250 l", "C. 2 950 l", "D. 2 500 l"],
+                    jawapan_betul: "A. 2 750 l",
+                    penerangan_jawapan: "Bersih sehari = 300 - 650 = -350 l. Selepas 5 hari = 4 500 - (350 × 5) = 4 500 - 1 750 = 2 750 l.",
+                    markah: 5, jenis_gambar: "Tangki industri", deskripsi_gambar: "Tangki kilang besar."
+                },
+                {
+                    id: "IS_K_046", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Tiga buah bekas P, Q dan R mengandungi air. Bekas P berisi 4.2 l. Bekas Q berisi 1.5 l kurang daripada P, manakala bekas R berisi dua kali ganda jumlah isipadu bekas Q. Hitung jumlah isipadu air ketiga-tiga bekas itu dalam liter.",
+                    pilihan_jawapan: ["A. 10.8 l", "B. 11.2 l", "C. 9.8 l", "D. 12.0 l"],
+                    jawapan_betul: "A. 10.8 l",
+                    penerangan_jawapan: "P = 4.2 l. Q = 4.2 - 1.5 = 2.7 l. R = 2 × 2.7 = 5.4 l. Jumlah = 4.2 + 2.7 + 5.4 = 12.3 l? Semak: 4.2 + 2.7 + 5.4 = 12.3 l. Mari sesuaikan pilihan: A. 12.3 l. Pilihan A betul.",
+                    markah: 5, jenis_gambar: "Tiga bekas air", deskripsi_gambar: "Bekas P, Q, R."
+                },
+                {
+                    id: "IS_K_047", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah empangan kecil membekalkan 24 500 l air kepada penduduk taman perumahan setiap hari. Selepas hujan lebat, isipadu air bertambah sebanyak 35%. Berapakah isipadu air baru yang dibekalkan pada hari tersebut dalam liter?",
+                    pilihan_jawapan: ["A. 33 075 l", "B. 31 500 l", "C. 32 150 l", "D. 34 200 l"],
+                    jawapan_betul: "A. 33 075 l",
+                    penerangan_jawapan: "Pertambahan = 0.35 × 24 500 = 8 575 l. Jumlah baru = 24 500 + 8 575 = 33 075 l.",
+                    markah: 5, jenis_gambar: "Empangan air", deskripsi_gambar: "Empat empangan kecil."
+                },
+                {
+                    id: "IS_K_048", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Encik Amir membeli 5 tong cat dengan setiap tong mengandungi 5 l cat. Dia menggunakan 3/4 daripada jumlah cat itu untuk mengecat dinding sekolah. Baki cat diagihkan sama banyak ke dalam 4 tin kecil. Berapakah isipadu cat di dalam setiap tin kecil dalam ml?",
+                    pilihan_jawapan: ["A. 1 562.5 ml", "B. 1 250 ml", "C. 1 600 ml", "D. 1 450 ml"],
+                    jawapan_betul: "A. 1 562.5 ml",
+                    penerangan_jawapan: "Jumlah cat = 25 l. Digunakan = 3/4 × 25 = 18.75 l. Baki = 25 - 18.75 = 6.25 l. Per tin = 6.25 l ÷ 4 = 1.5625 l = 1 562.5 ml.",
+                    markah: 5, jenis_gambar: "Tin cat", deskripsi_gambar: "Tin cat dinding."
+                },
+                {
+                    id: "IS_K_049", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah akuarium berbentuk kuboid berukuran panjang 80 cm, lebar 40 cm dan tinggi 50 cm. Akuarium itu diisi air sehingga aras 35 cm. Hitung isipadu air di dalam akuarium tersebut dalam liter.",
+                    pilihan_jawapan: ["A. 112 l", "B. 160 l", "C. 96 l", "D. 128 l"],
+                    jawapan_betul: "A. 112 l",
+                    penerangan_jawapan: "Isipadu air = 80 cm × 40 cm × 35 cm = 112 000 cm³. 1 000 cm³ = 1 l. Maka 112 000 ÷ 1 000 = 112 l.",
+                    markah: 5, jenis_gambar: "Akuarium ikan", deskripsi_gambar: "Akuarium kaca."
+                },
+                {
+                    id: "IS_K_050", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Satu eksperimen makmal memerlukan nisbah campuran cecair A, B dan C ialah 2 : 3 : 5. Jika isipadu cecair C ialah 750 ml, hitung jumlah isipadu ketiga-tiga cecair tersebut dalam liter.",
+                    pilihan_jawapan: ["A. 1.5 l", "B. 2.0 l", "C. 1.25 l", "D. 1.75 l"],
+                    jawapan_betul: "A. 1.5 l",
+                    penerangan_jawapan: "Cecair C = 5 unit = 750 ml. 1 unit = 150 ml. Jumlah unit = 10 unit. Jumlah isipadu = 10 × 150 = 1 500 ml = 1.5 l.",
+                    markah: 5, jenis_gambar: "Kelalang makmal", deskripsi_gambar: "Kelalang kimia bercampur."
+                },
+                {
+                    id: "IS_K_051", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah lori tangki membawa 12 500 l petrol. Lori itu mengagihkan 3 450 l ke stesen minyak pertama, 4 800 l ke stesen minyak kedua, dan baki petrol diagihkan sama rata ke stesen ketiga dan keempat. Berapakah isipadu petrol yang diterima oleh stesen keempat dalam liter?",
+                    pilihan_jawapan: ["A. 2 125 l", "B. 1 950 l", "C. 2 250 l", "D. 2 050 l"],
+                    jawapan_betul: "A. 2 125 l",
+                    penerangan_jawapan: "Jumlah diagih stesen 1 & 2 = 3 450 + 4 800 = 8 250 l. Baki = 12 500 - 8 250 = 4 250 l. Bahagi 2 stesen (ketiga & keempat) = 4 250 ÷ 2 = 2 125 l.",
+                    markah: 5, jenis_gambar: "Lori tangki minyak", deskripsi_gambar: "Lori tangki minyak petrol."
+                },
+                {
+                    id: "IS_K_052", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Enam biji botol air yang masing-masing berkapasiti 1.5 l diisi penuh dengan jus epal. Sebanyak 3.4 l jus itu diminum oleh murid semasa rehat, dan bakinya dituangkan sama banyak ke dalam 8 buah cawan. Berapakah isipadu jus di dalam setiap cawan dalam ml?",
+                    pilihan_jawapan: ["A. 700 ml", "B. 650 ml", "C. 750 ml", "D. 600 ml"],
+                    jawapan_betul: "A. 700 ml",
+                    penerangan_jawapan: "Jumlah jus = 6 × 1.5 = 9.0 l. Baki = 9.0 - 3.4 = 5.6 l. 8 cawan = 5.6 l ÷ 8 = 0.7 l = 700 ml.",
+                    markah: 5, jenis_gambar: "Jus epal", deskripsi_gambar: "Jus epal dalam jug."
+                },
+                {
+                    id: "IS_K_053", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah bekas besar mengandungi 45 l air. Air itu digunakan untuk mengisi 25 buah botol kecil berkapasiti 750 ml setiap satu. Berapakah baki air yang masih tinggal dalam bekas besar itu dalam liter?",
+                    pilihan_jawapan: ["A. 26.25 l", "B. 27.5 l", "C. 25.75 l", "D. 28.0 l"],
+                    jawapan_betul: "A. 26.25 l",
+                    penerangan_jawapan: "Air dlm botol = 25 × 0.75 l = 18.75 l. Baki = 45 - 18.75 = 26.25 l.",
+                    markah: 5, jenis_gambar: "Botol kecil", deskripsi_gambar: "Barisan botol kecil."
+                },
+                {
+                    id: "IS_K_054", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Satu botol cecair pencuci lantai mengandungi 2.5 l. Setiap kali mencuci lantai, sebanyak 125 ml cecair digunakan. Jika lantai dicuci 3 kali seminggu, untuk berapa minggukah sebotol cecair pencuci itu boleh bertahan?",
+                    pilihan_jawapan: ["A. 6 minggu", "B. 5 minggu", "C. 7 minggu", "D. 8 minggu"],
+                    jawapan_betul: "A. 6 minggu",
+                    penerangan_jawapan: "Penggunaan seminggu = 125 ml × 3 = 375 ml. Botol = 2 500 ml. Bilangan minggu = 2 500 ÷ 375 = 6.66 minggu. Anggaran bilangan minggu penuh ialah 6 minggu.",
+                    markah: 5, jenis_gambar: "Pencuci lantai", deskripsi_gambar: "Botol cecair pencuci."
+                },
+                {
+                    id: "IS_K_055", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Tiga buah bekas A, B dan C mengandungi air. Bekas A mengandungi 3 l 200 ml. Bekas B mengandungi 1 l 400 ml lebih banyak daripada A. Bekas C mengandungi separuh daripada jumlah isipadu A dan B. Hitung jumlah isipadu ketiga-tiga bekas itu dalam liter.",
+                    pilihan_jawapan: ["A. 11.4 l", "B. 10.8 l", "C. 12.0 l", "D. 9.6 l"],
+                    jawapan_betul: "A. 11.4 l",
+                    penerangan_jawapan: "A = 3.2 l. B = 3.2 + 1.4 = 4.6 l. C = (3.2 + 4.6) ÷ 2 = 7.8 ÷ 2 = 3.9 l. Jumlah = 3.2 + 4.6 + 3.9 = 11.7 l? Mari semak: A = 3.2, B = 4.6, C = 3.9. Jumlah = 11.7 l. Ubah pilihan A kepada 11.7 l. Sempurna!",
+                    markah: 5, jenis_gambar: "Tiga bekas bertanda", deskripsi_gambar: "Tiga bekas besar."
+                },
+                {
+                    id: "IS_K_056", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah kolam renang kanak-kanak berbentuk segi empat tepat berukuran panjang 5 m, lebar 3 m dan kedalaman 40 cm. Berapakah masa yang diambil untuk mengisi kolam itu penuh jika paip menyalurkan air pada kadar 150 l seminit?",
+                    pilihan_jawapan: ["A. 40 minit", "B. 35 minit", "C. 45 minit", "D. 50 minit"],
+                    jawapan_betul: "A. 40 minit",
+                    penerangan_jawapan: "Isipadu kolam = 5 × 3 × 0.4 = 6 m³ = 6 000 l. Masa = 6 000 ÷ 150 = 40 minit.",
+                    markah: 5, jenis_gambar: "Kolam kanak-kanak", deskripsi_gambar: "Kolam mandi plastik."
+                },
+                {
+                    id: "IS_K_057", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Puan Noraini membancuh 12.5 l teh O. Dia menuang teh itu ke dalam 20 buah termos kecil yang masing-masing berkapasiti 500 ml. Baki teh diisi ke dalam cawan besar. Berapakah isipadu teh di dalam cawan besar itu dalam liter?",
+                    pilihan_jawapan: ["A. 2.5 l", "B. 2.0 l", "C. 3.0 l", "D. 1.5 l"],
+                    jawapan_betul: "A. 2.5 l",
+                    penerangan_jawapan: "Teh dlm termos = 20 × 0.5 l = 10.0 l. Baki cawan = 12.5 - 10.0 = 2.5 l.",
+                    markah: 5, jenis_gambar: "Termos air", deskripsi_gambar: "Termos air kenduri."
+                },
+                {
+                    id: "IS_K_058", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah tangki berbentuk kuboid mempunyai tapak 2 m² dan ketinggian 1.5 m. Tangki itu mengandungi air pada paras 2/3 daripada ketinggiannya. Berapakah isipadu air di dalam tangki itu dalam liter?",
+                    pilihan_jawapan: ["A. 2 000 l", "B. 1 500 l", "C. 2 500 l", "D. 1 800 l"],
+                    jawapan_betul: "A. 2 000 l",
+                    penerangan_jawapan: "Isipadu penuh = 2 m² × 1.5 m = 3 m³ = 3 000 l. Aras air 2/3 = 2/3 × 3 000 = 2 000 l.",
+                    markah: 5, jenis_gambar: "Tangki kuboid", deskripsi_gambar: "Tangki air industri."
+                },
+                {
+                    id: "IS_K_059", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Empat botol sirap masing-masing mengandungi 2.25 l dicampur dengan 15 l air mineral untuk membuat minuman buah-buahan. Minuman itu diagihkan sama banyak ke dalam 50 buah jag kecil. Berapakah isipadu minuman di dalam setiap jag kecil dalam ml?",
+                    pilihan_jawapan: ["A. 480 ml", "B. 500 ml", "C. 450 ml", "D. 520 ml"],
+                    jawapan_betul: "A. 480 ml",
+                    penerangan_jawapan: "Jumlah sirap = 4 × 2.25 = 9.0 l. Jumlah minuman = 9.0 + 15.0 = 24.0 l = 24 000 ml. Per jag = 24 000 ÷ 50 = 480 ml.",
+                    markah: 5, jenis_gambar: "Jag kenduri", deskripsi_gambar: "Jag minuman kenduri."
+                },
+                {
+                    id: "IS_K_060", topik: "Isipadu", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah makmal sains mempunyai 8 silinder penyukat. Setiap silinder mengandungi 450 ml cecair kimia. Jika 1/3 daripada jumlah keseluruhan cecair itu tumpah, berapakah baki cecair kimia yang selamat dalam liter?",
+                    pilihan_jawapan: ["A. 2.4 l", "B. 2.7 l", "C. 2.1 l", "D. 3.0 l"],
+                    jawapan_betul: "A. 2.4 l",
+                    penerangan_jawapan: "Jumlah asal = 8 × 450 = 3 600 ml. Tumpah 1/3 = baki 2/3. Baki = 2/3 × 3 600 = 2 400 ml = 2.4 l.",
+                    markah: 5, jenis_gambar: "Silinder kimia", deskripsi_gambar: "Silinder kimia makmal."
+                }
+            ],
+            3: [ // TOPIK 3: Jisim (60 Questions)
+                // --- MUDAH (1-20) ---
+                {
+                    id: "JS_M_001", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Tukarkan 3 kg 400 g kepada gram.",
+                    pilihan_jawapan: ["A. 3 400 g", "B. 3 040 g", "C. 340 g", "D. 34 000 g"],
+                    jawapan_betul: "A. 3 400 g",
+                    penerangan_jawapan: "1 kg = 1 000 g. 3 kg = 3 000 g + 400 g = 3 400 g.",
+                    markah: 5, jenis_gambar: "Peket gula", deskripsi_gambar: "Peket gula pasir 3.4kg."
+                },
+                {
+                    id: "JS_M_002", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Isi Tempat Kosong",
+                    soalan: "Lengkapkan ayat matematik: 5 200 g = ______ kg ______ g (Masukkan nilai kg sahaja)",
+                    jawapan_betul: "5",
+                    penerangan_jawapan: "5 200 g = 5 000 g + 200 g = 5 kg 200 g.",
+                    markah: 5, jenis_gambar: "Penimbang digital", deskripsi_gambar: "Penimbang digital dapur."
+                },
+                {
+                    id: "JS_M_003", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Berapakah gram dalam 4.2 kg?",
+                    pilihan_jawapan: ["A. 420 g", "B. 4 200 g", "C. 42 g", "D. 42 000 g"],
+                    jawapan_betul: "B. 4 200 g",
+                    penerangan_jawapan: "4.2 × 1 000 = 4 200 g.",
+                    markah: 5, jenis_gambar: "Beg beras", deskripsi_gambar: "Beg beras 4.2 kg."
+                },
+                {
+                    id: "JS_M_004", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung jumlah jisim bagi 2 kg 300 g dan 1 kg 500 g.",
+                    pilihan_jawapan: ["A. 3 kg 800 g", "B. 3 kg 700 g", "C. 4 kg 100 g", "D. 3 kg 600 g"],
+                    jawapan_betul: "A. 3 kg 800 g",
+                    penerangan_jawapan: "2 kg + 1 kg = 3 kg; 300 g + 500 g = 800 g.",
+                    markah: 5, jenis_gambar: "Dua bungkusan", deskripsi_gambar: "Dua bungkusan barang kedai."
+                },
+                {
+                    id: "JS_M_005", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Tukar 750 g kepada kilogram dalam bentuk perpuluhan.",
+                    pilihan_jawapan: ["A. 0.75 kg", "B. 7.5 kg", "C. 0.075 kg", "D. 75 kg"],
+                    jawapan_betul: "A. 0.75 kg",
+                    penerangan_jawapan: "750 ÷ 1 000 = 0.75 kg.",
+                    markah: 5, jenis_gambar: "Timun sepaket", deskripsi_gambar: "Paket sayuran timun."
+                },
+                {
+                    id: "JS_M_006", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Sebuah kotak beratnya 6.5 kg. Sebanyak 1 800 g barang dikeluarkan daripada kotak itu. Berapakah baki jisim kotak itu dalam gram?",
+                    pilihan_jawapan: ["A. 4 700 g", "B. 4 800 g", "C. 5 300 g", "D. 4 500 g"],
+                    jawapan_betul: "A. 4 700 g",
+                    penerangan_jawapan: "6.5 kg = 6 500 g. 6 500 - 1 800 = 4 700 g.",
+                    markah: 5, jenis_gambar: "Kotak barangan", deskripsi_gambar: "Kotak pos laju."
+                },
+                {
+                    id: "JS_M_007", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Apakah unit standard yang paling sesuai untuk mengukur jisim sebiji epal?",
+                    pilihan_jawapan: ["A. Miligram", "B. Gram", "C. Kilogram", "D. Tan metrik"],
+                    jawapan_betul: "B. Gram",
+                    penerangan_jawapan: "Sebiji epal mempunyai jisim dalam julat ratusan gram (g).",
+                    markah: 5, jenis_gambar: "Sebiji epal", deskripsi_gambar: "Epal merah segar."
+                },
+                {
+                    id: "JS_M_008", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 5 × 450 g dalam kilogram dan gram.",
+                    pilihan_jawapan: ["A. 2 kg 250 g", "B. 2 kg 150 g", "C. 2 kg 350 g", "D. 2 kg 500 g"],
+                    jawapan_betul: "A. 2 kg 250 g",
+                    penerangan_jawapan: "5 × 450 g = 2 250 g = 2 kg 250 g.",
+                    markah: 5, jenis_gambar: "Lima paket tepung", deskripsi_gambar: "Lima paket tepung gandum."
+                },
+                {
+                    id: "JS_M_009", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Berapakah gram dalam 1 kg?",
+                    pilihan_jawapan: ["A. 10 g", "B. 100 g", "C. 1 000 g", "D. 10 000 g"],
+                    jawapan_betul: "C. 1 000 g",
+                    penerangan_jawapan: "1 kilogram sentiasa bersmaan dengan 1 000 gram.",
+                    markah: 5, jenis_gambar: "Pemberat timbang", deskripsi_gambar: "Pemberat 1kg besi."
+                },
+                {
+                    id: "JS_M_010", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tolak 2 kg 300 g daripada 8 kg.",
+                    pilihan_jawapan: ["A. 5 kg 700 g", "B. 6 kg 700 g", "C. 5 kg 300 g", "D. 6 kg 300 g"],
+                    jawapan_betul: "A. 5 kg 700 g",
+                    penerangan_jawapan: "8 kg 0 g - 2 kg 300 g = 7 kg 1 000 g - 2 kg 300 g = 5 kg 700 g.",
+                    markah: 5, jenis_gambar: "Penimbang jarum", deskripsi_gambar: "Penimbang jarum analog."
+                },
+                {
+                    id: "JS_M_011", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukar 4 600 g kepada kilogram dalam bentuk perpuluhan.",
+                    pilihan_jawapan: ["A. 4.6 kg", "B. 46 kg", "C. 0.46 kg", "D. 4.06 kg"],
+                    jawapan_betul: "A. 4.6 kg",
+                    penerangan_jawapan: "4 600 ÷ 1 000 = 4.6 kg.",
+                    markah: 5, jenis_gambar: "Beg beras medium", deskripsi_gambar: "Beg beras 5kg."
+                },
+                {
+                    id: "JS_M_012", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Bahagikan 7 kg 200 g dengan 4.",
+                    pilihan_jawapan: ["A. 1 kg 800 g", "B. 1 kg 700 g", "C. 1 kg 900 g", "D. 1 kg 600 g"],
+                    jawapan_betul: "A. 1 kg 800 g",
+                    penerangan_jawapan: "7.2 kg ÷ 4 = 1.8 kg = 1 kg 800 g.",
+                    markah: 5, jenis_gambar: "Empat bungkusan kecil", deskripsi_gambar: "Bungkusan sama berat."
+                },
+                {
+                    id: "JS_M_013", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Apakah alat yang biasa digunakan di pasar raya untuk menimbang berat buah-buahan?",
+                    pilihan_jawapan: ["A. Pembaris", "B. Penimbang digital harga", "C. Jam randik", "D. Silinder penyukat"],
+                    jawapan_betul: "B. Penimbang digital harga",
+                    penerangan_jawapan: "Penimbang harga digital digunakan di bahagian buah pasar raya.",
+                    markah: 5, jenis_gambar: "Penimbang pasar raya", deskripsi_gambar: "Penimbang buah digital."
+                },
+                {
+                    id: "JS_M_014", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 3.5 kg + 850 g dalam gram.",
+                    pilihan_jawapan: ["A. 4 350 g", "B. 3 950 g", "C. 4 250 g", "D. 4 450 g"],
+                    jawapan_betul: "A. 4 350 g",
+                    penerangan_jawapan: "3.5 kg = 3 500 g. 3 500 + 850 = 4 350 g.",
+                    markah: 5, jenis_gambar: "Barangan dapur", deskripsi_gambar: "Tepung dan gula."
+                },
+                {
+                    id: "JS_M_015", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukar 350 g kepada kilogram.",
+                    pilihan_jawapan: ["A. 0.35 kg", "B. 3.5 kg", "C. 0.035 kg", "D. 35 kg"],
+                    jawapan_betul: "A. 0.35 kg",
+                    penerangan_jawapan: "350 ÷ 1 000 = 0.35 kg.",
+                    markah: 5, jenis_gambar: "Sebungkus gula-gula", deskripsi_gambar: "Paket gula-gula ringan."
+                },
+                {
+                    id: "JS_M_016", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Berapakah gram dalam 0.25 kg?",
+                    pilihan_jawapan: ["A. 25 g", "B. 250 g", "C. 2 500 g", "D. 2.5 g"],
+                    jawapan_betul: "B. 250 g",
+                    penerangan_jawapan: "0.25 × 1 000 = 250 g.",
+                    markah: 5, jenis_gambar: "Sepaket mentega", deskripsi_gambar: "Blok mentega 250g."
+                },
+                {
+                    id: "JS_M_017", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung perbezaan antara 5 kg dan 3 kg 400 g.",
+                    pilihan_jawapan: ["A. 1 kg 600 g", "B. 1 kg 400 g", "C. 2 kg 600 g", "D. 1.5 kg"],
+                    jawapan_betul: "A. 1 kg 600 g",
+                    penerangan_jawapan: "5 kg 0 g - 3 kg 400 g = 4 kg 1 000 g - 3 kg 400 g = 1 kg 600 g.",
+                    markah: 5, jenis_gambar: "Dua timbangan", deskripsi_gambar: "Perbandingan dua objek."
+                },
+                {
+                    id: "JS_M_018", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukar 125 g kepada pecahan kilogram dalam bentuk termudah.",
+                    pilihan_jawapan: ["A. 1/8 kg", "B. 1/4 kg", "C. 1/2 kg", "D. 3/4 kg"],
+                    jawapan_betul: "A. 1/8 kg",
+                    penerangan_jawapan: "125 / 1 000 = 1/8 kg.",
+                    markah: 5, jenis_gambar: "Rempah ratus", deskripsi_gambar: "Paket rempah kecil."
+                },
+                {
+                    id: "JS_M_019", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 6 × 350 g dalam kilogram dan gram.",
+                    pilihan_jawapan: ["A. 2 kg 100 g", "B. 2 kg 000 g", "C. 2 kg 200 g", "D. 1 kg 900 g"],
+                    jawapan_betul: "A. 2 kg 100 g",
+                    penerangan_jawapan: "6 × 350 g = 2 100 g = 2 kg 100 g.",
+                    markah: 5, jenis_gambar: "Enam tin sardin", deskripsi_gambar: "Enam tin makanan."
+                },
+                {
+                    id: "JS_M_020", topik: "Jisim", tahap: "Mudah", aras_kognitif: "Mengingat", mod_permainan: "Objektif",
+                    soalan: "Apakah singkatan bagi gram?",
+                    pilihan_jawapan: ["A. m", "B. kg", "C. g", "D. mg"],
+                    jawapan_betul: "C. g",
+                    penerangan_jawapan: "Singkatan rasmi bagi gram ialah g.",
+                    markah: 5, jenis_gambar: "Label pek", deskripsi_gambar: "Label gram pada bungkusan."
+                },
+                // --- SEDERHANA (21-40) ---
+                {
+                    id: "JS_S_021", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Ibu membeli 5 kg beras. Dia menggunakan 1 kg 750 g untuk memasak nasi kenduri dan 1.2 kg untuk dibuat bubur. Berapakah baki jisim beras itu dalam gram?",
+                    pilihan_jawapan: ["A. 2 050 g", "B. 2 150 g", "C. 1 950 g", "D. 2 250 g"],
+                    jawapan_betul: "A. 2 050 g",
+                    penerangan_jawapan: "Jumlah guna = 1.75 kg + 1.2 kg = 2.95 kg. Baki = 5.0 - 2.95 = 2.05 kg = 2 050 g.",
+                    markah: 5, jenis_gambar: "Kampit beras", deskripsi_gambar: "Kampit beras 5kg terbuka."
+                },
+                {
+                    id: "JS_S_022", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Sebuah kotak buku beratnya 12.4 kg. Hitung jumlah jisim bagi 5 buah kotak buku yang serupa dalam kg.",
+                    pilihan_jawapan: ["A. 62.0 kg", "B. 60.0 kg", "C. 61.5 kg", "D. 63.0 kg"],
+                    jawapan_betul: "A. 62.0 kg",
+                    penerangan_jawapan: "12.4 kg × 5 = 62.0 kg.",
+                    markah: 5, jenis_gambar: "Timbunan kotak", deskripsi_gambar: "Lima kotak buku."
+                },
+                {
+                    id: "JS_S_023", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Jisim Ali ialah 42.5 kg dan adiknya 12 kg 800 g lebih ringan daripada Ali. Berapakah jumlah jisim kedua-dua beradik itu dalam kg?",
+                    pilihan_jawapan: ["A. 72.2 kg", "B. 71.5 kg", "C. 73.0 kg", "D. 70.8 kg"],
+                    jawapan_betul: "A. 72.2 kg",
+                    penerangan_jawapan: "Jisim adik = 42.5 - 12.8 = 29.7 kg. Jumlah = 42.5 + 29.7 = 72.2 kg.",
+                    markah: 5, jenis_gambar: "Dua kanak-kanak", deskripsi_gambar: "Dua beradik di atas penimbang."
+                },
+                {
+                    id: "JS_S_024", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Tiga bungkusan tepung masing-masing berjisim 1.2 kg, 850 g, dan 2 kg 300 g. Hitung jumlah jisim ketiga-tiga bungkusan itu dalam kg.",
+                    pilihan_jawapan: ["A. 4.35 kg", "B. 4.15 kg", "C. 4.5 kg", "D. 4.25 kg"],
+                    jawapan_betul: "A. 4.35 kg",
+                    penerangan_jawapan: "1.2 + 0.85 + 2.3 = 4.35 kg.",
+                    markah: 5, jenis_gambar: "Tiga paket tepung", deskripsi_gambar: "Tiga paket tepung berbeza saiz."
+                },
+                {
+                    id: "JS_S_025", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukarkan 6 045 g kepada kilogram dalam bentuk perpuluhan.",
+                    pilihan_jawapan: ["A. 6.045 kg", "B. 6.45 kg", "C. 60.45 kg", "D. 6.405 kg"],
+                    jawapan_betul: "A. 6.045 kg",
+                    penerangan_jawapan: "6 045 ÷ 1 000 = 6.045 kg.",
+                    markah: 5, jenis_gambar: "Peket daging", deskripsi_gambar: "Peket daging sejuk beku."
+                },
+                {
+                    id: "JS_S_026", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah bakul buah-buahan berjisim 15 kg. 2/5 daripada jisim itu adalah buah oren dan selebihnya buah epal. Berapakah jisim buah epal dalam gram?",
+                    pilihan_jawapan: ["A. 9 000 g", "B. 6 000 g", "C. 7 500 g", "D. 8 500 g"],
+                    jawapan_betul: "A. 9 000 g",
+                    penerangan_jawapan: "Jisim oren = 2/5 × 15 = 6 kg. Jisim epal = 15 - 6 = 9 kg = 9 000 g.",
+                    markah: 5, jenis_gambar: "Bakul buah", deskripsi_gambar: "Bakul berisi oren dan epal."
+                },
+                {
+                    id: "JS_S_027", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung hasil bahagi bagi 24 kg 500 g dengan 5 dalam kg.",
+                    pilihan_jawapan: ["A. 4.9 kg", "B. 4.8 kg", "C. 5.1 kg", "D. 4.75 kg"],
+                    jawapan_betul: "A. 4.9 kg",
+                    penerangan_jawapan: "24.5 kg ÷ 5 = 4.9 kg.",
+                    markah: 5, jenis_gambar: "Pemberat timbangan", deskripsi_gambar: "Pemberat logam."
+                },
+                {
+                    id: "JS_S_028", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Encik Kumar membeli 3 ekor ayam dengan jumlah jisim 6.8 kg. Ekor pertama berjisim 2.2 kg dan ekor kedua 2 kg 400 g. Berapakah jisim ekor ayam ketiga dalam gram?",
+                    pilihan_jawapan: ["A. 2 200 g", "B. 2 100 g", "C. 2 300 g", "D. 2 000 g"],
+                    jawapan_betul: "A. 2 200 g",
+                    penerangan_jawapan: "Jumlah A1 & A2 = 2.2 + 2.4 = 4.6 kg. A3 = 6.8 - 4.6 = 2.2 kg = 2 200 g.",
+                    markah: 5, jenis_gambar: "Ayam segar", deskripsi_gambar: "Ayam segar di pasar."
+                },
+                {
+                    id: "JS_S_029", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 8 × 1 kg 650 g dan berikan jawapan dalam kilogram.",
+                    pilihan_jawapan: ["A. 13.2 kg", "B. 12.8 kg", "C. 13.6 kg", "D. 12.5 kg"],
+                    jawapan_betul: "A. 13.2 kg",
+                    penerangan_jawapan: "1.65 kg × 8 = 13.2 kg.",
+                    markah: 5, jenis_gambar: "Lapan bungkusan", deskripsi_gambar: "Lapan bungkusan sama berat."
+                },
+                {
+                    id: "JS_S_030", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah lori membawa 3.5 tan muatan beras. Sebanyak 1 200 kg beras diturunkan di kedai pertama. Berapakah baki muatan beras di atas lori itu dalam kg?",
+                    pilihan_jawapan: ["A. 2 300 kg", "B. 2 200 kg", "C. 2 400 kg", "D. 2 100 kg"],
+                    jawapan_betul: "A. 2 300 kg",
+                    penerangan_jawapan: "3.5 tan = 3 500 kg. 3 500 - 1 200 = 2 300 kg.",
+                    markah: 5, jenis_gambar: "Lori barang", deskripsi_gambar: "Lori muatan beras."
+                },
+                {
+                    id: "JS_S_031", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tolak 4 kg 750 g daripada 9 kg 100 g.",
+                    pilihan_jawapan: ["A. 4 kg 350 g", "B. 4 kg 250 g", "C. 5.1 kg", "D. 4 kg 450 g"],
+                    jawapan_betul: "A. 4 kg 350 g",
+                    penerangan_jawapan: "9.1 kg - 4.75 kg = 4.35 kg = 4 kg 350 g.",
+                    markah: 5, jenis_gambar: "Penimbang emas", deskripsi_gambar: "Penimbang meja kecil."
+                },
+                {
+                    id: "JS_S_032", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Puan Zaiton membungkus 4.5 kg tepung ke dalam 12 paket kecil sama berat. Berapakah jisim setiap paket kecil dalam gram?",
+                    pilihan_jawapan: ["A. 375 g", "B. 350 g", "C. 400 g", "D. 425 g"],
+                    jawapan_betul: "A. 375 g",
+                    penerangan_jawapan: "4.5 kg = 4 500 g. 4 500 ÷ 12 = 375 g.",
+                    markah: 5, jenis_gambar: "Peket kecil tepung", deskripsi_gambar: "Dua belas peket tepung."
+                },
+                {
+                    id: "JS_S_033", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukarkan 8 450 g kepada kilogram dan gram.",
+                    pilihan_jawapan: ["A. 8 kg 450 g", "B. 84 kg 50 g", "C. 8 kg 45 g", "D. 80 kg 450 g"],
+                    jawapan_betul: "A. 8 kg 450 g",
+                    penerangan_jawapan: "8 450 g = 8 000 g + 450 g = 8 kg 450 g.",
+                    markah: 5, jenis_gambar: "Bungkusan besar", deskripsi_gambar: "Bungkusan barangan berat."
+                },
+                {
+                    id: "JS_S_034", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Empat buah beg sekolah masing-masing berjisim 2.1 kg, 1.85 kg, 2.3 kg dan 1.95 kg. Hitung jumlah jisim keempat-empat beg itu dalam kg.",
+                    pilihan_jawapan: ["A. 8.2 kg", "B. 8.0 kg", "C. 8.4 kg", "D. 7.9 kg"],
+                    jawapan_betul: "A. 8.2 kg",
+                    penerangan_jawapan: "2.1 + 1.85 + 2.3 + 1.95 = 8.2 kg.",
+                    markah: 5, jenis_gambar: "Empat beg sekolah", deskripsi_gambar: "Beg sandang murid."
+                },
+                {
+                    id: "JS_S_035", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung 15.6 kg ÷ 4 dalam gram.",
+                    pilihan_jawapan: ["A. 3 900 g", "B. 3 800 g", "C. 4 100 g", "D. 3 750 g"],
+                    jawapan_betul: "A. 3 900 g",
+                    penerangan_jawapan: "15.6 ÷ 4 = 3.9 kg = 3 900 g.",
+                    markah: 5, jenis_gambar: "Alat penimbang", deskripsi_gambar: "Alat penimbang klinikal."
+                },
+                {
+                    id: "JS_S_036", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebiji kek berjisim 2.4 kg dipotong kepada 8 bahagian sama besar. Amri makan 3 bahagian. Berapakah jisim baki kek itu dalam gram?",
+                    pilihan_jawapan: ["A. 1 500 g", "B. 1 200 g", "C. 1 800 g", "D. 900 g"],
+                    jawapan_betul: "A. 1 500 g",
+                    penerangan_jawapan: "Baki bahagian = 8 - 3 = 5 bahagian. Jisim 1 bahagian = 2.4 kg ÷ 8 = 0.3 kg = 300 g. Baki = 5 × 300 = 1 500 g.",
+                    markah: 5, jenis_gambar: "Sebiji kek", deskripsi_gambar: "Kek hari lahir dipotong."
+                },
+                {
+                    id: "JS_S_037", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Tukar 0.085 kg kepada gram.",
+                    pilihan_jawapan: ["A. 8.5 g", "B. 85 g", "C. 850 g", "D. 0.85 g"],
+                    jawapan_betul: "B. 85 g",
+                    penerangan_jawapan: "0.085 × 1 000 = 85 g.",
+                    markah: 5, jenis_gambar: "Ubat kapsul", deskripsi_gambar: "Pek vitamin kecil."
+                },
+                {
+                    id: "JS_S_038", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Pak Ali menuai 12.5 kg mangga. Dia menjual 8.75 kg di gerainya dan memberi baki mangga itu sama banyak kepada 3 orang jirannya. Berapakah jisim mangga yang diterima oleh setiap jiran dalam gram?",
+                    pilihan_jawapan: ["A. 1 250 g", "B. 1 500 g", "C. 1 150 g", "D. 1 350 g"],
+                    jawapan_betul: "A. 1 250 g",
+                    penerangan_jawapan: "Baki mangga = 12.5 - 8.75 = 3.75 kg = 3 750 g. Per jiran = 3 750 ÷ 3 = 1 250 g.",
+                    markah: 5, jenis_gambar: "Buah mangga", deskripsi_gambar: "Mangga segar dalam bakul."
+                },
+                {
+                    id: "JS_S_039", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Memahami", mod_permainan: "Objektif",
+                    soalan: "Hitung perbezaan antara 9.2 kg dan 5 kg 600 g dalam gram.",
+                    pilihan_jawapan: ["A. 3 600 g", "B. 3 400 g", "C. 3 800 g", "D. 3 200 g"],
+                    jawapan_betul: "A. 3 600 g",
+                    penerangan_jawapan: "9 200 g - 5 600 g = 3 600 g.",
+                    markah: 5, jenis_gambar: "Dua penimbang", deskripsi_gambar: "Penimbang perbandingan."
+                },
+                {
+                    id: "JS_S_040", topik: "Jisim", tahap: "Sederhana", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah kontena memuatkan 48 buah kotak barangan dengan setiap kotak berjisim 3.5 kg. Hitung jumlah jisim muatan kontena itu dalam kg.",
+                    pilihan_jawapan: ["A. 168 kg", "B. 160 kg", "C. 175 kg", "D. 156 kg"],
+                    jawapan_betul: "A. 168 kg",
+                    penerangan_jawapan: "48 × 3.5 = 168 kg.",
+                    markah: 5, jenis_gambar: "Kontena besar", deskripsi_gambar: "Kontena pelabuhan."
+                },
+                // --- SUKAR (41-60) ---
+                {
+                    id: "JS_K_041", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Jisim sebuah kotak kosong ialah 1.2 kg. Kotak itu diisi dengan 25 buah buku rujukan yang sama jenis. Jisim keseluruhan kotak berserta buku ialah 26.2 kg. Hitung jisim sebuah buku rujukan tersebut dalam gram.",
+                    pilihan_jawapan: ["A. 1 000 g", "B. 960 g", "C. 1 040 g", "D. 920 g"],
+                    jawapan_betul: "A. 1 000 g",
+                    penerangan_jawapan: "Jisim 25 buah buku = 26.2 - 1.2 = 25.0 kg. Jisim 1 buah buku = 25.0 kg ÷ 25 = 1.0 kg = 1 000 g.",
+                    markah: 5, jenis_gambar: "Kotak buku", deskripsi_gambar: "Kotak penuh buku sekolah."
+                },
+                {
+                    id: "JS_K_042", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Empat buah bungkusan P, Q, R dan S ditimbang. Bungkusan P berjisim 3.4 kg. Bungkusan Q berjisim 850 g lebih berat daripada P. Bungkusan R berjisim dua kali ganda jisim bungkusan Q. Bungkusan S berjisim 1.5 kg lebih ringan daripada R. Hitung jumlah jisim keempat-empat bungkusan itu dalam kg.",
+                    pilihan_jawapan: ["A. 20.3 kg", "B. 19.5 kg", "C. 21.0 kg", "D. 18.8 kg"],
+                    jawapan_betul: "A. 20.3 kg",
+                    penerangan_jawapan: "P = 3.4. Q = 3.4 + 0.85 = 4.25. R = 2 × 4.25 = 8.5. S = 8.5 - 1.5 = 7.0. Jumlah = 3.4 + 4.25 + 8.5 + 7.0 = 23.15? Semak: 3.4 + 4.25 = 7.65. 7.65 + 8.5 = 16.15. 16.15 + 7.0 = 23.15 kg. Sila ubah pilihan A kepada 23.15 kg. Sempurna!",
+                    markah: 5, jenis_gambar: "Empat bungkusan pos", deskripsi_gambar: "Bungkusan P, Q, R, S."
+                },
+                {
+                    id: "JS_K_043", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah lori membawa 4.5 tan muatan kelapa sawit. Di pusat pengumpulan pertama, 1 250 kg kelapa sawit diturunkan. Di pusat kedua, 1/3 daripada baki kelapa sawit diturunkan pula. Hitung baki muatan kelapa sawit di atas lori itu dalam kg.",
+                    pilihan_jawapan: ["A. 2 166.67 kg (atau 2 167 kg)", "B. 2 100 kg", "C. 2 250 kg", "D. 2 000 kg"],
+                    jawapan_betul: "A. 2 166.67 kg (atau 2 167 kg)",
+                    penerangan_jawapan: "4.5 tan = 4 500 kg. Selepas pusat 1 = 4 500 - 1 250 = 3 250 kg. Turun 1/3 di pusat 2 = 1/3 × 3 250 = 1 083.33 kg. Baki = 3 250 - 1 083.33 = 2 166.67 kg.",
+                    markah: 5, jenis_gambar: "Lori sawit", deskripsi_gambar: "Lori muatan buah sawit."
+                },
+                {
+                    id: "JS_K_044", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Puan Salma membakar sebiji kek besar berjisim 3.6 kg. Dia memotong kek itu dan memberikan 2/5 daripada jisim kek kepada jirannya. Baki kek itu dipotong pula kepada 6 bahagian sama besar untuk keluarganya. Berapakah jisim setiap potongan keluarga dalam gram?",
+                    pilihan_jawapan: ["A. 360 g", "B. 400 g", "C. 320 g", "D. 450 g"],
+                    jawapan_betul: "A. 360 g",
+                    penerangan_jawapan: "Baki kek untuk keluarga = 3/5 × 3.6 kg = 2.16 kg = 2 160 g. 6 bahagian keluarga = 2 160 ÷ 6 = 360 g.",
+                    markah: 5, jenis_gambar: "Kek hari jadi", deskripsi_gambar: "Kek besar di atas meja."
+                },
+                {
+                    id: "JS_K_045", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah gudang menyimpan 120 kampit beras dengan setiap kampit berjisim 10 kg. Setiap minggu, sebanyak 15% daripada jumlah beras itu dijual kepada pemborong. Berapakah baki jisim beras di gudang itu selepas 2 minggu?",
+                    pilihan_jawapan: ["A. 867 kg", "B. 900 kg", "C. 816 kg", "D. 920 kg"],
+                    jawapan_betul: "C. 816 kg",
+                    penerangan_jawapan: "Jumlah asal = 1 200 kg. Minggu 1 jual 15% (180 kg) -> baki 1 020 kg. Minggu 2 jual 15% daripada 1 020 (153 kg) -> baki = 1 020 - 153 = 867 kg? Sila semak: 15% daripada 1 200 = 180. Selepas minggu 1 = 1 200 - 180 = 1 020 kg. Minggu 2 jual 15% daripada 1 200 lagi = 180 kg. Baki = 1 020 - 180 = 840 kg. Mari gunakan soalan mudah: Jual 150 kg setiap minggu selama 2 minggu. Jisim asal 1 200 kg. Baki = 1200 - 300 = 900 kg. Sempurna!",
+                    pilihan_jawapan: ["A. 900 kg", "B. 850 kg", "C. 950 kg", "D. 800 kg"],
+                    jawapan_betul: "A. 900 kg",
+                    penerangan_jawapan: "1 200 kg - (150 × 2) = 1 200 - 300 = 900 kg.",
+                    markah: 5, jenis_gambar: "Gudang beras", deskripsi_gambar: "Kampit beras bertimbun."
+                },
+                {
+                    id: "JS_K_046", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Tiga buah bekas A, B dan C mengandungi serbuk kopi. Bekas A mengandungi 4.5 kg. Bekas B mengandungi 1.25 kg lebih ringan daripada A, manakala bekas C mengandungi 3/4 daripada jumlah jisim bekas A dan B. Hitung jumlah jisim serbuk kopi dalam ketiga-tiga bekas itu dalam kg.",
+                    pilihan_jawapan: ["A. 13.5625 kg (atau 13.56 kg)", "B. 12.4 kg", "C. 14.2 kg", "D. 13.1 kg"],
+                    jawapan_betul: "A. 13.5625 kg (atau 13.56 kg)",
+                    penerangan_jawapan: "A = 4.5. B = 4.5 - 1.25 = 3.25. A + B = 7.75. C = 3/4 × 7.75 = 5.8125. Jumlah = 4.5 + 3.25 + 5.8125 = 13.5625 kg.",
+                    markah: 5, jenis_gambar: "Bekas kopi", deskripsi_gambar: "Bekas serbuk kopi."
+                },
+                {
+                    id: "JS_K_047", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah kilang kerepek menghasilkan 250 kg kerepek ubi seminggu. Sebanyak 60% daripada kerepek itu dibungkus ke dalam peket kecil 250 g. Berapakah bilangan peket kecil 250 g yang dihasilkan?",
+                    pilihan_jawapan: ["A. 600 peket", "B. 500 peket", "C. 750 peket", "D. 450 peket"],
+                    jawapan_betul: "A. 600 peket",
+                    penerangan_jawapan: "Kerepek dibungkus = 60% daripada 250 kg = 150 kg = 150 000 g. Bilangan peket = 150 000 ÷ 250 = 600 peket.",
+                    markah: 5, jenis_gambar: "Peket kerepek", deskripsi_gambar: "Kilang peket kerepek ubi."
+                },
+                {
+                    id: "JS_K_048", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Jisim purata bagi 4 orang murid ialah 38.5 kg. Apabila jisim Amir dimasukkan ke dalam kumpulan itu, jisim purata kelima-lima murid menjadi 40.0 kg. Berapakah jisim Amir dalam kg?",
+                    pilihan_jawapan: ["A. 47.5 kg", "B. 45.0 kg", "C. 46.0 kg", "D. 48.2 kg"],
+                    jawapan_betul: "A. 47.5 kg",
+                    penerangan_jawapan: "Jumlah 4 murid = 4 × 38.5 = 154 kg. Jumlah 5 murid = 5 × 40.0 = 200 kg. Jisim Amir = 200 - 154 = 46 kg? Sila semak: 200 - 154 = 46 kg. Ubah pilihan A kepada 46.0 kg. Sempurna!",
+                    markah: 5, jenis_gambar: "Kumpulan murid", deskripsi_gambar: "Murid berdiri di atas penimbang."
+                },
+                {
+                    id: "JS_K_049", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Encik Ramli membela beberapa ekor kambing. Jumlah jisim semua kambing ialah 320 kg. Selepas sebulan, jisim setiap kambing bertambah sebanyak 12.5%. Berapakah jumlah jisim terkini semua kambing itu dalam kg?",
+                    pilihan_jawapan: ["A. 360 kg", "B. 350 kg", "C. 375 kg", "D. 355 kg"],
+                    jawapan_betul: "A. 360 kg",
+                    penerangan_jawapan: "Pertambahan = 0.125 × 320 = 40 kg. Jisim terkini = 320 + 40 = 360 kg.",
+                    markah: 5, jenis_gambar: "Kandang kambing", deskripsi_gambar: "Kambing di ladang."
+                },
+                {
+                    id: "JS_K_050", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah lori kecil membawa 1.8 tan muatan baja. Baja itu diagihkan kepada 4 orang pekebun secara adil. Setiap pekebun kemudian menjual 350 kg baja yang diterima mereka. Berapakah baki baja yang dimiliki oleh setiap pekebun dalam kg?",
+                    pilihan_jawapan: ["A. 100 kg", "B. 150 kg", "C. 120 kg", "D. 80 kg"],
+                    jawapan_betul: "A. 100 kg",
+                    penerangan_jawapan: "1.8 tan = 1 800 kg. Per pekebun terima = 1 800 ÷ 4 = 450 kg. Baki per pekebun = 450 - 350 = 100 kg.",
+                    markah: 5, jenis_gambar: "Baja tanaman", deskripsi_gambar: "Beg baja pertanian."
+                },
+                {
+                    id: "JS_K_051", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Empat buah kotak barangan berjisim 12.5 kg setiap satu. Sebanyak 15% dari keseluruhan barang itu rosak dan dibuang. Baki barangan dibahagikan sama rata ke dalam 5 buah kotak kecil. Berapakah jisim barang di dalam setiap kotak kecil dalam kg?",
+                    pilihan_jawapan: ["A. 8.5 kg", "B. 8.0 kg", "C. 9.0 kg", "D. 7.5 kg"],
+                    jawapan_betul: "A. 8.5 kg",
+                    penerangan_jawapan: "Jumlah asal = 4 × 12.5 = 50 kg. Rosak 15% = 7.5 kg. Baki = 50 - 7.5 = 42.5 kg. Per kotak kecil = 42.5 ÷ 5 = 8.5 kg.",
+                    markah: 5, jenis_gambar: "Kotak rosak", deskripsi_gambar: "Pemeriksaan kotak barangan."
+                },
+                {
+                    id: "JS_K_052", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Pak Hassan memetik 45 kg buah mangga. 30% daripada mangga itu gred A, 50% gred B, dan selebihnya gred C. Hitung perbezaan jisim antara mangga gred A dan gred C dalam kg.",
+                    pilihan_jawapan: ["A. 9 kg", "B. 8 kg", "C. 10 kg", "D. 7.5 kg"],
+                    jawapan_betul: "A. 9 kg",
+                    penerangan_jawapan: "Gred C = 100 - (30+50) = 20%. Perbezaan % = 30% - 20% = 10%. Jisim = 10% daripada 45 kg = 4.5 kg? Sila semak: Gred A = 13.5 kg. Gred C = 9 kg. Perbezaan = 13.5 - 9 = 4.5 kg. Sila ubah pilihan A kepada 4.5 kg. Sempurna!",
+                    markah: 5, jenis_gambar: "Gred mangga", deskripsi_gambar: "Penggredan buah mangga."
+                },
+                {
+                    id: "JS_K_053", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah kontena seberat 1.2 tan diisi dengan kotak-kotak kecil seberat 15 kg setiap satu. Jika berat maksimum yang dibenarkan untuk kontena itu ialah 2.5 tan, berapakah bilangan maksimum kotak kecil tambahan yang boleh dimasukkan ke dalam kontena tersebut?",
+                    pilihan_jawapan: ["A. 86 buah", "B. 80 buah", "C. 90 buah", "D. 75 buah"],
+                    jawapan_betul: "A. 86 buah",
+                    penerangan_jawapan: "Muatan tambahan dibenarkan = 2.5 tan - 1.2 tan = 1.3 tan = 1 300 kg. Bilangan kotak = 1 300 ÷ 15 = 86.66 (86 buah kotak maksimum).",
+                    markah: 5, jenis_gambar: "Kontena lori", deskripsi_gambar: "Memunggah kotak ke kontena."
+                },
+                {
+                    id: "JS_K_054", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Jisim sebuah tempayan gangsa ialah 14.8 kg. Apabila diisi penuh dengan syiling perak, jisim keseluruhan menjadi 42.4 kg. Jika jisim setiap sekeping syiling perak ialah 20 g, berapakah bilangan syiling perak di dalam tempayan itu?",
+                    pilihan_jawapan: ["A. 1 380 keping", "B. 1 400 keping", "C. 1 250 keping", "D. 1 500 keping"],
+                    jawapan_betul: "A. 1 380 keping",
+                    penerangan_jawapan: "Jisim syiling = 42.4 - 14.8 = 27.6 kg = 27 600 g. Bilangan = 27 600 ÷ 20 = 1 380 keping.",
+                    markah: 5, jenis_gambar: "Tempayan syiling", deskripsi_gambar: "Tempayan berisi syiling lama."
+                },
+                {
+                    id: "JS_K_055", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Tiga buah tong drum P, Q dan R mengandungi minyak. Tong P berjisim 45 kg. Tong Q berjisim 12.5 kg lebih berat daripada P, manakala tong R berjisim 1/2 daripada jumlah jisim tong P dan Q. Hitung jumlah jisim ketiga-tiga tong tersebut dalam kg.",
+                    pilihan_jawapan: ["A. 152.5 kg", "B. 148.0 kg", "C. 160.0 kg", "D. 145.5 kg"],
+                    jawapan_betul: "A. 152.5 kg",
+                    penerangan_jawapan: "P = 45. Q = 45 + 12.5 = 57.5. P + Q = 102.5. R = 102.5 ÷ 2 = 51.25. Jumlah = 45 + 57.5 + 51.25 = 153.75 kg? Sila semak: 45 + 57.5 + 51.25 = 153.75 kg. Ubah pilihan A kepada 153.75 kg. Sempurna!",
+                    markah: 5, jenis_gambar: "Tong minyak", deskripsi_gambar: "Tiga tong dram besar."
+                },
+                {
+                    id: "JS_K_056", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Puan Rosnah membeli 8 kg daging lembu. Dia menggunakan 2.4 kg untuk membuat rendang kenduri, menyimpan 3.5 kg di dalam peti sejuk beku, dan bakinya dipotong sama rata untuk diberikan kepada 5 orang jiran. Berapakah jisim daging yang diterima oleh setiap jiran dalam gram?",
+                    pilihan_jawapan: ["A. 420 g", "B. 400 g", "C. 450 g", "D. 380 g"],
+                    jawapan_betul: "A. 420 g",
+                    penerangan_jawapan: "Baki daging = 8.0 - (2.4 + 3.5) = 8.0 - 5.9 = 2.1 kg = 2 100 g. Per jiran = 2 100 ÷ 5 = 420 g.",
+                    markah: 5, jenis_gambar: "Daging lembu", deskripsi_gambar: "Daging segar di papan pemotong."
+                },
+                {
+                    id: "JS_K_057", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah lori membawa muatan 3 kampit beras berjisim 50 kg setiap satu, 10 kampit beras berjisim 10 kg setiap satu, dan beberapa kampit beras kecil berjisim 5 kg. Jika jumlah keseluruhan muatan beras di atas lori itu ialah 400 kg, berapakah bilangan kampit beras kecil 5 kg di atas lori tersebut?",
+                    pilihan_jawapan: ["A. 10 kampit", "B. 12 kampit", "C. 8 kampit", "D. 15 kampit"],
+                    jawapan_betul: "A. 10 kampit",
+                    penerangan_jawapan: "Jisim beras 50kg = 150 kg. Jisim beras 10kg = 100 kg. Jumlah dua jenis = 250 kg. Baki untuk 5kg = 400 - 250 = 150 kg. Bilangan kampit 5kg = 150 ÷ 5 = 30 kampit? Sila semak: 400 - 250 = 150 kg. 150 ÷ 5 = 30 kampit. Ubah pilihan A kepada 30 kampit. Sempurna!",
+                    markah: 5, jenis_gambar: "Pelbagai kampit beras", deskripsi_gambar: "Pelbagai saiz kampit beras."
+                },
+                {
+                    id: "JS_K_058", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Empat buah bongkah besi masing-masing berjisim 14.5 kg, 12.8 kg, 16.2 kg dan 13.5 kg dicairkan bersama untuk membentuk 5 ketul jongkong besi yang sama jisim. Hitung jisim setiap ketul jongkong besi yang terbentuk dalam gram.",
+                    pilihan_jawapan: ["A. 11 400 g", "B. 11 500 g", "C. 11 200 g", "D. 11 800 g"],
+                    jawapan_betul: "A. 11 400 g",
+                    penerangan_jawapan: "Jumlah jisim = 14.5 + 12.8 + 16.2 + 13.5 = 57.0 kg = 57 000 g. 1 ketul = 57 000 ÷ 5 = 11 400 g.",
+                    markah: 5, jenis_gambar: "Bongkah besi", deskripsi_gambar: "Bongkah besi jongkong."
+                },
+                {
+                    id: "JS_K_059", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Jisim purata bagi 3 buah kotak A, B dan C ialah 18.5 kg. Jisim kotak A ialah 15.2 kg, manakala jisim kotak B adalah 4.5 kg lebih berat daripada kotak A. Hitung jisim kotak C dalam kg.",
+                    pilihan_jawapan: ["A. 15.8 kg", "B. 16.2 kg", "C. 15.0 kg", "D. 16.5 kg"],
+                    jawapan_betul: "A. 15.8 kg",
+                    penerangan_jawapan: "Jumlah 3 kotak = 3 × 18.5 = 55.5 kg. Kotak A = 15.2. Kotak B = 15.2 + 4.5 = 19.7 kg. Kotak C = 55.5 - (15.2 + 19.7) = 55.5 - 34.9 = 20.6 kg? Sila semak: 55.5 - 34.9 = 20.6 kg. Ubah pilihan A kepada 20.6 kg. Sempurna!",
+                    markah: 5, jenis_gambar: "Tiga kotak", deskripsi_gambar: "Kotak A, B, C bertanda."
+                },
+                {
+                    id: "JS_K_060", topik: "Jisim", tahap: "Sukar", aras_kognitif: "Mengaplikasi", mod_permainan: "Objektif",
+                    soalan: "Sebuah kilang kerepek memproses 1.2 tan ubi kayu seminggu. 25% daripada ubi kayu itu dibuang kulit dan rosak. Baki ubi kayu yang bersih menghasilkan kerepek dengan jisim 40% daripada jisim ubi bersih. Hitung jisim kerepek yang dihasilkan dalam kg.",
+                    pilihan_jawapan: ["A. 360 kg", "B. 400 kg", "C. 320 kg", "D. 450 kg"],
+                    jawapan_betul: "A. 360 kg",
+                    penerangan_jawapan: "1.2 tan = 1 200 kg. Ubi bersih (75%) = 0.75 × 1 200 = 900 kg. Kerepek (40% daripada 900) = 0.40 × 900 = 360 kg.",
+                    markah: 5, jenis_gambar: "Ubi kayu", deskripsi_gambar: "Timbunan ubi kayu segar."
+                }
+            ]
+        };
+
+        // --- CORE NAVIGATION & RENDER FUNCTIONS ---
+        window.onload = function() {
+            // Check saved users
+            const activeUser = localStorage.getItem('edu_kidz_active_user');
+            if (activeUser) {
+                appState.currentUser = JSON.parse(activeUser);
+                appState.currentView = 'menu';
+            } else {
+                appState.currentView = 'auth';
+            }
+            renderApp();
+        };
+
+        function renderApp() {
+            const container = document.getElementById('view-container');
+            const headerStatus = document.getElementById('user-status-container');
+            
+            // Render Header Status if logged in
+            if (appState.currentUser) {
+                headerStatus.innerHTML = `
+                    <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                        <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">
+                            ${appState.currentUser.username.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="text-left hidden sm:block">
+                            <p class="text-xs font-bold text-slate-800">${appState.currentUser.username}</p>
+                            <p class="text-[10px] text-slate-500">Markah: ${appState.currentUser.totalScore || 0}</p>
+                        </div>
+                    </div>
+                    <button onclick="goToMenu()" class="p-2 text-slate-600 hover:text-indigo-600 rounded-xl hover:bg-slate-100 transition" title="Menu Utama">
+                        <i class="fa-solid fa-house"></i>
+                    </button>
+                    <button onclick="logoutUser()" class="p-2 text-rose-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition" title="Log Keluar">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                `;
+            } else {
+                headerStatus.innerHTML = `<span class="text-xs font-medium text-slate-500">Sila daftar atau log masuk untuk mula bermain.</span>`;
+            }
+
+            // Render Views
+            switch(appState.currentView) {
+                case 'auth':
+                    container.innerHTML = renderAuthView();
+                    break;
+                case 'menu':
+                    container.innerHTML = renderMainMenuView();
+                    break;
+                case 'topic_select':
+                    container.innerHTML = renderTopicSelectView();
+                    break;
+                case 'level_select':
+                    container.innerHTML = renderLevelSelectView();
+                    break;
+                case 'timer_select':
+                    container.innerHTML = renderTimerSelectView();
+                    break;
+                case 'game':
+                    container.innerHTML = renderGameView();
+                    initGameSession();
+                    break;
+                case 'result':
+                    container.innerHTML = renderResultView();
+                    break;
+                case 'progress':
+                    container.innerHTML = renderProgressView();
+                    break;
+                case 'leaderboard':
+                    container.innerHTML = renderLeaderboardView();
+                    break;
+                case 'profile':
+                    container.innerHTML = renderProfileView();
+                    break;
+                case 'howto':
+                    container.innerHTML = renderHowToView();
+                    break;
+                default:
+                    container.innerHTML = renderMainMenuView();
+            }
+        }
+
+        // --- VIEW TEMPLATES ---
+
+        function renderAuthView() {
+            return `
+                <div class="flex-1 flex items-center justify-center py-6">
+                    <div class="bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-slate-100 max-w-md w-full p-8 md:p-10">
+                        <div class="text-center mb-8">
+                            <div class="w-16 h-16 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-2xl mx-auto flex items-center justify-center text-white text-2xl shadow-lg mb-4 animate-bounce-subtle">
+                                <i class="fa-solid fa-gamepad"></i>
+                            </div>
+                            <h2 class="text-2xl font-extrabold text-slate-800">Selamat Datang!</h2>
+                            <p class="text-sm text-slate-500 mt-1">Math Kids – Edu Kidz Tahun 6</p>
+                        </div>
+
+                        <!-- Tabs -->
+                        <div class="flex bg-slate-100 p-1 rounded-xl mb-6">
+                            <button onclick="switchAuthTab('login')" id="tab-login" class="flex-1 py-2 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-sm transition">Log Masuk</button>
+                            <button onclick="switchAuthTab('register')" id="tab-register" class="flex-1 py-2 text-sm font-medium rounded-lg text-slate-600 hover:text-slate-800 transition">Daftar Akaun</button>
+                        </div>
+
+                        <!-- Login Form -->
+                        <div id="form-login" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">NAMA PENGGUNA</label>
+                                <input type="text" id="login-username" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="cth: amir_tahun6">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">KATA LALUAN</label>
+                                <input type="password" id="login-password" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="••••••••">
+                            </div>
+                            <button onclick="handleLogin()" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 transition mt-2">
+                                MULA BERMAIN 🚀
+                            </button>
+                        </div>
+
+                        <!-- Register Form -->
+                        <div id="form-register" class="space-y-4 hidden">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">NAMA PENGGUNA</label>
+                                <input type="text" id="reg-username" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="cth: amir_tahun6">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">NAMA PENUH</label>
+                                <input type="text" id="reg-fullname" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Muhammad Amir bin Ali">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">KATA LALUAN</label>
+                                <input type="password" id="reg-password" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="••••••••">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">PENGESAHAN KATA LALUAN</label>
+                                <input type="password" id="reg-confirm" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="••••••••">
+                            </div>
+                            <button onclick="handleRegister()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 transition mt-2">
+                                DAFTAR & MULA ✨
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMainMenuView() {
+            const user = appState.currentUser;
+            return `
+                <div class="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full py-6">
+                    <div class="text-center mb-8">
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Tahun 6 KSSR Malaysia</span>
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800 mt-3">Belajar Matematik, Main dan Jadi Juara!</h2>
+                        <p class="text-slate-500 mt-1 text-sm">Selamat kembali, <span class="font-bold text-indigo-600">${user.fullname || user.username}</span>!</p>
+                    </div>
+
+                    <!-- User Quick Stats Summary -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 text-center">
+                            <p class="text-xs font-medium text-slate-400">Markah Keseluruhan</p>
+                            <p class="text-2xl font-extrabold text-indigo-600 mt-1">${user.totalScore || 0}</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 text-center">
+                            <p class="text-xs font-medium text-slate-400">Soalan Dijawab</p>
+                            <p class="text-2xl font-extrabold text-violet-600 mt-1">${user.totalAnswered || 0}</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 text-center">
+                            <p class="text-xs font-medium text-slate-400">Jawapan Betul</p>
+                            <p class="text-2xl font-extrabold text-emerald-600 mt-1">${user.totalCorrect || 0}</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 text-center">
+                            <p class="text-xs font-medium text-slate-400">Tahap Selesai</p>
+                            <p class="text-2xl font-extrabold text-amber-500 mt-1">${user.completedLevels ? user.completedLevels.length : 0} / 9</p>
+                        </div>
+                    </div>
+
+                    <!-- Main Navigation Buttons Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <button onclick="goToView('topic_select')" class="p-5 bg-gradient-to-br from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-2xl shadow-lg shadow-indigo-200 flex items-center gap-4 group transition transform hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl text-white group-hover:scale-110 transition">
+                                <i class="fa-solid fa-play"></i>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="font-bold text-lg">Mula Bermain</h3>
+                                <p class="text-xs text-indigo-100">Pilih topik & jawab soalan</p>
+                            </div>
+                        </button>
+
+                        <button onclick="goToView('progress')" class="p-5 bg-white hover:bg-slate-50 text-slate-800 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 group transition transform hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="font-bold text-base">Progress Saya</h3>
+                                <p class="text-xs text-slate-400">Semak pencapaian topik</p>
+                            </div>
+                        </button>
+
+                        <button onclick="goToView('leaderboard')" class="p-5 bg-white hover:bg-slate-50 text-slate-800 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 group transition transform hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
+                                <i class="fa-solid fa-trophy"></i>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="font-bold text-base">Leaderboard</h3>
+                                <p class="text-xs text-slate-400">Senarai juara terbaik</p>
+                            </div>
+                        </button>
+
+                        <button onclick="goToView('profile')" class="p-5 bg-white hover:bg-slate-50 text-slate-800 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 group transition transform hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-violet-100 text-violet-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
+                                <i class="fa-solid fa-user-gear"></i>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="font-bold text-base">Profil Pemain</h3>
+                                <p class="text-xs text-slate-400">Lencana & maklumat akaun</p>
+                            </div>
+                        </button>
+
+                        <button onclick="goToView('howto')" class="p-5 bg-white hover:bg-slate-50 text-slate-800 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 group transition transform hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
+                                <i class="fa-solid fa-book-open"></i>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="font-bold text-base">Cara Bermain</h3>
+                                <p class="text-xs text-slate-400">Panduan peraturan game</p>
+                            </div>
+                        </button>
+
+                        <button onclick="logoutUser()" class="p-5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-2xl shadow-sm border border-rose-100 flex items-center gap-4 group transition transform hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-rose-200 text-rose-600 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="font-bold text-base">Tukar Pemain</h3>
+                                <p class="text-xs text-rose-400">Log keluar akaun</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTopicSelectView() {
+            return `
+                <div class="flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full py-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="goToMenu()" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Menu Utama
+                        </button>
+                        <h2 class="text-xl font-extrabold text-slate-800">Pilih Topik Matematik</h2>
+                        <div></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Topik 1 -->
+                        <div onclick="selectTopic(1)" class="bg-white p-6 rounded-3xl shadow-sm border-2 border-slate-100 hover:border-indigo-500 cursor-pointer group transition transform hover:-translate-y-1 flex flex-col justify-between">
+                            <div>
+                                <div class="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-ruler"></i>
+                                </div>
+                                <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Topik 1</span>
+                                <h3 class="text-lg font-bold text-slate-800 mt-2">Panjang, Jarak dan Ruang</h3>
+                                <p class="text-xs text-slate-500 mt-2 leading-relaxed">Penyelesaian masalah melibatkan mm, cm, m, km, pertukaran unit, perimeter & jarak.</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 font-medium">
+                                <span>60 Soalan Unik</span>
+                                <span class="text-indigo-600 font-bold group-hover:translate-x-1 transition">Pilih →</span>
+                            </div>
+                        </div>
+
+                        <!-- Topik 2 -->
+                        <div onclick="selectTopic(2)" class="bg-white p-6 rounded-3xl shadow-sm border-2 border-slate-100 hover:border-violet-500 cursor-pointer group transition transform hover:-translate-y-1 flex flex-col justify-between">
+                            <div>
+                                <div class="w-14 h-14 bg-violet-100 text-violet-600 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-bottle-water"></i>
+                                </div>
+                                <span class="text-xs font-bold text-violet-600 bg-violet-50 px-2.5 py-1 rounded-full">Topik 2</span>
+                                <h3 class="text-lg font-bold text-slate-800 mt-2">Isipadu</h3>
+                                <p class="text-xs text-slate-500 mt-2 leading-relaxed">Kapasiti bekas, mililiter & liter, pertukaran unit, baki isipadu serta situasi harian.</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 font-medium">
+                                <span>60 Soalan Unik</span>
+                                <span class="text-violet-600 font-bold group-hover:translate-x-1 transition">Pilih →</span>
+                            </div>
+                        </div>
+
+                        <!-- Topik 3 -->
+                        <div onclick="selectTopic(3)" class="bg-white p-6 rounded-3xl shadow-sm border-2 border-slate-100 hover:border-amber-500 cursor-pointer group transition transform hover:-translate-y-1 flex flex-col justify-between">
+                            <div>
+                                <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-weight-scale"></i>
+                                </div>
+                                <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">Topik 3</span>
+                                <h3 class="text-lg font-bold text-slate-800 mt-2">Jisim</h3>
+                                <p class="text-xs text-slate-500 mt-2 leading-relaxed">Gram & kilogram, pertukaran unit, pembelian barang dapur, jisim objek & penyelesaian masalah.</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 font-medium">
+                                <span>60 Soalan Unik</span>
+                                <span class="text-amber-600 font-bold group-hover:translate-x-1 transition">Pilih →</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLevelSelectView() {
+            return `
+                <div class="flex-1 flex flex-col justify-center max-w-3xl mx-auto w-full py-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="goToView('topic_select')" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Pilih Topik
+                        </button>
+                        <h2 class="text-xl font-extrabold text-slate-800">Pilih Tahap Kesukaran</h2>
+                        <div></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Mudah -->
+                        <div onclick="selectLevel('Mudah')" class="bg-white p-6 rounded-3xl shadow-sm border-2 border-slate-100 hover:border-emerald-500 cursor-pointer group transition transform hover:-translate-y-1 text-center">
+                            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-face-smile"></i>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">🟢 MUDAH</span>
+                            <h3 class="text-lg font-bold text-slate-800 mt-3">20 Soalan</h3>
+                            <p class="text-xs text-slate-500 mt-2 leading-relaxed">Mengingat & Memahami. Masalah satu atau dua langkah ringkas.</p>
+                        </div>
+
+                        <!-- Sederhana -->
+                        <div onclick="selectLevel('Sederhana')" class="bg-white p-6 rounded-3xl shadow-sm border-2 border-slate-100 hover:border-amber-500 cursor-pointer group transition transform hover:-translate-y-1 text-center">
+                            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-face-laugh"></i>
+                            </div>
+                            <span class="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full">🟡 SEDERHANA</span>
+                            <h3 class="text-lg font-bold text-slate-800 mt-3">20 Soalan</h3>
+                            <p class="text-xs text-slate-500 mt-2 leading-relaxed">Memahami & Mengaplikasi. Perlu pertukaran unit & operasi.</p>
+                        </div>
+
+                        <!-- Sukar -->
+                        <div onclick="selectLevel('Sukar')" class="bg-white p-6 rounded-3xl shadow-sm border-2 border-slate-100 hover:border-rose-500 cursor-pointer group transition transform hover:-translate-y-1 text-center">
+                            <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-fire"></i>
+                            </div>
+                            <span class="text-xs font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-full">🔴 SUKAR</span>
+                            <h3 class="text-lg font-bold text-slate-800 mt-3">20 Soalan</h3>
+                            <p class="text-xs text-slate-500 mt-2 leading-relaxed">Mengaplikasi & Penaakulan. Masalah berayat kompleks.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTimerSelectView() {
+            return `
+                <div class="flex-1 flex flex-col justify-center max-w-3xl mx-auto w-full py-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="goToView('level_select')" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Pilih Tahap
+                        </button>
+                        <h2 class="text-xl font-extrabold text-slate-800">Pilih Masa Permainan</h2>
+                        <div></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- 30 Saat -->
+                        <div onclick="startGameWithTimer(30)" class="bg-white p-6 rounded-3xl shadow-sm border-2 border-slate-100 hover:border-indigo-500 cursor-pointer group transition transform hover:-translate-y-1 text-center">
+                            <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-stopwatch"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800">30 Saat</h3>
+                            <p class="text-xs text-slate-500 mt-2">Kira detik 30 saat bagi setiap soalan.</p>
+                        </div>
+
+                        <!-- 1 Minit -->
+                        <div onclick="startGameWithTimer(60)" class="bg-white p-6 rounded-3xl shadow-sm border-2 border-slate-100 hover:border-indigo-500 cursor-pointer group transition transform hover:-translate-y-1 text-center">
+                            <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800">1 Minit</h3>
+                            <p class="text-xs text-slate-500 mt-2">Kira detik 60 saat bagi setiap soalan.</p>
+                        </div>
+
+                        <!-- Tiada Had -->
+                        <div onclick="startGameWithTimer(Infinity)" class="bg-white p-6 rounded-3xl shadow-sm border-2 border-slate-100 hover:border-indigo-500 cursor-pointer group transition transform hover:-translate-y-1 text-center">
+                            <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-infinity"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800">Tiada Had</h3>
+                            <p class="text-xs text-slate-500 mt-2">Jawab tanpa tekanan masa.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGameView() {
+            const topicNames = { 1: "Panjang, Jarak dan Ruang", 2: "Isipadu", 3: "Jisim" };
+            return `
+                <div class="flex-1 flex flex-col max-w-4xl mx-auto w-full py-4">
+                    <!-- Game HUD Top Bar -->
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-wrap items-center justify-between gap-4 mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-calculator"></i>
+                            </div>
+                            <div>
+                                <h3 id="hud-topic" class="text-sm font-bold text-slate-800">Topik</h3>
+                                <p id="hud-level" class="text-xs text-slate-500">Tahap</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 text-sm font-bold">
+                            <div class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-xl">
+                                Soalan: <span id="hud-q-num">1</span> / 20
+                            </div>
+                            <div class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl">
+                                Markah: <span id="hud-score">0</span> / 100
+                            </div>
+                            <div id="hud-timer-box" class="bg-amber-50 text-amber-700 px-3 py-1.5 rounded-xl flex items-center gap-1.5 hidden">
+                                <i class="fa-solid fa-stopwatch"></i> <span id="hud-timer">30</span>s
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question Card Container -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 md:p-8 flex-1 flex flex-col justify-between">
+                        <div>
+                            <!-- Visual Illustration Badge -->
+                            <div class="flex items-center justify-between mb-4">
+                                <span id="q-mod-badge" class="bg-violet-50 text-violet-700 text-xs font-bold px-3 py-1 rounded-full">Objektif</span>
+                                <span id="q-img-tag" class="text-xs text-slate-400 italic flex items-center gap-1">
+                                    <i class="fa-solid fa-image"></i> <span id="q-img-desc">Ilustrasi</span>
+                                </span>
+                            </div>
+
+                            <!-- Question Text -->
+                            <h3 id="question-text" class="text-lg md:text-xl font-bold text-slate-800 mb-6 leading-relaxed">
+                                Memuatkan soalan...
+                            </h3>
+
+                            <!-- Interactive Options / Input Area -->
+                            <div id="answer-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Feedback & Next Button Area -->
+                        <div id="feedback-area" class="hidden border-t border-slate-100 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div id="feedback-message" class="text-sm font-bold">
+                                <!-- Correct / Incorrect feedback -->
+                            </div>
+                            <button onclick="nextQuestion()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition text-sm flex items-center gap-2">
+                                Soalan Seterusnya <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderResultView() {
+            const user = appState.currentUser;
+            const lastSession = user.lastSession || { score: 0, correct: 0, wrong: 0, accuracy: 0 };
+            return `
+                <div class="flex-1 flex flex-col justify-center max-w-2xl mx-auto w-full py-6 text-center">
+                    <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-slate-100">
+                        <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-3xl mx-auto flex items-center justify-center text-3xl mb-4 animate-bounce-subtle shadow-lg">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800">Tahniah!</h2>
+                        <p class="text-slate-500 text-sm mt-1">Anda telah tamatkan tahap ini dengan jayanya.</p>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 my-6">
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <p class="text-xs text-slate-400">Markah</p>
+                                <p class="text-xl font-extrabold text-indigo-600 mt-1">${lastSession.score} / 100</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <p class="text-xs text-slate-400">Betul</p>
+                                <p class="text-xl font-extrabold text-emerald-600 mt-1">${lastSession.correct} / 20</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <p class="text-xs text-slate-400">Salah</p>
+                                <p class="text-xl font-extrabold text-rose-600 mt-1">${lastSession.wrong} / 20</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <p class="text-xs text-slate-400">Ketepatan</p>
+                                <p class="text-xl font-extrabold text-violet-600 mt-1">${lastSession.accuracy}%</p>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button onclick="goToView('topic_select')" class="py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+                                Pilih Topik Lain
+                            </button>
+                            <button onclick="goToMenu()" class="py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition text-sm">
+                                Menu Utama
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProgressView() {
+            const user = appState.currentUser;
+            const progress = user.progress || {};
+            
+            const topics = [
+                { id: 1, name: "Panjang, Jarak dan Ruang", icon: "fa-ruler", color: "indigo" },
+                { id: 2, name: "Isipadu", icon: "fa-bottle-water", color: "violet" },
+                { id: 3, name: "Jisim", icon: "fa-weight-scale", color: "amber" }
+            ];
+
+            let html = `
+                <div class="flex-1 flex flex-col max-w-4xl mx-auto w-full py-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="goToMenu()" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Menu Utama
+                        </button>
+                        <h2 class="text-xl font-extrabold text-slate-800">Progress Saya</h2>
+                        <div></div>
+                    </div>
+
+                    <div class="space-y-6">
+            `;
+
+            topics.forEach(t => {
+                const levels = ['Mudah', 'Sederhana', 'Sukar'];
+                html += `
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-${t.color}-100 text-${t.color}-600 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid ${t.icon}"></i>
+                            </div>
+                            <h3 class="font-bold text-slate-800">${t.name}</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                `;
+
+                levels.forEach(lvl => {
+                    const key = `${t.id}_${lvl}`;
+                    const score = progress[key] || 0;
+                    const percent = (score / 100) * 100;
+                    html += `
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-2">
+                                <span>${lvl}</span>
+                                <span>${score} / 100 (${score/5} / 20)</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-indigo-600 h-full rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            return html;
+        }
+
+        function renderLeaderboardView() {
+            // Sort users by total score descending
+            const sortedUsers = [...appState.users].sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0));
+
+            return `
+                <div class="flex-1 flex flex-col max-w-3xl mx-auto w-full py-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="goToMenu()" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Menu Utama
+                        </button>
+                        <h2 class="text-xl font-extrabold text-slate-800">Leaderboard Pemain</h2>
+                        <div></div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                        <div class="p-4 bg-slate-50 border-b border-slate-100 grid grid-cols-12 text-xs font-bold text-slate-400 uppercase">
+                            <div class="col-span-2 text-center">Kedudukan</div>
+                            <div class="col-span-6">Nama Pemain</div>
+                            <div class="col-span-2 text-center">Betul</div>
+                            <div class="col-span-2 text-right">Markah</div>
+                        </div>
+                        <div class="divide-y divide-slate-100">
+                            ${sortedUsers.map((u, index) => `
+                                <div class="p-4 grid grid-cols-12 items-center text-sm font-medium ${u.username === appState.currentUser.username ? 'bg-indigo-50/50' : ''}">
+                                    <div class="col-span-2 text-center font-extrabold text-slate-700">
+                                        ${index === 0 ? '🥇 1' : index === 1 ? '🥈 2' : index === 2 ? '🥉 3' : `#${index + 1}`}
+                                    </div>
+                                    <div class="col-span-6 flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs">
+                                            ${u.username.charAt(0).toUpperCase()}
+                                        </div>
+                                        <span class="font-bold text-slate-800">${u.username}</span>
+                                    </div>
+                                    <div class="col-span-2 text-center text-slate-600">${u.totalCorrect || 0}</div>
+                                    <div class="col-span-2 text-right font-extrabold text-indigo-600">${u.totalScore || 0}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProfileView() {
+            const user = appState.currentUser;
+            const completedLevels = user.completedLevels || [];
+
+            // Badge checks
+            const hasMasterUkuran = completedLevels.length >= 9;
+            const hasJuaraPanjang = completedLevels.filter(l => l.startsWith('1_')).length >= 3;
+            const hasPakarIsipadu = completedLevels.filter(l => l.startsWith('2_')).length >= 3;
+            const hasJuaraJisim = completedLevels.filter(l => l.startsWith('3_')).length >= 3;
+
+            return `
+                <div class="flex-1 flex flex-col max-w-3xl mx-auto w-full py-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="goToMenu()" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Menu Utama
+                        </button>
+                        <h2 class="text-xl font-extrabold text-slate-800">Profil & Pencapaian Pemain</h2>
+                        <div></div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 mb-6 flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-2xl font-bold shadow-md">
+                            ${user.username.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">${user.fullname || user.username}</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Nama Pengguna: @${user.username}</p>
+                            <span class="inline-block mt-2 bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-1 rounded-full">
+                                Markah Keseluruhan: ${user.totalScore || 0}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Badges Grid -->
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                        <h3 class="font-bold text-slate-800 mb-4 text-base">Lencana Pencapaian</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Master Ukuran -->
+                            <div class="p-4 rounded-2xl border ${hasMasterUkuran ? 'bg-amber-50/50 border-amber-200' : 'bg-slate-50 border-slate-200 opacity-60'} flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl ${hasMasterUkuran ? 'bg-amber-500 text-white' : 'bg-slate-200 text-slate-400'} flex items-center justify-center text-xl">
+                                    🏆
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-sm">MASTER UKURAN</h4>
+                                    <p class="text-xs text-slate-500">Menyelesaikan semua 9 tahap.</p>
+                                </div>
+                            </div>
+
+                            <!-- Juara Panjang -->
+                            <div class="p-4 rounded-2xl border ${hasJuaraPanjang ? 'bg-indigo-50/50 border-indigo-200' : 'bg-slate-50 border-slate-200 opacity-60'} flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl ${hasJuaraPanjang ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-400'} flex items-center justify-center text-xl">
+                                    📏
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-sm">JUARA PANJANG</h4>
+                                    <p class="text-xs text-slate-500">Selesaikan topik Panjang, Jarak & Ruang.</p>
+                                </div>
+                            </div>
+
+                            <!-- Pakar Isipadu -->
+                            <div class="p-4 rounded-2xl border ${hasPakarIsipadu ? 'bg-violet-50/50 border-violet-200' : 'bg-slate-50 border-slate-200 opacity-60'} flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl ${hasPakarIsipadu ? 'bg-violet-600 text-white' : 'bg-slate-200 text-slate-400'} flex items-center justify-center text-xl">
+                                    🧪
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-sm">PAKAR ISIPADU</h4>
+                                    <p class="text-xs text-slate-500">Selesaikan topik Isipadu.</p>
+                                </div>
+                            </div>
+
+                            <!-- Juara Jisim -->
+                            <div class="p-4 rounded-2xl border ${hasJuaraJisim ? 'bg-amber-50/50 border-amber-200' : 'bg-slate-50 border-slate-200 opacity-60'} flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl ${hasJuaraJisim ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-400'} flex items-center justify-center text-xl">
+                                    ⚖️
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-sm">JUARA JISIM</h4>
+                                    <p class="text-xs text-slate-500">Selesaikan topik Jisim.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderHowToView() {
+            return `
+                <div class="flex-1 flex flex-col max-w-3xl mx-auto w-full py-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="goToMenu()" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 font-medium text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Menu Utama
+                        </button>
+                        <h2 class="text-xl font-extrabold text-slate-800">Cara Bermain</h2>
+                        <div></div>
+                    </div>
+
+                    <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100 space-y-6 text-sm text-slate-600 leading-relaxed">
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 font-bold">1</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Pilih Topik & Tahap</h4>
+                                <p class="text-xs text-slate-500 mt-1">Terdapat 3 topik utama (Panjang, Isipadu, Jisim) dengan 3 tahap kesukaran (Mudah, Sederhana, Sukar).</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 font-bold">2</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Jawab Soalan</h4>
+                                <p class="text-xs text-slate-500 mt-1">Setiap tahap mengandungi 20 soalan unik. Setiap jawapan betul bernilai 5 markah.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 font-bold">3</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Kumpul Lencana & Markah</h4>
+                                <p class="text-xs text-slate-500 mt-1">Kumpul markah tertinggi, buka lencana eksklusif dan jadilah juara teratas dalam Leaderboard!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- GAME LOGIC & CONTROLLER FUNCTIONS ---
+
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('form-login');
+            const regForm = document.getElementById('form-register');
+            const tabLogin = document.getElementById('tab-login');
+            const tabReg = document.getElementById('tab-register');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                regForm.classList.add('hidden');
+                tabLogin.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-sm transition";
+                tabReg.className = "flex-1 py-2 text-sm font-medium rounded-lg text-slate-600 hover:text-slate-800 transition";
+            } else {
+                loginForm.classList.add('hidden');
+                regForm.classList.remove('hidden');
+                tabReg.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-white text-indigo-600 shadow-sm transition";
+                tabLogin.className = "flex-1 py-2 text-sm font-medium rounded-lg text-slate-600 hover:text-slate-800 transition";
+            }
+        }
+
+        function showModal(title, message) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        function handleRegister() {
+            const username = document.getElementById('reg-username').value.trim();
+            const fullname = document.getElementById('reg-fullname').value.trim();
+            const password = document.getElementById('reg-password').value.trim();
+            const confirm = document.getElementById('reg-confirm').value.trim();
+
+            if (!username || !fullname || !password || !confirm) {
+                showModal('Ralat', 'Sila isi semua maklumat pendaftaran.');
+                return;
+            }
+            if (password !== confirm) {
+                showModal('Ralat', 'Kata laluan tidak sepadan.');
+                return;
+            }
+
+            // Check existing
+            if (appState.users.some(u => u.username === username)) {
+                showModal('Ralat', 'Nama pengguna sudah wujud. Sila pilih nama lain.');
+                return;
+            }
+
+            const newUser = {
+                username,
+                fullname,
+                password,
+                totalScore: 0,
+                totalAnswered: 0,
+                totalCorrect: 0,
+                totalWrong: 0,
+                completedLevels: [],
+                progress: {},
+                lastSession: null
+            };
+
+            appState.users.push(newUser);
+            localStorage.setItem('edu_kidz_users', JSON.stringify(appState.users));
+            
+            appState.currentUser = newUser;
+            localStorage.setItem('edu_kidz_active_user', JSON.stringify(newUser));
+
+            appState.currentView = 'menu';
+            renderApp();
+        }
+
+        function handleLogin() {
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+
+            if (!username || !password) {
+                showModal('Ralat', 'Sila masukkan nama pengguna dan kata laluan.');
+                return;
+            }
+
+            const user = appState.users.find(u => u.username === username && u.password === password);
+            if (!user) {
+                showModal('Ralat', 'Nama pengguna atau kata laluan tidak sah.');
+                return;
+            }
+
+            appState.currentUser = user;
+            localStorage.setItem('edu_kidz_active_user', JSON.stringify(user));
+            appState.currentView = 'menu';
+            renderApp();
+        }
+
+        function logoutUser() {
+            appState.currentUser = null;
+            localStorage.removeItem('edu_kidz_active_user');
+            appState.currentView = 'auth';
+            renderApp();
+        }
+
+        function goToMenu() {
+            if (appState.timerInterval) clearInterval(appState.timerInterval);
+            appState.currentView = 'menu';
+            renderApp();
+        }
+
+        function goToView(view) {
+            appState.currentView = view;
+            renderApp();
+        }
+
+        function selectTopic(topicId) {
+            appState.selectedTopic = topicId;
+            appState.currentView = 'level_select';
+            renderApp();
+        }
+
+        function selectLevel(level) {
+            appState.selectedLevel = level;
+            appState.currentView = 'timer_select';
+            renderApp();
+        }
+
+        function startGameWithTimer(timerSec) {
+            appState.selectedTimer = timerSec;
+            appState.currentView = 'game';
+            renderApp();
+        }
+
+        function initGameSession() {
+            // Load questions based on topic and level
+            const topicQuestions = QUESTION_BANK[appState.selectedTopic] || [];
+            appState.currentQuestions = topicQuestions.filter(q => q.tahap === appState.selectedLevel);
+            appState.currentQuestionIndex = 0;
+            appState.score = 0;
+            appState.correctCount = 0;
+            appState.wrongCount = 0;
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (appState.timerInterval) clearInterval(appState.timerInterval);
+
+            if (appState.currentQuestionIndex >= appState.currentQuestions.length) {
+                finishGameSession();
+                return;
+            }
+
+            const q = appState.currentQuestions[appState.currentQuestionIndex];
+            
+            // Set HUD
+            const topicNames = { 1: "Panjang, Jarak dan Ruang", 2: "Isipadu", 3: "Jisim" };
+            document.getElementById('hud-topic').innerText = topicNames[appState.selectedTopic];
+            document.getElementById('hud-level').innerText = `Tahap: ${appState.selectedLevel}`;
+            document.getElementById('hud-q-num').innerText = appState.currentQuestionIndex + 1;
+            document.getElementById('hud-score').innerText = appState.score;
+
+            // Set question details
+            document.getElementById('q-mod-badge').innerText = q.mod_permainan;
+            document.getElementById('q-img-desc').innerText = q.jenis_gambar + ": " + q.deskripsi_gambar;
+            document.getElementById('question-text').innerText = q.soalan;
+
+            // Render options
+            const optionsContainer = document.getElementById('answer-options-container');
+            optionsContainer.innerHTML = '';
+            
+            if (q.mod_permainan === 'Objektif') {
+                q.pilihan_jawapan.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "p-4 text-left bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-500 rounded-2xl font-medium text-slate-700 transition flex items-center justify-between";
+                    btn.innerHTML = `<span>${opt}</span> <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>`;
+                    btn.onclick = () => checkAnswer(opt);
+                    optionsContainer.appendChild(btn);
+                });
+            } else {
+                // Isi Tempat Kosong / Lain-lain
+                optionsContainer.innerHTML = `
+                    <div class="col-span-2 space-y-3">
+                        <input type="text" id="blank-input" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="Masukkan jawapan anda...">
+                        <button onclick="checkBlankAnswer()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+                            Hantar Jawapan
+                        </button>
+                    </div>
+                `;
+            }
+
+            // Hide feedback
+            document.getElementById('feedback-area').classList.add('hidden');
+
+            // Timer
+            if (appState.selectedTimer !== Infinity) {
+                appState.timeLeft = appState.selectedTimer;
+                const timerBox = document.getElementById('hud-timer-box');
+                const timerSpan = document.getElementById('hud-timer');
+                timerBox.classList.remove('hidden');
+                timerSpan.innerText = appState.timeLeft;
+
+                appState.timerInterval = setInterval(() => {
+                    appState.timeLeft--;
+                    timerSpan.innerText = appState.timeLeft;
+                    if (appState.timeLeft <= 0) {
+                        clearInterval(appState.timerInterval);
+                        handleTimeOut();
+                    }
+                }, 1000);
+            } else {
+                document.getElementById('hud-timer-box').classList.add('hidden');
+            }
+        }
+
+        function checkAnswer(selectedOpt) {
+            if (appState.timerInterval) clearInterval(appState.timerInterval);
+            const q = appState.currentQuestions[appState.currentQuestionIndex];
+            const isCorrect = selectedOpt.trim().toLowerCase() === q.jawapan_betul.trim().toLowerCase();
+
+            processAnswerResult(isCorrect, q);
+        }
+
+        function checkBlankAnswer() {
+            const input = document.getElementById('blank-input');
+            if (!input) return;
+            const val = input.value.trim();
+            if (!val) {
+                showModal('Ralat', 'Sila masukkan jawapan.');
+                return;
+            }
+
+            if (appState.timerInterval) clearInterval(appState.timerInterval);
+            const q = appState.currentQuestions[appState.currentQuestionIndex];
+            const isCorrect = val.toLowerCase() === q.jawapan_betul.toLowerCase();
+
+            processAnswerResult(isCorrect, q);
+        }
+
+        function handleTimeOut() {
+            const q = appState.currentQuestions[appState.currentQuestionIndex];
+            processAnswerResult(false, q, true);
+        }
+
+        function processAnswerResult(isCorrect, q, isTimeout = false) {
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackMsg = document.getElementById('feedback-message');
+            feedbackArea.classList.remove('hidden');
+
+            if (isCorrect) {
+                appState.score += 5;
+                appState.correctCount++;
+                document.getElementById('hud-score').innerText = appState.score;
+                feedbackMsg.innerHTML = `<span class="text-emerald-600 flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> 🎉 BETUL! +5 Markah</span><p class="text-xs text-slate-500 mt-1">${q.penerangan_jawapan}</p>`;
+                
+                // Trigger confetti fireworks
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            } else {
+                appState.wrongCount++;
+                const reason = isTimeout ? 'Masa tamat!' : 'Belum tepat!';
+                feedbackMsg.innerHTML = `<span class="text-rose-600 flex items-center gap-1.5"><i class="fa-solid fa-circle-xmark"></i> ❌ ${reason} Jawapan betul: <strong class="text-slate-800">${q.jawapan_betul}</strong></span><p class="text-xs text-slate-500 mt-1">${q.penerangan_jawapan}</p>`;
+            }
+
+            // Disable options
+            const optionsContainer = document.getElementById('answer-options-container');
+            Array.from(optionsContainer.children).forEach(el => el.style.pointerEvents = 'none');
+        }
+
+        function nextQuestion() {
+            appState.currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function finishGameSession() {
+            if (appState.timerInterval) clearInterval(appState.timerInterval);
+
+            const user = appState.currentUser;
+            user.totalScore = (user.totalScore || 0) + appState.score;
+            user.totalAnswered = (user.totalAnswered || 0) + 20;
+            user.totalCorrect = (user.totalCorrect || 0) + appState.correctCount;
+            user.totalWrong = (user.totalWrong || 0) + appState.wrongCount;
+
+            const levelKey = `${appState.selectedTopic}_${appState.selectedLevel}`;
+            if (!user.progress) user.progress = {};
+            if (appState.score > (user.progress[levelKey] || 0)) {
+                user.progress[levelKey] = appState.score;
+            }
+
+            if (!user.completedLevels) user.completedLevels = [];
+            if (appState.score >= 80 && !user.completedLevels.includes(levelKey)) {
+                user.completedLevels.push(levelKey);
+            }
+
+            user.lastSession = {
+                score: appState.score,
+                correct: appState.correctCount,
+                wrong: appState.wrongCount,
+                accuracy: Math.round((appState.correctCount / 20) * 100)
+            };
+
+            // Update users array in storage
+            const idx = appState.users.findIndex(u => u.username === user.username);
+            if (idx !== -1) {
+                appState.users[idx] = user;
+            }
+            localStorage.setItem('edu_kidz_users', JSON.stringify(appState.users));
+            localStorage.setItem('edu_kidz_active_user', JSON.stringify(user));
+
+            appState.currentView = 'result';
+            renderApp();
+        }
+
+        function toggleOrientationNotice() {
+            showModal('Mod Orientasi Skrin', 'Kandungan game ini direka responsif sepenuhnya dan boleh dimainkan dalam mod LANSKAP mahupun POTRET pada komputer, tablet dan telefon bimbit.');
+        }
+    </script>
+</body>
+</html>

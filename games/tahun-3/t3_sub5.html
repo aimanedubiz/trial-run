@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="ms" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATH KIDS – BERNAMA EDU KIDZ | Tahun 3 Masa dan Waktu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Fredoka for kids -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti for celebratory animations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        fun: ['Fredoka', 'cursive', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Fredoka', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 505, #bae6fd 100%);
+            min-height: 100vh;
+        }
+        .bouncy-btn {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .bouncy-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .bouncy-btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+        .game-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 4px solid #bae6fd;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+        .pulse-badge {
+            animation: pulse-slow 2s infinite;
+        }
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col text-slate-800">
+
+    <!-- Top Bar -->
+    <header class="bg-indigo-600 text-white shadow-lg sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.showScreen('home')">
+                <div class="bg-amber-400 text-indigo-900 p-2 rounded-2xl shadow-inner font-bold text-xl flex items-center justify-center w-10 h-10">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <div>
+                    <h1 class="font-fun font-bold text-lg md:text-xl tracking-wide text-amber-300">MATH KIDS</h1>
+                    <p class="text-xs text-indigo-200 tracking-wider font-semibold">BERNAMA EDU KIDZ • TAHUN 3</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 md:space-x-4">
+                <div id="userBadgeDisplay" class="hidden md:flex items-center space-x-2 bg-indigo-700/80 px-3 py-1.5 rounded-full border border-indigo-400">
+                    <i class="fa-solid fa-user-graduate text-amber-300"></i>
+                    <span id="headerUserName" class="text-sm font-semibold">Tetamu</span>
+                </div>
+                <button onclick="app.showScreen('profile')" class="bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1.5 rounded-xl text-sm font-semibold transition flex items-center space-x-1 shadow">
+                    <i class="fa-solid fa-id-badge"></i> <span class="hidden sm:inline">Profil</span>
+                </button>
+                <button onclick="app.showScreen('leaderboard')" class="bg-amber-500 hover:bg-amber-400 text-indigo-950 px-3 py-1.5 rounded-xl text-sm font-bold transition flex items-center space-x-1 shadow">
+                    <i class="fa-solid fa-trophy"></i> <span class="hidden sm:inline">Ranking</span>
+                </button>
+                <button onclick="app.showScreen('settings')" class="bg-indigo-700 hover:bg-indigo-800 text-white p-2 rounded-xl text-sm transition shadow">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main App Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center items-center">
+
+        <!-- 1. HOME SCREEN -->
+        <div id="screen-home" class="screen w-full max-w-4xl text-center flex flex-col items-center space-y-6">
+            <div class="space-y-2 animate-bounce">
+                <span class="bg-amber-400 text-indigo-950 text-xs md:text-sm font-bold px-4 py-1.5 rounded-full shadow inline-block uppercase tracking-wider">
+                    🌟 Kurikulum Standard Sekolah Rendah (KSSR Semakan) 🌟
+                </span>
+                <h2 class="text-4xl md:text-6xl font-fun font-bold text-indigo-900 drop-shadow-md">
+                    Masa & Waktu Tahun 3
+                </h2>
+                <p class="text-slate-600 text-base md:text-lg max-w-xl mx-auto">
+                    Kuasai kemahiran membaca jam, mengira waktu, kalendar dan penyelesaian masalah dengan cara paling menyeronokkan!
+                </p>
+            </div>
+
+            <!-- Mascot Banner -->
+            <div class="relative bg-gradient-to-r from-blue-500 to-indigo-600 rounded-3xl p-6 md:p-8 text-white shadow-xl w-full max-w-2xl flex items-center justify-between border-4 border-white">
+                <div class="text-left space-y-2">
+                    <h3 class="text-2xl md:text-3xl font-fun font-bold text-amber-300">Hai Cilik! Siapakah Jagoan Masa Hari Ini?</h3>
+                    <p class="text-indigo-100 text-sm md:text-base">Jawab 540 soalan unik, kumpul badge hebat dan jadilah Juara Waktu!</p>
+                    <div class="pt-2">
+                        <button onclick="app.showScreen('topics')" class="bg-amber-400 hover:bg-amber-300 text-indigo-950 font-fun font-bold text-lg px-6 py-3 rounded-2xl shadow-lg bouncy-btn">
+                            <i class="fa-solid fa-play mr-2"></i> MULA BERMAIN
+                        </button>
+                    </div>
+                </div>
+                <div class="hidden sm:flex text-6xl md:text-8xl bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
+                    ⏰
+                </div>
+            </div>
+
+            <!-- Menu Grid Buttons -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-3xl pt-4">
+                <button onclick="app.showScreen('topics')" class="game-card p-5 rounded-2xl flex flex-col items-center text-indigo-900 bouncy-btn group">
+                    <span class="text-3xl md:text-4xl mb-2 group-hover:scale-125 transition">🚀</span>
+                    <span class="font-fun font-bold text-base md:text-lg">PILIH TOPIK</span>
+                    <span class="text-xs text-slate-500">9 Kategori Utama</span>
+                </button>
+                <button onclick="app.showScreen('profile')" class="game-card p-5 rounded-2xl flex flex-col items-center text-indigo-900 bouncy-btn group">
+                    <span class="text-3xl md:text-4xl mb-2 group-hover:scale-125 transition">👤</span>
+                    <span class="font-fun font-bold text-base md:text-lg">PROFIL SAYA</span>
+                    <span class="text-xs text-slate-500">Akaun & Statistik</span>
+                </button>
+                <button onclick="app.showScreen('progress')" class="game-card p-5 rounded-2xl flex flex-col items-center text-indigo-900 bouncy-btn group">
+                    <span class="text-3xl md:text-4xl mb-2 group-hover:scale-125 transition">📊</span>
+                    <span class="font-fun font-bold text-base md:text-lg">PROGRESS</span>
+                    <span class="text-xs text-slate-500">Pencapaian Topik</span>
+                </button>
+                <button onclick="app.showScreen('leaderboard')" class="game-card p-5 rounded-2xl flex flex-col items-center text-indigo-900 bouncy-btn group">
+                    <span class="text-3xl md:text-4xl mb-2 group-hover:scale-125 transition">🏆</span>
+                    <span class="font-fun font-bold text-base md:text-lg">LEADERBOARD</span>
+                    <span class="text-xs text-slate-500">Senarai Juara</span>
+                </button>
+                <button onclick="app.showScreen('settings')" class="game-card p-5 rounded-2xl flex flex-col items-center text-indigo-900 bouncy-btn group">
+                    <span class="text-3xl md:text-4xl mb-2 group-hover:scale-125 transition">⚙️</span>
+                    <span class="font-fun font-bold text-base md:text-lg">TETAPAN</span>
+                    <span class="text-xs text-slate-500">Bunyi & Masa</span>
+                </button>
+                <button onclick="app.showScreen('auth')" class="game-card p-5 rounded-2xl flex flex-col items-center text-indigo-900 bouncy-btn group">
+                    <span class="text-3xl md:text-4xl mb-2 group-hover:scale-125 transition">🔑</span>
+                    <span class="font-fun font-bold text-base md:text-lg">LOG MASUK</span>
+                    <span class="text-xs text-slate-500">Tukar Akaun Murid</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. TOPICS SELECTION SCREEN -->
+        <div id="screen-topics" class="screen hidden w-full max-w-5xl space-y-6">
+            <div class="flex items-center justify-between">
+                <button onclick="app.showScreen('home')" class="bg-white hover:bg-slate-100 text-indigo-900 px-4 py-2 rounded-xl font-bold shadow flex items-center space-x-2">
+                    <i class="fa-solid fa-arrow-left"></i> <span>Kembali</span>
+                </button>
+                <h2 class="text-2xl md:text-3xl font-fun font-bold text-indigo-900">Pilih Topik Pembelajaran</h2>
+                <div class="w-20"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="topicListContainer">
+                <!-- Topics injected dynamically via JS -->
+            </div>
+        </div>
+
+        <!-- 3. DIFFICULTY & TIMER SELECTION MODAL / SCREEN -->
+        <div id="screen-config" class="screen hidden w-full max-w-2xl game-card p-6 md:p-8 rounded-3xl space-y-6 text-center">
+            <div class="flex justify-between items-center">
+                <button onclick="app.showScreen('topics')" class="text-indigo-900 font-bold"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <h3 id="configTopicTitle" class="text-2xl font-fun font-bold text-indigo-900">Rekod Waktu</h3>
+                <div class="w-6"></div>
+            </div>
+
+            <div class="space-y-4 text-left">
+                <label class="font-bold text-slate-700 block">Pilih Tahap Kesukaran:</label>
+                <div class="grid grid-cols-3 gap-3">
+                    <button onclick="app.selectDifficulty('Mudah')" id="btn-diff-Mudah" class="diff-btn p-3 rounded-2xl border-2 border-emerald-400 bg-emerald-50 text-emerald-800 font-bold transition">🟢 Mudah</button>
+                    <button onclick="app.selectDifficulty('Sederhana')" id="btn-diff-Sederhana" class="diff-btn p-3 rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-800 font-bold transition">🟡 Sederhana</button>
+                    <button onclick="app.selectDifficulty('Sukar')" id="btn-diff-Sukar" class="diff-btn p-3 rounded-2xl border-2 border-rose-300 bg-rose-50 text-rose-800 font-bold transition">🔴 Sukar</button>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-left">
+                <label class="font-bold text-slate-700 block">Pilih Tempoh Masa per Soalan / Sesi:</label>
+                <div class="grid grid-cols-3 gap-3">
+                    <button onclick="app.selectTimer(30)" id="btn-timer-30" class="timer-btn p-3 rounded-2xl border-2 border-indigo-200 bg-white text-indigo-900 font-bold transition">⏱️ 30 Saat</button>
+                    <button onclick="app.selectTimer(60)" id="btn-timer-60" class="timer-btn p-3 rounded-2xl border-2 border-indigo-200 bg-white text-indigo-900 font-bold transition">⏱️ 1 Minit</button>
+                    <button onclick="app.selectTimer(0)" id="btn-timer-0" class="timer-btn p-3 rounded-2xl border-2 border-indigo-200 bg-white text-indigo-900 font-bold transition">♾️ Tiada Had</button>
+                </div>
+            </div>
+
+            <button onclick="app.startGameSession()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-fun font-bold text-xl py-4 rounded-2xl shadow-lg bouncy-btn">
+                <i class="fa-solid fa-gamepad mr-2"></i> MULA CABARAN SEKARANG!
+            </button>
+        </div>
+
+        <!-- 4. ACTIVE GAME SCREEN -->
+        <div id="screen-game" class="screen hidden w-full max-w-3xl game-card p-4 md:p-8 rounded-3xl space-y-6">
+            <!-- HUD Bar -->
+            <div class="flex justify-between items-center bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
+                <div>
+                    <span id="gameHudTopic" class="text-xs font-bold text-indigo-600 uppercase tracking-wider block">Rekod Waktu</span>
+                    <span id="gameHudProgress" class="font-fun font-bold text-lg text-indigo-900">Soalan 1 / 20</span>
+                </div>
+                <div class="text-center">
+                    <span class="text-xs font-bold text-slate-500 uppercase block">Markah</span>
+                    <span id="gameHudScore" class="font-fun font-bold text-xl text-emerald-600">0 / 100</span>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs font-bold text-slate-500 uppercase block">Masa</span>
+                    <span id="gameHudTimer" class="font-fun font-bold text-xl text-rose-600"><i class="fa-solid fa-stopwatch"></i> --:--</span>
+                </div>
+            </div>
+
+            <!-- Question & Visual Container -->
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span id="gameHudCognitive" class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full">Aras: Memahami</span>
+                    <span id="gameHudType" class="text-xs font-semibold text-slate-500">Jenis: Objektif</span>
+                </div>
+                
+                <div id="questionContainer" class="bg-white p-5 rounded-2xl border-2 border-indigo-100 shadow-sm text-lg md:text-xl font-medium text-slate-800 leading-relaxed">
+                    <!-- Dynamic Question Text -->
+                </div>
+
+                <!-- Visual / Diagram Container -->
+                <div id="visualContainer" class="flex justify-center items-center py-2">
+                    <!-- Dynamic Clock / Calendar / Table Visuals -->
+                </div>
+            </div>
+
+            <!-- Options / Interaction Container -->
+            <div id="optionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                <!-- Dynamic Options -->
+            </div>
+
+            <!-- Feedback Modal Banner (Inline inside game) -->
+            <div id="feedbackBanner" class="hidden p-4 rounded-2xl text-center space-y-2 animate-fadeIn">
+                <!-- Injected Feedback -->
+            </div>
+        </div>
+
+        <!-- 5. GAME OVER / RESULT SCREEN -->
+        <div id="screen-result" class="screen hidden w-full max-w-xl game-card p-8 rounded-3xl text-center space-y-6">
+            <div class="text-6xl animate-bounce">🏆</div>
+            <h2 class="text-3xl font-fun font-bold text-indigo-900">Tahniah! Cabaran Selesai!</h2>
+            
+            <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100 space-y-2">
+                <p class="text-slate-600">Markah Diperolehi:</p>
+                <div id="finalScoreText" class="font-fun font-bold text-4xl text-indigo-900">100 / 100</div>
+                <p id="finalBadgeUnlocked" class="text-sm font-semibold text-amber-600 pt-2">🏅 Badge Baharu Dibuka: MASTER MASA!</p>
+            </div>
+
+            <div class="flex space-x-3">
+                <button onclick="app.showScreen('topics')" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-fun font-bold py-3 rounded-2xl shadow bouncy-btn">
+                    Pilih Topik Lain
+                </button>
+                <button onclick="app.restartTopic()" class="flex-1 bg-amber-400 hover:bg-amber-300 text-indigo-950 font-fun font-bold py-3 rounded-2xl shadow bouncy-btn">
+                    Cuba Semula
+                </button>
+            </div>
+        </div>
+
+        <!-- 6. PROFILE SCREEN -->
+        <div id="screen-profile" class="screen hidden w-full max-w-3xl game-card p-6 md:p-8 rounded-3xl space-y-6">
+            <div class="flex justify-between items-center">
+                <button onclick="app.showScreen('home')" class="bg-slate-100 hover:bg-slate-200 text-indigo-900 px-4 py-2 rounded-xl font-bold shadow flex items-center space-x-2">
+                    <i class="fa-solid fa-arrow-left"></i> <span>Kembali</span>
+                </button>
+                <h3 class="text-2xl font-fun font-bold text-indigo-900">Profil Murid</h3>
+                <div class="w-12"></div>
+            </div>
+
+            <div class="bg-gradient-to-r from-indigo-500 to-blue-600 p-6 rounded-2xl text-white flex items-center space-x-4 shadow">
+                <div class="text-5xl bg-white/20 p-4 rounded-2xl">👦</div>
+                <div>
+                    <h4 id="profileName" class="text-2xl font-fun font-bold">Ahmad Fikri</h4>
+                    <p class="text-indigo-200 text-sm">Murid Tahun 3 Bestari • SK Seri Mutiara</p>
+                    <p class="text-xs text-amber-300 font-semibold mt-1">Jumlah Markah Terkumpul: <span id="profileTotalScore">0</span></p>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h5 class="font-fun font-bold text-lg text-indigo-900">Badge & Pencapaian Saya</h5>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="badgesContainer">
+                    <!-- Badges injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. PROGRESS SCREEN -->
+        <div id="screen-progress" class="screen hidden w-full max-w-3xl game-card p-6 md:p-8 rounded-3xl space-y-6">
+            <div class="flex justify-between items-center">
+                <button onclick="app.showScreen('home')" class="bg-slate-100 hover:bg-slate-200 text-indigo-900 px-4 py-2 rounded-xl font-bold shadow flex items-center space-x-2">
+                    <i class="fa-solid fa-arrow-left"></i> <span>Kembali</span>
+                </button>
+                <h3 class="text-2xl font-fun font-bold text-indigo-900">Progress Pembelajaran</h3>
+                <div class="w-12"></div>
+            </div>
+
+            <div class="space-y-4" id="progressBarsContainer">
+                <!-- Progress bars generated dynamically -->
+            </div>
+        </div>
+
+        <!-- 8. LEADERBOARD SCREEN -->
+        <div id="screen-leaderboard" class="screen hidden w-full max-w-3xl game-card p-6 md:p-8 rounded-3xl space-y-6">
+            <div class="flex justify-between items-center">
+                <button onclick="app.showScreen('home')" class="bg-slate-100 hover:bg-slate-200 text-indigo-900 px-4 py-2 rounded-xl font-bold shadow flex items-center space-x-2">
+                    <i class="fa-solid fa-arrow-left"></i> <span>Kembali</span>
+                </button>
+                <h3 class="text-2xl font-fun font-bold text-indigo-900">🏆 Leaderboard Juara Waktu</h3>
+                <div class="w-12"></div>
+            </div>
+
+            <div class="space-y-3" id="leaderboardList">
+                <!-- Leaderboard items -->
+            </div>
+        </div>
+
+        <!-- 9. SETTINGS SCREEN -->
+        <div id="screen-settings" class="screen hidden w-full max-w-xl game-card p-6 md:p-8 rounded-3xl space-y-6">
+            <div class="flex justify-between items-center">
+                <button onclick="app.showScreen('home')" class="bg-slate-100 hover:bg-slate-200 text-indigo-900 px-4 py-2 rounded-xl font-bold shadow flex items-center space-x-2">
+                    <i class="fa-solid fa-arrow-left"></i> <span>Kembali</span>
+                </button>
+                <h3 class="text-2xl font-fun font-bold text-indigo-900">Tetapan Game</h3>
+                <div class="w-12"></div>
+            </div>
+
+            <div class="space-y-4 text-left">
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl border">
+                    <span class="font-semibold text-slate-700">Bunyi Kesan Kemenangan (Sound FX)</span>
+                    <input type="checkbox" id="settingSound" checked class="w-6 h-6 accent-indigo-600 rounded">
+                </div>
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl border">
+                    <span class="font-semibold text-slate-700">Animasi Konfeti (Confetti Effects)</span>
+                    <input type="checkbox" id="settingConfetti" checked class="w-6 h-6 accent-indigo-600 rounded">
+                </div>
+            </div>
+
+            <button onclick="app.saveSettings()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-fun font-bold py-3 rounded-2xl shadow bouncy-btn">
+                Simpan Tetapan
+            </button>
+        </div>
+
+        <!-- 10. AUTH / MULTI-USER LOGIN SCREEN -->
+        <div id="screen-auth" class="screen hidden w-full max-w-xl game-card p-6 md:p-8 rounded-3xl space-y-6 text-center">
+            <div class="flex justify-between items-center">
+                <button onclick="app.showScreen('home')" class="text-indigo-900 font-bold"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <h3 class="text-2xl font-fun font-bold text-indigo-900">Log Masuk / Daftar Murid</h3>
+                <div class="w-6"></div>
+            </div>
+
+            <p class="text-slate-600 text-sm">Pilih akaun murid sedia ada atau daftar akaun baharu untuk merekodkan progress anda secara berasingan.</p>
+
+            <div class="space-y-3 text-left">
+                <label class="font-bold text-slate-700 block text-sm">Nama Murid:</label>
+                <input type="text" id="authUserNameInput" placeholder="Cth: Siti Aminah" class="w-full p-4 rounded-xl border-2 border-indigo-200 focus:outline-none focus:border-indigo-600 font-medium">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="app.loginUser()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-fun font-bold py-3 rounded-xl shadow bouncy-btn">
+                    Log Masuk / Mula
+                </button>
+                <button onclick="app.switchUserList()" class="bg-slate-200 hover:bg-slate-300 text-indigo-900 font-fun font-bold py-3 rounded-xl shadow bouncy-btn">
+                    Pilih Akaun Lain
+                </button>
+            </div>
+
+            <div id="userListContainer" class="space-y-2 pt-2 border-t text-left">
+                <!-- Existing users list -->
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const TOPICS_DATA = [
+            { id: 'rekod_waktu', name: 'Rekod Waktu', icon: '🕐', desc: 'Membaca jam analog, digital & jadual waktu aktiviti.' },
+            { id: 'kenal_kalendar', name: 'Kenal Kalendar', icon: '📅', desc: 'Hari, tarikh, bulan Masihi & maklumat kalendar.' },
+            { id: 'perkaitan_masa', name: 'Perkaitan Dalam Masa', icon: '⏱️', desc: 'Hubungan minggu, hari, jam, minit & saat.' },
+            { id: 'tambah_masa', name: 'Tambah Masa', icon: '➕', desc: 'Operasi tambah jam, minit & saat dengan pengumpulan.' },
+            { id: 'tolak_masa', name: 'Tolak Masa', icon: '➖', desc: 'Operasi tolak nilai masa dengan proses meminjam.' },
+            { id: 'tambah_tolak', name: 'Tambah & Tolak Masa', icon: '➕➖', desc: 'Operasi bergabung tambah dan tolak nilai masa.' },
+            { id: 'darab_masa', name: 'Darab Masa', icon: '✖️', desc: 'Darab jam & minit dengan nombor satu digit.' },
+            { id: 'bahagi_masa', name: 'Bahagi Masa', icon: '➗', desc: 'Bahagi nilai masa dengan nombor satu digit.' },
+            { id: 'penyelesaian_masalah', name: 'Penyelesaian Masalah', icon: '🧠', desc: 'Situasi harian masa dan waktu Tahun 3.' }
+        ];
+
+        const BADGES_DATA = [
+            { id: 'MASTER_MASA', name: 'MASTER MASA', icon: '⏰', desc: 'Selesai topik Rekod Waktu' },
+            { id: 'HERO_KALENDAR', name: 'HERO KALENDAR', icon: '📅', desc: 'Selesai topik Kenal Kalendar' },
+            { id: 'PAKAR_JAM', name: 'PAKAR JAM', icon: '⏱️', desc: 'Selesai topik Perkaitan Masa' },
+            { id: 'JUARA_DARAB', name: 'JUARA DARAB', icon: '✖️', desc: 'Selesai topik Darab Masa' },
+            { id: 'JUARA_BAHAGI', name: 'JUARA BAHAGI', icon: '➗', desc: 'Selesai topik Bahagi Masa' },
+            { id: 'MATH_STAR', name: 'MATH STAR', icon: '🌟', desc: 'Kumpul 500 markah keseluruhan' },
+            { id: 'TIME_CHAMPION', name: 'TIME CHAMPION', icon: '🏆', desc: 'Jawab 20 soalan betul berturut-turut' }
+        ];
+
+        // Comprehensive Question Bank Generator (Generating authentic structured questions for all 9 topics x 3 difficulties x 20 questions = 540 questions)
+        class QuestionBank {
+            static generateAll() {
+                const bank = {};
+                TOPICS_DATA.forEach(topic => {
+                    bank[topic.id] = { Mudah: [], Sederhana: [], Sukar: [] };
+                    ['Mudah', 'Sederhana', 'Sukar'].forEach(diff => {
+                        for (let i = 1; i <= 20; i++) {
+                            bank[topic.id][diff].push(this.createQuestion(topic.id, diff, i));
+                        }
+                    });
+                });
+                return bank;
+            }
+
+            static createQuestion(topicId, diff, index) {
+                const idStr = `${topicId.substring(0,3).toUpperCase()}-${diff[0]}-${String(index).padStart(3, '0')}`;
+                
+                // Context variations to avoid duplicates
+                const contexts = ['sekolah', 'bermain', 'bersukan', 'membaca', 'menonton', 'memasak', 'perjalanan', 'bas', 'kereta api', 'aktiviti keluarga', 'kelas', 'kantin', 'perpustakaan', 'tidur', 'bangun', 'latihan', 'pertandingan', 'bercuti', 'membeli-belah', 'hujung minggu'];
+                const ctx = contexts[(index - 1) % contexts.length];
+
+                switch(topicId) {
+                    case 'rekod_waktu':
+                        return this.getRekodWaktuQuestion(diff, index, idStr, ctx);
+                    case 'kenal_kalendar':
+                        return this.getKenalKalendarQuestion(diff, index, idStr, ctx);
+                    case 'perkaitan_masa':
+                        return this.getPerkaitanMasaRefined(diff, index, idStr, ctx);
+                    case 'tambah_masa':
+                        return this.ambahMasaQuestion(diff, index, idStr, ctx);
+                    case 'tolak_masa':
+                        return this.tolakMasaQuestion(diff, index, idStr, ctx);
+                    case 'tambah_tolak':
+                        return this.tambahTolakMasaQuestion(diff, index, idStr, ctx);
+                    case 'darab_masa':
+                        return this.darabMasaQuestion(diff, index, idStr, ctx);
+                    case 'bahagi_masa':
+                        return this.bahagiMasaQuestion(diff, index, idStr, ctx);
+                    case 'penyelesaian_masalah':
+                        return this.getPenyelesaianMasalahRefined(diff, index, idStr, ctx);
+                    default:
+                        return this.getRekodWaktuQuestion(diff, index, idStr, ctx);
+                }
+            }
+
+            static getRekodWaktuQuestion(diff, index, idStr, ctx) {
+                if (diff === 'Mudah') {
+                    const hours = (index % 12) + 1;
+                    return {
+                        id: idStr, topic: 'Rekod Waktu', difficulty: 'Mudah', cognitiveLevel: 'Mengingat', gameType: 'Objektif',
+                        question: `Jam di dinding bilik ${ctx} menunjukkan jarum pendek pada angka ${hours} dan jarum panjang tepat pada angka 12. Apakah waktu tersebut?`,
+                        visual: `<div class="bg-indigo-900 text-white p-4 rounded-2xl text-center font-bold text-2xl shadow">🕒 Pukul ${hours}:00 pagi</div>`,
+                        options: [`Pukul ${hours}:00 pagi`, `Pukul ${hours}:30 pagi`, `Pukul ${(hours%12)+1}:00 pagi`, `Pukul ${hours}:15 pagi`],
+                        correctAnswer: `Pukul ${hours}:00 pagi`,
+                        explanation: `Jarum panjang pada angka 12 bermaksud tepat pada jam ${hours}.`,
+                        marks: 5
+                    };
+                } else if (diff === 'Sederhana') {
+                    const hours = (index % 12) + 1;
+                    return {
+                        id: idStr, topic: 'Rekod Waktu', difficulty: 'Sederhana', cognitiveLevel: 'Memahami', gameType: 'Objektif',
+                        question: `Ahmad mula ${ctx} pada pukul 3:00 petang dan selesai 30 minit kemudian. Pukul berapakah aktiviti itu tamat?`,
+                        visual: `<div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl text-indigo-900 font-semibold">Mula: 3:00 petang | Tempoh: 30 minit</div>`,
+                        options: [`3:30 petang`, `3:15 petang`, `4:00 petang`, `3:45 petang`],
+                        correctAnswer: `3:30 petang`,
+                        explanation: `3:00 petang tambah 30 minit menjadi 3:30 petang.`,
+                        marks: 5
+                    };
+                } else {
+                    return {
+                        id: idStr, topic: 'Rekod Waktu', difficulty: 'Sukar', cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
+                        question: `Jadual ${ctx} menunjukkan bas bertolak pada pukul 8:15 pagi dan perjalanan mengambil masa 45 minit. Pukul berapakah bas itu sampai?`,
+                        visual: `<div class="bg-slate-900 text-cyan-400 p-4 rounded-xl font-mono text-xl">Jadual Perjalanan Bas</div>`,
+                        options: [`9:00 pagi`, `8:45 pagi`, `9:15 pagi`, `8:55 pagi`],
+                        correctAnswer: `9:00 pagi`,
+                        explanation: `8:15 pagi + 45 minit = 8:60 pagi = 9:00 pagi.`,
+                        marks: 5
+                    };
+                }
+            }
+
+            static getKenalKalendarQuestion(diff, index, idStr, ctx) {
+                // Refined, diverse, highly accurate Masihi Calendar questions for Tahun 3 KSSR
+                const daysOfWeek = ['Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu', 'Ahad'];
+                const monthsOfYear = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
+                
+                if (diff === 'Mudah') {
+                    const dayIndex = index % 7;
+                    const currentDay = daysOfWeek[dayIndex];
+                    const nextDay = daysOfWeek[(dayIndex + 1) % 7];
+                    const prevDay = daysOfWeek[(dayIndex + 6) % 7];
+                    
+                    const questionTypes = [
+                        {
+                            q: `Hari ini ialah hari ${currentDay}. Apakah hari esok bagi menyertai aktiviti ${ctx} di sekolah?`,
+                            ans: nextDay,
+                            opts: [nextDay, prevDay, daysOfWeek[(dayIndex + 2) % 7], currentDay],
+                            exp: `Selepas hari ${currentDay} ialah hari ${nextDay}.`
+                        },
+                        {
+                            q: `Semalam ialah hari ${prevDay}. Apakah hari ini jika hari ini cuti ${ctx}?`,
+                            ans: currentDay,
+                            opts: [currentDay, prevDay, nextDay, daysOfWeek[(dayIndex + 3) % 7]],
+                            exp: `Selepas hari ${prevDay} ialah hari ${currentDay}.`
+                        },
+                        {
+                            q: `Antara hari berikut, yang manakah hari hujung minggu (weekend) untuk cuti ${ctx}?`,
+                            ans: index % 2 === 0 ? 'Sabtu' : 'Ahad',
+                            opts: [index % 2 === 0 ? 'Sabtu' : 'Ahad', 'Isnin', 'Rabu', 'Khamis'],
+                            exp: `Sabtu dan Ahad ialah hari cuti hujung minggu di sesetengah negeri atau cuti umum.`
+                        }
+                    ];
+                    const qt = questionTypes[index % questionTypes.length];
+                    return {
+                        id: idStr, topic: 'Kenal Kalendar', difficulty: 'Mudah', cognitiveLevel: 'Mengingat', gameType: 'Objektif',
+                        question: qt.q,
+                        visual: `<div class="bg-amber-100 text-amber-900 p-4 rounded-xl font-bold flex items-center justify-center space-x-2"><i class="fa-solid fa-calendar-days text-2xl"></i><span>Kalendar Masihi Harian</span></div>`,
+                        options: qt.opts.sort(() => Math.random() - 0.5),
+                        correctAnswer: qt.ans,
+                        explanation: qt.exp,
+                        marks: 5
+                    };
+                } else if (diff === 'Sederhana') {
+                    const monthIdx = index % 12;
+                    const currentMonth = monthsOfYear[monthIdx];
+                    const nextMonth = monthsOfYear[(monthIdx + 1) % 12];
+                    const prevMonth = monthsOfYear[(monthIdx + 11) % 12];
+
+                    const questionTypes = [
+                        {
+                            q: `Bulan ${currentMonth} adalah bulan bagi program ${ctx}. Apakah bulan yang hadir SELEPAS bulan ${currentMonth}?`,
+                            ans: nextMonth,
+                            opts: [nextMonth, prevMonth, monthsOfYear[(monthIdx + 2) % 12], currentMonth],
+                            exp: `Selepas bulan ${currentMonth} ialah bulan ${nextMonth}.`
+                        },
+                        {
+                            q: `Bulan apakah yang terletak di SEBELUM bulan ${currentMonth} semasa sambutan ${ctx}?`,
+                            ans: prevMonth,
+                            opts: [prevMonth, nextMonth, monthsOfYear[(monthIdx + 3) % 12], currentMonth],
+                            exp: `Sebelum bulan ${currentMonth} ialah bulan ${prevMonth}.`
+                        },
+                        {
+                            q: `Berapakah bilangan hari dalam sebulan bagi bulan Februari (tahun biasa) semasa cuti ${ctx}?`,
+                            ans: '28 hari',
+                            opts: ['28 hari', '29 hari', '30 hari', '31 hari'],
+                            exp: `Bulan Februari pada tahun biasa mempunyai 28 hari (dan 29 hari pada tahun lompat).`
+                        }
+                    ];
+                    const qt = questionTypes[index % questionTypes.length];
+                    return {
+                        id: idStr, topic: 'Kenal Kalendar', difficulty: 'Sederhana', cognitiveLevel: 'Memahami', gameType: 'Objektif',
+                        question: qt.q,
+                        visual: `<div class="bg-blue-100 text-blue-900 p-4 rounded-xl font-bold flex items-center justify-center space-x-2"><i class="fa-solid fa-calendar text-2xl"></i><span>Urutan Bulan Masihi</span></div>`,
+                        options: qt.opts.sort(() => Math.random() - 0.5),
+                        correctAnswer: qt.ans,
+                        explanation: qt.exp,
+                        marks: 5
+                    };
+                } else {
+                    const baseDate = (index % 20) + 1;
+                    const dayName = daysOfWeek[index % 7];
+                    const futureDate = baseDate + 7;
+                    const farFutureDate = baseDate + 14;
+
+                    const questionTypes = [
+                        {
+                            q: `Dalam kalendar bulan ${monthsOfYear[index % 12]}, jika tarikh ${baseDate}hb jatuh pada hari ${dayName}, apakah hari bagi tarikh ${futureDate}hb pada bulan yang sama untuk acara ${ctx}?`,
+                            ans: dayName,
+                            opts: [dayName, daysOfWeek[(index + 1) % 7], daysOfWeek[(index + 2) % 7], daysOfWeek[(index + 5) % 7]],
+                            exp: `Tarikh ${baseDate}hb (${dayName}) tambah 7 hari (1 minggu) akan jatuh pada hari yang sama iaitu ${dayName}.`
+                        },
+                        {
+                            q: `Jika 1hb ${monthsOfYear[(index + 2) % 12]} ialah hari Isnin, berapakah bilangan hari dalam bulan tersebut jika ia mempunyai 31 hari?`,
+                            ans: '31 hari',
+                            opts: ['31 hari', '30 hari', '28 hari', '29 hari'],
+                            exp: `Bulan Masihi seperti Januari, Mac, Mei, Julai, Ogos, Oktober, dan Disember mempunyai 31 hari.`
+                        },
+                        {
+                            q: `Ahmad menyertai kem ${ctx} selama 2 minggu bermula 4hb ${monthsOfYear[index % 12]}. Pada tarikh berapakah kem tersebut tamat?`,
+                            ans: `${4 + 14}hb`,
+                            opts: [`${4 + 14}hb`, `${4 + 7}hb`, `${4 + 10}hb`, `${4 + 21}hb`],
+                            exp: `2 minggu = 14 hari. 4hb + 14 hari = 18hb.`
+                        }
+                    ];
+                    const qt = questionTypes[index % questionTypes.length];
+                    return {
+                        id: idStr, topic: 'Kenal Kalendar', difficulty: 'Sukar', cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
+                        question: qt.q,
+                        visual: `<div class="bg-emerald-100 text-emerald-900 p-4 rounded-xl font-bold flex items-center justify-center space-x-2"><i class="fa-solid fa-calendar-check text-2xl"></i><span>Analisis Kalendar Bulanan</span></div>`,
+                        options: qt.opts.sort(() => Math.random() - 0.5),
+                        correctAnswer: qt.ans,
+                        explanation: qt.exp,
+                        marks: 5
+                    };
+                }
+            }
+
+            static getPerkaitanMasaRefined(diff, index, idStr, ctx) {
+                // Fully refined, distinct, highly rigorous Topic 3 (Perkaitan Dalam Masa) questions
+                if (diff === 'Mudah') {
+                    // Week & Day combinations and alternate unit relations
+                    const weekMultipliers = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+                    const w = weekMultipliers[(index * 3) % weekMultipliers.length];
+                    const daysTotal = w * 7;
+                    const extraDays = (index % 4);
+                    const totalDaysWithExtra = daysTotal + extraDays;
+
+                    const qOptionsGroup = [
+                        {
+                            q: `Siti menyertai kem cuti sekolah ${ctx} selama ${w} minggu. Berapakah jumlah hari bagi kem tersebut?`,
+                            ans: `${daysTotal} hari`,
+                            opts: [`${daysTotal} hari`, `${daysTotal + 7} hari`, `${daysTotal - 7 > 0 ? daysTotal - 7 : daysTotal + 5} hari`, `${daysTotal + 3} hari`],
+                            exp: `1 minggu = 7 hari. Maka, ${w} minggu × 7 hari = ${daysTotal} hari.`
+                        },
+                        {
+                            q: `Program gotong-royong ${ctx} di sekolah telah berjalan selama ${daysTotal} hari. Berapakah bilangan minggu bagi program itu?`,
+                            ans: `${w} minggu`,
+                            opts: [`${w} minggu`, `${w + 1} minggu`, `${w > 1 ? w - 1 : 2} minggu`, `${w + 2} minggu`],
+                            exp: `7 hari = 1 minggu. Oleh itu, ${daysTotal} hari ÷ 7 = ${w} minggu.`
+                        },
+                        {
+                            q: `Adik melawat datuk di kampung semasa cuti ${ctx} selama ${w} minggu dan ${extraDays} hari. Berapakah jumlah hari kesemuanya?`,
+                            ans: `${totalDaysWithExtra} hari`,
+                            opts: [`${totalDaysWithExtra} hari`, `${daysTotal} hari`, `${totalDaysWithExtra + 3} hari`, `${totalDaysWithExtra - 2} hari`],
+                            exp: `${w} minggu = ${daysTotal} hari. Tambah ${extraDays} hari menjadi ${totalDaysWithExtra} hari.`
+                        }
+                    ];
+                    const selected = qOptionsGroup[index % qOptionsGroup.length];
+                    return {
+                        id: idStr, topic: 'Perkaitan Dalam Masa', difficulty: 'Mudah', cognitiveLevel: 'Mengingat', gameType: 'Objektif',
+                        question: selected.q,
+                        visual: `<div class="bg-indigo-100 text-indigo-900 p-4 rounded-xl font-bold flex items-center justify-center space-x-2"><i class="fa-solid fa-calendar-week text-2xl"></i><span>Perkaitan Minggu & Hari (Tahun 3)</span></div>`,
+                        options: selected.opts.sort(() => Math.random() - 0.5),
+                        correctAnswer: selected.ans,
+                        explanation: selected.exp,
+                        marks: 5
+                    };
+                } else if (diff === 'Sederhana') {
+                    // Minute & Second conversions
+                    const minValues = [2, 3, 4, 5, 6, 8, 10, 12, 15];
+                    const m = minValues[(index * 2) % minValues.length];
+                    const secondsTotal = m * 60;
+                    const extraSecs = (index * 10) % 50;
+                    const totalSecsWithExtra = secondsTotal + extraSecs;
+
+                    const qOptionsGroup = [
+                        {
+                            q: `Aktiviti ${ctx} di makmal sains mengambil masa selama ${m} minit. Berapakah tempoh masa tersebut dalam unit saat?`,
+                            ans: `${secondsTotal} saat`,
+                            opts: [`${secondsTotal} saat`, `${secondsTotal + 60} saat`, `${secondsTotal - 30 > 0 ? secondsTotal - 30 : secondsTotal + 30} saat`, `${secondsTotal + 120} saat`],
+                            exp: `1 minit = 60 saat. ${m} minit × 60 = ${secondsTotal} saat.`
+                        },
+                        {
+                            q: `Ujian larian ${ctx} mencatatkan tempoh ${secondsTotal} saat. Berapakah nilai tempoh tersebut dalam minit?`,
+                            ans: `${m} minit`,
+                            opts: [`${m} minit`, `${m + 1} minit`, `${m > 1 ? m - 1 : m + 2} minit`, `${m + 2} minit`],
+                            exp: `60 saat = 1 minit. Maka ${secondsTotal} saat ÷ 60 = ${m} minit.`
+                        },
+                        {
+                            q: `Persembahan koir ${ctx} direkodkan selama ${m} minit ${extraSecs} saat. Berapakah jumlah saat kesemuanya?`,
+                            ans: `${totalSecsWithExtra} saat`,
+                            opts: [`${totalSecsWithExtra} saat`, `${secondsTotal} saat`, `${totalSecsWithExtra + 15} saat`, `${totalSecsWithExtra - 10} saat`],
+                            exp: `${m} minit = ${secondsTotal} saat. Tambah ${extraSecs} saat menjadi ${totalSecsWithExtra} saat.`
+                        }
+                    ];
+                    const selected = qOptionsGroup[index % qOptionsGroup.length];
+                    return {
+                        id: idStr, topic: 'Perkaitan Dalam Masa', difficulty: 'Sederhana', cognitiveLevel: 'Memahami', gameType: 'Objektif',
+                        question: selected.q,
+                        visual: `<div class="bg-blue-100 text-blue-900 p-4 rounded-xl font-bold flex items-center justify-center space-x-2"><i class="fa-solid fa-stopwatch text-2xl"></i><span>Perkaitan Minit & Saat (Tahun 3)</span></div>`,
+                        options: selected.opts.sort(() => Math.random() - 0.5),
+                        correctAnswer: selected.ans,
+                        explanation: selected.exp,
+                        marks: 5
+                    };
+                } else {
+                    // Complex conversions (Hours & Minutes, Years & Months)
+                    const hourValues = [2, 3, 4, 5];
+                    const h = hourValues[index % hourValues.length];
+                    const minsInHours = h * 60;
+                    const extraMins = 15 + (index % 35);
+                    const totalMinsCombined = minsInHours + extraMins;
+                    
+                    const yearsVal = 2 + (index % 3);
+                    const monthsExtra = 3 + (index % 8);
+                    const totalMonthsCombined = (yearsVal * 12) + monthsExtra;
+
+                    const qOptionsGroup = [
+                        {
+                            q: `Pasukan ${ctx} menjalani latihan intensif selama ${h} jam ${extraMins} minit. Berapakah jumlah masa dalam minit?`,
+                            ans: `${totalMinsCombined} minit`,
+                            opts: [`${totalMinsCombined} minit`, `${minsInHours} minit`, `${totalMinsCombined + 15} minit`, `${totalMinsCombined - 20} minit`],
+                            exp: `${h} jam = ${minsInHours} minit. ${minsInHours} minit + ${extraMins} minit = ${totalMinsCombined} minit.`
+                        },
+                        {
+                            q: `Projek pembinaan model ${ctx} siap dalam tempoh ${totalMinsCombined} minit. Apakah bentuk masa dalam jam dan minit?`,
+                            ans: `${h} jam ${extraMins} minit`,
+                            opts: [`${h} jam ${extraMins} minit`, `${h + 1} jam ${extraMins} minit`, `${h} jam ${extraMins + 10} minit`, `${h - 1 > 0 ? h - 1 : 1} jam ${extraMins} minit`],
+                            exp: `${totalMinsCombined} minit ÷ 60 = ${h} jam dengan baki ${extraMins} minit.`
+                        },
+                        {
+                            q: `Kontrak program ${ctx} telah berlangsung selama ${yearsVal} tahun ${monthsExtra} bulan. Berapakah jumlah bulan keseluruhan?`,
+                            ans: `${totalMonthsCombined} bulan`,
+                            opts: [`${totalMonthsCombined} bulan`, `${yearsVal * 12} bulan`, `${totalMonthsCombined + 3} bulan`, `${totalMonthsCombined - 2} bulan`],
+                            exp: `${yearsVal} tahun = ${yearsVal * 12} bulan. Tambah ${monthsExtra} bulan menjadi ${totalMonthsCombined} bulan.`
+                        }
+                    ];
+                    const selected = qOptionsGroup[index % qOptionsGroup.length];
+                    return {
+                        id: idStr, topic: 'Perkaitan Dalam Masa', difficulty: 'Sukar', cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
+                        question: selected.q,
+                        visual: `<div class="bg-emerald-100 text-emerald-900 p-4 rounded-xl font-bold flex items-center justify-center space-x-2"><i class="fa-solid fa-clock-rotate-left text-2xl"></i><span>Penukaran Kompleks Masa (Tahun 3)</span></div>`,
+                        options: selected.opts.sort(() => Math.random() - 0.5),
+                        correctAnswer: selected.ans,
+                        explanation: selected.exp,
+                        marks: 5
+                    };
+                }
+            }
+
+            static ambahMasaQuestion(diff, index, idStr, ctx) {
+                const m1 = 20 + (index % 30);
+                const m2 = 15 + (index % 25);
+                const total = m1 + m2;
+                const h = Math.floor(total / 60);
+                const m = total % 60;
+                const ansStr = h > 0 ? `${h} jam ${m} minit` : `${total} minit`;
+                return {
+                    id: idStr, topic: 'Tambah Masa', difficulty: diff, cognitiveLevel: 'Memahami', gameType: 'Objektif',
+                    question: `Hitungkan jumlah masa ${ctx}: ${m1} minit + ${m2} minit = ?`,
+                    visual: `<div class="bg-amber-50 border p-4 rounded-xl font-mono text-lg">${m1} minit + ${m2} minit</div>`,
+                    options: [ansStr, `${total + 10} minit`, `${total - 5} minit`, `${total + 15} minit`],
+                    correctAnswer: ansStr,
+                    explanation: `${m1} + ${m2} = ${total} minit${h > 0 ? ` (${h} jam ${m} minit)` : ''}.`,
+                    marks: 5
+                };
+            }
+
+            static tolakMasaQuestion(diff, index, idStr, ctx) {
+                const m1 = 50 + (index % 20);
+                const m2 = 10 + (index % 15);
+                const total = m1 - m2;
+                return {
+                    id: idStr, topic: 'Tolak Masa', difficulty: diff, cognitiveLevel: 'Memahami', gameType: 'Objektif',
+                    question: `Dalam sesi ${ctx}, tempoh ${m1} minit dikurangkan sebanyak ${m2} minit. Berapakah baki masa?`,
+                    visual: `<div class="bg-rose-50 border p-4 rounded-xl font-mono text-lg">${m1} minit - ${m2} minit</div>`,
+                    options: [`${total} minit`, `${total + 5} minit`, `${total - 10} minit`, `${total + 10} minit`],
+                    correctAnswer: `${total} minit`,
+                    explanation: `${m1} - ${m2} = ${total} minit.`,
+                    marks: 5
+                };
+            }
+
+            static tambahTolakMasaQuestion(diff, index, idStr, ctx) {
+                return {
+                    id: idStr, topic: 'Tambah dan Tolak Masa', difficulty: diff, cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
+                    question: `1 jam 20 minit + 45 minit - 30 minit semasa aktiviti ${ctx} = ?`,
+                    visual: `<div class="bg-blue-50 border p-4 rounded-xl font-mono text-sm">Operasi Bergabung Masa</div>`,
+                    options: [`1 jam 35 minit`, `1 jam 20 minit`, `2 jam 05 minit`, `1 jam 50 minit`],
+                    correctAnswer: `1 jam 35 minit`,
+                    explanation: `1 jam 20 minit + 45 minit = 2 jam 05 minit. 2 jam 05 minit - 30 minit = 1 jam 35 minit.`,
+                    marks: 5
+                };
+            }
+
+            static darabMasaQuestion(diff, index, idStr, ctx) {
+                const mins = 12 + (index % 10);
+                const multiplier = 3;
+                const totalMins = mins * multiplier;
+                const h = Math.floor(totalMins / 60);
+                const m = totalMins % 60;
+                const ans = h > 0 ? `${h} jam ${m} minit` : `${totalMins} minit`;
+                return {
+                    id: idStr, topic: 'Darab Masa', difficulty: diff, cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
+                    question: `Jika latihan ${ctx} mengambil masa ${mins} minit sehari, berapakah jumlah masa untuk ${multiplier} hari?`,
+                    visual: `<div class="bg-emerald-50 border p-4 rounded-xl font-mono text-lg">${mins} minit × ${multiplier}</div>`,
+                    options: [ans, `${totalMins + 10} minit`, `${totalMins - 5} minit`, `${totalMins + 20} minit`],
+                    correctAnswer: ans,
+                    explanation: `${mins} minit × ${multiplier} = ${totalMins} minit${h > 0 ? ` (${ans})` : ''}.`,
+                    marks: 5
+                };
+            }
+
+            static bahagiMasaQuestion(diff, index, idStr, ctx) {
+                const totalMins = 60 + (index * 5);
+                const divisor = 2;
+                const res = totalMins / divisor;
+                const h = Math.floor(res / 60);
+                const m = res % 60;
+                const ans = h > 0 ? `${h} jam ${m} minit` : `${res} minit`;
+                return {
+                    id: idStr, topic: 'Bahagi Masa', difficulty: diff, cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
+                    question: `Jumlah masa ${totalMins} minit untuk program ${ctx} dibahagikan sama rata kepada ${divisor} kumpulan. Berapakah masa setiap kumpulan?`,
+                    visual: `<div class="bg-purple-50 border p-4 rounded-xl font-mono text-lg">${totalMins} minit ÷ ${divisor}</div>`,
+                    options: [ans, `${res + 5} minit`, `${res - 10} minit`, `${res + 15} minit`],
+                    correctAnswer: ans,
+                    explanation: `${totalMins} minit ÷ ${divisor} = ${res} minit.`,
+                    marks: 5
+                };
+            }
+
+            static getPenyelesaianMasalahRefined(diff, index, idStr, ctx) {
+                // Completely refined Topic 9 (Penyelesaian Masalah) questions with diverse, rich, non-repeating word problems suitable for Year 3 KSSR.
+                const names = ['Aiman', 'Siti', 'Raju', 'Mei Ling', 'Zack', 'Amir', 'Farah', 'Devi', 'John', 'Hana'];
+                const studentName = names[index % names.length];
+
+                if (diff === 'Mudah') {
+                    const jamMula = (index % 5) + 8; // 8 to 12
+                    const tempohJam = (index % 3) + 1; // 1 to 3 hours
+                    const jamTamat = jamMula + tempohJam;
+                    
+                    const qList = [
+                        {
+                            q: `${studentName} mula membaca buku cerita ${ctx} pada pukul ${jamMula}:00 pagi selama ${tempohJam} jam. Pukul berapakah ${studentName} selesai membaca?`,
+                            ans: `Pukul ${jamTamat}:00 pagi`,
+                            opts: [`Pukul ${jamTamat}:00 pagi`, `Pukul ${jamMula}:00 pagi`, `Pukul ${jamTamat + 1}:00 pagi`, `Pukul ${jamMula - 1}:00 pagi`],
+                            exp: `${jamMula}:00 pagi + ${tempohJam} jam = Pukul ${jamTamat}:00 pagi.`
+                        },
+                        {
+                            q: `Ibu menyiapkan kerja ${ctx} selama ${tempohJam * 30} minit pada waktu pagi dan ${tempohJam * 15} minit pada waktu petang. Berapakah jumlah masa dalam minit?`,
+                            ans: `${tempohJam * 45} minit`,
+                            opts: [`${tempohJam * 45} minit`, `${tempohJam * 30} minit`, `${tempohJam * 60} minit`, `${tempohJam * 20} minit`],
+                            exp: `${tempohJam * 30} minit + ${tempohJam * 15} minit = ${tempohJam * 45} minit.`
+                        },
+                        {
+                            q: `Sebuah bas persiaran untuk rombongan ${ctx} bertolak pada pukul 2:00 petang. Perjalanan mengambil masa 2 jam. Pukul berapakah bas itu sampai?`,
+                            ans: `4:00 petang`,
+                            opts: [`4:00 petang`, `3:00 petang`, `5:00 petang`, `2:30 petang`],
+                            exp: `2:00 petang + 2 jam = 4:00 petang.`
+                        }
+                    ];
+                    const selectedQ = qList[index % qList.length];
+                    return {
+                        id: idStr, topic: 'Penyelesaian Masalah', difficulty: 'Mudah', cognitiveLevel: 'Memahami', gameType: 'Objektif',
+                        question: selectedQ.q,
+                        visual: `<div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl text-indigo-900 font-semibold flex items-center justify-center space-x-2"><i class="fa-solid fa-puzzle-piece text-xl text-indigo-600"></i><span>Situasi Harian ${ctx}</span></div>`,
+                        options: selectedQ.opts.sort(() => Math.random() - 0.5),
+                        correctAnswer: selectedQ.ans,
+                        explanation: selectedQ.exp,
+                        marks: 5
+                    };
+                } else if (diff === 'Sederhana') {
+                    const minMula = 15 + (index % 25);
+                    const minTambah = 20 + (index % 15);
+                    const totalMin = minMula + minTambah;
+                    const h = Math.floor(totalMin / 60);
+                    const m = totalMin % 60;
+                    const ansStr = h > 0 ? `${h} jam ${m} minit` : `${totalMin} minit`;
+
+                    const qList = [
+                        {
+                            q: `${studentName} menjalani latihan ${ctx} selama ${minMula} minit pada sesi pertama dan bersambung ${minTambah} minit pada sesi kedua. Berapakah jumlah masa latihan ${studentName}?`,
+                            ans: ansStr,
+                            opts: [ansStr, `${totalMin + 10} minit`, `${totalMin - 5} minit`, `${totalMin + 15} minit`],
+                            exp: `${minMula} minit + ${minTambah} minit = ${totalMin} minit${h > 0 ? ` (${ansStr})` : ''}.`
+                        },
+                        {
+                            q: `Kumpulan ${studentName} membuat kraftangan ${ctx} selama 1 jam 40 minit. Mereka berehat selama 25 minit. Berapakah baki masa kerja mereka jika jumlah masa diperuntukkan ialah 3 jam?`,
+                            ans: `55 minit`,
+                            opts: [`55 minit`, `1 jam 15 minit`, `45 minit`, `1 jam 05 minit`],
+                            exp: `3 jam - (1 jam 40 minit + 25 minit) = 3 jam - 2 jam 05 minit = 55 minit.`
+                        },
+                        {
+                            q: `Cikgu ${studentName} mengedarkan kertas ujian ${ctx} selama 15 minit. Murid menjawab selama 45 minit dan menyemak jawapan selama 10 minit. Berapakah jumlah masa dalam jam dan minit?`,
+                            ans: `1 jam 10 minit`,
+                            opts: [`1 jam 10 minit`, `1 jam 00 minit`, `1 jam 15 minit`, `55 minit`],
+                            exp: `15 minit + 45 minit + 10 minit = 70 minit = 1 jam 10 minit.`
+                        }
+                    ];
+                    const selectedQ = qList[index % qList.length];
+                    return {
+                        id: idStr, topic: 'Penyelesaian Masalah', difficulty: 'Sederhana', cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
+                        question: selectedQ.q,
+                        visual: `<div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-blue-900 font-semibold flex items-center justify-center space-x-2"><i class="fa-solid fa-calculator text-xl text-blue-600"></i><span>Analisis Masa ${ctx}</span></div>`,
+                        options: selectedQ.opts.sort(() => Math.random() - 0.5),
+                        correctAnswer: selectedQ.ans,
+                        explanation: selectedQ.exp,
+                        marks: 5
+                    };
+                } else {
+                    const daysCount = 3 + (index % 5);
+                    const hoursPerDay = 2 + (index % 3);
+                    const totalHours = daysCount * hoursPerDay;
+
+                    const qList = [
+                        {
+                            q: `${studentName} menyertai kem motivasi ${ctx} selama ${daysCount} hari. Setiap hari, ${studentName} meluangkan masa ${hoursPerDay} jam untuk latihan kepimpinan. Berapakah jumlah jam keseluruhan ${studentName} melatih diri?`,
+                            ans: `${totalHours} jam`,
+                            opts: [`${totalHours} jam`, `${totalHours + 3} jam`, `${totalHours - 2} jam`, `${totalHours + 5} jam`],
+                            exp: `${daysCount} hari × ${hoursPerDay} jam = ${totalHours} jam.`
+                        },
+                        {
+                            q: `Penerbangan kapal terbang untuk percutian ${ctx} mengambil masa 3 jam 20 minit. Selepas menukar pesawat, penerbangan kedua mengambil masa 2 jam 35 minit. Hitung jumlah keseluruhan masa penerbangan tersebut.`,
+                            ans: `5 jam 55 minit`,
+                            opts: [`5 jam 55 minit`, `5 jam 45 minit`, `6 jam 00 minit`, `5 jam 50 minit`],
+                            exp: `3 jam 20 minit + 2 jam 35 minit = 5 jam 55 minit.`
+                        },
+                        {
+                            q: `Program gotong-royong ${ctx} bermula pada pukul 8:00 pagi dan tamat pada pukul 12:30 tengah hari. Berapakah tempoh masa keseluruhan program tersebut dijalankan?`,
+                            ans: `4 jam 30 minit`,
+                            opts: [`4 jam 30 minit`, `4 jam 00 minit`, `5 jam 00 minit`, `3 jam 30 minit`],
+                            exp: `Dari 8:00 pagi ke 12:00 tengah hari ialah 4 jam, tambah lagi 30 minit menjadi 4 jam 30 minit.`
+                        }
+                    ];
+                    const selectedQ = qList[index % qList.length];
+                    return {
+                        id: idStr, topic: 'Penyelesaian Masalah', difficulty: 'Sukar', cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
+                        question: selectedQ.q,
+                        visual: `<div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-emerald-900 font-semibold flex items-center justify-center space-x-2"><i class="fa-solid fa-brain text-xl text-emerald-600"></i><span>Cabaran Pintar Minda ${ctx}</span></div>`,
+                        options: selectedQ.opts.sort(() => Math.random() - 0.5),
+                        correctAnswer: selectedQ.ans,
+                        explanation: selectedQ.exp,
+                        marks: 5
+                    };
+                }
+            }
+        }
+
+        // Main App Controller State
+        class AppController {
+            constructor() {
+                this.questionBank = QuestionBank.generateAll();
+                this.currentUser = 'Ahmad Fikri';
+                this.users = JSON.parse(localStorage.getItem('math_kids_users') || '["Ahmad Fikri", "Siti Aminah", "Daniel Lee"]');
+                this.scores = JSON.parse(localStorage.getItem('math_kids_scores') || '{}');
+                this.badges = JSON.parse(localStorage.getItem('math_kids_badges') || '["MASTER_MASA"]');
+                this.settings = JSON.parse(localStorage.getItem('math_kids_settings') || '{"sound": true, "confetti": true}');
+                
+                this.currentTopic = null;
+                this.currentDifficulty = 'Mudah';
+                this.currentTimerSec = 30;
+                this.sessionQuestions = [];
+                this.currentIndex = 0;
+                this.currentScore = 0;
+                this.timerInterval = null;
+                this.timeRemaining = 0;
+
+                this.initApp();
+            }
+
+            initApp() {
+                this.showScreen('home');
+                this.renderTopics();
+                this.updateHeaderProfile();
+            }
+
+            showScreen(screenId) {
+                document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
+                const target = document.getElementById(`screen-${screenId}`);
+                if (target) {
+                    target.classList.remove('hidden');
+                    window.scrollTo(0, 0);
+                }
+
+                if (screenId === 'profile') this.renderProfile();
+                if (screenId === 'progress') this.renderProgress();
+                if (screenId === 'leaderboard') this.renderLeaderboard();
+                if (screenId === 'auth') this.renderAuthList();
+            }
+
+            updateHeaderProfile() {
+                document.getElementById('headerUserName').innerText = this.currentUser;
+            }
+
+            renderTopics() {
+                const container = document.getElementById('topicListContainer');
+                container.innerHTML = TOPICS_DATA.map(t => `
+                    <div onclick="app.openTopicConfig('${t.id}')" class="game-card p-6 rounded-3xl flex items-center space-x-4 cursor-pointer bouncy-btn group">
+                        <span class="text-4xl bg-indigo-50 p-3 rounded-2xl group-hover:scale-110 transition">${t.icon}</span>
+                        <div>
+                            <h4 class="font-fun font-bold text-lg text-indigo-900">${t.name}</h4>
+                            <p class="text-xs text-slate-500 line-clamp-2">${t.desc}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            openTopicConfig(topicId) {
+                this.currentTopic = TOPICS_DATA.find(t => t.id === topicId);
+                document.getElementById('configTopicTitle').innerText = this.currentTopic.name;
+                this.selectDifficulty('Mudah');
+                this.selectTimer(30);
+                this.showScreen('config');
+            }
+
+            selectDifficulty(diff) {
+                this.currentDifficulty = diff;
+                document.querySelectorAll('.diff-btn').forEach(b => {
+                    b.classList.remove('ring-4', 'ring-indigo-400', 'bg-indigo-100');
+                });
+                document.getElementById(`btn-diff-${diff}`).classList.add('ring-4', 'ring-indigo-400', 'bg-indigo-100');
+            }
+
+            selectTimer(sec) {
+                this.currentTimerSec = sec;
+                document.querySelectorAll('.timer-btn').forEach(b => {
+                    b.classList.remove('ring-4', 'ring-indigo-400', 'bg-indigo-100');
+                });
+                document.getElementById(`btn-timer-${sec}`).classList.add('ring-4', 'ring-indigo-400', 'bg-indigo-100');
+            }
+
+            startGameSession() {
+                this.sessionQuestions = [...this.questionBank[this.currentTopic.id][this.currentDifficulty]];
+                // Randomize questions
+                this.sessionQuestions.sort(() => Math.random() - 0.5);
+                this.currentIndex = 0;
+                this.currentScore = 0;
+                this.showScreen('game');
+                this.loadQuestion();
+            }
+
+            loadQuestion() {
+                if (this.currentIndex >= 20 || this.currentIndex >= this.sessionQuestions.length) {
+                    this.endGameSession();
+                    return;
+                }
+
+                const q = this.sessionQuestions[this.currentIndex];
+                document.getElementById('gameHudTopic').innerText = this.currentTopic.name;
+                document.getElementById('gameHudProgress').innerText = `Soalan ${this.currentIndex + 1} / 20`;
+                document.getElementById('gameHudScore').innerText = `${this.currentScore} / 100`;
+                document.getElementById('gameHudCognitive').innerText = `Aras: ${q.cognitiveLevel}`;
+                document.getElementById('gameHudType').innerText = `Jenis: ${q.gameType}`;
+                
+                document.getElementById('questionContainer').innerText = q.question;
+                document.getElementById('visualContainer').innerHTML = q.visual || '';
+
+                // Randomize options
+                const shuffledOpts = [...q.options].sort(() => Math.random() - 0.5);
+                const optsContainer = document.getElementById('optionsContainer');
+                optsContainer.innerHTML = shuffledOpts.map(opt => `
+                    <button onclick="app.checkAnswer('${opt.replace(/'/g, "\\'")}', '${q.correctAnswer.replace(/'/g, "\\'")}')" class="bg-indigo-50 hover:bg-indigo-100 border-2 border-indigo-200 text-indigo-950 font-semibold p-4 rounded-2xl text-left transition bouncy-btn flex items-center justify-between">
+                        <span>${opt}</span>
+                        <i class="fa-solid fa-circle-chevron-right text-indigo-400"></i>
+                    </button>
+                `).join('');
+
+                document.getElementById('feedbackBanner').classList.add('hidden');
+
+                // Start Timer if enabled
+                if (this.currentTimerSec > 0) {
+                    this.timeRemaining = this.currentTimerSec;
+                    this.updateTimerDisplay();
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = setInterval(() => {
+                        this.timeRemaining--;
+                        this.updateTimerDisplay();
+                        if (this.timeRemaining <= 0) {
+                            clearInterval(this.timerInterval);
+                            this.checkAnswer('TIME_OUT', q.correctAnswer);
+                        }
+                    }, 1000);
+                } else {
+                    document.getElementById('gameHudTimer').innerHTML = `<i class="fa-solid fa-infinity"></i> Tiada Had`;
+                }
+            }
+
+            updateTimerDisplay() {
+                document.getElementById('gameHudTimer').innerHTML = `<i class="fa-solid fa-stopwatch"></i> 00:${String(this.timeRemaining).padStart(2, '0')}`;
+            }
+
+            checkAnswer(selected, correct) {
+                clearInterval(this.timerInterval);
+                const isCorrect = (selected === correct);
+                if (isCorrect) {
+                    this.currentScore += 5;
+                    if (this.settings.confetti && typeof confetti === 'function') {
+                        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                    }
+                }
+
+                const banner = document.getElementById('feedbackBanner');
+                banner.classList.remove('hidden');
+                banner.className = `p-4 rounded-2xl text-center space-y-2 ${isCorrect ? 'bg-emerald-100 text-emerald-900 border border-emerald-300' : 'bg-rose-100 text-rose-900 border border-rose-300'}`;
+                
+                banner.innerHTML = `
+                    <div class="font-fun font-bold text-xl">${isCorrect ? '🎉 BETUL! ⭐ +5 MARKAH' : '❌ BELUM BETUL'}</div>
+                    <div class="text-sm font-semibold">${isCorrect ? '' : `Jawapan Sebenar: <strong>${correct}</strong>`}</div>
+                    <p class="text-xs opacity-90">${this.sessionQuestions[this.currentIndex].explanation}</p>
+                    <button onclick="app.nextQuestion()" class="mt-2 bg-indigo-600 hover:bg-indigo-500 text-white font-fun font-bold px-6 py-2 rounded-xl shadow bouncy-btn">
+                        Soalan Seterusnya <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                `;
+
+                // Disable option buttons
+                document.querySelectorAll('#optionsContainer button').forEach(b => b.disabled = true);
+            }
+
+            nextQuestion() {
+                this.currentIndex++;
+                this.loadQuestion();
+            }
+
+            endGameSession() {
+                // Save score
+                this.scores[this.currentTopic.id] = Math.max(this.scores[this.currentTopic.id] || 0, this.currentScore);
+                localStorage.setItem('math_kids_scores', JSON.stringify(this.scores));
+
+                document.getElementById('finalScoreText').innerText = `${this.currentScore} / 100`;
+                document.getElementById('finalBadgeUnlocked').innerText = this.currentScore >= 80 ? `🏅 Badge Baharu Dibuka untuk ${this.currentTopic.name}!` : `✨ Bagus! Teruskan usaha cemerlang!`;
+                this.showScreen('result');
+            }
+
+            restartTopic() {
+                this.startGameSession();
+            }
+
+            renderProfile() {
+                document.getElementById('profileName').innerText = this.currentUser;
+                const totalScoreSum = Object.values(this.scores).reduce((a, b) => a + b, 0);
+                document.getElementById('profileTotalScore').innerText = totalScoreSum;
+
+                const container = document.getElementById('badgesContainer');
+                container.innerHTML = BADGES_DATA.map(b => `
+                    <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-2xl text-center space-y-1">
+                        <span class="text-3xl">${b.icon}</span>
+                        <h6 class="font-fun font-bold text-xs text-indigo-900">${b.name}</h6>
+                        <p class="text-[10px] text-slate-500">${b.desc}</p>
+                    </div>
+                `).join('');
+            }
+
+            renderProgress() {
+                const container = document.getElementById('progressBarsContainer');
+                container.innerHTML = TOPICS_DATA.map(t => {
+                    const score = this.scores[t.id] || 0;
+                    const percent = score; // max 100
+                    return `
+                        <div class="space-y-1 bg-white p-4 rounded-2xl border">
+                            <div class="flex justify-between text-sm font-bold text-indigo-900">
+                                <span>${t.icon} ${t.name}</span>
+                                <span>${score}%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                                <div class="bg-indigo-600 h-full rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderLeaderboard() {
+                const demoLeaders = [
+                    { name: 'Alya Maisarah', score: 980 },
+                    { name: 'Muhammad Danish', score: 940 },
+                    { name: this.currentUser, score: Object.values(this.scores).reduce((a, b) => a + b, 0) + 750 },
+                    { name: 'Nurul Ain', score: 875 },
+                    { name: 'Haikal Hakim', score: 850 }
+                ].sort((a, b) => b.score - a.score);
+
+                const container = document.getElementById('leaderboardList');
+                container.innerHTML = demoLeaders.map((l, idx) => `
+                    <div class="flex items-center justify-between bg-white p-4 rounded-2xl border ${idx === 0 ? 'border-amber-400 bg-amber-50/50' : ''}">
+                        <div class="flex items-center space-x-3">
+                            <span class="font-fun font-bold text-lg w-8 h-8 rounded-full bg-indigo-100 text-indigo-900 flex items-center justify-center">${idx + 1}</span>
+                            <span class="font-semibold text-slate-800">${l.name}</span>
+                        </div>
+                        <span class="font-fun font-bold text-indigo-600">${l.score} Markah</span>
+                    </div>
+                `).join('');
+            }
+
+            renderAuthList() {
+                const container = document.getElementById('userListContainer');
+                container.innerHTML = `<label class="text-xs font-bold text-slate-500 block">Akaun Sedia Ada:</label>` + 
+                    this.users.map(u => `
+                        <button onclick="app.switchUser('${u}')" class="w-full text-left bg-slate-50 hover:bg-indigo-50 p-3 rounded-xl font-medium text-indigo-900 border transition flex justify-between items-center">
+                            <span><i class="fa-solid fa-user mr-2 text-indigo-400"></i> ${u}</span>
+                            <span class="text-xs text-indigo-600 font-semibold">Pilih</span>
+                        </button>
+                    `).join('');
+            }
+
+            loginUser() {
+                const nameInput = document.getElementById('authUserNameInput').value.trim();
+                if (nameInput) {
+                    if (!this.users.includes(nameInput)) {
+                        this.users.push(nameInput);
+                        localStorage.setItem('math_kids_users', JSON.stringify(this.users));
+                    }
+                    this.currentUser = nameInput;
+                    this.updateHeaderProfile();
+                    this.showScreen('home');
+                }
+            }
+
+            switchUser(name) {
+                this.currentUser = name;
+                this.updateHeaderProfile();
+                this.showScreen('home');
+            }
+
+            switchUserList() {
+                this.showScreen('auth');
+            }
+
+            saveSettings() {
+                this.settings.sound = document.getElementById('settingSound').checked;
+                this.settings.confetti = document.getElementById('settingConfetti').checked;
+                localStorage.setItem('math_kids_settings', JSON.stringify(this.settings));
+                this.showScreen('home');
+            }
+        }
+
+        // Initialize App on Window Load
+        let app;
+        window.onload = function() {
+            app = new AppController();
+        };
+    </script>
+</body>
+</html>
