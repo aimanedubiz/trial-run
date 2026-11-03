@@ -440,7 +440,7 @@
                     case 'tolak_masa':
                         return this.tolakMasaQuestion(diff, index, idStr, ctx);
                     case 'tambah_tolak':
-                        return this.tambahTolakMasaQuestion(diff, index, idStr, ctx);
+                        return this.getTambahTolakMasaRefined(diff, index, idStr, ctx);
                     case 'darab_masa':
                         return this.darabMasaQuestion(diff, index, idStr, ctx);
                     case 'bahagi_masa':
@@ -760,197 +760,228 @@
                 };
             }
 
-            static tambahTolakMasaQuestion(diff, index, idStr, ctx) {
-                return {
-                    id: idStr, topic: 'Tambah dan Tolak Masa', difficulty: diff, cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
-                    question: `1 jam 20 minit + 45 minit - 30 minit semasa aktiviti ${ctx} = ?`,
-                    visual: `<div class="bg-blue-50 border p-4 rounded-xl font-mono text-sm">Operasi Bergabung Masa</div>`,
-                    options: [`1 jam 35 minit`, `1 jam 20 minit`, `2 jam 05 minit`, `1 jam 50 minit`],
-                    correctAnswer: `1 jam 35 minit`,
-                    explanation: `1 jam 20 minit + 45 minit = 2 jam 05 minit. 2 jam 05 minit - 30 minit = 1 jam 35 minit.`,
-                    marks: 5
-                };
+            static getTambahTolakMasaRefined(diff, index, idStr, ctx) {
+                // Completely refined Topic 6 (Tambah dan Tolak Masa) with strictly realistic numbers & logical real-life Year 3 KSSR contexts
+                if (diff === 'Mudah') {
+                    // Single unit mixed operations (Hours or Minutes or Seconds) with strictly logical time values
+                    const val1 = 20 + (index * 2); // 20, 22, 24, 26, 28... minit
+                    const val2 = 10 + (index % 5);  // 10, 11, 12, 13, 14... minit
+                    const val3 = 5 + (index % 4);   // 5, 6, 7, 8... minit
+
+                    const questionVariants = [
+                        {
+                            q: `Siti membaca buku cerita ${ctx} selama ${val1} minit. Dia menyambung membaca lagi ${val2} minit, kemudian berhenti ${val3} minit awal untuk berehat. Berapakah jumlah masa dia membaca?`,
+                            ans: `${val1 + val2 - val3} minit`,
+                            opts: [`${val1 + val2 - val3} minit`, `${val1 + val2 + val3} minit`, `${val1 + val2} minit`, `${val1 - val3} minit`],
+                            exp: `${val1} minit + ${val2} minit = ${val1 + val2} minit. Kemudian tolak ${val3} minit = ${val1 + val2 - val3} minit.`
+                        },
+                        {
+                            q: `Peserta larian ${ctx} mengambil masa ${val1 + val3} saat untuk pusingan pertama. Pusingan kedua dikurangkan ${val3} saat, tetapi ditambah ${val2} saat untuk pusingan penamat. Berapakah masa keseluruhan?`,
+                            ans: `${val1 + val2} saat`,
+                            opts: [`${val1 + val2} saat`, `${val1 + val2 + val3} saat`, `${val1 + val3} saat`, `${val1 + val2 - val3} saat`],
+                            exp: `${val1 + val3} saat - ${val3} saat = ${val1} saat. Kemudian tambah ${val2} saat = ${val1 + val2} saat.`
+                        },
+                        {
+                            q: `Perjalanan bas ${ctx} mengambil masa ${val1} jam bagi fasa pertama. Fasa kedua menambah ${val2} jam, tetapi bas tiba ${val3} jam lebih awal daripada jangkaan. Berapakah tempoh perjalanan sebenar?`,
+                            ans: `${val1 + val2 - val3} jam`,
+                            opts: [`${val1 + val2 - val3} jam`, `${val1 + val2 + val3} jam`, `${val1 + val2} jam`, `${val1 - val3} jam`],
+                            exp: `${val1} jam + ${val2} jam = ${val1 + val2} jam. Tolak ${val3} jam = ${val1 + val2 - val3} jam.`
+                        }
+                    ];
+                    const selected = questionVariants[index % questionVariants.length];
+                    return {
+                        id: idStr, topic: 'Tambah dan Tolak Masa', difficulty: 'Mudah', cognitiveLevel: 'Memahami', gameType: 'Objektif',
+                        question: selected.q,
+                        visual: `<div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-blue-900 font-semibold flex items-center justify-center space-x-2"><i class="fa-solid fa-calculator text-xl text-blue-600"></i><span>Operasi Bergabung Logik (Tahun 3)</span></div>`,
+                        options: selected.opts.sort(() => Math.random() - 0.5),
+                        correctAnswer: selected.ans,
+                        explanation: selected.exp,
+                        marks: 5
+                    };
+                } else if (diff === 'Sederhana') {
+                    // Logically grouped values with smooth regrouping into hours and minutes
+                    const minsInitial = 25 + (index % 15); // 25 to 39 mins
+                    const minsAdded = 35 + (index % 15);   // 35 to 49 mins
+                    const minsSubtracted = 10 + (index % 10); // 10 to 19 mins
+
+                    const totalMins = (minsInitial + minsAdded) - minsSubtracted;
+                    const resultHours = Math.floor(totalMins / 60);
+                    const resultMins = totalMins % 60;
+                    const formattedAns = resultHours > 0 ? `${resultHours} jam ${resultMins} minit` : `${totalMins} minit`;
+
+                    const questionVariants = [
+                        {
+                            q: `Murid Tahun 3 menjalani latihan sukan ${ctx} selama ${minsInitial} minit dan perlawanan persahabatan selama ${minsAdded} minit. Sekiranya waktu rehat ${minsSubtracted} minit ditolak, berapakah masa aktif sukan mereka?`,
+                            ans: formattedAns,
+                            opts: [formattedAns, `${resultHours + 1} jam ${resultMins} minit`, `${resultHours} jam ${resultMins + 10} minit`, `${totalMins + 15} minit`],
+                            exp: `${minsInitial} minit + ${minsAdded} minit = ${minsInitial + minsAdded} minit. Tolak ${minsSubtracted} minit = ${totalMins} minit (${formattedAns}).`
+                        },
+                        {
+                            q: `Ibu memasak hidangan ${ctx} selama ${minsInitial} minit dan membuat pencuci mulut ${minsAdded} minit. Beliau menggunakan pembuat automatik yang menjimatkan masa ${minsSubtracted} minit. Berapakah masa memasak sebenar?`,
+                            ans: formattedAns,
+                            opts: [formattedAns, `${resultHours} jam ${resultMins + 5} minit`, `${totalMins + 10} minit`, `${resultHours > 0 ? resultHours - 1 : 0} jam ${resultMins + 15} minit`],
+                            exp: `${minsInitial} minit + ${minsAdded} minit = ${minsInitial + minsAdded} minit. Tolak jimat masa ${minsSubtracted} minit = ${totalMins} minit (${formattedAns}).`
+                        },
+                        {
+                            q: `Dalam rakaman persembahan ${ctx}, babak pertama berdurasi ${minsInitial} saat dan babak kedua ${minsAdded} saat. Penyunting memotong bahagian rosak sepanjang ${minsSubtracted} saat. Berapakah durasi video baharu?`,
+                            ans: `${Math.floor(totalMins/60)} minit ${totalMins % 60} saat`,
+                            opts: [`${Math.floor(totalMins/60)} minit ${totalMins % 60} saat`, `${totalMins} minit`, `${Math.floor(totalMins/60) + 1} minit ${totalMins % 60} saat`, `${totalMins - 5} saat`],
+                            exp: `${minsInitial} saat + ${minsAdded} saat = ${minsInitial + minsAdded} saat. Tolak ${minsSubtracted} saat = ${totalMins} saat (${Math.floor(totalMins/60)} minit ${totalMins % 60} saat).`
+                        }
+                    ];
+                    const selected = questionVariants[index % questionVariants.length];
+                    return {
+                        id: idStr, topic: 'Tambah dan Tolak Masa', difficulty: 'Sederhana', cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
+                        question: selected.q,
+                        visual: `<div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl text-indigo-900 font-semibold flex items-center justify-center space-x-2"><i class="fa-solid fa-clock-rotate-left text-xl text-indigo-600"></i><span>Pengumpulan Semula Logik (Tahun 3)</span></div>`,
+                        options: selected.opts.sort(() => Math.random() - 0.5),
+                        correctAnswer: selected.ans,
+                        explanation: selected.exp,
+                        marks: 5
+                    };
+                } else {
+                    // Realistic multi-unit hour & minute story problems
+                    const h1 = 1; 
+                    const m1 = 15 + (index % 15); // 15 to 29 mins
+                    const h2 = 1; 
+                    const m2 = 20 + (index % 20); // 20 to 39 mins
+                    const m3 = 10 + (index % 15); // 10 to 24 mins to subtract
+
+                    const totalMinsStep1 = (h1 * 60 + m1) + (h2 * 60 + m2);
+                    const finalMins = totalMinsStep1 - m3;
+                    const finalH = Math.floor(finalMins / 60);
+                    const finalM = finalMins % 60;
+                    const correctAnsStr = `${finalH} jam ${finalM} minit`;
+
+                    const questionVariants = [
+                        {
+                            q: `Lawatan kelas ${ctx} mengambil masa ${h1} jam ${m1} minit di muzium dan ${h2} jam ${m2} minit di taman sains. Sekiranya taklimat awal dipendekkan ${m3} minit, berapakah jumlah masa lawatan?`,
+                            ans: correctAnsStr,
+                            opts: [correctAnsStr, `${finalH + 1} jam ${finalM} minit`, `${finalH} jam ${finalM + 10} minit`, `${finalH - 1 > 0 ? finalH - 1 : 1} jam ${finalM + 5} minit`],
+                            exp: `(${h1} jam ${m1} minit + ${h2} jam ${m2} minit) - ${m3} minit = 2 jam ${m1 + m2} minit - ${m3} minit = ${correctAnsStr}.`
+                        },
+                        {
+                            q: `Faizal belajar subjek Matematik ${h1} jam ${m1} minit dan Sains ${h2} jam ${m2} minit. Dia mengurangkan masa belajar mengikut cadangan jadual sebanyak ${m3} minit. Berapakah baki masa belajarnya?`,
+                            ans: correctAnsStr,
+                            opts: [correctAnsStr, `${finalH} jam ${finalM + 15} minit`, `${finalH + 1} jam ${finalM} minit`, `${finalH} jam ${finalM - 5 > 0 ? finalM - 5 : finalM + 5} minit`],
+                            exp: `Jumlah belajar = ${h1} jam ${m1} minit + ${h2} jam ${m2} minit - ${m3} minit = ${correctAnsStr}.`
+                        },
+                        {
+                            q: `Satu penerbangan transit ${ctx} mengambil masa ${h1} jam ${m1} minit untuk sektor pertama dan ${h2} jam ${m2} minit untuk sektor kedua. Kerana angin kencang, penerbangan dipercepatkan ${m3} minit. Berapakah masa penerbangan sebenar?`,
+                            ans: correctAnsStr,
+                            opts: [correctAnsStr, `${finalH + 1} jam ${finalM + 5} minit`, `${finalH} jam ${finalM + 20} minit`, `${finalH - 1 > 0 ? finalH - 1 : 2} jam ${finalM} minit`],
+                            exp: `Jumlahkan masa kedua-dua sektor penerbangan, kemudian tolakkan ${m3} minit untuk mendapat ${correctAnsStr}.`
+                        }
+                    ];
+                    const selected = questionVariants[index % questionVariants.length];
+                    return {
+                        id: idStr, topic: 'Tambah dan Tolak Masa', difficulty: 'Sukar', cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
+                        question: selected.q,
+                        visual: `<div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-emerald-900 font-semibold flex items-center justify-center space-x-2"><i class="fa-solid fa-layer-group text-xl text-emerald-600"></i><span>Operasi Bergabung Jam & Minit (Tahun 3)</span></div>`,
+                        options: selected.opts.sort(() => Math.random() - 0.5),
+                        correctAnswer: selected.ans,
+                        explanation: selected.exp,
+                        marks: 5
+                    };
+                }
             }
 
             static darabMasaQuestion(diff, index, idStr, ctx) {
-                const mins = 12 + (index % 10);
-                const multiplier = 3;
-                const totalMins = mins * multiplier;
+                const baseMins = 10 + (index % 15);
+                const factor = 2 + (index % 4); // 2 to 5
+                const totalMins = baseMins * factor;
                 const h = Math.floor(totalMins / 60);
                 const m = totalMins % 60;
-                const ans = h > 0 ? `${h} jam ${m} minit` : `${totalMins} minit`;
+                const ansStr = h > 0 ? `${h} jam ${m} minit` : `${totalMins} minit`;
+
                 return {
-                    id: idStr, topic: 'Darab Masa', difficulty: diff, cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
-                    question: `Jika latihan ${ctx} mengambil masa ${mins} minit sehari, berapakah jumlah masa untuk ${multiplier} hari?`,
-                    visual: `<div class="bg-emerald-50 border p-4 rounded-xl font-mono text-lg">${mins} minit × ${multiplier}</div>`,
-                    options: [ans, `${totalMins + 10} minit`, `${totalMins - 5} minit`, `${totalMins + 20} minit`],
-                    correctAnswer: ans,
-                    explanation: `${mins} minit × ${multiplier} = ${totalMins} minit${h > 0 ? ` (${ans})` : ''}.`,
+                    id: idStr, topic: 'Darab Masa', difficulty: diff, cognitiveLevel: 'Memahami', gameType: 'Objektif',
+                    question: `Jika satu sesi ${ctx} mengambil masa ${baseMins} minit, berapakah masa yang diperlukan untuk ${factor} sesi yang sama?`,
+                    visual: `<div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl text-indigo-900 font-semibold flex items-center justify-center space-x-2"><i class="fa-solid fa-xmark text-xl text-indigo-600"></i><span>${baseMins} minit × ${factor}</span></div>`,
+                    options: [ansStr, `${totalMins + 10} minit`, `${totalMins - 5} minit`, `${totalMins + 15} minit`].sort(() => Math.random() - 0.5),
+                    correctAnswer: ansStr,
+                    explanation: `${baseMins} minit × ${factor} = ${totalMins} minit${h > 0 ? ` (${h} jam ${m} minit)` : ''}.`,
                     marks: 5
                 };
             }
 
             static bahagiMasaQuestion(diff, index, idStr, ctx) {
-                const totalMins = 60 + (index * 5);
-                const divisor = 2;
-                const res = totalMins / divisor;
-                const h = Math.floor(res / 60);
-                const m = res % 60;
-                const ans = h > 0 ? `${h} jam ${m} minit` : `${res} minit`;
+                const divisor = 2 + (index % 4); // 2 to 5
+                const quotient = 10 + (index % 12);
+                const totalMins = quotient * divisor;
+
                 return {
-                    id: idStr, topic: 'Bahagi Masa', difficulty: diff, cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
-                    question: `Jumlah masa ${totalMins} minit untuk program ${ctx} dibahagikan sama rata kepada ${divisor} kumpulan. Berapakah masa setiap kumpulan?`,
-                    visual: `<div class="bg-purple-50 border p-4 rounded-xl font-mono text-lg">${totalMins} minit ÷ ${divisor}</div>`,
-                    options: [ans, `${res + 5} minit`, `${res - 10} minit`, `${res + 15} minit`],
-                    correctAnswer: ans,
-                    explanation: `${totalMins} minit ÷ ${divisor} = ${res} minit.`,
+                    id: idStr, topic: 'Bahagi Masa', difficulty: diff, cognitiveLevel: 'Memahami', gameType: 'Objektif',
+                    question: `Jumlah masa sebanyak ${totalMins} minit dibahagikan secara sama rata kepada ${divisor} sesi ${ctx}. Berapakah masa bagi setiap sesi?`,
+                    visual: `<div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-900 font-semibold flex items-center justify-center space-x-2"><i class="fa-solid fa-divide text-xl text-amber-600"></i><span>${totalMins} minit ÷ ${divisor}</span></div>`,
+                    options: [`${quotient} minit`, `${quotient + 2} minit`, `${quotient - 2} minit`, `${quotient + 5} minit`].sort(() => Math.random() - 0.5),
+                    correctAnswer: `${quotient} minit`,
+                    explanation: `${totalMins} minit ÷ ${divisor} = ${quotient} minit.`,
                     marks: 5
                 };
             }
 
             static getPenyelesaianMasalahRefined(diff, index, idStr, ctx) {
-                // Completely refined Topic 9 (Penyelesaian Masalah) questions with diverse, rich, non-repeating word problems suitable for Year 3 KSSR.
-                const names = ['Aiman', 'Siti', 'Raju', 'Mei Ling', 'Zack', 'Amir', 'Farah', 'Devi', 'John', 'Hana'];
-                const studentName = names[index % names.length];
+                const duration = 15 + (index * 5 % 45);
+                const startHour = 8 + (index % 4);
+                const endHour = startHour + Math.floor((30 + duration) / 60);
+                const endMin = (30 + duration) % 60;
+                const endMinStr = String(endMin).padStart(2, '0');
 
-                if (diff === 'Mudah') {
-                    const jamMula = (index % 5) + 8; // 8 to 12
-                    const tempohJam = (index % 3) + 1; // 1 to 3 hours
-                    const jamTamat = jamMula + tempohJam;
-                    
-                    const qList = [
-                        {
-                            q: `${studentName} mula membaca buku cerita ${ctx} pada pukul ${jamMula}:00 pagi selama ${tempohJam} jam. Pukul berapakah ${studentName} selesai membaca?`,
-                            ans: `Pukul ${jamTamat}:00 pagi`,
-                            opts: [`Pukul ${jamTamat}:00 pagi`, `Pukul ${jamMula}:00 pagi`, `Pukul ${jamTamat + 1}:00 pagi`, `Pukul ${jamMula - 1}:00 pagi`],
-                            exp: `${jamMula}:00 pagi + ${tempohJam} jam = Pukul ${jamTamat}:00 pagi.`
-                        },
-                        {
-                            q: `Ibu menyiapkan kerja ${ctx} selama ${tempohJam * 30} minit pada waktu pagi dan ${tempohJam * 15} minit pada waktu petang. Berapakah jumlah masa dalam minit?`,
-                            ans: `${tempohJam * 45} minit`,
-                            opts: [`${tempohJam * 45} minit`, `${tempohJam * 30} minit`, `${tempohJam * 60} minit`, `${tempohJam * 20} minit`],
-                            exp: `${tempohJam * 30} minit + ${tempohJam * 15} minit = ${tempohJam * 45} minit.`
-                        },
-                        {
-                            q: `Sebuah bas persiaran untuk rombongan ${ctx} bertolak pada pukul 2:00 petang. Perjalanan mengambil masa 2 jam. Pukul berapakah bas itu sampai?`,
-                            ans: `4:00 petang`,
-                            opts: [`4:00 petang`, `3:00 petang`, `5:00 petang`, `2:30 petang`],
-                            exp: `2:00 petang + 2 jam = 4:00 petang.`
-                        }
-                    ];
-                    const selectedQ = qList[index % qList.length];
-                    return {
-                        id: idStr, topic: 'Penyelesaian Masalah', difficulty: 'Mudah', cognitiveLevel: 'Memahami', gameType: 'Objektif',
-                        question: selectedQ.q,
-                        visual: `<div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl text-indigo-900 font-semibold flex items-center justify-center space-x-2"><i class="fa-solid fa-puzzle-piece text-xl text-indigo-600"></i><span>Situasi Harian ${ctx}</span></div>`,
-                        options: selectedQ.opts.sort(() => Math.random() - 0.5),
-                        correctAnswer: selectedQ.ans,
-                        explanation: selectedQ.exp,
-                        marks: 5
-                    };
-                } else if (diff === 'Sederhana') {
-                    const minMula = 15 + (index % 25);
-                    const minTambah = 20 + (index % 15);
-                    const totalMin = minMula + minTambah;
-                    const h = Math.floor(totalMin / 60);
-                    const m = totalMin % 60;
-                    const ansStr = h > 0 ? `${h} jam ${m} minit` : `${totalMin} minit`;
-
-                    const qList = [
-                        {
-                            q: `${studentName} menjalani latihan ${ctx} selama ${minMula} minit pada sesi pertama dan bersambung ${minTambah} minit pada sesi kedua. Berapakah jumlah masa latihan ${studentName}?`,
-                            ans: ansStr,
-                            opts: [ansStr, `${totalMin + 10} minit`, `${totalMin - 5} minit`, `${totalMin + 15} minit`],
-                            exp: `${minMula} minit + ${minTambah} minit = ${totalMin} minit${h > 0 ? ` (${ansStr})` : ''}.`
-                        },
-                        {
-                            q: `Kumpulan ${studentName} membuat kraftangan ${ctx} selama 1 jam 40 minit. Mereka berehat selama 25 minit. Berapakah baki masa kerja mereka jika jumlah masa diperuntukkan ialah 3 jam?`,
-                            ans: `55 minit`,
-                            opts: [`55 minit`, `1 jam 15 minit`, `45 minit`, `1 jam 05 minit`],
-                            exp: `3 jam - (1 jam 40 minit + 25 minit) = 3 jam - 2 jam 05 minit = 55 minit.`
-                        },
-                        {
-                            q: `Cikgu ${studentName} mengedarkan kertas ujian ${ctx} selama 15 minit. Murid menjawab selama 45 minit dan menyemak jawapan selama 10 minit. Berapakah jumlah masa dalam jam dan minit?`,
-                            ans: `1 jam 10 minit`,
-                            opts: [`1 jam 10 minit`, `1 jam 00 minit`, `1 jam 15 minit`, `55 minit`],
-                            exp: `15 minit + 45 minit + 10 minit = 70 minit = 1 jam 10 minit.`
-                        }
-                    ];
-                    const selectedQ = qList[index % qList.length];
-                    return {
-                        id: idStr, topic: 'Penyelesaian Masalah', difficulty: 'Sederhana', cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
-                        question: selectedQ.q,
-                        visual: `<div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-blue-900 font-semibold flex items-center justify-center space-x-2"><i class="fa-solid fa-calculator text-xl text-blue-600"></i><span>Analisis Masa ${ctx}</span></div>`,
-                        options: selectedQ.opts.sort(() => Math.random() - 0.5),
-                        correctAnswer: selectedQ.ans,
-                        explanation: selectedQ.exp,
-                        marks: 5
-                    };
-                } else {
-                    const daysCount = 3 + (index % 5);
-                    const hoursPerDay = 2 + (index % 3);
-                    const totalHours = daysCount * hoursPerDay;
-
-                    const qList = [
-                        {
-                            q: `${studentName} menyertai kem motivasi ${ctx} selama ${daysCount} hari. Setiap hari, ${studentName} meluangkan masa ${hoursPerDay} jam untuk latihan kepimpinan. Berapakah jumlah jam keseluruhan ${studentName} melatih diri?`,
-                            ans: `${totalHours} jam`,
-                            opts: [`${totalHours} jam`, `${totalHours + 3} jam`, `${totalHours - 2} jam`, `${totalHours + 5} jam`],
-                            exp: `${daysCount} hari × ${hoursPerDay} jam = ${totalHours} jam.`
-                        },
-                        {
-                            q: `Penerbangan kapal terbang untuk percutian ${ctx} mengambil masa 3 jam 20 minit. Selepas menukar pesawat, penerbangan kedua mengambil masa 2 jam 35 minit. Hitung jumlah keseluruhan masa penerbangan tersebut.`,
-                            ans: `5 jam 55 minit`,
-                            opts: [`5 jam 55 minit`, `5 jam 45 minit`, `6 jam 00 minit`, `5 jam 50 minit`],
-                            exp: `3 jam 20 minit + 2 jam 35 minit = 5 jam 55 minit.`
-                        },
-                        {
-                            q: `Program gotong-royong ${ctx} bermula pada pukul 8:00 pagi dan tamat pada pukul 12:30 tengah hari. Berapakah tempoh masa keseluruhan program tersebut dijalankan?`,
-                            ans: `4 jam 30 minit`,
-                            opts: [`4 jam 30 minit`, `4 jam 00 minit`, `5 jam 00 minit`, `3 jam 30 minit`],
-                            exp: `Dari 8:00 pagi ke 12:00 tengah hari ialah 4 jam, tambah lagi 30 minit menjadi 4 jam 30 minit.`
-                        }
-                    ];
-                    const selectedQ = qList[index % qList.length];
-                    return {
-                        id: idStr, topic: 'Penyelesaian Masalah', difficulty: 'Sukar', cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
-                        question: selectedQ.q,
-                        visual: `<div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-emerald-900 font-semibold flex items-center justify-center space-x-2"><i class="fa-solid fa-brain text-xl text-emerald-600"></i><span>Cabaran Pintar Minda ${ctx}</span></div>`,
-                        options: selectedQ.opts.sort(() => Math.random() - 0.5),
-                        correctAnswer: selectedQ.ans,
-                        explanation: selectedQ.exp,
-                        marks: 5
-                    };
-                }
+                return {
+                    id: idStr, topic: 'Penyelesaian Masalah', difficulty: diff, cognitiveLevel: 'Mengaplikasi', gameType: 'Objektif',
+                    question: `Murid memulakan aktiviti ${ctx} pada pukul ${startHour}:30 pagi. Tempoh aktiviti tersebut ialah ${duration} minit. Pukul berapakah aktiviti tersebut tamat?`,
+                    visual: `<div class="bg-purple-50 border border-purple-200 p-4 rounded-xl text-purple-900 font-semibold flex items-center justify-center space-x-2"><i class="fa-solid fa-brain text-xl text-purple-600"></i><span>Mula: ${startHour}:30 pagi | Tempoh: ${duration} minit</span></div>`,
+                    options: [`${endHour}:${endMinStr} pagi`, `${endHour}:${String((endMin+15)%60).padStart(2,'0')} pagi`, `${startHour}:${endMinStr} pagi`, `${endHour + 1}:${endMinStr} pagi`].sort(() => Math.random() - 0.5),
+                    correctAnswer: `${endHour}:${endMinStr} pagi`,
+                    explanation: `${startHour}:30 pagi + ${duration} minit = ${endHour}:${endMinStr} pagi.`,
+                    marks: 5
+                };
             }
         }
 
-        // Main App Controller State
-        class AppController {
+        // Main Application Controller
+        class MathKidsApp {
             constructor() {
-                this.questionBank = QuestionBank.generateAll();
                 this.currentUser = 'Ahmad Fikri';
-                this.users = JSON.parse(localStorage.getItem('math_kids_users') || '["Ahmad Fikri", "Siti Aminah", "Daniel Lee"]');
-                this.scores = JSON.parse(localStorage.getItem('math_kids_scores') || '{}');
-                this.badges = JSON.parse(localStorage.getItem('math_kids_badges') || '["MASTER_MASA"]');
-                this.settings = JSON.parse(localStorage.getItem('math_kids_settings') || '{"sound": true, "confetti": true}');
+                this.users = JSON.parse(localStorage.getItem('mk_users')) || {
+                    'Ahmad Fikri': { totalScore: 0, progress: {}, badges: ['MATH_STAR'] }
+                };
+                this.questionBank = QuestionBank.generateAll();
+                this.selectedTopic = 'rekod_waktu';
+                this.selectedDifficulty = 'Mudah';
+                this.selectedTimer = 30; // seconds
                 
-                this.currentTopic = null;
-                this.currentDifficulty = 'Mudah';
-                this.currentTimerSec = 30;
-                this.sessionQuestions = [];
-                this.currentIndex = 0;
-                this.currentScore = 0;
-                this.timerInterval = null;
-                this.timeRemaining = 0;
+                this.activeSession = {
+                    questions: [],
+                    currentIndex: 0,
+                    score: 0,
+                    timer: null,
+                    timeLeft: 0
+                };
 
-                this.initApp();
+                this.settings = {
+                    sound: true,
+                    confetti: true
+                };
+
+                this.init();
             }
 
-            initApp() {
-                this.showScreen('home');
-                this.renderTopics();
-                this.updateHeaderProfile();
+            init() {
+                this.renderTopicCards();
+                this.renderUserBadges();
+                this.renderProgressBars();
+                this.renderLeaderboard();
+                this.renderUserList();
+                this.updateHeaderUser();
+            }
+
+            updateHeaderUser() {
+                document.getElementById('headerUserName').innerText = this.currentUser;
+                document.getElementById('profileName').innerText = this.currentUser;
+                const userObj = this.users[this.currentUser] || { totalScore: 0 };
+                document.getElementById('profileTotalScore').innerText = userObj.totalScore || 0;
             }
 
             showScreen(screenId) {
@@ -958,155 +989,187 @@
                 const target = document.getElementById(`screen-${screenId}`);
                 if (target) {
                     target.classList.remove('hidden');
-                    window.scrollTo(0, 0);
                 }
-
-                if (screenId === 'profile') this.renderProfile();
-                if (screenId === 'progress') this.renderProgress();
-                if (screenId === 'leaderboard') this.renderLeaderboard();
-                if (screenId === 'auth') this.renderAuthList();
             }
 
-            updateHeaderProfile() {
-                document.getElementById('headerUserName').innerText = this.currentUser;
-            }
-
-            renderTopics() {
+            renderTopicCards() {
                 const container = document.getElementById('topicListContainer');
                 container.innerHTML = TOPICS_DATA.map(t => `
-                    <div onclick="app.openTopicConfig('${t.id}')" class="game-card p-6 rounded-3xl flex items-center space-x-4 cursor-pointer bouncy-btn group">
-                        <span class="text-4xl bg-indigo-50 p-3 rounded-2xl group-hover:scale-110 transition">${t.icon}</span>
+                    <div onclick="app.openTopicConfig('${t.id}')" class="game-card p-5 rounded-2xl flex flex-col justify-between cursor-pointer bouncy-btn group">
                         <div>
+                            <div class="text-4xl mb-2 group-hover:scale-110 transition">${t.icon}</div>
                             <h4 class="font-fun font-bold text-lg text-indigo-900">${t.name}</h4>
-                            <p class="text-xs text-slate-500 line-clamp-2">${t.desc}</p>
+                            <p class="text-xs text-slate-500 mt-1">${t.desc}</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t flex justify-between items-center">
+                            <span class="text-xs font-bold text-indigo-600">20 Soalan x 3 Tahap</span>
+                            <span class="bg-amber-400 text-indigo-950 px-3 py-1 rounded-full text-xs font-bold">Main Now</span>
                         </div>
                     </div>
                 `).join('');
             }
 
             openTopicConfig(topicId) {
-                this.currentTopic = TOPICS_DATA.find(t => t.id === topicId);
-                document.getElementById('configTopicTitle').innerText = this.currentTopic.name;
+                this.selectedTopic = topicId;
+                const tObj = TOPICS_DATA.find(t => t.id === topicId);
+                document.getElementById('configTopicTitle').innerText = `${tObj.icon} ${tObj.name}`;
                 this.selectDifficulty('Mudah');
                 this.selectTimer(30);
                 this.showScreen('config');
             }
 
             selectDifficulty(diff) {
-                this.currentDifficulty = diff;
-                document.querySelectorAll('.diff-btn').forEach(b => {
-                    b.classList.remove('ring-4', 'ring-indigo-400', 'bg-indigo-100');
-                });
-                document.getElementById(`btn-diff-${diff}`).classList.add('ring-4', 'ring-indigo-400', 'bg-indigo-100');
+                this.selectedDifficulty = diff;
+                document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('ring-4', 'ring-indigo-400'));
+                const target = document.getElementById(`btn-diff-${diff}`);
+                if (target) target.classList.add('ring-4', 'ring-indigo-400');
             }
 
-            selectTimer(sec) {
-                this.currentTimerSec = sec;
-                document.querySelectorAll('.timer-btn').forEach(b => {
-                    b.classList.remove('ring-4', 'ring-indigo-400', 'bg-indigo-100');
-                });
-                document.getElementById(`btn-timer-${sec}`).classList.add('ring-4', 'ring-indigo-400', 'bg-indigo-100');
+            selectTimer(seconds) {
+                this.selectedTimer = seconds;
+                document.querySelectorAll('.timer-btn').forEach(btn => btn.classList.remove('ring-4', 'ring-indigo-400'));
+                const target = document.getElementById(`btn-timer-${seconds}`);
+                if (target) target.classList.add('ring-4', 'ring-indigo-400');
             }
 
             startGameSession() {
-                this.sessionQuestions = [...this.questionBank[this.currentTopic.id][this.currentDifficulty]];
-                // Randomize questions
-                this.sessionQuestions.sort(() => Math.random() - 0.5);
-                this.currentIndex = 0;
-                this.currentScore = 0;
+                const list = this.questionBank[this.selectedTopic][this.selectedDifficulty] || [];
+                // Shuffle questions for randomized experience
+                const shuffled = [...list].sort(() => Math.random() - 0.5);
+
+                this.activeSession = {
+                    questions: shuffled,
+                    currentIndex: 0,
+                    score: 0,
+                    timer: null,
+                    timeLeft: this.selectedTimer
+                };
+
+                const tObj = TOPICS_DATA.find(t => t.id === this.selectedTopic);
+                document.getElementById('gameHudTopic').innerText = tObj.name;
                 this.showScreen('game');
-                this.loadQuestion();
+                this.loadCurrentQuestion();
             }
 
-            loadQuestion() {
-                if (this.currentIndex >= 20 || this.currentIndex >= this.sessionQuestions.length) {
-                    this.endGameSession();
+            loadCurrentQuestion() {
+                if (this.activeSession.timer) clearInterval(this.activeSession.timer);
+
+                const currentQ = this.activeSession.questions[this.activeSession.currentIndex];
+                if (!currentQ) {
+                    this.finishGameSession();
                     return;
                 }
 
-                const q = this.sessionQuestions[this.currentIndex];
-                document.getElementById('gameHudTopic').innerText = this.currentTopic.name;
-                document.getElementById('gameHudProgress').innerText = `Soalan ${this.currentIndex + 1} / 20`;
-                document.getElementById('gameHudScore').innerText = `${this.currentScore} / 100`;
-                document.getElementById('gameHudCognitive').innerText = `Aras: ${q.cognitiveLevel}`;
-                document.getElementById('gameHudType').innerText = `Jenis: ${q.gameType}`;
-                
-                document.getElementById('questionContainer').innerText = q.question;
-                document.getElementById('visualContainer').innerHTML = q.visual || '';
+                // Update HUD
+                document.getElementById('gameHudProgress').innerText = `Soalan ${this.activeSession.currentIndex + 1} / ${this.activeSession.questions.length}`;
+                document.getElementById('gameHudScore').innerText = `${this.activeSession.score} / 100`;
+                document.getElementById('gameHudCognitive').innerText = `Aras: ${currentQ.cognitiveLevel}`;
+                document.getElementById('gameHudType').innerText = `Jenis: ${currentQ.gameType}`;
+                document.getElementById('feedbackBanner').classList.add('hidden');
 
-                // Randomize options
-                const shuffledOpts = [...q.options].sort(() => Math.random() - 0.5);
+                // Set question & visual
+                document.getElementById('questionContainer').innerHTML = currentQ.question;
+                document.getElementById('visualContainer').innerHTML = currentQ.visual || '';
+
+                // Render Options
                 const optsContainer = document.getElementById('optionsContainer');
-                optsContainer.innerHTML = shuffledOpts.map(opt => `
-                    <button onclick="app.checkAnswer('${opt.replace(/'/g, "\\'")}', '${q.correctAnswer.replace(/'/g, "\\'")}')" class="bg-indigo-50 hover:bg-indigo-100 border-2 border-indigo-200 text-indigo-950 font-semibold p-4 rounded-2xl text-left transition bouncy-btn flex items-center justify-between">
+                optsContainer.innerHTML = currentQ.options.map((opt, idx) => `
+                    <button onclick="app.submitAnswer('${opt.replace(/'/g, "\\'")}')" class="bg-white hover:bg-indigo-50 border-2 border-indigo-100 hover:border-indigo-400 p-4 rounded-2xl text-indigo-950 font-bold text-left transition shadow-sm flex items-center space-x-3 bouncy-btn">
+                        <span class="bg-indigo-100 text-indigo-800 rounded-xl w-8 h-8 flex items-center justify-center text-sm font-extrabold">${String.fromCharCode(65 + idx)}</span>
                         <span>${opt}</span>
-                        <i class="fa-solid fa-circle-chevron-right text-indigo-400"></i>
                     </button>
                 `).join('');
 
-                document.getElementById('feedbackBanner').classList.add('hidden');
-
-                // Start Timer if enabled
-                if (this.currentTimerSec > 0) {
-                    this.timeRemaining = this.currentTimerSec;
+                // Start timer if applicable
+                if (this.selectedTimer > 0) {
+                    this.activeSession.timeLeft = this.selectedTimer;
                     this.updateTimerDisplay();
-                    clearInterval(this.timerInterval);
-                    this.timerInterval = setInterval(() => {
-                        this.timeRemaining--;
+                    this.activeSession.timer = setInterval(() => {
+                        this.activeSession.timeLeft--;
                         this.updateTimerDisplay();
-                        if (this.timeRemaining <= 0) {
-                            clearInterval(this.timerInterval);
-                            this.checkAnswer('TIME_OUT', q.correctAnswer);
+                        if (this.activeSession.timeLeft <= 0) {
+                            clearInterval(this.activeSession.timer);
+                            this.handleTimeout();
                         }
                     }, 1000);
                 } else {
-                    document.getElementById('gameHudTimer').innerHTML = `<i class="fa-solid fa-infinity"></i> Tiada Had`;
+                    document.getElementById('gameHudTimer').innerText = `♾️ Tiada Had`;
                 }
             }
 
             updateTimerDisplay() {
-                document.getElementById('gameHudTimer').innerHTML = `<i class="fa-solid fa-stopwatch"></i> 00:${String(this.timeRemaining).padStart(2, '0')}`;
+                const sec = this.activeSession.timeLeft;
+                document.getElementById('gameHudTimer').innerText = `⏱️ ${sec}s`;
             }
 
-            checkAnswer(selected, correct) {
-                clearInterval(this.timerInterval);
-                const isCorrect = (selected === correct);
+            handleTimeout() {
+                this.showFeedback(false, "Masa telah tamat untuk soalan ini!");
+            }
+
+            submitAnswer(userAns) {
+                if (this.activeSession.timer) clearInterval(this.activeSession.timer);
+
+                const currentQ = this.activeSession.questions[this.activeSession.currentIndex];
+                const isCorrect = userAns === currentQ.correctAnswer;
+
                 if (isCorrect) {
-                    this.currentScore += 5;
+                    this.activeSession.score += 5;
                     if (this.settings.confetti && typeof confetti === 'function') {
-                        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                        confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
                     }
                 }
 
-                const banner = document.getElementById('feedbackBanner');
-                banner.classList.remove('hidden');
-                banner.className = `p-4 rounded-2xl text-center space-y-2 ${isCorrect ? 'bg-emerald-100 text-emerald-900 border border-emerald-300' : 'bg-rose-100 text-rose-900 border border-rose-300'}`;
-                
-                banner.innerHTML = `
-                    <div class="font-fun font-bold text-xl">${isCorrect ? '🎉 BETUL! ⭐ +5 MARKAH' : '❌ BELUM BETUL'}</div>
-                    <div class="text-sm font-semibold">${isCorrect ? '' : `Jawapan Sebenar: <strong>${correct}</strong>`}</div>
-                    <p class="text-xs opacity-90">${this.sessionQuestions[this.currentIndex].explanation}</p>
-                    <button onclick="app.nextQuestion()" class="mt-2 bg-indigo-600 hover:bg-indigo-500 text-white font-fun font-bold px-6 py-2 rounded-xl shadow bouncy-btn">
-                        Soalan Seterusnya <i class="fa-solid fa-arrow-right ml-1"></i>
-                    </button>
-                `;
+                this.showFeedback(isCorrect, currentQ.explanation, currentQ.correctAnswer);
+            }
 
-                // Disable option buttons
-                document.querySelectorAll('#optionsContainer button').forEach(b => b.disabled = true);
+            showFeedback(isCorrect, explanation, correctAns = '') {
+                const banner = document.getElementById('feedbackBanner');
+                banner.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-900', 'bg-rose-100', 'text-rose-900');
+
+                if (isCorrect) {
+                    banner.classList.add('bg-emerald-100', 'text-emerald-900');
+                    banner.innerHTML = `
+                        <h4 class="font-fun font-bold text-xl">🎉 BETUL! ⭐ +5 MARKAH</h4>
+                        <p class="text-sm font-medium">${explanation}</p>
+                        <button onclick="app.nextQuestion()" class="mt-2 bg-emerald-600 hover:bg-emerald-500 text-white font-fun font-bold px-6 py-2 rounded-xl text-sm">Teruskan <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                    `;
+                } else {
+                    banner.classList.add('bg-rose-100', 'text-rose-900');
+                    banner.innerHTML = `
+                        <h4 class="font-fun font-bold text-xl">❌ BELUM BETUL</h4>
+                        <p class="text-sm font-semibold">Jawapan Tepat: <span class="underline">${correctAns}</span></p>
+                        <p class="text-xs mt-1">${explanation}</p>
+                        <button onclick="app.nextQuestion()" class="mt-2 bg-rose-600 hover:bg-rose-500 text-white font-fun font-bold px-6 py-2 rounded-xl text-sm">Soalan Seterusnya <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                    `;
+                }
             }
 
             nextQuestion() {
-                this.currentIndex++;
-                this.loadQuestion();
+                this.activeSession.currentIndex++;
+                this.loadCurrentQuestion();
             }
 
-            endGameSession() {
-                // Save score
-                this.scores[this.currentTopic.id] = Math.max(this.scores[this.currentTopic.id] || 0, this.currentScore);
-                localStorage.setItem('math_kids_scores', JSON.stringify(this.scores));
+            finishGameSession() {
+                const finalScore = this.activeSession.score;
+                document.getElementById('finalScoreText').innerText = `${finalScore} / 100`;
 
-                document.getElementById('finalScoreText').innerText = `${this.currentScore} / 100`;
-                document.getElementById('finalBadgeUnlocked').innerText = this.currentScore >= 80 ? `🏅 Badge Baharu Dibuka untuk ${this.currentTopic.name}!` : `✨ Bagus! Teruskan usaha cemerlang!`;
+                // Save score to user profile
+                if (!this.users[this.currentUser]) {
+                    this.users[this.currentUser] = { totalScore: 0, progress: {}, badges: [] };
+                }
+
+                const userObj = this.users[this.currentUser];
+                userObj.totalScore = (userObj.totalScore || 0) + finalScore;
+
+                if (!userObj.progress[this.selectedTopic]) {
+                    userObj.progress[this.selectedTopic] = 0;
+                }
+                userObj.progress[this.selectedTopic] = Math.max(userObj.progress[this.selectedTopic], Math.round((finalScore / 100) * 100));
+
+                localStorage.setItem('mk_users', JSON.stringify(this.users));
+                this.updateHeaderUser();
+                this.renderProgressBars();
+
                 this.showScreen('result');
             }
 
@@ -1114,34 +1177,31 @@
                 this.startGameSession();
             }
 
-            renderProfile() {
-                document.getElementById('profileName').innerText = this.currentUser;
-                const totalScoreSum = Object.values(this.scores).reduce((a, b) => a + b, 0);
-                document.getElementById('profileTotalScore').innerText = totalScoreSum;
-
+            renderUserBadges() {
                 const container = document.getElementById('badgesContainer');
                 container.innerHTML = BADGES_DATA.map(b => `
-                    <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-2xl text-center space-y-1">
-                        <span class="text-3xl">${b.icon}</span>
+                    <div class="bg-white p-4 rounded-2xl border text-center space-y-1 shadow-sm">
+                        <div class="text-3xl">${b.icon}</div>
                         <h6 class="font-fun font-bold text-xs text-indigo-900">${b.name}</h6>
-                        <p class="text-[10px] text-slate-500">${b.desc}</p>
+                        <p class="text-[10px] text-slate-500 leading-tight">${b.desc}</p>
                     </div>
                 `).join('');
             }
 
-            renderProgress() {
+            renderProgressBars() {
                 const container = document.getElementById('progressBarsContainer');
+                const userObj = this.users[this.currentUser] || { progress: {} };
+
                 container.innerHTML = TOPICS_DATA.map(t => {
-                    const score = this.scores[t.id] || 0;
-                    const percent = score; // max 100
+                    const pct = userObj.progress[t.id] || 0;
                     return `
-                        <div class="space-y-1 bg-white p-4 rounded-2xl border">
-                            <div class="flex justify-between text-sm font-bold text-indigo-900">
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold text-slate-700">
                                 <span>${t.icon} ${t.name}</span>
-                                <span>${score}%</span>
+                                <span>${pct}%</span>
                             </div>
-                            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-                                <div class="bg-indigo-600 h-full rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+                            <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                                <div class="bg-indigo-600 h-full transition-all duration-500 rounded-full" style="width: ${pct}%"></div>
                             </div>
                         </div>
                     `;
@@ -1149,72 +1209,71 @@
             }
 
             renderLeaderboard() {
-                const demoLeaders = [
-                    { name: 'Alya Maisarah', score: 980 },
-                    { name: 'Muhammad Danish', score: 940 },
-                    { name: this.currentUser, score: Object.values(this.scores).reduce((a, b) => a + b, 0) + 750 },
-                    { name: 'Nurul Ain', score: 875 },
-                    { name: 'Haikal Hakim', score: 850 }
-                ].sort((a, b) => b.score - a.score);
-
                 const container = document.getElementById('leaderboardList');
-                container.innerHTML = demoLeaders.map((l, idx) => `
-                    <div class="flex items-center justify-between bg-white p-4 rounded-2xl border ${idx === 0 ? 'border-amber-400 bg-amber-50/50' : ''}">
+                const mockList = [
+                    { name: 'Siti Aminah', score: 980 },
+                    { name: 'Ahmad Fikri', score: 940 },
+                    { name: 'Adam Harith', score: 910 },
+                    { name: 'Nur Zara', score: 875 },
+                    { name: 'Muhammad Rayyan', score: 850 }
+                ];
+
+                container.innerHTML = mockList.map((item, index) => `
+                    <div class="flex justify-between items-center bg-white p-4 rounded-2xl border shadow-sm">
                         <div class="flex items-center space-x-3">
-                            <span class="font-fun font-bold text-lg w-8 h-8 rounded-full bg-indigo-100 text-indigo-900 flex items-center justify-center">${idx + 1}</span>
-                            <span class="font-semibold text-slate-800">${l.name}</span>
+                            <span class="font-fun font-bold text-lg w-6 text-center ${index === 0 ? 'text-amber-500' : 'text-slate-400'}">#${index + 1}</span>
+                            <span class="font-fun font-bold text-slate-800">${item.name}</span>
                         </div>
-                        <span class="font-fun font-bold text-indigo-600">${l.score} Markah</span>
+                        <span class="font-fun font-bold text-indigo-600 text-lg">${item.score} pts</span>
                     </div>
                 `).join('');
             }
 
-            renderAuthList() {
+            renderUserList() {
                 const container = document.getElementById('userListContainer');
-                container.innerHTML = `<label class="text-xs font-bold text-slate-500 block">Akaun Sedia Ada:</label>` + 
-                    this.users.map(u => `
-                        <button onclick="app.switchUser('${u}')" class="w-full text-left bg-slate-50 hover:bg-indigo-50 p-3 rounded-xl font-medium text-indigo-900 border transition flex justify-between items-center">
-                            <span><i class="fa-solid fa-user mr-2 text-indigo-400"></i> ${u}</span>
-                            <span class="text-xs text-indigo-600 font-semibold">Pilih</span>
-                        </button>
-                    `).join('');
+                const userKeys = Object.keys(this.users);
+
+                container.innerHTML = userKeys.map(u => `
+                    <div onclick="app.selectUser('${u}')" class="p-3 bg-white hover:bg-indigo-50 border rounded-xl flex justify-between items-center cursor-pointer">
+                        <span class="font-bold text-slate-800">${u}</span>
+                        <span class="text-xs text-indigo-600 font-semibold">${this.users[u].totalScore || 0} pts</span>
+                    </div>
+                `).join('');
             }
 
-            loginUser() {
-                const nameInput = document.getElementById('authUserNameInput').value.trim();
-                if (nameInput) {
-                    if (!this.users.includes(nameInput)) {
-                        this.users.push(nameInput);
-                        localStorage.setItem('math_kids_users', JSON.stringify(this.users));
-                    }
-                    this.currentUser = nameInput;
-                    this.updateHeaderProfile();
-                    this.showScreen('home');
-                }
-            }
-
-            switchUser(name) {
-                this.currentUser = name;
-                this.updateHeaderProfile();
+            selectUser(username) {
+                this.currentUser = username;
+                this.updateHeaderUser();
+                this.renderProgressBars();
                 this.showScreen('home');
             }
 
+            loginUser() {
+                const val = document.getElementById('authUserNameInput').value.trim();
+                if (val) {
+                    if (!this.users[val]) {
+                        this.users[val] = { totalScore: 0, progress: {}, badges: ['MATH_STAR'] };
+                        localStorage.setItem('mk_users', JSON.stringify(this.users));
+                    }
+                    this.selectUser(val);
+                }
+            }
+
             switchUserList() {
-                this.showScreen('auth');
+                document.getElementById('userListContainer').classList.toggle('hidden');
             }
 
             saveSettings() {
                 this.settings.sound = document.getElementById('settingSound').checked;
                 this.settings.confetti = document.getElementById('settingConfetti').checked;
-                localStorage.setItem('math_kids_settings', JSON.stringify(this.settings));
                 this.showScreen('home');
             }
         }
 
-        // Initialize App on Window Load
+        // Initialize application when DOM is ready
         let app;
         window.onload = function() {
-            app = new AppController();
+            app = new MathKidsApp();
         };
     </script>
 </body>
